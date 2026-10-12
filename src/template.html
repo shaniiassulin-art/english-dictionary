@@ -1,0 +1,499 @@
+<title>מילון אנגלית לפי רמות</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<style>
+/* Layout: one screen at a time, like an app — levels → groups → group → quiz. One accent, lots of space. */
+:root{
+  --bg:#ffffff; --surface:#f4f6f9; --ink:#141a22; --muted:#545e6c; --line:#e3e7ec;
+  --accent:#2453c7; --accent-ink:#ffffff; --accent-soft:#eaf0fc;
+  --ok:#1f7a45; --ok-soft:#e6f4ec; --bad:#b4282e; --bad-soft:#fbeaea;
+  --he:"Assistant",Arial,sans-serif; --en:"Source Serif 4",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111418; --surface:#1b2027; --ink:#eef1f5; --muted:#b0b9c5; --line:#2c333d;
+  --accent:#8fb0ff; --accent-ink:#0c1530; --accent-soft:#1d2840;
+  --ok:#6fd39a; --ok-soft:#173226; --bad:#ff8a8a; --bad-soft:#3a1d1f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111418; --surface:#1b2027; --ink:#eef1f5; --muted:#b0b9c5; --line:#2c333d;
+  --accent:#8fb0ff; --accent-ink:#0c1530; --accent-soft:#1d2840;
+  --ok:#6fd39a; --ok-soft:#173226; --bad:#ff8a8a; --bad-soft:#3a1d1f; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--he);font-size:18px;line-height:1.55}
+.app{max-width:560px;margin:0 auto;padding-inline:20px;padding-block:20px 48px;min-height:100%}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+h1,h2{margin:0;line-height:1.2;text-wrap:balance}
+h1{font-size:1.8rem;font-weight:800}
+h2{font-size:1.5rem;font-weight:800}
+.sub{color:var(--muted);margin:.35rem 0 0}
+.screen{display:flex;flex-direction:column;gap:20px}
+
+/* top nav */
+.nav{display:flex;align-items:center;gap:8px;min-height:48px}
+.back{border:0;background:none;color:var(--accent);font-weight:700;padding:10px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.back::before{content:"→";font-size:1.2em}
+
+/* primary actions */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;border-radius:14px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1.1rem;cursor:pointer;padding:12px 18px}
+.btn.secondary{background:var(--surface);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+
+/* simple list rows */
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.item{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:right;background:var(--surface);border:0;border-radius:14px;padding:16px 18px;min-height:64px;cursor:pointer}
+.item .t{font-weight:700;font-size:1.1rem}
+.item .d{color:var(--muted);font-size:.95rem}
+.item .chev{color:var(--muted);font-size:1.3rem}
+.item.done .d{color:var(--ok);font-weight:600}
+.lbl{font-size:.95rem;color:var(--muted);font-weight:600;margin:0}
+
+/* segmented control */
+.seg{display:flex;background:var(--surface);border-radius:12px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:none;border-radius:9px;min-height:44px;cursor:pointer;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--bg);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+/* word list in a group */
+.words{list-style:none;margin:0;padding:0}
+.words li{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.words .txt{flex:1;min-width:0}
+.words .e{font-family:var(--en);font-weight:600;font-size:1.1rem;direction:ltr;text-align:right}
+.words .h{color:var(--muted);font-size:.98rem}
+.words li.ok .e::after{content:" ✓";color:var(--ok);font-family:var(--he)}
+.spk{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.spk svg{width:20px;height:20px}
+.no-tts .spk{display:none}
+details.wl summary{cursor:pointer;color:var(--accent);font-weight:700;min-height:44px;display:flex;align-items:center}
+
+/* quiz */
+.qtop{display:flex;align-items:center;gap:14px}
+.x{border:0;background:var(--surface);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.1rem;flex:none}
+.prog{flex:1;height:8px;background:var(--surface);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
+.count{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.95rem;flex:none}
+.word{display:flex;flex-direction:column;align-items:center;gap:14px;padding:36px 12px 28px;text-align:center}
+.word .w{font-family:var(--en);font-weight:600;font-size:clamp(2rem,9vw,2.8rem);direction:ltr;line-height:1.15;overflow-wrap:anywhere}
+.word .spk{width:52px;height:52px}
+.ask{font-weight:700;margin:0}
+.inp{width:100%;min-height:56px;border:2px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);font:inherit;font-size:1.15rem;padding:12px 16px}
+.inp:focus{border-color:var(--accent);outline:none}
+.mine{background:var(--surface);border-radius:12px;padding:12px 16px;margin:0}
+.mine span{color:var(--muted)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{width:100%;text-align:right;min-height:58px;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 16px;font-size:1.08rem;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:700}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
+.fb{margin:0;font-weight:800;font-size:1.15rem;text-align:center}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
+.fb:empty{display:none}
+
+/* results */
+.big{font-size:3.4rem;font-weight:800;text-align:center;font-variant-numeric:tabular-nums;line-height:1}
+.center{text-align:center}
+.mist{list-style:none;margin:0;padding:0}
+.mist li{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.mist .e{font-family:var(--en);font-weight:600;direction:ltr}
+.mist .h{color:var(--muted);text-align:left}
+
+/* flashcard */
+.card{background:var(--surface);border:0;border-radius:18px;min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;cursor:pointer;width:100%}
+.card .w{font-family:var(--en);font-weight:600;font-size:2.2rem;direction:ltr}
+.card .a{font-size:1.25rem}
+.card .hint{color:var(--muted)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.howto{color:var(--muted);font-size:.95rem}
+.howto summary{cursor:pointer;color:var(--accent);font-weight:600;min-height:44px;display:flex;align-items:center}
+.howto ol{margin:0;padding-inline-start:20px}
+
+/* mobile tuning */
+html,body{height:100%}
+button,.item,.opt{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn:active,.item:active,.opt:active:not(:disabled){transform:scale(.985)}
+.sticky{position:sticky;bottom:0;z-index:3;display:flex;flex-direction:column;gap:10px;background:var(--bg);padding-top:10px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));margin-top:auto}
+.screen.full{min-height:calc(100dvh - 40px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+.qtop{position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:3;padding-block:8px}
+.inp{font-size:max(16px,1.15rem)}
+.mist li{flex-wrap:wrap}
+.mist .h{text-align:right;flex-basis:100%}
+@media (max-width:420px){
+  body{font-size:17px}
+  .app{padding-inline:16px;padding-block:12px 24px}
+  h1{font-size:1.6rem} h2{font-size:1.35rem}
+  .item{padding:14px 16px}
+  .card{min-height:220px}
+  .card .w{font-size:1.9rem}
+}
+@media (max-height:720px){
+  .word{padding:14px 8px 10px;gap:10px}
+  .word .spk{width:46px;height:46px}
+  .screen{gap:14px}
+}
+
+.item{justify-content:flex-start}
+.item .grow{flex:1;min-width:0}
+.item .num{flex:none;width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:800;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.panel{background:var(--surface);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:16px}
+.panel h3{margin:0;font-size:1.2rem;font-weight:800}
+.panel .seg{background:var(--bg)}
+.panel .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);box-shadow:none}
+.set-box{display:flex;flex-direction:column;gap:14px}
+.set-box .lbl{margin-bottom:8px}
+.hint{color:var(--muted);font-size:.9rem;margin:8px 0 0}
+.link{border:0;background:none;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:10px 4px;cursor:pointer;min-height:44px;align-self:center}
+.sentence{display:flex;align-items:flex-start;gap:10px;background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-family:var(--en);font-size:1.08rem;line-height:1.45}
+.sentence span{flex:1;text-align:left}
+mark{background:none;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.spk.sm{width:38px;height:38px;flex:none}
+.spk.sm svg{width:17px;height:17px}
+.mode-tag{margin:0;text-align:center;color:var(--muted);font-size:.9rem;font-weight:600}
+.word.listen{padding:28px 12px 12px}
+.play{width:120px;height:120px;border-radius:50%;border:0;background:var(--accent);color:var(--accent-ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;font-weight:700;font-size:.85rem}
+.play svg{width:40px;height:40px}
+.ex{font-family:var(--en);direction:ltr;text-align:left;color:var(--muted);font-size:.95rem;margin-top:4px}
+.card .ex{text-align:center;font-size:1.05rem;color:var(--ink)}
+.mist li{align-items:center;flex-wrap:nowrap}
+.mist .txt{display:flex;flex-direction:column;flex:1;min-width:0}
+.mist .h{text-align:right;flex-basis:auto}
+.btn svg{width:20px;height:20px}
+
+.resume-card{width:100%;display:flex;align-items:center;gap:12px;text-align:right;border:0;border-radius:16px;padding:18px;min-height:72px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.resume-card .t{font-weight:800;font-size:1.15rem}
+.resume-card .d{opacity:.9;font-size:.95rem}
+.resume-card .grow{flex:1;min-width:0}
+.resume-info{margin:0;color:var(--ink)}
+.bar2{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.bar2 i{display:block;height:100%;background:var(--accent)}
+
+.words li.bad .e{color:var(--bad)}
+.words li.bad .e::after{content:" · טעות";font-family:var(--he);font-size:.8rem;font-weight:700}
+.rm{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--bad-soft);color:var(--bad);cursor:pointer;font-size:.95rem}
+.mist-panel{background:var(--bad-soft)}
+.mist-panel h3{color:var(--bad)}
+.mist-panel .btn{background:var(--bad);color:var(--bg)}
+.seg button:disabled{opacity:.4;cursor:default}
+
+.sync-state{margin:.3rem 0 0;font-size:.9rem;font-weight:600;color:var(--muted);min-height:1.2em}
+.sync-state.ok{color:var(--ok)}
+.sync-state.error{color:var(--bad);font-weight:500}
+.sync-box{background:var(--surface);border-radius:14px;padding:0 16px 4px}
+.sync-box[open]{padding-bottom:16px}
+.sync-box p{margin:.2rem 0 .6rem;color:var(--ink)}
+.sync-box label{display:block;margin-top:14px;margin-bottom:6px;font-weight:600;color:var(--ink)}
+.code-row{display:flex;gap:8px;align-items:stretch}
+.code-row code{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px;font-size:1rem;overflow-wrap:anywhere;user-select:all;-webkit-user-select:all}
+.code-row .inp{flex:1;min-width:0;min-height:48px;font-size:16px}
+.btn.small{width:auto;min-height:48px;font-size:1rem;padding:8px 16px;flex:none}
+.sync-msg{font-size:.9rem;color:var(--muted)!important;min-height:1.2em;margin:.4rem 0 0!important}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app" dir="rtl" id="app"></div>
+
+<script>
+/* ---------- cloud sync (Firestore REST) ---------- */
+const FB={key:'AIzaSyDH9rTvdftEKsj7lgM_FkdnQAnNCTQMME4',project:'english-dictionary-452b4'};
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+function newCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';let r='';const a=new Uint32Array(22);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<22;i++)a[i]=Math.random()*1e9}for(let i=0;i<22;i++)r+=c[a[i]%c.length];return 'd-'+r}
+let SYNC_ID=LS.get('dictSyncId');if(!SYNC_ID||SYNC_ID.length<20){SYNC_ID=newCode();LS.set('dictSyncId',SYNC_ID)}
+let SYNC={state:'idle',ready:false,applying:false,timer:null};
+const docUrl=id=>`https://firestore.googleapis.com/v1/projects/${FB.project}/databases/(default)/documents/dictionary/${encodeURIComponent(id)}?key=${FB.key}`;
+function dirty(){if(SYNC.applying)return;LS.set('dictUpdated',String(Date.now()));if(!SYNC.ready)return;clearTimeout(SYNC.timer);setSync('saving');SYNC.timer=setTimeout(push,1200)}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),mist:JSON.parse(LS.get('dictMist')||'[]')})}
+async function push(){
+  const t=+(LS.get('dictUpdated')||Date.now());
+  try{const r=await fetch(docUrl(SYNC_ID),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:snapshot()},updated:{integerValue:String(t)}}})});
+    if(!r.ok)throw new Error(r.status);LS.set('dictSynced',String(t));setSync('ok')}catch(e){setSync('error');clearTimeout(SYNC.timer);SYNC.timer=setTimeout(push,15000)}
+}
+async function pull(){
+  const r=await fetch(docUrl(SYNC_ID));
+  if(r.status===404)return null;if(!r.ok)throw new Error(r.status);
+  const j=await r.json();const f=j.fields||{};return{data:JSON.parse(f.data?.stringValue||'{}'),updated:+(f.updated?.integerValue||0)};
+}
+function mergeData(a,b){
+  const prog={...(a.prog||{})};for(const k in (b.prog||{}))prog[k]=Math.max(prog[k]||0,b.prog[k]||0);
+  const sess={...(a.sess||{})};for(const k in (b.sess||{}))if(!sess[k]||(b.sess[k].t||0)>(sess[k].t||0))sess[k]=b.sess[k];
+  const mist=[...new Set([...(a.mist||[]),...(b.mist||[])])].filter(id=>!(prog[id]>=1&&!(a.mist||[]).includes(id)&&!(b.mist||[]).includes(id)));
+  return{prog,sess,mist};
+}
+function applyRemote(d,t){
+  SYNC.applying=true;
+  try{prog=d.prog||{};SESS=d.sess||{};MIST=new Set(d.mist||[]);save();saveSess();saveMist();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  if(!['quiz','cards'].includes(S.screen))draw();
+}
+async function syncNow(forceRemote){
+  setSync('loading');
+  try{const rem=await pull(),loc=+(LS.get('dictUpdated')||0);
+    SYNC.ready=true;
+    if(rem&&(forceRemote||rem.updated>loc))applyRemote(rem.data,rem.updated);
+    else if(!rem||loc>rem.updated)await push();
+    setSync('ok');
+  }catch(e){SYNC.ready=true;setSync('error')}
+}
+function setSync(st){SYNC.state=st;const el=document.getElementById('syncState');if(el){el.textContent=syncLabel();el.className='sync-state '+st}}
+function syncLabel(){return {idle:'',loading:'מתחבר…',saving:'שומר…',ok:'מסונכרן בין המכשירים ✓',error:'אין חיבור כרגע · נשמר במכשיר ויסונכרן אחר כך'}[SYNC.state]||''}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&SYNC.ready&&!['quiz','cards'].includes(S.screen))syncNow(false);if(document.visibilityState==='hidden'&&SYNC.timer){clearTimeout(SYNC.timer);push()}});
+const D=__DATA__;
+const LVN=['קל מאוד','קל','קל-בינוני','בינוני','בינוני+','בינוני-קשה','קשה','קשה מאוד','מתקדם','מומחה'];
+const SET=50;
+const words=D.map(r=>({id:r[0],e:r[0],h:r[1],l:r[2],s:r[3]}));
+const byLv=l=>words.filter(w=>w.l===l);
+const group=(l,g)=>byLv(l).slice(g*SET,g*SET+SET);
+const nGroups=l=>Math.ceil(byLv(l).length/SET);
+let prog={};try{prog=JSON.parse(localStorage.getItem('dictProg')||'{}')}catch(e){}
+// migrate old keys "word|unit"
+for(const k of Object.keys(prog)){if(k.includes('|')){const e=k.split('|')[0];if(prog[k]>=1)prog[e]=1;delete prog[k]}}
+const save=()=>{try{localStorage.setItem('dictProg',JSON.stringify(prog))}catch(e){};dirty()};
+save();
+const W=Object.fromEntries(words.map(w=>[w.id,w]));
+let SESS={};try{SESS=JSON.parse(localStorage.getItem('dictSess')||'{}')}catch(e){}
+const saveSess=()=>{try{localStorage.setItem('dictSess',JSON.stringify(SESS))}catch(e){};dirty()};
+const ids=a=>a.map(w=>w.id), objs=a=>a.map(i=>W[i]).filter(Boolean);
+let MIST=new Set();try{MIST=new Set(JSON.parse(localStorage.getItem('dictMist')||'[]'))}catch(e){}
+const saveMist=()=>{try{localStorage.setItem('dictMist',JSON.stringify([...MIST]))}catch(e){};dirty()};
+const wrong=w=>MIST.has(w.id);
+const known=w=>(prog[w.id]||0)>=1;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const label=w=>w.h.join(' · ');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const app=document.getElementById('app');
+const $=id=>document.getElementById(id);
+
+/* speech */
+const TTS='speechSynthesis' in window;if(!TTS)document.documentElement.classList.add('no-tts');
+let voice=null;function pickVoice(){if(!TTS)return;const v=speechSynthesis.getVoices();voice=v.find(x=>/en[-_]US/i.test(x.lang)&&/Google|Samantha|Aria|Jenny|Natural/i.test(x.name))||v.find(x=>/en[-_]US/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null}
+if(TTS){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+function speak(t,rate){if(!TTS)return;try{speechSynthesis.cancel();t=t.replace(/\s*\(.*?\)/g,'').replace(/…|\.\.\./g,', ').replace(/^\d+(st|nd|rd|th)\s*-\s*/,'').replace(/\s*-\s*10th$/,'');const u=new SpeechSynthesisUtterance(t);u.lang='en-US';if(voice)u.voice=voice;u.rate=rate||.85;speechSynthesis.speak(u)}catch(e){}}
+function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=esc(s);
+  toks.filter(t=>t.length>1&&!['st','nd','rd','th','of','the','to','in','on','a'].includes(t)).forEach(t=>{const stem=t.length>4?t.slice(0,t.length-2):t;
+    out=out.replace(new RegExp('\\b('+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[a-z]*)','i'),'<mark>$1</mark>')});return out}
+
+/* state */
+let S={screen:'home',l:1,g:0,mode:'read',active:null};
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards'].includes(S.screen))S.screen='home'}catch(e){}
+function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active}))}catch(e){}}
+function go(patch){Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
+function draw(){({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen})[S.screen]()}
+
+function settings(allLabel){
+  return `<div class="set-box">
+    <div><p class="lbl">סוג הבוחן</p>
+      <div class="seg" role="group" aria-label="סוג הבוחן">
+        <button data-mode="read" aria-pressed="${S.mode==='read'}">קריאה</button>
+        <button data-mode="listen" aria-pressed="${S.mode==='listen'}">שמיעה</button>
+      </div>
+      <p class="hint">${S.mode==='read'?'רואים את המילה כתובה, כותבים פירוש ובוחרים תשובה.':'שומעים את המילה, כותבים פירוש, ואז רואים אותה ובוחרים תשובה.'}</p></div>
+  </div>`;
+}
+function bindSettings(){
+  app.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;persist();draw()});
+}
+function pickList(ws){return [...shuffle(ws.filter(w=>!known(w))),...shuffle(ws.filter(known))]}
+function quizPanel(key,ws,title,name,from,noSet,cls){
+  const ss=SESS[key];
+  if(ss){const n=ss.ids.length,at=Math.min(ss.i+1,n);
+    return `<section class="panel ${cls||''}"><h3>${title}</h3>
+      <p class="resume-info">עצרת ב${ss.mode==='listen'?'בוחן שמיעה':'בוחן קריאה'} במילה <b>${at} מתוך ${n}</b> · ${ss.score} נכונות עד עכשיו</p>
+      <div class="bar2"><i style="width:${ss.i/n*100}%"></i></div>
+      <button class="btn" data-resume="${key}">המשך מהמילה ${at}</button>
+      <button class="link" data-restart="${key}">התחלה מחדש</button></section>`}
+  return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}<button class="btn" data-start="${key}">${noSet?'בוחן ממוקד':'התחלת בוחן'} · ${ws.length} מילים</button></section>`;
+}
+function bindQuizPanel(key,ws,name,from){
+  const st=app.querySelector(`[data-start="${key}"]`);if(st)st.onclick=()=>startQuiz(pickList(ws),name,from,key);
+  const rs=app.querySelector(`[data-resume="${key}"]`);if(rs)rs.onclick=()=>resumeQuiz(key);
+  const rr=app.querySelector(`[data-restart="${key}"]`);if(rr)rr.onclick=()=>{delete SESS[key];saveSess();draw()};
+}
+
+function home(){
+  const k=words.filter(known).length;
+  app.innerHTML=`<div class="screen">
+    <div><h1>מילון אנגלית</h1><p class="sub">${words.length.toLocaleString()} מילים ב־10 רמות · ענית נכון על ${k.toLocaleString()}</p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
+    ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz');if(!ks.length)return'';
+      ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
+      return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
+    <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
+    <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
+      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · ${kk} נכונות`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+    <details class="howto sync-box" ${S.syncOpen?'open':''}><summary>סנכרון בין מכשירים</summary>
+      <p>זה קוד הסנכרון שלך. כדי לראות את אותה התקדמות במכשיר אחר, פתחי שם את האתר והדביקי את הקוד הזה.</p>
+      <div class="code-row"><code id="myCode" dir="ltr">${esc(SYNC_ID)}</code><button class="btn small" id="copyCode">העתקה</button></div>
+      <p class="sync-msg" id="copyMsg" role="status"></p>
+      <label for="otherCode">יש לך קוד ממכשיר אחר?</label>
+      <div class="code-row"><input class="inp" id="otherCode" dir="ltr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="d-..."><button class="btn small" id="useCode">חיבור</button></div>
+      <p class="sync-msg" id="codeMsg" role="status"></p>
+    </details>
+  </div>`;
+  app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
+  const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
+  app.querySelector('.sync-box').ontoggle=e=>{S.syncOpen=e.target.open};
+  $('copyCode').onclick=async()=>{try{await navigator.clipboard.writeText(SYNC_ID);$('copyMsg').textContent='הקוד הועתק. שלחי אותו לעצמך ופתחי במכשיר השני.'}catch(e){const r=document.createRange();r.selectNodeContents($('myCode'));const g=getSelection();g.removeAllRanges();g.addRange(r);$('copyMsg').textContent='הקוד מסומן, אפשר להעתיק.'}};
+  $('useCode').onclick=async()=>{const v=$('otherCode').value.trim().replace(/\s/g,'');
+    if(!/^[A-Za-z0-9_-]{20,}$/.test(v)){$('codeMsg').textContent='הקוד לא תקין. העתיקי אותו שוב מהמכשיר השני.';return}
+    if(v===SYNC_ID){$('codeMsg').textContent='זה כבר הקוד של המכשיר הזה.';return}
+    $('codeMsg').textContent='מתחבר…';
+    try{const old=SYNC_ID;SYNC_ID=v;const rem=await pull();
+      if(!rem){SYNC_ID=old;$('codeMsg').textContent='לא נמצאה התקדמות עם הקוד הזה. בדקי שהעתקת אותו נכון.';return}
+      LS.set('dictSyncId',v);S.syncOpen=false;const merged=mergeData(rem.data,JSON.parse(snapshot()));const now=Date.now();applyRemote(merged,now);LS.set('dictUpdated',String(now));await push();draw()}
+    catch(e){$('codeMsg').textContent='אין חיבור לאינטרנט כרגע. נסי שוב.'}};
+}
+
+function level(){
+  const ws=byLv(S.l),n=nGroups(S.l),kk=ws.filter(known).length;
+  app.innerHTML=`<div class="screen">
+    <div class="nav"><button class="back" id="bk">כל הרמות</button></div>
+    <div><h2>רמה ${S.l} · ${LVN[S.l-1]}</h2><p class="sub">${ws.length} מילים · ${kk} נכונות</p></div>
+    ${quizPanel('L'+S.l,ws,'בוחן על כל הרמה',`רמה ${S.l}`,'level')}
+    <p class="lbl">או תרגול לפי קבוצות של 50 מילים</p>
+    <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),k2=gw.filter(known).length,done=k2===gw.length;
+      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">קבוצה ${g+1}</span><br><span class="d">${done?'הושלמה ✓':k2?`${k2} מתוך ${gw.length} נכונות`:`${gw.length} מילים`}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+  </div>`;
+  $('bk').onclick=()=>go({screen:'home'});
+  bindSettings();bindQuizPanel('L'+S.l,ws,`רמה ${S.l}`,'level');
+  app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
+}
+
+const gkey=()=>'G'+S.l+'-'+S.g;
+function wordRow(w){return `<li class="${wrong(w)?'bad':known(w)?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div><div class="ex">${highlight(w.s,w.e)}</div></div>${wrong(w)?`<button class="rm" data-rm="${esc(w.id)}" aria-label="הסרה מרשימת הטעויות">✕</button>`:''}</li>`}
+function bindRows(){
+  app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
+  app.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{MIST.delete(b.dataset.rm);saveMist();draw()});
+}
+function groupScreen(){
+  const ws=group(S.l,S.g),kk=ws.filter(known).length,mw=ws.filter(wrong);
+  const name=`קבוצה ${S.g+1} · רמה ${S.l}`;
+  app.innerHTML=`<div class="screen">
+    <div class="nav"><button class="back" id="bk">רמה ${S.l}</button></div>
+    <div><h2>קבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · ${LVN[S.l-1]} · ${kk} מתוך ${ws.length} נכונות</p></div>
+    <button class="btn secondary" id="list">רשימת ${ws.length} המילים בקבוצה</button>
+    ${quizPanel(gkey(),ws,'בוחן על כל הקבוצה',name,'group')}
+    ${mw.length||SESS['M'+gkey()]?quizPanel('M'+gkey(),mw,`מילים שטעיתי בהן (${mw.length})`,'טעויות · '+name,'group',true,'mist-panel')+
+      (mw.length?`<details class="wl"><summary>הצגת ${mw.length} המילים שטעיתי בהן</summary><ul class="words">${mw.map(wordRow).join('')}</ul></details>`:''):
+      `<p class="hint center">מילים שתטעי בהן בבוחן יישמרו כאן, ותוכלי לעשות עליהן בוחן ממוקד.</p>`}
+    <button class="btn secondary" id="fc">${SESS['C'+gkey()]?`המשך כרטיסיות · ${SESS['C'+gkey()].i+1} מתוך ${ws.length}`:'תרגול בכרטיסיות'}</button>
+  </div>`;
+  $('bk').onclick=()=>go({screen:'level'});
+  $('list').onclick=()=>go({screen:'words',filter:'all'});
+  bindSettings();bindQuizPanel(gkey(),ws,name,'group');
+  bindQuizPanel('M'+gkey(),mw,'טעויות · '+name,'group');
+  bindRows();
+  $('fc').onclick=()=>{const k='C'+gkey(),ss=SESS[k];
+    C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'});if(C.deck[C.i])speak(C.deck[C.i].e)};
+}
+function wordsScreen(){
+  const ws=group(S.l,S.g),mw=ws.filter(wrong),f=S.filter==='mist'&&mw.length?'mist':'all',list=f==='mist'?mw:ws;
+  app.innerHTML=`<div class="screen">
+    <div class="nav"><button class="back" id="bk">קבוצה ${S.g+1}</button></div>
+    <div><h2>המילים בקבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · לחצי על הרמקול כדי לשמוע</p></div>
+    <div class="seg" role="group" aria-label="סינון"><button data-f="all" aria-pressed="${f==='all'}">כל המילים (${ws.length})</button><button data-f="mist" aria-pressed="${f==='mist'}" ${mw.length?'':'disabled'}>טעויות (${mw.length})</button></div>
+    <ul class="words">${list.map(wordRow).join('')}</ul>
+    <div class="sticky"><button class="btn" id="toQuiz">לבוחן</button></div>
+  </div>`;
+  $('bk').onclick=()=>go({screen:'group'});
+  app.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.f;draw()});
+  $('toQuiz').onclick=()=>go({screen:'group'});
+  bindRows();
+}
+
+/* quiz */
+let Q=null;
+function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,mist:[],name,from,l:S.l,g:S.g,mode:S.mode,stage:'write',mine:'',opts:null,picked:null,shown:false,sent:false};saveQ();S.active=key;go({screen:'quiz'});speak(list[0].e)}
+function saveQ(){if(!Q)return;SESS[Q.key]={kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,mist:ids(Q.mist),name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts?ids(Q.opts):null,picked:Q.picked,shown:Q.shown,sent:Q.sent};saveSess()}
+function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz')return false;Q={key,list:objs(s.ids),i:s.i,score:s.score,mist:objs(s.mist||[]),name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,stage:s.stage||'write',mine:s.mine||'',opts:s.opts?objs(s.opts):null,picked:s.picked??null,shown:!!s.shown,sent:!!s.sent};
+  if(Q.stage==='pick'&&(!Q.opts||Q.opts.length<2)){Q.stage='write';Q.picked=null}return Q.i<Q.list.length}
+function resumeQuiz(key){if(!loadQ(key)){delete SESS[key];saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(Q.picked===null)speak(Q.list[Q.i].e)}
+function distractors(w){const pool=shuffle(words.filter(x=>Math.abs(x.l-w.l)<=1&&x.e.toLowerCase()!==w.e.toLowerCase()&&!x.h.some(m=>w.h.includes(m))));
+  const out=[],seen=new Set([label(w)]);for(const x of pool){if(!seen.has(label(x))){seen.add(label(x));out.push(x)}if(out.length===3)break}return out}
+function quizScreen(){
+  const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',ans=Q.picked!==null;
+  const showWord=!listen||Q.shown||Q.stage==='pick';
+  const sentence=Q.sent||ans?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
+  let wordBox;
+  if(showWord){wordBox=`<div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>`}
+  else{wordBox=`<div class="word listen"><button class="play" id="say" aria-label="השמעת המילה שוב">${SPK}<span>השמעה חוזרת</span></button><button class="link" id="reveal">הצגת המילה כתובה</button></div>`}
+  let body='';
+  if(Q.stage==='write'){
+    body=`${sentence}
+      <label class="ask" for="inp">${listen?'מה שמעת? כתבי את הפירוש בעברית':'מה הפירוש בעברית?'}</label>
+      <input class="inp" id="inp" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="כתבי כאן את הפירוש" value="${esc(Q.mine)}">
+      <div class="sticky"><button class="btn" id="show">הצגת אפשרויות</button></div>`;
+  }else{
+    const ok=ans&&Q.opts[Q.picked]===w;
+    body=`<p class="mine"><span>מה שכתבת:</span> ${Q.mine?esc(Q.mine):'<span>(לא נכתב)</span>'}</p>
+      ${ans?'':'<p class="ask">בחרי את התשובה הנכונה</p>'}
+      <div class="opts">${Q.opts.map((o,k)=>{let c='',pre='';if(ans){if(o===w){c=' right';pre='✓ '}else if(k===Q.picked){c=' wrong';pre='✗ '}}
+        return `<button class="opt${c}" data-k="${k}" ${ans?'disabled':''}>${pre}${esc(label(o))}</button>`}).join('')}</div>
+      <p class="fb ${ans?(ok?'ok':'bad'):''}" role="status" aria-live="polite">${ans?(ok?'נכון!':'לא נכון'):''}</p>
+      ${sentence}
+      ${ans?`<div class="sticky"><button class="btn" id="next">${Q.i+1<n?'למילה הבאה':'לתוצאות'}</button></div>`:''}`;
+  }
+  app.innerHTML=`<div class="screen full">
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span></div>
+    <p class="mode-tag">${listen?'בוחן שמיעה':'בוחן קריאה'} · ${esc(Q.name)}</p>
+    ${wordBox}
+    ${body}
+  </div>`;
+  $('exit').onclick=()=>{saveQ();S.active=null;go({screen:Q.from})};
+  $('say').onclick=()=>speak(w.e);
+  const rv=$('reveal');if(rv)rv.onclick=()=>{Q.shown=true;keepInput();saveQ();draw()};
+  const ss=$('showSent');if(ss)ss.onclick=()=>{Q.sent=true;keepInput();saveQ();draw();speak(w.s,.9)};
+  const sy=$('saySent');if(sy)sy.onclick=()=>speak(w.s,.9);
+  function keepInput(){const i=$('inp');if(i)Q.mine=i.value}
+  if(Q.stage==='write'){
+    const inp=$('inp');
+    const show=()=>{Q.mine=inp.value.trim();Q.opts=shuffle([w,...distractors(w)]);Q.stage='pick';saveQ();draw();if(listen)speak(w.e)};
+    $('show').onclick=show;
+    inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();show()}};
+    inp.oninput=()=>{Q.mine=inp.value;clearTimeout(window._sv);window._sv=setTimeout(saveQ,400)};
+  }else{
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(Q.picked!==null)return;Q.picked=+b.dataset.k;
+      if(Q.opts[Q.picked]===w){Q.score++;prog[w.id]=1;MIST.delete(w.id)}else{Q.mist.push(w);prog[w.id]=0;MIST.add(w.id)}saveMist();save();saveQ();draw();
+      const nb=$('next');nb&&nb.focus({preventScroll:true});app.querySelector('.fb').scrollIntoView({block:'nearest',behavior:'smooth'})});
+    const nx=$('next');
+    if(nx)nx.onclick=()=>{Q.i++;if(Q.i>=n){delete SESS[Q.key];saveSess();S.active=null;go({screen:'result'});return}Object.assign(Q,{stage:'write',mine:'',picked:null,opts:null,shown:false,sent:false});saveQ();draw();window.scrollTo(0,0);speak(Q.list[Q.i].e);if(Q.mode==='read'){const i=$('inp');i&&i.focus({preventScroll:true})}};
+  }
+}
+function result(){
+  const done=Math.min(Q.i+(Q.picked!==null&&Q.i<Q.list.length?1:0),Q.list.length),p=done?Math.round(Q.score/done*100):0;
+  app.innerHTML=`<div class="screen">
+    <div class="center"><p class="sub" style="margin:0 0 10px">${esc(Q.name)}</p><div class="big">${Q.score}/${done}</div><p class="sub">${p}% · ${p===100?'מושלם!':p>=80?'יפה מאוד':p>=50?'התחלה טובה':'כדאי לתרגל עוד'}</p></div>
+    ${Q.mist.length?`<button class="btn" id="retry">בוחן חוזר על ${Q.mist.length} הטעויות</button>`:''}
+    <button class="btn secondary" id="back">סיום</button>
+    ${Q.mist.length?`<div><p class="lbl">מילים לחזור עליהן</p><ul class="mist">${Q.mist.map(w=>`<li><button class="spk sm" data-say="${esc(w.e)}" aria-label="השמעה">${SPK}</button><div class="txt"><span class="e">${esc(w.e)}</span><span class="h">${esc(label(w))}</span></div></li>`).join('')}</ul></div>`:''}
+  </div>`;
+  app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
+  const r=$('retry');if(r)r.onclick=()=>{S.mode=Q.mode;startQuiz(shuffle(Q.mist),'חזרה על טעויות · '+Q.name.replace('חזרה על טעויות · ',''),Q.from,'R'+Q.key.replace(/^R/,''))};
+  $('back').onclick=()=>{S.l=Q.l;S.g=Q.g;go({screen:Q.from})};
+}
+
+/* flashcards */
+let C=null;
+function saveC(){if(!C)return;if(C.i>=C.deck.length){delete SESS[C.key]}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g}}saveSess()}
+function cardScreen(){
+  const n=C.deck.length;
+  if(C.i>=n){saveC();S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">✓</div><h2 style="margin-top:14px">סיימת את כל ${n} הכרטיסיות</h2></div><button class="btn" id="q">עכשיו לבוחן</button><button class="btn secondary" id="b">חזרה לקבוצה</button></div>`;
+    $('q').onclick=()=>{S.screen='group';draw();$('go').click()};
+    $('b').onclick=()=>go({screen:'group'});return}
+  const w=C.deck[C.i];
+  app.innerHTML=`<div class="screen full">
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button><div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span></div>
+    <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span><span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
+    <div class="sticky"><div class="row2"><button class="btn secondary" id="say">${SPK} מילה</button><button class="btn secondary" id="saySent">${SPK} משפט</button></div>
+    <div class="row2"><button class="btn secondary" id="prev" ${C.i?'':'disabled'}>הקודם</button><button class="btn" id="nxt">הבא</button></div></div>
+  </div>`;
+  $('exit').onclick=()=>{saveC();S.active=null;go({screen:'group'})};
+  $('card').onclick=()=>{C.open=!C.open;draw()};
+  $('say').onclick=()=>speak(w.e);
+  $('saySent').onclick=()=>speak(w.s,.9);
+  $('prev').onclick=()=>{C.i--;C.open=false;saveC();draw();speak(C.deck[C.i].e)};
+  $('nxt').onclick=()=>{C.i++;C.open=false;saveC();draw();if(C.deck[C.i])speak(C.deck[C.i].e)};
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.screen==='quiz'||S.screen==='cards'))$('exit')?.click()});
+(function boot(){
+  if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
+  if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false}}else S.screen='group'}
+  draw();
+  syncNow(false);
+})();
+</script>
