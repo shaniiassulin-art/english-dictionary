@@ -258,7 +258,8 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 const FB={key:'AIzaSyDH9rTvdftEKsj7lgM_FkdnQAnNCTQMME4',project:'english-dictionary-452b4'};
 const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 function newCode(){const c='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';let r='';const a=new Uint32Array(22);try{crypto.getRandomValues(a)}catch(e){for(let i=0;i<22;i++)a[i]=Math.random()*1e9}for(let i=0;i<22;i++)r+=c[a[i]%c.length];return 'd-'+r}
-let SYNC_ID=LS.get('dictSyncId');if(!SYNC_ID||SYNC_ID.length<20){SYNC_ID=newCode();LS.set('dictSyncId',SYNC_ID)}
+/* one fixed sync code for every device; what was saved under an older code is merged into it on the first sync */
+const SYNC_ID='d-kZzMHDu3fpCjwyFCqiU9ys';LS.set('dictSyncId',SYNC_ID);
 let SYNC={state:'idle',ready:false,applying:false,timer:null};
 const docUrl=id=>`https://firestore.googleapis.com/v1/projects/${FB.project}/databases/(default)/documents/dictionary/${encodeURIComponent(id)}?key=${FB.key}`;
 function dirty(){if(SYNC.applying)return;LS.set('dictUpdated',String(Date.now()));if(!SYNC.ready)return;clearTimeout(SYNC.timer);setSync('saving');SYNC.timer=setTimeout(push,1200)}
@@ -394,27 +395,9 @@ function home(){
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
       return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
-    <details class="howto sync-box" ${S.syncOpen?'open':''}><summary>סנכרון בין מכשירים</summary>
-      <p>זה קוד הסנכרון שלך. כדי לראות את אותה התקדמות במכשיר אחר, פתחי שם את האתר והדביקי את הקוד הזה.</p>
-      <div class="code-row"><code id="myCode" dir="ltr">${esc(SYNC_ID)}</code><button class="btn small" id="copyCode">העתקה</button></div>
-      <p class="sync-msg" id="copyMsg" role="status"></p>
-      <label for="otherCode">יש לך קוד ממכשיר אחר?</label>
-      <div class="code-row"><input class="inp" id="otherCode" dir="ltr" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="d-..."><button class="btn small" id="useCode">חיבור</button></div>
-      <p class="sync-msg" id="codeMsg" role="status"></p>
-    </details>
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
-  app.querySelector('.sync-box').ontoggle=e=>{S.syncOpen=e.target.open};
-  $('copyCode').onclick=async()=>{try{await navigator.clipboard.writeText(SYNC_ID);$('copyMsg').textContent='הקוד הועתק. שלחי אותו לעצמך ופתחי במכשיר השני.'}catch(e){const r=document.createRange();r.selectNodeContents($('myCode'));const g=getSelection();g.removeAllRanges();g.addRange(r);$('copyMsg').textContent='הקוד מסומן, אפשר להעתיק.'}};
-  $('useCode').onclick=async()=>{const v=$('otherCode').value.trim().replace(/\s/g,'');
-    if(!/^[A-Za-z0-9_-]{20,}$/.test(v)){$('codeMsg').textContent='הקוד לא תקין. העתיקי אותו שוב מהמכשיר השני.';return}
-    if(v===SYNC_ID){$('codeMsg').textContent='זה כבר הקוד של המכשיר הזה.';return}
-    $('codeMsg').textContent='מתחבר…';
-    try{const old=SYNC_ID;SYNC_ID=v;const rem=await pull();
-      if(!rem){SYNC_ID=old;$('codeMsg').textContent='לא נמצאה התקדמות עם הקוד הזה. בדקי שהעתקת אותו נכון.';return}
-      LS.set('dictSyncId',v);S.syncOpen=false;const merged=mergeData(rem.data,JSON.parse(snapshot()));const now=Date.now();applyRemote(merged,now);LS.set('dictUpdated',String(now));await push();draw()}
-    catch(e){$('codeMsg').textContent='אין חיבור לאינטרנט כרגע. נסי שוב.'}};
 }
 
 function countLine(ws){const y=ws.filter(isY).length,n=ws.filter(isN).length;
