@@ -471,10 +471,19 @@ function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return fal
     stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent};
   if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}return Q.i<Q.list.length}
 function resumeQuiz(key){if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)speak(Q.list[Q.i].e)}
-function buildOpts(w){const right=meanings(w),need=Math.max(2,4-right.length);
-  const pool=shuffle(words.filter(x=>Math.abs(x.l-w.l)<=1&&x.e.toLowerCase()!==w.e.toLowerCase()&&!meanings(x).some(m=>right.includes(m))));
-  const wrongs=[];for(const x of pool){const m=shuffle(meanings(x))[0];if(m&&!right.includes(m)&&!wrongs.includes(m))wrongs.push(m);if(wrongs.length>=need)break}
-  return shuffle([...right.map(t=>[t,1]),...wrongs.map(t=>[t,0])])}
+/* the correct meanings plus ONE wrong meaning that looks or sounds close, to make it confusing */
+const bigr=t=>{t=String(t).toLowerCase().replace(/\([^)]*\)/g,'').replace(/[^a-zא-ת]/g,'');const b=new Set();for(let i=0;i<t.length-1;i++)b.add(t.slice(i,i+2));return b};
+const jac=(a,b)=>{if(!a.size||!b.size)return 0;let n=0;a.forEach(x=>{if(b.has(x))n++});return n/(a.size+b.size-n)};
+function buildOpts(w){const right=meanings(w),rb=right.map(bigr),eb=bigr(w.e),parts=right.join(',').split(/[,;\/]/).map(x=>x.trim()).filter(Boolean);
+  const cands=[];
+  for(const x of words){if(x===w||x.e.toLowerCase()===w.e.toLowerCase())continue;const xm=meanings(x);
+    if(xm.some(m=>right.includes(m)))continue;
+    const es=jac(eb,bigr(x.e));
+    for(const m of xm){if(parts.some(p=>m.includes(p)))continue;
+      const hs=Math.max(...rb.map(b=>jac(b,bigr(m))));cands.push([m,Math.max(hs,es*.9)+(Math.abs(x.l-w.l)<=1?.05:0)])}}
+  cands.sort((a,b)=>b[1]-a[1]);
+  const top=cands.slice(0,6);const wrong=(top[Math.floor(Math.random()*top.length)]||['—'])[0];
+  return shuffle([...right.map(t=>[t,1]),[wrong,0]])}
 /* ---------- quiz actions (shared by touch and voice) ---------- */
 function qShow(){const w=Q.list[Q.i];Q.opts=buildOpts(w);Q.sel=[];Q.stage='pick';saveQ();draw()}
 function qCheck(){const nm=meanings(Q.list[Q.i]).length;Q.checked=true;const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
