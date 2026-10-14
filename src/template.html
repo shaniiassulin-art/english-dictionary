@@ -259,6 +259,15 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
 button,a,input,label,summary{touch-action:manipulation}
 input,textarea,select{font-size:max(16px,1em)}
+
+.olist{margin:4px 0;padding-inline-start:22px;color:var(--ink);font-weight:600}
+.olist li{margin:1px 0}
+.qz .link.inl{display:inline;min-height:0;padding:0 2px;font-size:inherit}
+.rv-ans{background:var(--ok-soft);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.rv-ans .lbl{font-size:.8rem;margin:0}
+.rv-now{margin:0;text-align:center}
+.btn.knowyes[aria-pressed="false"],.btn.knowno[aria-pressed="false"]{opacity:.55}
+.qz .btn.secondary{background:var(--surface);color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -361,6 +370,8 @@ function setKnow(id,v){KNOW[id]=[v||'u',Date.now()];saveKnow()}
 const meanings=w=>w.h;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const label=w=>w.h.join(' · ');
+const numList=a=>`<ol class="olist">${a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`;
+const numText=a=>a.map((x,i)=>`${i+1}. ${x}`).join('   ');
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const app=document.getElementById('app');
@@ -447,7 +458,7 @@ function level(){
 }
 
 const gkey=()=>'G'+S.l+'-'+S.g;
-function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div>${w.others.length?`<div class="oth">פירושים נוספים: ${w.others.map(esc).join(' · ')}</div>`:''}<div class="ex">${highlight(w.s,w.e)}</div></div>
+function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div>${w.others.length?`<div class="oth">פירושים נוספים: ${esc(numText(w.others))}</div>`:''}<div class="ex">${highlight(w.s,w.e)}</div></div>
   <div class="yn" role="group" aria-label="האם את יודעת את ${esc(w.e)}"><button class="yn-b y" data-k="${esc(w.id)}" data-v="y" aria-pressed="${st==='y'}" aria-label="יודעת">✓</button><button class="yn-b n" data-k="${esc(w.id)}" data-v="n" aria-pressed="${st==='n'}" aria-label="לא יודעת">✗</button></div></li>`}
 function bindRows(){
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
@@ -492,10 +503,10 @@ function wordsScreen(){
 /* quiz-logic */
 let Q=null;
 const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false});
-function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});speak(list[0].e)}
-function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent};saveSess()}
+function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},rv:null,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});speak(list[0].e)}
+function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),marks:Q.marks||{},name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent};saveSess()}
 function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return false;
-  Q={key,list:objs(s.ids),i:s.i,score:s.score||0,pts:s.pts||0,max:s.max||0,mist:objs(s.mist||[]),name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,...blankQ(),
+  Q={key,list:objs(s.ids),i:s.i,score:s.score||0,pts:s.pts||0,max:s.max||0,mist:objs(s.mist||[]),marks:s.marks||{},rv:null,name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,...blankQ(),
     stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent};
   if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}return Q.i<Q.list.length}
 function resumeQuiz(key){if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)speak(Q.list[Q.i].e)}
@@ -516,7 +527,7 @@ function buildOpts(w){const right=meanings(w),rb=right.map(bigr),eb=bigr(w.e),pa
 function qShow(){const w=Q.list[Q.i];Q.opts=buildOpts(w);Q.sel=[];Q.stage='pick';saveQ();draw()}
 function qCheck(){const nm=meanings(Q.list[Q.i]).length;Q.checked=true;const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
   Q.pts+=got;Q.max+=nm;saveQ();draw();const f=app.querySelector('.fb');f&&f.scrollIntoView({block:'nearest',behavior:'smooth'});return{got,bad,nm}}
-function qMark(v){const w=Q.list[Q.i],n=Q.list.length;setKnow(w.id,v);if(v==='y')Q.score++;else Q.mist.push(w);Q.i++;
+function qMark(v){const w=Q.list[Q.i],n=Q.list.length;setKnow(w.id,v);Q.marks=Q.marks||{};Q.marks[w.id]=v;if(v==='y')Q.score++;else Q.mist.push(w);Q.i++;
   if(Q.i>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);go({screen:'result'});return true}
   Object.assign(Q,blankQ());saveQ();draw();window.scrollTo(0,0);
   if(!V.on){speak(Q.list[Q.i].e);if(Q.mode==='read'){const i=$('inp0');i&&i.focus({preventScroll:true})}}
@@ -582,7 +593,7 @@ async function voiceLoop(){
     const w=Q.list[Q.i],nm=meanings(w).length,snap=()=>Q.i+'|'+Q.stage+'|'+Q.checked,s0=snap();
     if(Q.stage==='write'){
       setStatus('מקריאה את המילה');await say(w.e,'en-US');if(!alive())return;
-      if(w.others.length){await say('חוץ מ: '+w.others.map(o=>o.replace(/ \/ /g,', ')).join(', ')+'. מה הפירוש הנוסף?','he-IL');if(!alive())return}
+      if(w.others.length){await say('חוץ מ: '+w.others.map((o,i)=>(i+1)+': '+o.replace(/ \/ /g,', ')).join('. ')+'. מה הפירוש הנוסף?','he-IL');if(!alive())return}
       beep();const a=await listen(9000);if(!alive())return;if(snap()!==s0)continue;const t=a[0]||'';
       if(isStop(t)){stopVoice();return}
       if(isRepeat(t))continue;
@@ -614,7 +625,29 @@ async function voiceLoop(){
   }
 }
 
+/* go back to earlier words of this quiz and change ידעתי / לא ידעתי */
+function reMark(w,v){Q.marks=Q.marks||{};const old=Q.marks[w.id]||kst(w);if(old===v)return;setKnow(w.id,v);Q.marks[w.id]=v;
+  if(v==='y'){if(old==='n')Q.mist=Q.mist.filter(x=>x.id!==w.id);Q.score++}else{if(old==='y')Q.score=Math.max(0,Q.score-1);if(!Q.mist.some(x=>x.id===w.id))Q.mist.push(w)}
+  saveQ();draw()}
+function reviewScreen(){
+  const k=Q.rv,w=Q.list[k],n=Q.list.length,m=(Q.marks||{})[w.id]||kst(w);
+  app.innerHTML=`<div class="screen qz">
+    <div class="qtop"><button class="x" id="back" aria-label="חזרה לבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${k+1} / ${n}</span></div>
+    <p class="mode-tag">מילה קודמת · אפשר לשנות אם ידעת</p>
+    <div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
+    <div class="rv-ans"><span class="lbl">הפירוש שנשאלת עליו</span><b>${esc(label(w))}</b></div>
+    ${w.others.length?`<div class="others sm">פירושים אחרים:${numList(w.others)}</div>`:''}
+    <p class="rv-now">סימנת: <b class="${m==='y'?'kn':'unk'}">${m==='y'?'✓ ידעתי':m==='n'?'✗ לא ידעתי':'—'}</b></p>
+    <div class="sticky"><div class="row2"><button class="btn knowno" id="markN" aria-pressed="${m==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${m==='y'}">✓ ידעתי</button></div>
+      <div class="row2"><button class="btn secondary" id="prev" ${k>0?'':'disabled'}>→ מילה קודמת</button><button class="btn secondary" id="ret">חזרה למילה הנוכחית</button></div></div>
+  </div>`;
+  $('say').onclick=()=>speak(w.e);
+  $('markY').onclick=()=>reMark(w,'y');$('markN').onclick=()=>reMark(w,'n');
+  $('prev').onclick=()=>{if(Q.rv>0){Q.rv--;draw()}};
+  const ret=()=>{Q.rv=null;draw()};$('ret').onclick=ret;$('back').onclick=ret;
+}
 function quizScreen(){
+  if(Q.rv!=null&&Q.rv<Q.i)return reviewScreen();Q.rv=null;
   const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',M=meanings(w),nm=M.length;
   const showWord=!listen||Q.shown||Q.stage==='pick';
   const sentence=Q.sent||Q.checked?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
@@ -623,7 +656,7 @@ function quizScreen(){
   let body='';
   if(Q.stage==='write'){
     body=`${sentence}
-      ${w.others.length?`<p class="others">פירושים אחרים של המילה: <b>${w.others.map(esc).join(' · ')}</b><br>מה הפירוש הנוסף?</p>`:''}
+      ${w.others.length?`<div class="others">פירושים אחרים של המילה:${numList(w.others)}מה הפירוש הנוסף?</div>`:''}
       ${listen&&!w.others.length?`<p class="ask">מה שמעת?</p>`:''}
       <div class="inps">${M.map((_,k)=>`<input class="inp" id="inp${k}" data-k="${k}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="${k<nm-1?'next':'go'}" aria-label="פירוש ${k+1}" placeholder="${nm>1?`פירוש ${k+1}`:'כתבי כאן את הפירוש'}" value="${esc(Q.mine[k]||'')}">`).join('')}</div>
       <div class="sticky"><button class="btn" id="show">הצגת אפשרויות</button></div>`;
@@ -632,7 +665,7 @@ function quizScreen(){
     let fb='';
     if(Q.checked){const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
       fb=`<p class="fb ${got===nm&&!bad?'ok':got?'part':'bad'}" role="status" aria-live="polite"><span class="frac">${got}/${nm}</span> ${got===nm?(nm>1?'כל הפירושים נכונים':'נכון!'):got?'מהפירושים הנכונים':'לא סימנת פירוש נכון'}${bad?` · סימנת ${bad===1?'פירוש שגוי אחד':bad+' פירושים שגויים'}`:''}</p>`}
-    body=`${w.others.length?`<p class="others sm">פירושים אחרים: ${w.others.map(esc).join(' · ')}</p>`:''}<p class="mine"><span>מה שכתבת:</span> ${mine.length?mine.map(esc).join(' · '):'<span>(לא נכתב)</span>'}</p>
+    body=`${w.others.length?`<div class="others sm">פירושים אחרים:${numList(w.others)}</div>`:''}<p class="mine"><span>מה שכתבת:</span> ${mine.length?mine.map(esc).join(' · '):'<span>(לא נכתב)</span>'}</p>
       ${Q.checked?'':`<p class="ask">${nm>1?`סמני את כל הפירושים הנכונים (${nm})`:'בחרי את הפירוש הנכון'}</p>`}
       <div class="opts">${Q.opts.map(([t,ok],k)=>{const on=Q.sel.includes(k);let c=on?' on':'',pre='';
         if(Q.checked){c='';if(ok&&on){c=' right';pre='✓ '}else if(ok){c=' missed';pre='✓ '}else if(on){c=' wrong';pre='✗ '}else c=' dim'}
@@ -645,12 +678,13 @@ function quizScreen(){
   app.innerHTML=`<div class="screen qz">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span><button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
     <p class="vmsg" id="vmsg" hidden></p>
-    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}</p>
+    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}${Q.i>0?` · <button class="link inl" id="goPrev">→ למילה הקודמת</button>`:''}</p>
     ${wordBox}
     ${body}
     ${V.on?`<div class="vbar" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="vbarTxt">${esc(V.status||'מצב קולי פעיל')}</span><button class="vstop" id="vstop">עצירה</button></div>`:''}
   </div>`;
   $('voiceBtn').onclick=()=>{if(V.on)stopVoice();else startVoice()};
+  const gp=$('goPrev');if(gp)gp.onclick=()=>{keepInput();stopVoice(true);saveQ();Q.rv=Q.i-1;draw()};
   const vs=$('vstop');if(vs)vs.onclick=()=>stopVoice();
   function keepInput(){if(Q.stage==='write')Q.mine=M.map((_,k)=>($('inp'+k)||{}).value||'')}
   $('exit').onclick=()=>{keepInput();stopVoice(true);saveQ();S.active=null;go({screen:Q.from})};
@@ -696,7 +730,7 @@ function cardScreen(){
   const w=C.deck[C.i];
   app.innerHTML=`<div class="screen full">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button><div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span></div>
-    <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span>${w.others.length?`<span class="oth">פירושים נוספים: ${w.others.map(esc).join(' · ')}</span>`:''}<span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
+    <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span>${w.others.length?`<span class="oth">פירושים נוספים: ${esc(numText(w.others))}</span>`:''}<span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
     <div class="sticky"><div class="row2"><button class="btn secondary" id="say">${SPK} מילה</button><button class="btn secondary" id="saySent">${SPK} משפט</button></div>
     <div class="row2"><button class="btn secondary" id="prev" ${C.i?'':'disabled'}>הקודם</button><button class="btn" id="nxt">הבא</button></div></div>
   </div>`;
