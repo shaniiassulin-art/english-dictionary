@@ -248,6 +248,12 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .vstop{border:0;border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-weight:700;padding:8px 14px;cursor:pointer}
 .app:has(.vbar){padding-bottom:64px}
 .vmsg{margin:0;background:var(--bad-soft);color:var(--bad);border-radius:10px;padding:8px 12px;font-size:.9rem}
+
+.qz .others{margin:0;background:var(--surface);border-radius:10px;padding:8px 12px;font-size:.92rem;line-height:1.45;color:var(--muted)}
+.qz .others b{color:var(--ink);font-weight:600}
+.qz .others.sm{font-size:.85rem;padding:6px 12px}
+.oth{color:var(--muted);font-size:.85rem;margin-top:2px}
+.card .oth{font-size:.95rem}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -306,7 +312,15 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 const D=__DATA__;
 const LVN=['קל מאוד','קל','קל-בינוני','בינוני','בינוני+','בינוני-קשה','קשה','קשה מאוד','מתקדם','מומחה'];
 const SET=50;
-const words=D.map(r=>({id:r[0],e:r[0],h:r[1],l:r[2],s:r[3]}));
+/* one card per meaning: a word with several meanings appears several times, each asking one meaning and
+   showing the others. Sibling cards are spread ~one group (50) apart so they never come one after another. */
+const RAW=D.map(r=>({e:r[0],h:r[1],l:r[2],s:r[3]}));
+const words=[];
+for(let l=1;l<=10;l++){const prim=RAW.filter(r=>r.l===l),Np=prim.length||1,items=[];
+  prim.forEach((r,p)=>{const n=r.h.length;r.h.forEach((m,k)=>items.push({key:k?((p+k*SET)%Np)+k*.01+.001:p,
+    w:{id:n>1?r.e+'#'+k:r.e,e:r.e,h:[m],others:r.h.filter((_,j)=>j!==k),l:r.l,s:r.s}}))});
+  items.sort((a,b)=>a.key-b.key);items.forEach(it=>words.push(it.w))}
+const WORDS_N=RAW.length;
 const byLv=l=>words.filter(w=>w.l===l);
 const group=(l,g)=>byLv(l).slice(g*SET,g*SET+SET);
 const nGroups=l=>Math.ceil(byLv(l).length/SET);
@@ -324,7 +338,9 @@ function migrateMist(m){const o={};(m||[]).forEach(id=>o[id]=['n',1]);return o}
 let KNOW=null;try{KNOW=JSON.parse(localStorage.getItem('dictKnow')||'null')}catch(e){}
 if(!KNOW){let m=[];try{m=JSON.parse(localStorage.getItem('dictMist')||'[]')}catch(e){}KNOW=migrateMist(m)}
 const saveKnow=()=>{try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){};dirty()};
-try{if(!localStorage.getItem('dictKnow'))localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
+/* a mark saved for a whole word before it was split into cards carries over to each of its cards */
+words.forEach(w=>{if(w.id!==w.e&&KNOW[w.e]&&!KNOW[w.id])KNOW[w.id]=KNOW[w.e].slice()});
+try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
 const kst=w=>{const v=(KNOW[w.id]||[])[0];return v==='y'||v==='n'?v:undefined};
 const isY=w=>kst(w)==='y', isN=w=>kst(w)==='n';
 const known=isY;
@@ -388,7 +404,7 @@ function bindQuizPanel(key,ws,name,from){
 function home(){
   const k=words.filter(known).length;
   app.innerHTML=`<div class="screen">
-    <div><h1>מילון אנגלית</h1><p class="sub">${words.length.toLocaleString()} מילים ב־10 רמות · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
+    <div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${words.length.toLocaleString()} פירושים לתרגול · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
@@ -419,7 +435,7 @@ function level(){
 }
 
 const gkey=()=>'G'+S.l+'-'+S.g;
-function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div><div class="ex">${highlight(w.s,w.e)}</div></div>
+function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div>${w.others.length?`<div class="oth">פירושים נוספים: ${w.others.map(esc).join(' · ')}</div>`:''}<div class="ex">${highlight(w.s,w.e)}</div></div>
   <div class="yn" role="group" aria-label="האם את יודעת את ${esc(w.e)}"><button class="yn-b y" data-k="${esc(w.id)}" data-v="y" aria-pressed="${st==='y'}" aria-label="יודעת">✓</button><button class="yn-b n" data-k="${esc(w.id)}" data-v="n" aria-pressed="${st==='n'}" aria-label="לא יודעת">✗</button></div></li>`}
 function bindRows(){
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
@@ -479,7 +495,7 @@ function buildOpts(w){const right=meanings(w),rb=right.map(bigr),eb=bigr(w.e),pa
   for(const x of words){if(x===w||x.e.toLowerCase()===w.e.toLowerCase())continue;const xm=meanings(x);
     if(xm.some(m=>right.includes(m)))continue;
     const es=jac(eb,bigr(x.e));
-    for(const m of xm){if(parts.some(p=>m.includes(p)))continue;
+    for(const m of xm){if(parts.some(p=>m.includes(p))||(w.others||[]).includes(m))continue;
       const hs=Math.max(...rb.map(b=>jac(b,bigr(m))));cands.push([m,Math.max(hs,es*.9)+(Math.abs(x.l-w.l)<=1?.05:0)])}}
   cands.sort((a,b)=>b[1]-a[1]);
   const top=cands.slice(0,6);const wrong=(top[Math.floor(Math.random()*top.length)]||['—'])[0];
@@ -554,7 +570,7 @@ async function voiceLoop(){
     const w=Q.list[Q.i],nm=meanings(w).length,snap=()=>Q.i+'|'+Q.stage+'|'+Q.checked,s0=snap();
     if(Q.stage==='write'){
       setStatus('מקריאה את המילה');await say(w.e,'en-US');if(!alive())return;
-      if(nm>1){await say(`${nm} פירושים`,'he-IL');if(!alive())return}
+      if(w.others.length){await say('חוץ מ: '+w.others.map(o=>o.replace(/ \/ /g,', ')).join(', ')+'. מה הפירוש הנוסף?','he-IL');if(!alive())return}
       beep();const a=await listen(9000);if(!alive())return;if(snap()!==s0)continue;const t=a[0]||'';
       if(isStop(t)){stopVoice();return}
       if(isRepeat(t))continue;
@@ -595,7 +611,8 @@ function quizScreen(){
   let body='';
   if(Q.stage==='write'){
     body=`${sentence}
-      ${nm>1||listen?`<p class="ask">${listen?'מה שמעת? ':''}${nm>1?`${nm} פירושים · כתבי כמה שאת יודעת`:''}</p>`:''}
+      ${w.others.length?`<p class="others">פירושים אחרים של המילה: <b>${w.others.map(esc).join(' · ')}</b><br>מה הפירוש הנוסף?</p>`:''}
+      ${listen&&!w.others.length?`<p class="ask">מה שמעת?</p>`:''}
       <div class="inps">${M.map((_,k)=>`<input class="inp" id="inp${k}" data-k="${k}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="${k<nm-1?'next':'go'}" aria-label="פירוש ${k+1}" placeholder="${nm>1?`פירוש ${k+1}`:'כתבי כאן את הפירוש'}" value="${esc(Q.mine[k]||'')}">`).join('')}</div>
       <div class="sticky"><button class="btn" id="show">הצגת אפשרויות</button></div>`;
   }else{
@@ -603,7 +620,7 @@ function quizScreen(){
     let fb='';
     if(Q.checked){const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
       fb=`<p class="fb ${got===nm&&!bad?'ok':got?'part':'bad'}" role="status" aria-live="polite"><span class="frac">${got}/${nm}</span> ${got===nm?(nm>1?'כל הפירושים נכונים':'נכון!'):got?'מהפירושים הנכונים':'לא סימנת פירוש נכון'}${bad?` · סימנת ${bad===1?'פירוש שגוי אחד':bad+' פירושים שגויים'}`:''}</p>`}
-    body=`<p class="mine"><span>מה שכתבת:</span> ${mine.length?mine.map(esc).join(' · '):'<span>(לא נכתב)</span>'}</p>
+    body=`${w.others.length?`<p class="others sm">פירושים אחרים: ${w.others.map(esc).join(' · ')}</p>`:''}<p class="mine"><span>מה שכתבת:</span> ${mine.length?mine.map(esc).join(' · '):'<span>(לא נכתב)</span>'}</p>
       ${Q.checked?'':`<p class="ask">${nm>1?`סמני את כל הפירושים הנכונים (${nm})`:'בחרי את הפירוש הנכון'}</p>`}
       <div class="opts">${Q.opts.map(([t,ok],k)=>{const on=Q.sel.includes(k);let c=on?' on':'',pre='';
         if(Q.checked){c='';if(ok&&on){c=' right';pre='✓ '}else if(ok){c=' missed';pre='✓ '}else if(on){c=' wrong';pre='✗ '}else c=' dim'}
@@ -667,7 +684,7 @@ function cardScreen(){
   const w=C.deck[C.i];
   app.innerHTML=`<div class="screen full">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button><div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span></div>
-    <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span><span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
+    <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span>${w.others.length?`<span class="oth">פירושים נוספים: ${w.others.map(esc).join(' · ')}</span>`:''}<span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
     <div class="sticky"><div class="row2"><button class="btn secondary" id="say">${SPK} מילה</button><button class="btn secondary" id="saySent">${SPK} משפט</button></div>
     <div class="row2"><button class="btn secondary" id="prev" ${C.i?'':'disabled'}>הקודם</button><button class="btn" id="nxt">הבא</button></div></div>
   </div>`;
