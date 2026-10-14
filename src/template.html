@@ -208,37 +208,37 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .sticky .ask{margin:0}
 
 /* compact quiz: everything fits on one phone screen, also above the keyboard */
-.app:has(.qz){padding-block:6px 10px}
-.screen.qz{gap:8px;font-size:16px;min-height:0}
-.qz .qtop{padding-block:4px;gap:10px}
-.qz .x{width:36px;height:36px;font-size:1rem}
+.app:has(.qz){padding-block:10px 14px}
+.screen.qz{gap:12px;font-size:16px;min-height:0}
+.qz .qtop{padding-block:6px;gap:12px}
+.qz .x{width:40px;height:40px;font-size:1rem}
 .qz .prog{height:6px}
 .qz .count{font-size:.85rem}
-.qz .mode-tag{font-size:.75rem;margin:-6px 0 -4px}
-.qz .word{padding:0 8px;gap:10px;flex-direction:row;justify-content:center}
-.qz .word .w{font-size:clamp(1.5rem,7vw,2rem)}
-.qz .word .spk{width:38px;height:38px}
+.qz .mode-tag{font-size:.8rem;margin:-4px 0 0}
+.qz .word{padding:8px 8px 4px;gap:10px;flex-direction:row;justify-content:center}
+.qz .word .w{font-size:clamp(1.8rem,8vw,2.3rem)}
+.qz .word .spk{width:42px;height:42px}
 .qz .word.listen{flex-direction:row;padding:4px 8px}
 .qz .play{width:64px;height:64px;font-size:.7rem;gap:2px}
 .qz .play svg{width:26px;height:26px}
 .qz .link{min-height:32px;padding:4px}
 .qz .ask{font-size:.92rem;margin:0}
-.qz .inps{gap:6px}
-.qz .inp{min-height:40px;padding:6px 12px;font-size:16px;border-radius:10px}
-.qz .sentence{padding:4px 10px;align-items:center;font-size:.92rem;line-height:1.35;gap:8px;border-radius:10px}
+.qz .inps{gap:8px}
+.qz .inp{min-height:46px;padding:8px 14px;font-size:16px;border-radius:10px}
+.qz .sentence{padding:8px 12px;align-items:center;font-size:.92rem;line-height:1.35;gap:8px;border-radius:10px}
 .qz .spk.sm{width:30px;height:30px}
 .qz .spk.sm svg{width:14px;height:14px}
-.qz .mine{padding:5px 10px;font-size:.88rem;border-radius:10px}
-.qz .opts{gap:5px}
-.qz .opt{min-height:36px;padding:5px 12px;line-height:1.3;font-size:.95rem;border-radius:10px;border-width:1.5px}
+.qz .mine{padding:8px 12px;font-size:.92rem;border-radius:10px}
+.qz .opts{gap:8px}
+.qz .opt{min-height:44px;padding:8px 14px;line-height:1.3;font-size:.95rem;border-radius:10px;border-width:1.5px}
 .qz .fb{font-size:.98rem}
 .qz .frac{font-size:1.15em}
-.qz .sticky{position:static;padding:2px 0 calc(4px + env(safe-area-inset-bottom,0px));gap:6px;margin-top:0}
-.qz .btn{min-height:44px;font-size:.95rem;border-radius:12px;padding:8px 14px}
-.qz .row2{gap:8px}
+.qz .sticky{position:static;padding:4px 0 calc(6px + env(safe-area-inset-bottom,0px));gap:8px;margin-top:2px}
+.qz .btn{min-height:50px;font-size:1rem;border-radius:12px;padding:8px 14px}
+.qz .row2{gap:10px}
 .qz .btn{white-space:nowrap}
 
-.qz .mic{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.qz .mic{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .qz .mic svg{width:18px;height:18px}
 .qz .mic.on{background:var(--bad);color:var(--bg)}
 .vbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));font-size:.95rem}
@@ -505,14 +505,18 @@ let heVoice=null;
 function pickHe(){if(!TTS)return;const v=speechSynthesis.getVoices();heVoice=v.find(x=>/^(he|iw)/i.test(x.lang))||null}
 if(TTS){pickHe();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',pickHe)}
 function setStatus(t){V.status=t;const el=$('vbarTxt');if(el)el.textContent=t}
-function say(text,lang){return new Promise(res=>{if(!TTS||!text){res();return}
-  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;const v=lang==='he-IL'?heVoice:voice;if(v)u.voice=v;u.rate=lang==='he-IL'?1:.85;
-    let done=false;const fin=()=>{if(!done){done=true;res()}};u.onend=fin;u.onerror=fin;setTimeout(fin,text.length*220+4000);speechSynthesis.speak(u)}catch(e){res()}})}
+/* iOS: speech only plays if the first utterance starts inside the tap, never right after cancel(), and not while the mic is still closing */
+function sayNow(text,lang,res){try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;const v=lang==='he-IL'?heVoice:voice;if(v)u.voice=v;u.rate=lang==='he-IL'?1:.85;
+    let done=false;const fin=()=>{if(!done){done=true;res()}};u.onend=fin;u.onerror=fin;setTimeout(fin,text.length*220+4000);speechSynthesis.speak(u)}catch(e){res()}}
+async function say(text,lang){if(!TTS||!text)return;
+  const gap=450-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);
+  if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();await wait(150)}
+  return new Promise(res=>sayNow(text,lang,res))}
 function beep(){try{const ac=V.ac;if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.value=.12;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.12)}catch(e){}}
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 function listen(ms){return new Promise(res=>{let r;try{r=new SR()}catch(e){res([]);return}
   r.lang='he-IL';r.interimResults=true;r.maxAlternatives=3;r.continuous=false;let alts=[],done=false;
-  const fin=()=>{if(done)return;done=true;clearTimeout(t);try{r.stop()}catch(e){}res(alts)};
+  const fin=()=>{if(done)return;done=true;clearTimeout(t);try{r.abort()}catch(e){}V.micOff=Date.now();res(alts)};
   r.onresult=e=>{const last=e.results[e.results.length-1];alts=[...last].map(a=>a.transcript.trim()).filter(Boolean);if(alts[0])setStatus('שמעתי: '+alts[0]);if(last.isFinal)fin()};
   r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')V.denied=true;fin()};
   r.onend=fin;const t=setTimeout(fin,ms||9000);setStatus('מקשיבה… דברי עכשיו');try{r.start()}catch(e){fin()}})}
@@ -531,12 +535,16 @@ function parseSel(alts,opts){
     const byText=[];opts.forEach(([t],k)=>{if(t.split(' / ').some(p=>{const q=vnorm(p);return q.length>1&&n.includes(q)}))byText.push(k)});
     if(byText.length)return byText}
   return null}
-async function startVoice(){
+function startVoice(){
   if(!SR){V.on=false;setStatus('');draw();alertBar('זיהוי דיבור לא נתמך בדפדפן הזה. נסי לפתוח את האתר ב־Safari או ב־Chrome.');return}
+  if(!TTS){alertBar('הדפדפן הזה לא יכול להקריא טקסט.');return}
   V.on=true;V.denied=false;V.miss=0;S.voice=true;persist();
   try{V.ac=V.ac||new (window.AudioContext||window.webkitAudioContext)();V.ac.resume&&V.ac.resume()}catch(e){}
-  try{if(navigator.wakeLock&&!V.lock)V.lock=await navigator.wakeLock.request('screen')}catch(e){}
-  draw();voiceLoop();
+  try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}
+  try{speechSynthesis.cancel()}catch(e){}
+  draw();
+  /* first utterance must start synchronously inside the tap, or iOS keeps the voice silent */
+  sayNow('מצב קולי פועל','he-IL',()=>{if(V.on)voiceLoop()});
 }
 function stopVoice(silent){V.on=false;V.token++;S.voice=false;persist();try{speechSynthesis.cancel()}catch(e){}
   try{V.lock&&V.lock.release()}catch(e){}V.lock=null;setStatus('');if(!silent&&S.screen==='quiz')draw()}
