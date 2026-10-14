@@ -196,6 +196,11 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .code-row .inp{flex:1;min-width:0;min-height:48px;font-size:16px}
 .btn.small{width:auto;min-height:48px;font-size:1rem;padding:8px 16px;flex:none}
 .sync-msg{font-size:.9rem;color:var(--muted)!important;min-height:1.2em;margin:.4rem 0 0!important}
+
+.kn{color:var(--ok);font-weight:700}
+.kn-chip{display:inline-block;font-family:var(--he);font-size:.78rem;font-weight:700;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:1px 9px;vertical-align:middle;margin-inline-start:6px}
+.known-line{margin:.5rem 0 0;font-size:1.05rem;color:var(--ok)}
+.mine-item .num{background:var(--ok-soft);color:var(--ok)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -250,6 +255,59 @@ const D=[["and",["ו-"],1,"I bought bread and milk."],["of",["של, מ-"],1,"She
 const LVN=['קל מאוד','קל','קל-בינוני','בינוני','בינוני+','בינוני-קשה','קשה','קשה מאוד','מתקדם','מומחה'];
 const SET=50;
 const words=D.map(r=>({id:r[0],e:r[0],h:r[1],l:r[2],s:r[3]}));
+/* weekly lists: exact matches count as "יודעת"; words not in the dictionary form level 11 */
+const LISTS={
+  "lists": [
+    {
+      "date": "2026-10-14",
+      "words": [
+        ["prestigious", "יוקרתי / בעל מוניטין"],
+        ["institutions", "מוסדות"],
+        ["dominate", "לשלוט / להיות דומיננטי"],
+        ["disorder", "הפרעה / מחלה"],
+        ["greyhounds", "כלבי גרייהאונד"],
+        ["insanity", "אי־שפיות / טירוף"],
+        ["mental illness", "מחלת נפש"],
+        ["rather than", "במקום / ולא"],
+        ["synonym", "מילה נרדפת"],
+        ["transaction", "עסקה"],
+        ["recipient", "מקבל / נמען"],
+        ["prerequisite", "תנאי מוקדם"],
+        ["riddle", "חידה"],
+        ["freed", "שוחרר / שוחררה"],
+        ["expelled", "גורש / סולק"],
+        ["liberated", "שוחרר / שוחררה"],
+        ["licensed", "בעל רישיון / מורשה"],
+        ["crops", "גידולים חקלאיים"],
+        ["beyond", "מעבר ל־ / מעבר לתחום"]
+      ]
+    }
+  ],
+  "sentences": {
+    "institutions": "Universities are important institutions.",
+    "greyhounds": "Greyhounds are very fast dogs.",
+    "mental illness": "Depression is a common mental illness.",
+    "synonym": "\"Big\" is a synonym for \"large\".",
+    "prerequisite": "Math 1 is a prerequisite for this course.",
+    "riddle": "Can you solve this riddle?",
+    "freed": "The prisoners were freed after the war.",
+    "expelled": "He was expelled from school for fighting.",
+    "liberated": "The city was liberated in 1945.",
+    "licensed": "Only a licensed driver can drive this bus.",
+    "crops": "The farmers grow crops like wheat and corn."
+  }
+}
+;
+const MAIN=new Set(words.map(w=>w.e.toLowerCase()));
+const KNOWNL=new Set();const EXTRA=new Map();
+LISTS.lists.forEach(li=>li.words.forEach(([en,he])=>{const k=en.trim().toLowerCase();
+  if(MAIN.has(k))KNOWNL.add(k);else if(!EXTRA.has(k))EXTRA.set(k,{id:en.trim(),e:en.trim(),h:[he.trim()],l:11,s:LISTS.sentences[en.trim()]||LISTS.sentences[k]||'',date:li.date})}));
+EXTRA.forEach(w=>words.push(w));
+const listKnown=w=>KNOWNL.has(w.e.toLowerCase());
+const MYL=11;
+const lvTitle=l=>l===MYL?'המילים מהרשימות שלי':`רמה ${l} · ${LVN[l-1]}`;
+const lvShort=l=>l===MYL?'המילים שלי':`רמה ${l}`;
+const kn=ws=>ws.filter(listKnown).length;
 const byLv=l=>words.filter(w=>w.l===l);
 const group=(l,g)=>byLv(l).slice(g*SET,g*SET+SET);
 const nGroups=l=>Math.ceil(byLv(l).length/SET);
@@ -326,9 +384,11 @@ function home(){
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz');if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
+    ${byLv(MYL).length?`<p class="lbl">מילים מהרשימות שלי שלא היו במילון</p>
+    <ul class="list"><li><button class="item mine-item" data-l="${MYL}"><span class="num">★</span><span class="grow"><span class="t">המילים שלי</span><br><span class="d">${byLv(MYL).length} מילים${byLv(MYL).filter(known).length?` · ${byLv(MYL).filter(known).length} נכונות`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li></ul>`:''}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
-    <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
-      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · ${kk} נכונות`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+    <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length,kl=kn(ws);
+      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kl?` · <b class="kn">יודעת ${kl}</b>`:''}${kk?` · ${kk} נכונות`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
     <details class="howto sync-box" ${S.syncOpen?'open':''}><summary>סנכרון בין מכשירים</summary>
       <p>זה קוד הסנכרון שלך. כדי לראות את אותה התקדמות במכשיר אחר, פתחי שם את האתר והדביקי את הקוד הזה.</p>
       <div class="code-row"><code id="myCode" dir="ltr">${esc(SYNC_ID)}</code><button class="btn small" id="copyCode">העתקה</button></div>
@@ -356,29 +416,29 @@ function level(){
   const ws=byLv(S.l),n=nGroups(S.l),kk=ws.filter(known).length;
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">כל הרמות</button></div>
-    <div><h2>רמה ${S.l} · ${LVN[S.l-1]}</h2><p class="sub">${ws.length} מילים · ${kk} נכונות</p></div>
-    ${quizPanel('L'+S.l,ws,'בוחן על כל הרמה',`רמה ${S.l}`,'level')}
+    <div><h2>${lvTitle(S.l)}</h2><p class="sub">${ws.length} מילים${S.l===MYL?'':` · <b class="kn">יודעת ${kn(ws)}</b>`} · ${kk} נכונות</p></div>
+    ${quizPanel('L'+S.l,ws,S.l===MYL?'בוחן על כל המילים שלי':'בוחן על כל הרמה',lvShort(S.l),'level')}
     <p class="lbl">או תרגול לפי קבוצות של 50 מילים</p>
     <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),k2=gw.filter(known).length,done=k2===gw.length;
-      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">קבוצה ${g+1}</span><br><span class="d">${done?'הושלמה ✓':k2?`${k2} מתוך ${gw.length} נכונות`:`${gw.length} מילים`}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">קבוצה ${g+1}${S.l!==MYL&&kn(gw)?` <b class="kn-chip">יודעת ${kn(gw)}/${gw.length}</b>`:''}</span><br><span class="d">${done?'הושלמה ✓':k2?`${k2} מתוך ${gw.length} נכונות`:`${gw.length} מילים`}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
-  bindSettings();bindQuizPanel('L'+S.l,ws,`רמה ${S.l}`,'level');
+  bindSettings();bindQuizPanel('L'+S.l,ws,lvShort(S.l),'level');
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
 
 const gkey=()=>'G'+S.l+'-'+S.g;
-function wordRow(w){return `<li class="${wrong(w)?'bad':known(w)?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div><div class="ex">${highlight(w.s,w.e)}</div></div>${wrong(w)?`<button class="rm" data-rm="${esc(w.id)}" aria-label="הסרה מרשימת הטעויות">✕</button>`:''}</li>`}
+function wordRow(w){return `<li class="${wrong(w)?'bad':known(w)?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}${listKnown(w)?' <span class="kn-chip">יודעת</span>':''}</div><div class="h">${esc(label(w))}</div><div class="ex">${highlight(w.s,w.e)}</div></div>${wrong(w)?`<button class="rm" data-rm="${esc(w.id)}" aria-label="הסרה מרשימת הטעויות">✕</button>`:''}</li>`}
 function bindRows(){
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
   app.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{MIST.delete(b.dataset.rm);saveMist();draw()});
 }
 function groupScreen(){
   const ws=group(S.l,S.g),kk=ws.filter(known).length,mw=ws.filter(wrong);
-  const name=`קבוצה ${S.g+1} · רמה ${S.l}`;
+  const name=`קבוצה ${S.g+1} · ${lvShort(S.l)}`;
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">רמה ${S.l}</button></div>
-    <div><h2>קבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · ${LVN[S.l-1]} · ${kk} מתוך ${ws.length} נכונות</p></div>
+    <div class="nav"><button class="back" id="bk">${lvShort(S.l)}</button></div>
+    <div><h2>קבוצה ${S.g+1}</h2><p class="sub">${lvTitle(S.l)}</p>${S.l===MYL?'':`<p class="known-line">יודעת <b>${kn(ws)}/${ws.length}</b> מהמילים בקבוצה</p>`}<p class="sub">${kk} מתוך ${ws.length} נכונות בבוחן</p></div>
     <button class="btn secondary" id="list">רשימת ${ws.length} המילים בקבוצה</button>
     ${quizPanel(gkey(),ws,'בוחן על כל הקבוצה',name,'group')}
     ${mw.length||SESS['M'+gkey()]?quizPanel('M'+gkey(),mw,`מילים שטעיתי בהן (${mw.length})`,'טעויות · '+name,'group',true,'mist-panel')+
@@ -398,7 +458,7 @@ function wordsScreen(){
   const ws=group(S.l,S.g),mw=ws.filter(wrong),f=S.filter==='mist'&&mw.length?'mist':'all',list=f==='mist'?mw:ws;
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">קבוצה ${S.g+1}</button></div>
-    <div><h2>המילים בקבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · לחצי על הרמקול כדי לשמוע</p></div>
+    <div><h2>המילים בקבוצה ${S.g+1}</h2><p class="sub">${lvShort(S.l)} · לחצי על הרמקול כדי לשמוע</p></div>
     <div class="seg" role="group" aria-label="סינון"><button data-f="all" aria-pressed="${f==='all'}">כל המילים (${ws.length})</button><button data-f="mist" aria-pressed="${f==='mist'}" ${mw.length?'':'disabled'}>טעויות (${mw.length})</button></div>
     <ul class="words">${list.map(wordRow).join('')}</ul>
     <div class="sticky"><button class="btn" id="toQuiz">לבוחן</button></div>
@@ -416,7 +476,7 @@ function saveQ(){if(!Q)return;SESS[Q.key]={kind:'quiz',t:Date.now(),ids:ids(Q.li
 function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz')return false;Q={key,list:objs(s.ids),i:s.i,score:s.score,mist:objs(s.mist||[]),name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,stage:s.stage||'write',mine:s.mine||'',opts:s.opts?objs(s.opts):null,picked:s.picked??null,shown:!!s.shown,sent:!!s.sent};
   if(Q.stage==='pick'&&(!Q.opts||Q.opts.length<2)){Q.stage='write';Q.picked=null}return Q.i<Q.list.length}
 function resumeQuiz(key){if(!loadQ(key)){delete SESS[key];saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(Q.picked===null)speak(Q.list[Q.i].e)}
-function distractors(w){const pool=shuffle(words.filter(x=>Math.abs(x.l-w.l)<=1&&x.e.toLowerCase()!==w.e.toLowerCase()&&!x.h.some(m=>w.h.includes(m))));
+function distractors(w){const pool=shuffle(words.filter(x=>(w.l===MYL||Math.abs(x.l-w.l)<=1)&&x.e.toLowerCase()!==w.e.toLowerCase()&&!x.h.some(m=>w.h.includes(m))));
   const out=[],seen=new Set([label(w)]);for(const x of pool){if(!seen.has(label(x))){seen.add(label(x));out.push(x)}if(out.length===3)break}return out}
 function quizScreen(){
   const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',ans=Q.picked!==null;

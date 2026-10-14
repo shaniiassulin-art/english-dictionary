@@ -1,0 +1,41 @@
+{
+  "lists": [
+    {
+      "date": "2026-10-14",
+      "words": [
+        ["prestigious", "יוקרתי / בעל מוניטין"],
+        ["institutions", "מוסדות"],
+        ["dominate", "לשלוט / להיות דומיננטי"],
+        ["disorder", "הפרעה / מחלה"],
+        ["greyhounds", "כלבי גרייהאונד"],
+        ["insanity", "אי־שפיות / טירוף"],
+        ["mental illness", "מחלת נפש"],
+        ["rather than", "במקום / ולא"],
+        ["synonym", "מילה נרדפת"],
+        ["transaction", "עסקה"],
+        ["recipient", "מקבל / נמען"],
+        ["prerequisite", "תנאי מוקדם"],
+        ["riddle", "חידה"],
+        ["freed", "שוחרר / שוחררה"],
+        ["expelled", "גורש / סולק"],
+        ["liberated", "שוחרר / שוחררה"],
+        ["licensed", "בעל רישיון / מורשה"],
+        ["crops", "גידולים חקלאיים"],
+        ["beyond", "מעבר ל־ / מעבר לתחום"]
+      ]
+    }
+  ],
+  "sentences": {
+    "institutions": "Universities are important institutions.",
+    "greyhounds": "Greyhounds are very fast dogs.",
+    "mental illness": "Depression is a common mental illness.",
+    "synonym": "\"Big\" is a synonym for \"large\".",
+    "prerequisite": "Math 1 is a prerequisite for this course.",
+    "riddle": "Can you solve this riddle?",
+    "freed": "The prisoners were freed after the war.",
+    "expelled": "He was expelled from school for fighting.",
+    "liberated": "The city was liberated in 1945.",
+    "licensed": "Only a licensed driver can drive this bus.",
+    "crops": "The farmers grow crops like wheat and corn."
+  }
+}
