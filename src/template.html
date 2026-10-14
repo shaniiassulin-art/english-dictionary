@@ -281,11 +281,8 @@ const kst=w=>(KNOW[w.id]||[])[0];
 const isY=w=>kst(w)==='y', isN=w=>kst(w)==='n';
 const known=isY;
 function setKnow(id,v){if(v)KNOW[id]=[v,Date.now()];else delete KNOW[id];saveKnow()}
-/* split a word's Hebrew into separate meanings (commas, semicolons, slashes outside parentheses) */
-const MCACHE=new Map();
-function meanings(w){if(MCACHE.has(w.id))return MCACHE.get(w.id);const out=[];
-  w.h.forEach(part=>{let buf='',d=0;for(const ch of part){if('(['.includes(ch))d++;if(')]'.includes(ch))d--;if(',;/'.includes(ch)&&d===0){out.push(buf);buf=''}else buf+=ch}out.push(buf)});
-  const r=[];out.forEach(x=>{x=x.trim();if(x&&!r.includes(x))r.push(x)});if(!r.length)r.push(w.h.join(' '));MCACHE.set(w.id,r);return r}
+/* each entry in w.h is one meaning; near-synonyms are already grouped with " / " */
+const meanings=w=>w.h;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const label=w=>w.h.join(' · ');
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
