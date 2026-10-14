@@ -198,9 +198,25 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .sync-msg{font-size:.9rem;color:var(--muted)!important;min-height:1.2em;margin:.4rem 0 0!important}
 
 .kn{color:var(--ok);font-weight:700}
-.kn-chip{display:inline-block;font-family:var(--he);font-size:.78rem;font-weight:700;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:1px 9px;vertical-align:middle;margin-inline-start:6px}
-.known-line{margin:.5rem 0 0;font-size:1.05rem;color:var(--ok)}
-.mine-item .num{background:var(--ok-soft);color:var(--ok)}
+.unk{color:var(--bad);font-weight:700}
+.muted{color:var(--muted)}
+.known-line{margin:.5rem 0 0;font-size:1.05rem}
+.yn{display:flex;gap:6px;flex:none}
+.yn-b{width:40px;height:40px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--muted);font-size:1.1rem;font-weight:800;cursor:pointer}
+.yn-b.y[aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:var(--bg)}
+.yn-b.n[aria-pressed="true"]{background:var(--bad);border-color:var(--bad);color:var(--bg)}
+.words li.ok .e::after{content:none}
+.seg4 button{font-size:.88rem;padding:0 4px}
+.inps{display:flex;flex-direction:column;gap:8px}
+.opt.on{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
+.opt.missed{border-color:var(--ok);border-style:dashed;color:var(--ok)}
+.opt.missed small{font-weight:400}
+.opt.dim{opacity:.5}
+.fb.part{color:#b26b00}
+.frac{font-variant-numeric:tabular-nums;font-size:1.3em;margin-inline-end:6px}
+.btn.knowyes{background:var(--ok);color:var(--bg)}
+.btn.knowno{background:var(--bad);color:var(--bg)}
+.sticky .ask{margin:0}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -217,7 +233,7 @@ let SYNC_ID=LS.get('dictSyncId');if(!SYNC_ID||SYNC_ID.length<20){SYNC_ID=newCode
 let SYNC={state:'idle',ready:false,applying:false,timer:null};
 const docUrl=id=>`https://firestore.googleapis.com/v1/projects/${FB.project}/databases/(default)/documents/dictionary/${encodeURIComponent(id)}?key=${FB.key}`;
 function dirty(){if(SYNC.applying)return;LS.set('dictUpdated',String(Date.now()));if(!SYNC.ready)return;clearTimeout(SYNC.timer);setSync('saving');SYNC.timer=setTimeout(push,1200)}
-function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),mist:JSON.parse(LS.get('dictMist')||'[]')})}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}')})}
 async function push(){
   const t=+(LS.get('dictUpdated')||Date.now());
   try{const r=await fetch(docUrl(SYNC_ID),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:snapshot()},updated:{integerValue:String(t)}}})});
@@ -231,12 +247,13 @@ async function pull(){
 function mergeData(a,b){
   const prog={...(a.prog||{})};for(const k in (b.prog||{}))prog[k]=Math.max(prog[k]||0,b.prog[k]||0);
   const sess={...(a.sess||{})};for(const k in (b.sess||{}))if(!sess[k]||(b.sess[k].t||0)>(sess[k].t||0))sess[k]=b.sess[k];
-  const mist=[...new Set([...(a.mist||[]),...(b.mist||[])])].filter(id=>!(prog[id]>=1&&!(a.mist||[]).includes(id)&&!(b.mist||[]).includes(id)));
-  return{prog,sess,mist};
+  const ka=a.know||migrateMist(a.mist),kb=b.know||migrateMist(b.mist);
+  const know={...ka};for(const k in kb)if(!know[k]||(kb[k][1]||0)>(know[k][1]||0))know[k]=kb[k];
+  return{prog,sess,know};
 }
 function applyRemote(d,t){
   SYNC.applying=true;
-  try{prog=d.prog||{};SESS=d.sess||{};MIST=new Set(d.mist||[]);save();saveSess();saveMist();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  try{prog=d.prog||{};SESS=d.sess||{};KNOW=d.know||migrateMist(d.mist);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   if(!['quiz','cards'].includes(S.screen))draw();
 }
 async function syncNow(forceRemote){
@@ -255,59 +272,6 @@ const D=[["and",["ו-"],1,"I bought bread and milk."],["of",["של, מ-"],1,"She
 const LVN=['קל מאוד','קל','קל-בינוני','בינוני','בינוני+','בינוני-קשה','קשה','קשה מאוד','מתקדם','מומחה'];
 const SET=50;
 const words=D.map(r=>({id:r[0],e:r[0],h:r[1],l:r[2],s:r[3]}));
-/* weekly lists: exact matches count as "יודעת"; words not in the dictionary form level 11 */
-const LISTS={
-  "lists": [
-    {
-      "date": "2026-10-14",
-      "words": [
-        ["prestigious", "יוקרתי / בעל מוניטין"],
-        ["institutions", "מוסדות"],
-        ["dominate", "לשלוט / להיות דומיננטי"],
-        ["disorder", "הפרעה / מחלה"],
-        ["greyhounds", "כלבי גרייהאונד"],
-        ["insanity", "אי־שפיות / טירוף"],
-        ["mental illness", "מחלת נפש"],
-        ["rather than", "במקום / ולא"],
-        ["synonym", "מילה נרדפת"],
-        ["transaction", "עסקה"],
-        ["recipient", "מקבל / נמען"],
-        ["prerequisite", "תנאי מוקדם"],
-        ["riddle", "חידה"],
-        ["freed", "שוחרר / שוחררה"],
-        ["expelled", "גורש / סולק"],
-        ["liberated", "שוחרר / שוחררה"],
-        ["licensed", "בעל רישיון / מורשה"],
-        ["crops", "גידולים חקלאיים"],
-        ["beyond", "מעבר ל־ / מעבר לתחום"]
-      ]
-    }
-  ],
-  "sentences": {
-    "institutions": "Universities are important institutions.",
-    "greyhounds": "Greyhounds are very fast dogs.",
-    "mental illness": "Depression is a common mental illness.",
-    "synonym": "\"Big\" is a synonym for \"large\".",
-    "prerequisite": "Math 1 is a prerequisite for this course.",
-    "riddle": "Can you solve this riddle?",
-    "freed": "The prisoners were freed after the war.",
-    "expelled": "He was expelled from school for fighting.",
-    "liberated": "The city was liberated in 1945.",
-    "licensed": "Only a licensed driver can drive this bus.",
-    "crops": "The farmers grow crops like wheat and corn."
-  }
-}
-;
-const MAIN=new Set(words.map(w=>w.e.toLowerCase()));
-const KNOWNL=new Set();const EXTRA=new Map();
-LISTS.lists.forEach(li=>li.words.forEach(([en,he])=>{const k=en.trim().toLowerCase();
-  if(MAIN.has(k))KNOWNL.add(k);else if(!EXTRA.has(k))EXTRA.set(k,{id:en.trim(),e:en.trim(),h:[he.trim()],l:11,s:LISTS.sentences[en.trim()]||LISTS.sentences[k]||'',date:li.date})}));
-EXTRA.forEach(w=>words.push(w));
-const listKnown=w=>KNOWNL.has(w.e.toLowerCase());
-const MYL=11;
-const lvTitle=l=>l===MYL?'המילים מהרשימות שלי':`רמה ${l} · ${LVN[l-1]}`;
-const lvShort=l=>l===MYL?'המילים שלי':`רמה ${l}`;
-const kn=ws=>ws.filter(listKnown).length;
 const byLv=l=>words.filter(w=>w.l===l);
 const group=(l,g)=>byLv(l).slice(g*SET,g*SET+SET);
 const nGroups=l=>Math.ceil(byLv(l).length/SET);
@@ -320,10 +284,21 @@ const W=Object.fromEntries(words.map(w=>[w.id,w]));
 let SESS={};try{SESS=JSON.parse(localStorage.getItem('dictSess')||'{}')}catch(e){}
 const saveSess=()=>{try{localStorage.setItem('dictSess',JSON.stringify(SESS))}catch(e){};dirty()};
 const ids=a=>a.map(w=>w.id), objs=a=>a.map(i=>W[i]).filter(Boolean);
-let MIST=new Set();try{MIST=new Set(JSON.parse(localStorage.getItem('dictMist')||'[]'))}catch(e){}
-const saveMist=()=>{try{localStorage.setItem('dictMist',JSON.stringify([...MIST]))}catch(e){};dirty()};
-const wrong=w=>MIST.has(w.id);
-const known=w=>(prog[w.id]||0)>=1;
+/* "do I know this word": KNOW[id]=['y'|'n', timestamp] */
+function migrateMist(m){const o={};(m||[]).forEach(id=>o[id]=['n',1]);return o}
+let KNOW=null;try{KNOW=JSON.parse(localStorage.getItem('dictKnow')||'null')}catch(e){}
+if(!KNOW){let m=[];try{m=JSON.parse(localStorage.getItem('dictMist')||'[]')}catch(e){}KNOW=migrateMist(m)}
+const saveKnow=()=>{try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){};dirty()};
+try{if(!localStorage.getItem('dictKnow'))localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
+const kst=w=>(KNOW[w.id]||[])[0];
+const isY=w=>kst(w)==='y', isN=w=>kst(w)==='n';
+const known=isY;
+function setKnow(id,v){if(v)KNOW[id]=[v,Date.now()];else delete KNOW[id];saveKnow()}
+/* split a word's Hebrew into separate meanings (commas, semicolons, slashes outside parentheses) */
+const MCACHE=new Map();
+function meanings(w){if(MCACHE.has(w.id))return MCACHE.get(w.id);const out=[];
+  w.h.forEach(part=>{let buf='',d=0;for(const ch of part){if('(['.includes(ch))d++;if(')]'.includes(ch))d--;if(',;/'.includes(ch)&&d===0){out.push(buf);buf=''}else buf+=ch}out.push(buf)});
+  const r=[];out.forEach(x=>{x=x.trim();if(x&&!r.includes(x))r.push(x)});if(!r.length)r.push(w.h.join(' '));MCACHE.set(w.id,r);return r}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const label=w=>w.h.join(' · ');
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
@@ -360,16 +335,17 @@ function settings(allLabel){
 function bindSettings(){
   app.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;persist();draw()});
 }
-function pickList(ws){return [...shuffle(ws.filter(w=>!known(w))),...shuffle(ws.filter(known))]}
+function pickList(ws){return [...shuffle(ws.filter(w=>!isY(w))),...shuffle(ws.filter(isY))]}
 function quizPanel(key,ws,title,name,from,noSet,cls){
+  if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)delete SESS[key];
   const ss=SESS[key];
   if(ss){const n=ss.ids.length,at=Math.min(ss.i+1,n);
     return `<section class="panel ${cls||''}"><h3>${title}</h3>
-      <p class="resume-info">עצרת ב${ss.mode==='listen'?'בוחן שמיעה':'בוחן קריאה'} במילה <b>${at} מתוך ${n}</b> · ${ss.score} נכונות עד עכשיו</p>
+      <p class="resume-info">עצרת ב${ss.mode==='listen'?'בוחן שמיעה':'בוחן קריאה'} במילה <b>${at} מתוך ${n}</b> · ידעת ${ss.score} עד עכשיו</p>
       <div class="bar2"><i style="width:${ss.i/n*100}%"></i></div>
       <button class="btn" data-resume="${key}">המשך מהמילה ${at}</button>
       <button class="link" data-restart="${key}">התחלה מחדש</button></section>`}
-  return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}<button class="btn" data-start="${key}">${noSet?'בוחן ממוקד':'התחלת בוחן'} · ${ws.length} מילים</button></section>`;
+  return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}<button class="btn" data-start="${key}">${noSet?'בוחן על המילים שאני לא יודעת':'התחלת בוחן'} · ${ws.length} מילים</button></section>`;
 }
 function bindQuizPanel(key,ws,name,from){
   const st=app.querySelector(`[data-start="${key}"]`);if(st)st.onclick=()=>startQuiz(pickList(ws),name,from,key);
@@ -380,15 +356,13 @@ function bindQuizPanel(key,ws,name,from){
 function home(){
   const k=words.filter(known).length;
   app.innerHTML=`<div class="screen">
-    <div><h1>מילון אנגלית</h1><p class="sub">${words.length.toLocaleString()} מילים ב־10 רמות · ענית נכון על ${k.toLocaleString()}</p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
-    ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz');if(!ks.length)return'';
+    <div><h1>מילון אנגלית</h1><p class="sub">${words.length.toLocaleString()} מילים ב־10 רמות · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
+    ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
-    ${byLv(MYL).length?`<p class="lbl">מילים מהרשימות שלי שלא היו במילון</p>
-    <ul class="list"><li><button class="item mine-item" data-l="${MYL}"><span class="num">★</span><span class="grow"><span class="t">המילים שלי</span><br><span class="d">${byLv(MYL).length} מילים${byLv(MYL).filter(known).length?` · ${byLv(MYL).filter(known).length} נכונות`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li></ul>`:''}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
-    <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length,kl=kn(ws);
-      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kl?` · <b class="kn">יודעת ${kl}</b>`:''}${kk?` · ${kk} נכונות`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+    <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
+      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
     <details class="howto sync-box" ${S.syncOpen?'open':''}><summary>סנכרון בין מכשירים</summary>
       <p>זה קוד הסנכרון שלך. כדי לראות את אותה התקדמות במכשיר אחר, פתחי שם את האתר והדביקי את הקוד הזה.</p>
       <div class="code-row"><code id="myCode" dir="ltr">${esc(SYNC_ID)}</code><button class="btn small" id="copyCode">העתקה</button></div>
@@ -412,55 +386,59 @@ function home(){
     catch(e){$('codeMsg').textContent='אין חיבור לאינטרנט כרגע. נסי שוב.'}};
 }
 
+function countLine(ws){const y=ws.filter(isY).length,n=ws.filter(isN).length;
+  return `<span class="kn">יודעת ${y}/${ws.length}</span>${n?` · <span class="unk">לא יודעת ${n}</span>`:''}`}
 function level(){
-  const ws=byLv(S.l),n=nGroups(S.l),kk=ws.filter(known).length;
+  const ws=byLv(S.l),n=nGroups(S.l),nw=ws.filter(isN);
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">כל הרמות</button></div>
-    <div><h2>${lvTitle(S.l)}</h2><p class="sub">${ws.length} מילים${S.l===MYL?'':` · <b class="kn">יודעת ${kn(ws)}</b>`} · ${kk} נכונות</p></div>
-    ${quizPanel('L'+S.l,ws,S.l===MYL?'בוחן על כל המילים שלי':'בוחן על כל הרמה',lvShort(S.l),'level')}
+    <div><h2>רמה ${S.l} · ${LVN[S.l-1]}</h2><p class="sub">${countLine(ws)}</p></div>
+    ${quizPanel('L'+S.l,ws,'בוחן על כל הרמה',`רמה ${S.l}`,'level')}
+    ${nw.length||SESS['NL'+S.l]?quizPanel('NL'+S.l,nw,`המילים שאני לא יודעת ברמה (${nw.length})`,`לא יודעת · רמה ${S.l}`,'level',true,'mist-panel'):''}
     <p class="lbl">או תרגול לפי קבוצות של 50 מילים</p>
-    <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),k2=gw.filter(known).length,done=k2===gw.length;
-      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">קבוצה ${g+1}${S.l!==MYL&&kn(gw)?` <b class="kn-chip">יודעת ${kn(gw)}/${gw.length}</b>`:''}</span><br><span class="d">${done?'הושלמה ✓':k2?`${k2} מתוך ${gw.length} נכונות`:`${gw.length} מילים`}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+    <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
+      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">קבוצה ${g+1}</span><br><span class="d">${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
-  bindSettings();bindQuizPanel('L'+S.l,ws,lvShort(S.l),'level');
+  bindSettings();bindQuizPanel('L'+S.l,ws,`רמה ${S.l}`,'level');bindQuizPanel('NL'+S.l,nw,`לא יודעת · רמה ${S.l}`,'level');
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
 
 const gkey=()=>'G'+S.l+'-'+S.g;
-function wordRow(w){return `<li class="${wrong(w)?'bad':known(w)?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}${listKnown(w)?' <span class="kn-chip">יודעת</span>':''}</div><div class="h">${esc(label(w))}</div><div class="ex">${highlight(w.s,w.e)}</div></div>${wrong(w)?`<button class="rm" data-rm="${esc(w.id)}" aria-label="הסרה מרשימת הטעויות">✕</button>`:''}</li>`}
+function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div><div class="ex">${highlight(w.s,w.e)}</div></div>
+  <div class="yn" role="group" aria-label="האם את יודעת את ${esc(w.e)}"><button class="yn-b y" data-k="${esc(w.id)}" data-v="y" aria-pressed="${st==='y'}" aria-label="יודעת">✓</button><button class="yn-b n" data-k="${esc(w.id)}" data-v="n" aria-pressed="${st==='n'}" aria-label="לא יודעת">✗</button></div></li>`}
 function bindRows(){
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
-  app.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{MIST.delete(b.dataset.rm);saveMist();draw()});
+  app.querySelectorAll('.yn-b').forEach(b=>b.onclick=()=>{const id=b.dataset.k,v=b.dataset.v;setKnow(id,(KNOW[id]||[])[0]===v?null:v);const y=window.scrollY||0;draw();window.scrollTo(0,y)});
 }
 function groupScreen(){
-  const ws=group(S.l,S.g),kk=ws.filter(known).length,mw=ws.filter(wrong);
-  const name=`קבוצה ${S.g+1} · ${lvShort(S.l)}`;
+  const ws=group(S.l,S.g),nw=ws.filter(isN),un=ws.filter(w=>!kst(w)).length;
+  const name=`קבוצה ${S.g+1} · רמה ${S.l}`;
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">${lvShort(S.l)}</button></div>
-    <div><h2>קבוצה ${S.g+1}</h2><p class="sub">${lvTitle(S.l)}</p>${S.l===MYL?'':`<p class="known-line">יודעת <b>${kn(ws)}/${ws.length}</b> מהמילים בקבוצה</p>`}<p class="sub">${kk} מתוך ${ws.length} נכונות בבוחן</p></div>
-    <button class="btn secondary" id="list">רשימת ${ws.length} המילים בקבוצה</button>
+    <div class="nav"><button class="back" id="bk">רמה ${S.l}</button></div>
+    <div><h2>קבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · ${LVN[S.l-1]}</p>
+      <p class="known-line">${countLine(ws)}${un?` · <span class="muted">לא סומנו ${un}</span>`:''}</p></div>
+    <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
     ${quizPanel(gkey(),ws,'בוחן על כל הקבוצה',name,'group')}
-    ${mw.length||SESS['M'+gkey()]?quizPanel('M'+gkey(),mw,`מילים שטעיתי בהן (${mw.length})`,'טעויות · '+name,'group',true,'mist-panel')+
-      (mw.length?`<details class="wl"><summary>הצגת ${mw.length} המילים שטעיתי בהן</summary><ul class="words">${mw.map(wordRow).join('')}</ul></details>`:''):
-      `<p class="hint center">מילים שתטעי בהן בבוחן יישמרו כאן, ותוכלי לעשות עליהן בוחן ממוקד.</p>`}
+    ${nw.length||SESS['N'+gkey()]?quizPanel('N'+gkey(),nw,`המילים שאני לא יודעת (${nw.length})`,'לא יודעת · '+name,'group',true,'mist-panel'):
+      `<p class="hint center">מילים שתסמני "לא ידעתי" בבוחן או ✗ ברשימה יופיעו כאן, ותוכלי לעשות עליהן בוחן.</p>`}
     <button class="btn secondary" id="fc">${SESS['C'+gkey()]?`המשך כרטיסיות · ${SESS['C'+gkey()].i+1} מתוך ${ws.length}`:'תרגול בכרטיסיות'}</button>
   </div>`;
   $('bk').onclick=()=>go({screen:'level'});
   $('list').onclick=()=>go({screen:'words',filter:'all'});
   bindSettings();bindQuizPanel(gkey(),ws,name,'group');
-  bindQuizPanel('M'+gkey(),mw,'טעויות · '+name,'group');
-  bindRows();
+  bindQuizPanel('N'+gkey(),nw,'לא יודעת · '+name,'group');
   $('fc').onclick=()=>{const k='C'+gkey(),ss=SESS[k];
     C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'});if(C.deck[C.i])speak(C.deck[C.i].e)};
 }
 function wordsScreen(){
-  const ws=group(S.l,S.g),mw=ws.filter(wrong),f=S.filter==='mist'&&mw.length?'mist':'all',list=f==='mist'?mw:ws;
+  const ws=group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
+  const f=F[S.filter]?S.filter:'all',list=F[f];
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">קבוצה ${S.g+1}</button></div>
-    <div><h2>המילים בקבוצה ${S.g+1}</h2><p class="sub">${lvShort(S.l)} · לחצי על הרמקול כדי לשמוע</p></div>
-    <div class="seg" role="group" aria-label="סינון"><button data-f="all" aria-pressed="${f==='all'}">כל המילים (${ws.length})</button><button data-f="mist" aria-pressed="${f==='mist'}" ${mw.length?'':'disabled'}>טעויות (${mw.length})</button></div>
-    <ul class="words">${list.map(wordRow).join('')}</ul>
+    <div><h2>המילים בקבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · סמני ✓ אם את יודעת, ✗ אם לא. לחיצה נוספת מבטלת.</p></div>
+    <div class="seg seg4" role="group" aria-label="סינון">${[['all','הכל'],['y','יודעת'],['n','לא יודעת'],['u','לא סומנו']].map(([k,t])=>`<button data-f="${k}" aria-pressed="${f===k}">${t} (${F[k].length})</button>`).join('')}</div>
+    ${list.length?`<ul class="words">${list.map(wordRow).join('')}</ul>`:'<p class="hint center">אין מילים כאן.</p>'}
     <div class="sticky"><button class="btn" id="toQuiz">לבוחן</button></div>
   </div>`;
   $('bk').onclick=()=>go({screen:'group'});
@@ -469,37 +447,46 @@ function wordsScreen(){
   bindRows();
 }
 
-/* quiz */
+/* quiz-logic */
 let Q=null;
-function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,mist:[],name,from,l:S.l,g:S.g,mode:S.mode,stage:'write',mine:'',opts:null,picked:null,shown:false,sent:false};saveQ();S.active=key;go({screen:'quiz'});speak(list[0].e)}
-function saveQ(){if(!Q)return;SESS[Q.key]={kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,mist:ids(Q.mist),name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts?ids(Q.opts):null,picked:Q.picked,shown:Q.shown,sent:Q.sent};saveSess()}
-function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz')return false;Q={key,list:objs(s.ids),i:s.i,score:s.score,mist:objs(s.mist||[]),name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,stage:s.stage||'write',mine:s.mine||'',opts:s.opts?objs(s.opts):null,picked:s.picked??null,shown:!!s.shown,sent:!!s.sent};
-  if(Q.stage==='pick'&&(!Q.opts||Q.opts.length<2)){Q.stage='write';Q.picked=null}return Q.i<Q.list.length}
-function resumeQuiz(key){if(!loadQ(key)){delete SESS[key];saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(Q.picked===null)speak(Q.list[Q.i].e)}
-function distractors(w){const pool=shuffle(words.filter(x=>(w.l===MYL||Math.abs(x.l-w.l)<=1)&&x.e.toLowerCase()!==w.e.toLowerCase()&&!x.h.some(m=>w.h.includes(m))));
-  const out=[],seen=new Set([label(w)]);for(const x of pool){if(!seen.has(label(x))){seen.add(label(x));out.push(x)}if(out.length===3)break}return out}
+const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false});
+function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});speak(list[0].e)}
+function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent};saveSess()}
+function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return false;
+  Q={key,list:objs(s.ids),i:s.i,score:s.score||0,pts:s.pts||0,max:s.max||0,mist:objs(s.mist||[]),name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,...blankQ(),
+    stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent};
+  if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}return Q.i<Q.list.length}
+function resumeQuiz(key){if(!loadQ(key)){delete SESS[key];saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)speak(Q.list[Q.i].e)}
+function buildOpts(w){const right=meanings(w),need=Math.max(2,4-right.length);
+  const pool=shuffle(words.filter(x=>Math.abs(x.l-w.l)<=1&&x.e.toLowerCase()!==w.e.toLowerCase()&&!meanings(x).some(m=>right.includes(m))));
+  const wrongs=[];for(const x of pool){const m=shuffle(meanings(x))[0];if(m&&!right.includes(m)&&!wrongs.includes(m))wrongs.push(m);if(wrongs.length>=need)break}
+  return shuffle([...right.map(t=>[t,1]),...wrongs.map(t=>[t,0])])}
 function quizScreen(){
-  const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',ans=Q.picked!==null;
+  const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',M=meanings(w),nm=M.length;
   const showWord=!listen||Q.shown||Q.stage==='pick';
-  const sentence=Q.sent||ans?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
-  let wordBox;
-  if(showWord){wordBox=`<div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>`}
-  else{wordBox=`<div class="word listen"><button class="play" id="say" aria-label="השמעת המילה שוב">${SPK}<span>השמעה חוזרת</span></button><button class="link" id="reveal">הצגת המילה כתובה</button></div>`}
+  const sentence=Q.sent||Q.checked?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
+  const wordBox=showWord?`<div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>`
+    :`<div class="word listen"><button class="play" id="say" aria-label="השמעת המילה שוב">${SPK}<span>השמעה חוזרת</span></button><button class="link" id="reveal">הצגת המילה כתובה</button></div>`;
   let body='';
   if(Q.stage==='write'){
     body=`${sentence}
-      <label class="ask" for="inp">${listen?'מה שמעת? כתבי את הפירוש בעברית':'מה הפירוש בעברית?'}</label>
-      <input class="inp" id="inp" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="כתבי כאן את הפירוש" value="${esc(Q.mine)}">
+      <p class="ask">${listen?'מה שמעת? ':''}${nm>1?`למילה יש ${nm} פירושים. כתבי כמה שאת יודעת`:'מה הפירוש בעברית?'}</p>
+      <div class="inps">${M.map((_,k)=>`<input class="inp" id="inp${k}" data-k="${k}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="${k<nm-1?'next':'go'}" aria-label="פירוש ${k+1}" placeholder="${nm>1?`פירוש ${k+1}`:'כתבי כאן את הפירוש'}" value="${esc(Q.mine[k]||'')}">`).join('')}</div>
       <div class="sticky"><button class="btn" id="show">הצגת אפשרויות</button></div>`;
   }else{
-    const ok=ans&&Q.opts[Q.picked]===w;
-    body=`<p class="mine"><span>מה שכתבת:</span> ${Q.mine?esc(Q.mine):'<span>(לא נכתב)</span>'}</p>
-      ${ans?'':'<p class="ask">בחרי את התשובה הנכונה</p>'}
-      <div class="opts">${Q.opts.map((o,k)=>{let c='',pre='';if(ans){if(o===w){c=' right';pre='✓ '}else if(k===Q.picked){c=' wrong';pre='✗ '}}
-        return `<button class="opt${c}" data-k="${k}" ${ans?'disabled':''}>${pre}${esc(label(o))}</button>`}).join('')}</div>
-      <p class="fb ${ans?(ok?'ok':'bad'):''}" role="status" aria-live="polite">${ans?(ok?'נכון!':'לא נכון'):''}</p>
+    const mine=(Q.mine||[]).filter(x=>x&&x.trim());
+    let fb='';
+    if(Q.checked){const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
+      fb=`<p class="fb ${got===nm&&!bad?'ok':got?'part':'bad'}" role="status" aria-live="polite"><span class="frac">${got}/${nm}</span> ${got===nm?(nm>1?'כל הפירושים נכונים':'נכון!'):got?'מהפירושים הנכונים':'לא סימנת פירוש נכון'}${bad?` · סימנת ${bad===1?'פירוש שגוי אחד':bad+' פירושים שגויים'}`:''}</p>`}
+    body=`<p class="mine"><span>מה שכתבת:</span> ${mine.length?mine.map(esc).join(' · '):'<span>(לא נכתב)</span>'}</p>
+      ${Q.checked?'':`<p class="ask">${nm>1?`סמני את כל הפירושים הנכונים (${nm})`:'בחרי את הפירוש הנכון'}</p>`}
+      <div class="opts">${Q.opts.map(([t,ok],k)=>{const on=Q.sel.includes(k);let c=on?' on':'',pre='';
+        if(Q.checked){c='';if(ok&&on){c=' right';pre='✓ '}else if(ok){c=' missed';pre='✓ '}else if(on){c=' wrong';pre='✗ '}else c=' dim'}
+        return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}${Q.checked&&ok&&!on?' <small>(לא סומן)</small>':''}</button>`}).join('')}</div>
+      ${fb}
       ${sentence}
-      ${ans?`<div class="sticky"><button class="btn" id="next">${Q.i+1<n?'למילה הבאה':'לתוצאות'}</button></div>`:''}`;
+      <div class="sticky">${Q.checked?`<p class="ask center">ידעת את המילה?</p><div class="row2"><button class="btn knowno" id="markN">✗ לא ידעתי</button><button class="btn knowyes" id="markY">✓ ידעתי</button></div>`
+        :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>`}</div>`;
   }
   app.innerHTML=`<div class="screen full">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span></div>
@@ -507,36 +494,40 @@ function quizScreen(){
     ${wordBox}
     ${body}
   </div>`;
-  $('exit').onclick=()=>{saveQ();S.active=null;go({screen:Q.from})};
+  function keepInput(){if(Q.stage==='write')Q.mine=M.map((_,k)=>($('inp'+k)||{}).value||'')}
+  $('exit').onclick=()=>{keepInput();saveQ();S.active=null;go({screen:Q.from})};
   $('say').onclick=()=>speak(w.e);
-  const rv=$('reveal');if(rv)rv.onclick=()=>{Q.shown=true;keepInput();saveQ();draw()};
-  const ss=$('showSent');if(ss)ss.onclick=()=>{Q.sent=true;keepInput();saveQ();draw();speak(w.s,.9)};
+  const rv=$('reveal');if(rv)rv.onclick=()=>{keepInput();Q.shown=true;saveQ();draw()};
+  const ss=$('showSent');if(ss)ss.onclick=()=>{keepInput();Q.sent=true;saveQ();draw();speak(w.s,.9)};
   const sy=$('saySent');if(sy)sy.onclick=()=>speak(w.s,.9);
-  function keepInput(){const i=$('inp');if(i)Q.mine=i.value}
   if(Q.stage==='write'){
-    const inp=$('inp');
-    const show=()=>{Q.mine=inp.value.trim();Q.opts=shuffle([w,...distractors(w)]);Q.stage='pick';saveQ();draw();if(listen)speak(w.e)};
+    const show=()=>{keepInput();Q.opts=buildOpts(w);Q.sel=[];Q.stage='pick';saveQ();draw();if(listen)speak(w.e)};
     $('show').onclick=show;
-    inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();show()}};
-    inp.oninput=()=>{Q.mine=inp.value;clearTimeout(window._sv);window._sv=setTimeout(saveQ,400)};
+    app.querySelectorAll('.inps .inp').forEach(inp=>{
+      inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const nx=$('inp'+(+inp.dataset.k+1));if(nx)nx.focus();else show()}};
+      inp.oninput=()=>{keepInput();clearTimeout(window._sv);window._sv=setTimeout(saveQ,400)}});
+  }else if(!Q.checked){
+    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;
+      if(nm===1)Q.sel=Q.sel.includes(k)?[]:[k];else Q.sel=Q.sel.includes(k)?Q.sel.filter(x=>x!==k):[...Q.sel,k];saveQ();draw()});
+    $('check').onclick=()=>{Q.checked=true;const got=Q.sel.filter(k=>Q.opts[k][1]).length;Q.pts+=got;Q.max+=nm;saveQ();draw();
+      const f=app.querySelector('.fb');f&&f.scrollIntoView({block:'nearest',behavior:'smooth'})};
   }else{
-    app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{if(Q.picked!==null)return;Q.picked=+b.dataset.k;
-      if(Q.opts[Q.picked]===w){Q.score++;prog[w.id]=1;MIST.delete(w.id)}else{Q.mist.push(w);prog[w.id]=0;MIST.add(w.id)}saveMist();save();saveQ();draw();
-      const nb=$('next');nb&&nb.focus({preventScroll:true});app.querySelector('.fb').scrollIntoView({block:'nearest',behavior:'smooth'})});
-    const nx=$('next');
-    if(nx)nx.onclick=()=>{Q.i++;if(Q.i>=n){delete SESS[Q.key];saveSess();S.active=null;go({screen:'result'});return}Object.assign(Q,{stage:'write',mine:'',picked:null,opts:null,shown:false,sent:false});saveQ();draw();window.scrollTo(0,0);speak(Q.list[Q.i].e);if(Q.mode==='read'){const i=$('inp');i&&i.focus({preventScroll:true})}};
+    const next=v=>{setKnow(w.id,v);if(v==='y')Q.score++;else Q.mist.push(w);Q.i++;
+      if(Q.i>=n){delete SESS[Q.key];saveSess();S.active=null;go({screen:'result'});return}
+      Object.assign(Q,blankQ());saveQ();draw();window.scrollTo(0,0);speak(Q.list[Q.i].e);if(Q.mode==='read'){const i=$('inp0');i&&i.focus({preventScroll:true})}};
+    $('markY').onclick=()=>next('y');$('markN').onclick=()=>next('n');
   }
 }
 function result(){
-  const done=Math.min(Q.i+(Q.picked!==null&&Q.i<Q.list.length?1:0),Q.list.length),p=done?Math.round(Q.score/done*100):0;
+  const done=Math.min(Q.i,Q.list.length),p=Q.max?Math.round(Q.pts/Q.max*100):0;
   app.innerHTML=`<div class="screen">
-    <div class="center"><p class="sub" style="margin:0 0 10px">${esc(Q.name)}</p><div class="big">${Q.score}/${done}</div><p class="sub">${p}% · ${p===100?'מושלם!':p>=80?'יפה מאוד':p>=50?'התחלה טובה':'כדאי לתרגל עוד'}</p></div>
-    ${Q.mist.length?`<button class="btn" id="retry">בוחן חוזר על ${Q.mist.length} הטעויות</button>`:''}
+    <div class="center"><p class="sub" style="margin:0 0 10px">${esc(Q.name)}</p><div class="big">${Q.score}/${done}</div><p class="sub">מילים שידעת · ${Q.pts}/${Q.max} פירושים נכונים (${p}%)</p></div>
+    ${Q.mist.length?`<button class="btn" id="retry">בוחן על ${Q.mist.length} המילים שלא ידעת</button>`:''}
     <button class="btn secondary" id="back">סיום</button>
-    ${Q.mist.length?`<div><p class="lbl">מילים לחזור עליהן</p><ul class="mist">${Q.mist.map(w=>`<li><button class="spk sm" data-say="${esc(w.e)}" aria-label="השמעה">${SPK}</button><div class="txt"><span class="e">${esc(w.e)}</span><span class="h">${esc(label(w))}</span></div></li>`).join('')}</ul></div>`:''}
+    ${Q.mist.length?`<div><p class="lbl">מילים שסימנת "לא ידעתי"</p><ul class="mist">${Q.mist.map(w=>`<li><button class="spk sm" data-say="${esc(w.e)}" aria-label="השמעה">${SPK}</button><div class="txt"><span class="e">${esc(w.e)}</span><span class="h">${esc(label(w))}</span></div></li>`).join('')}</ul></div>`:''}
   </div>`;
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
-  const r=$('retry');if(r)r.onclick=()=>{S.mode=Q.mode;startQuiz(shuffle(Q.mist),'חזרה על טעויות · '+Q.name.replace('חזרה על טעויות · ',''),Q.from,'R'+Q.key.replace(/^R/,''))};
+  const r=$('retry');if(r)r.onclick=()=>{S.mode=Q.mode;startQuiz(shuffle(Q.mist),'חזרה · '+Q.name.replace('חזרה · ',''),Q.from,'R'+Q.key.replace(/^R/,''))};
   $('back').onclick=()=>{S.l=Q.l;S.g=Q.g;go({screen:Q.from})};
 }
 
@@ -546,7 +537,7 @@ function saveC(){if(!C)return;if(C.i>=C.deck.length){delete SESS[C.key]}else{SES
 function cardScreen(){
   const n=C.deck.length;
   if(C.i>=n){saveC();S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">✓</div><h2 style="margin-top:14px">סיימת את כל ${n} הכרטיסיות</h2></div><button class="btn" id="q">עכשיו לבוחן</button><button class="btn secondary" id="b">חזרה לקבוצה</button></div>`;
-    $('q').onclick=()=>{S.screen='group';draw();$('go').click()};
+    $('q').onclick=()=>{go({screen:'group'});const b=app.querySelector('[data-start],[data-resume]');b&&b.click()};
     $('b').onclick=()=>go({screen:'group'});return}
   const w=C.deck[C.i];
   app.innerHTML=`<div class="screen full">

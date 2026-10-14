@@ -1,10 +1,8 @@
 # English dictionary site
 
-`index.html` is generated. Edit files in `src/`, then run `python3 build.py`.
+`index.html` is generated. Edit files in `src/`, then run `python3 build.py`, commit and push to `main` (Netlify deploys from it).
 
-## Weekly word lists (the user sends one every week)
-Append a new entry to `src/lists.json` → `lists`: `{"date": "YYYY-MM-DD", "words": [[english, hebrew], ...]}`.
-- A word whose English text matches a dictionary word in `src/words.json` exactly (case-insensitive) is shown as "יודעת" in its group. Nothing else changes; it still appears in quizzes.
-- Any other word goes into the "המילים שלי" group automatically. For every such new word, add a short, simple English example sentence to `sentences` (key = the English word exactly as written).
-- Don't edit `src/words.json` for weekly lists.
-Then run `python3 build.py`, commit and push to `main`. Tell the user which words matched and which were added.
+- `src/template.html` – the app (HTML/CSS/JS); `__DATA__` is replaced with `src/words.json`.
+- Words: `[english, [hebrew…], level 1–10, example sentence]`. Groups are 50 words per level, in file order.
+- Quiz: one input line per meaning (Hebrew split on `,` `;` `/` outside parentheses), multi-select options, score per meaning, then the user marks "ידעתי / לא ידעתי".
+- Per-word "know" state lives in localStorage `dictKnow` and syncs via Firestore (project `english-dictionary-452b4`, collection `dictionary`).
