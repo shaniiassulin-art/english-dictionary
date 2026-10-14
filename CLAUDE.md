@@ -7,3 +7,4 @@
 - Each entry in the Hebrew list is one meaning; near-identical meanings are grouped in one entry joined with " / ".
 - Quiz: one input line per meaning, multi-select options (one option per meaning), score per meaning, then the user marks "ידעתי / לא ידעתי".
 - Per-word "know" state lives in localStorage `dictKnow` and syncs via Firestore (project `english-dictionary-452b4`, collection `dictionary`).
+- Voice mode (mic button in the quiz): reads the word and options aloud (en-US / he-IL speech synthesis) and listens with Web Speech recognition in Hebrew; commands: numbers / option text, "ידעתי", "לא ידעתי", "חזור", "עצור".

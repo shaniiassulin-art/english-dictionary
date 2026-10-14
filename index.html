@@ -248,6 +248,17 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .qz .btn{min-height:44px;font-size:.95rem;border-radius:12px;padding:8px 14px}
 .qz .row2{gap:8px}
 .qz .btn{white-space:nowrap}
+
+.qz .mic{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.qz .mic svg{width:18px;height:18px}
+.qz .mic.on{background:var(--bad);color:var(--bg)}
+.vbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));font-size:.95rem}
+.vbar span#vbarTxt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vbar .dot{width:10px;height:10px;border-radius:50%;background:var(--bad);flex:none;animation:vp 1.2s ease-in-out infinite}
+@keyframes vp{50%{opacity:.3}}
+.vstop{border:0;border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-weight:700;padding:8px 14px;cursor:pointer}
+.app:has(.vbar){padding-bottom:64px}
+.vmsg{margin:0;background:var(--bad-soft);color:var(--bad);border-radius:10px;padding:8px 12px;font-size:.9rem}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -357,7 +368,7 @@ function settings(allLabel){
         <button data-mode="read" aria-pressed="${S.mode==='read'}">קריאה</button>
         <button data-mode="listen" aria-pressed="${S.mode==='listen'}">שמיעה</button>
       </div>
-      <p class="hint">${S.mode==='read'?'רואים את המילה כתובה, כותבים פירוש ובוחרים תשובה.':'שומעים את המילה, כותבים פירוש, ואז רואים אותה ובוחרים תשובה.'}</p></div>
+      <p class="hint">${S.mode==='read'?'רואים את המילה כתובה, כותבים פירוש ובוחרים תשובה.':'שומעים את המילה, כותבים פירוש, ואז רואים אותה ובוחרים תשובה.'} בתוך הבוחן, כפתור המיקרופון מפעיל מצב קולי: עונים בדיבור בלי לגעת במסך.</p></div>
   </div>`;
 }
 function bindSettings(){
@@ -489,6 +500,100 @@ function buildOpts(w){const right=meanings(w),need=Math.max(2,4-right.length);
   const pool=shuffle(words.filter(x=>Math.abs(x.l-w.l)<=1&&x.e.toLowerCase()!==w.e.toLowerCase()&&!meanings(x).some(m=>right.includes(m))));
   const wrongs=[];for(const x of pool){const m=shuffle(meanings(x))[0];if(m&&!right.includes(m)&&!wrongs.includes(m))wrongs.push(m);if(wrongs.length>=need)break}
   return shuffle([...right.map(t=>[t,1]),...wrongs.map(t=>[t,0])])}
+/* ---------- quiz actions (shared by touch and voice) ---------- */
+function qShow(){const w=Q.list[Q.i];Q.opts=buildOpts(w);Q.sel=[];Q.stage='pick';saveQ();draw()}
+function qCheck(){const nm=meanings(Q.list[Q.i]).length;Q.checked=true;const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
+  Q.pts+=got;Q.max+=nm;saveQ();draw();const f=app.querySelector('.fb');f&&f.scrollIntoView({block:'nearest',behavior:'smooth'});return{got,bad,nm}}
+function qMark(v){const w=Q.list[Q.i],n=Q.list.length;setKnow(w.id,v);if(v==='y')Q.score++;else Q.mist.push(w);Q.i++;
+  if(Q.i>=n){delete SESS[Q.key];saveSess();S.active=null;stopVoice(true);go({screen:'result'});return true}
+  Object.assign(Q,blankQ());saveQ();draw();window.scrollTo(0,0);
+  if(!V.on){speak(Q.list[Q.i].e);if(Q.mode==='read'){const i=$('inp0');i&&i.focus({preventScroll:true})}}
+  return false}
+
+/* ---------- voice mode: the app reads everything aloud and listens for answers ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const MIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4M8 22h8"/></svg>';
+let V={on:false,token:0,status:'',lock:null,ac:null,miss:0};
+let heVoice=null;
+function pickHe(){if(!TTS)return;const v=speechSynthesis.getVoices();heVoice=v.find(x=>/^(he|iw)/i.test(x.lang))||null}
+if(TTS){pickHe();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',pickHe)}
+function setStatus(t){V.status=t;const el=$('vbarTxt');if(el)el.textContent=t}
+function say(text,lang){return new Promise(res=>{if(!TTS||!text){res();return}
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;const v=lang==='he-IL'?heVoice:voice;if(v)u.voice=v;u.rate=lang==='he-IL'?1:.85;
+    let done=false;const fin=()=>{if(!done){done=true;res()}};u.onend=fin;u.onerror=fin;setTimeout(fin,text.length*220+4000);speechSynthesis.speak(u)}catch(e){res()}})}
+function beep(){try{const ac=V.ac;if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.value=.12;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.12)}catch(e){}}
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function listen(ms){return new Promise(res=>{let r;try{r=new SR()}catch(e){res([]);return}
+  r.lang='he-IL';r.interimResults=true;r.maxAlternatives=3;r.continuous=false;let alts=[],done=false;
+  const fin=()=>{if(done)return;done=true;clearTimeout(t);try{r.stop()}catch(e){}res(alts)};
+  r.onresult=e=>{const last=e.results[e.results.length-1];alts=[...last].map(a=>a.transcript.trim()).filter(Boolean);if(alts[0])setStatus('שמעתי: '+alts[0]);if(last.isFinal)fin()};
+  r.onerror=e=>{if(e.error==='not-allowed'||e.error==='service-not-allowed')V.denied=true;fin()};
+  r.onend=fin;const t=setTimeout(fin,ms||9000);setStatus('מקשיבה… דברי עכשיו');try{r.start()}catch(e){fin()}})}
+const vnorm=t=>String(t||'').toLowerCase().replace(/[֑-ׇ]/g,'').replace(/[.,!?;:"'״׳()\-–]/g,' ').replace(/\s+/g,' ').trim();
+const vwords=t=>vnorm(t).split(' ').filter(Boolean);
+const isStop=t=>vwords(t).some(w=>['עצור','עצרי','הפסק','הפסיקי','סטופ','stop'].includes(w));
+const isRepeat=t=>{const n=vnorm(t);return /(^| )(חזור|חזרי|תחזור|תחזרי|שוב)( |$)/.test(n)||n.includes('עוד פעם')};
+const NUM={'אחת':1,'אחד':1,'ראשונה':1,'ראשון':1,'שתיים':2,'שתים':2,'שניים':2,'שנים':2,'שתי':2,'שנייה':2,'שניה':2,'שני':2,'שלוש':3,'שלש':3,'שלושה':3,'שלישית':3,'שלישי':3,
+  'ארבע':4,'ארבעה':4,'רביעית':4,'רביעי':4,'חמש':5,'חמישה':5,'חמישית':5,'חמישי':5,'שש':6,'שישה':6,'שישית':6,'שישי':6,'שבע':7,'שבעה':7,'שביעית':7,'שביעי':7,'שמונה':8,'שמינית':8};
+function parseSel(alts,opts){
+  for(const a of alts){const n=vnorm(a),found=new Set();
+    (n.match(/\d+/g)||[]).forEach(d=>d.split('').forEach(c=>found.add(+c)));
+    n.split(' ').forEach(w=>{for(const c of [w,w.replace(/^ו/,''),w.replace(/^ה/,''),w.replace(/^וה/,'')])if(NUM[c]){found.add(NUM[c]);break}});
+    const nums=[...found].filter(k=>k>=1&&k<=opts.length).map(k=>k-1);
+    if(nums.length)return nums.sort((x,y)=>x-y);
+    const byText=[];opts.forEach(([t],k)=>{if(t.split(' / ').some(p=>{const q=vnorm(p);return q.length>1&&n.includes(q)}))byText.push(k)});
+    if(byText.length)return byText}
+  return null}
+async function startVoice(){
+  if(!SR){V.on=false;setStatus('');draw();alertBar('זיהוי דיבור לא נתמך בדפדפן הזה. נסי לפתוח את האתר ב־Safari או ב־Chrome.');return}
+  V.on=true;V.denied=false;V.miss=0;S.voice=true;persist();
+  try{V.ac=V.ac||new (window.AudioContext||window.webkitAudioContext)();V.ac.resume&&V.ac.resume()}catch(e){}
+  try{if(navigator.wakeLock&&!V.lock)V.lock=await navigator.wakeLock.request('screen')}catch(e){}
+  draw();voiceLoop();
+}
+function stopVoice(silent){V.on=false;V.token++;S.voice=false;persist();try{speechSynthesis.cancel()}catch(e){}
+  try{V.lock&&V.lock.release()}catch(e){}V.lock=null;setStatus('');if(!silent&&S.screen==='quiz')draw()}
+function alertBar(t){const el=$('vmsg');if(el){el.textContent=t;el.hidden=false}}
+async function voiceLoop(){
+  const tk=++V.token;const alive=()=>V.on&&V.token===tk&&S.screen==='quiz'&&Q&&Q.i<Q.list.length;
+  const miss=async()=>{V.miss++;if(V.miss>=3){await say('לא שמעתי תשובה. עצרתי. לחצי על המיקרופון כדי להמשיך','he-IL');stopVoice();return true}return false};
+  while(alive()){
+    if(V.denied){stopVoice();alertBar('אין הרשאה למיקרופון. אשרי גישה למיקרופון בהגדרות הדפדפן ונסי שוב.');return}
+    const w=Q.list[Q.i],nm=meanings(w).length,snap=()=>Q.i+'|'+Q.stage+'|'+Q.checked,s0=snap();
+    if(Q.stage==='write'){
+      setStatus('מקריאה את המילה');await say(w.e,'en-US');if(!alive())return;
+      if(nm>1){await say(`${nm} פירושים`,'he-IL');if(!alive())return}
+      beep();const a=await listen(9000);if(!alive())return;if(snap()!==s0)continue;const t=a[0]||'';
+      if(isStop(t)){stopVoice();return}
+      if(isRepeat(t))continue;
+      if(!t&&!(await miss()))continue;if(!V.on)return;
+      V.miss=0;Q.mine=t?[t]:[];qShow();continue;
+    }
+    if(!Q.checked){
+      const txt=Q.opts.map(([o],k)=>`${k+1}: ${o.replace(/ \/ /g,', ')}`).join('. ');
+      setStatus('מקריאה את האפשרויות');await say((nm>1?`בחרי ${nm} תשובות. `:'')+txt,'he-IL');if(!alive())return;
+      let sel=null,again=false;
+      for(let tries=0;tries<3&&alive();tries++){beep();const a=await listen(10000);if(!alive())return;if(snap()!==s0){again=true;break}
+        if(isStop(a[0]||'')){stopVoice();return}
+        if(isRepeat(a[0]||'')){again=true;break}
+        sel=parseSel(a,Q.opts);if(sel)break;
+        if(!a.length){if(await miss())return;if(!V.on)return}
+        await say('לא הבנתי. אמרי את מספר התשובה','he-IL');if(!alive())return}
+      if(again)continue;
+      V.miss=0;Q.sel=sel||[];const r=qCheck();
+      const right=Q.opts.filter(o=>o[1]).map(o=>o[0].replace(/ \/ /g,', '));
+      const fb=r.got===nm&&!r.bad?'נכון!':`${r.got} מתוך ${nm}. ${nm>1?'התשובות הנכונות':'התשובה הנכונה'}: ${right.join('. ')}`;
+      setStatus('');await say(fb+'. ידעת את המילה?','he-IL');continue;
+    }
+    beep();const a=await listen(8000);if(!alive())return;if(snap()!==s0)continue;const t=vnorm(a.join(' '));
+    if(isStop(t)){stopVoice();return}
+    if(isRepeat(t)){await say('ידעת את המילה? אמרי ידעתי או לא ידעתי','he-IL');continue}
+    let v=null;if(/(^| )(לא|no)( |$)/.test(t)||t.includes('לא ידעתי'))v='n';else if(/ידעתי|יודעת|כן|ידעת|yes/.test(t))v='y';
+    if(!v){if(!a.length&&await miss())return;if(!V.on)return;await say('אמרי ידעתי או לא ידעתי','he-IL');continue}
+    V.miss=0;if(qMark(v)){await say('סיימת את הבוחן. כל הכבוד','he-IL');return}
+  }
+}
+
 function quizScreen(){
   const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',M=meanings(w),nm=M.length;
   const showWord=!listen||Q.shown||Q.stage==='pick';
@@ -517,19 +622,23 @@ function quizScreen(){
         :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>`}</div>`;
   }
   app.innerHTML=`<div class="screen qz">
-    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span></div>
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span><button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
+    <p class="vmsg" id="vmsg" hidden></p>
     <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}</p>
     ${wordBox}
     ${body}
+    ${V.on?`<div class="vbar" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="vbarTxt">${esc(V.status||'מצב קולי פעיל')}</span><button class="vstop" id="vstop">עצירה</button></div>`:''}
   </div>`;
+  $('voiceBtn').onclick=()=>{if(V.on)stopVoice();else startVoice()};
+  const vs=$('vstop');if(vs)vs.onclick=()=>stopVoice();
   function keepInput(){if(Q.stage==='write')Q.mine=M.map((_,k)=>($('inp'+k)||{}).value||'')}
-  $('exit').onclick=()=>{keepInput();saveQ();S.active=null;go({screen:Q.from})};
+  $('exit').onclick=()=>{keepInput();stopVoice(true);saveQ();S.active=null;go({screen:Q.from})};
   $('say').onclick=()=>speak(w.e);
   const rv=$('reveal');if(rv)rv.onclick=()=>{keepInput();Q.shown=true;saveQ();draw()};
   const ss=$('showSent');if(ss)ss.onclick=()=>{keepInput();Q.sent=true;saveQ();draw();speak(w.s,.9)};
   const sy=$('saySent');if(sy)sy.onclick=()=>speak(w.s,.9);
   if(Q.stage==='write'){
-    const show=()=>{keepInput();Q.opts=buildOpts(w);Q.sel=[];Q.stage='pick';saveQ();draw();if(listen)speak(w.e)};
+    const show=()=>{keepInput();qShow();if(listen&&!V.on)speak(w.e)};
     $('show').onclick=show;
     app.querySelectorAll('.inps .inp').forEach(inp=>{
       inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const nx=$('inp'+(+inp.dataset.k+1));if(nx)nx.focus();else show()}};
@@ -537,13 +646,9 @@ function quizScreen(){
   }else if(!Q.checked){
     app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;
       if(nm===1)Q.sel=Q.sel.includes(k)?[]:[k];else Q.sel=Q.sel.includes(k)?Q.sel.filter(x=>x!==k):[...Q.sel,k];saveQ();draw()});
-    $('check').onclick=()=>{Q.checked=true;const got=Q.sel.filter(k=>Q.opts[k][1]).length;Q.pts+=got;Q.max+=nm;saveQ();draw();
-      const f=app.querySelector('.fb');f&&f.scrollIntoView({block:'nearest',behavior:'smooth'})};
+    $('check').onclick=()=>qCheck();
   }else{
-    const next=v=>{setKnow(w.id,v);if(v==='y')Q.score++;else Q.mist.push(w);Q.i++;
-      if(Q.i>=n){delete SESS[Q.key];saveSess();S.active=null;go({screen:'result'});return}
-      Object.assign(Q,blankQ());saveQ();draw();window.scrollTo(0,0);speak(Q.list[Q.i].e);if(Q.mode==='read'){const i=$('inp0');i&&i.focus({preventScroll:true})}};
-    $('markY').onclick=()=>next('y');$('markN').onclick=()=>next('n');
+    $('markY').onclick=()=>qMark('y');$('markN').onclick=()=>qMark('n');
   }
 }
 function result(){
