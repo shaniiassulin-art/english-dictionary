@@ -206,6 +206,37 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .btn.knowyes{background:var(--ok);color:var(--bg)}
 .btn.knowno{background:var(--bad);color:var(--bg)}
 .sticky .ask{margin:0}
+
+/* compact quiz: everything fits on one phone screen, also above the keyboard */
+.app:has(.qz){padding-block:6px 10px}
+.screen.qz{gap:8px;font-size:16px;min-height:0}
+.qz .qtop{padding-block:4px;gap:10px}
+.qz .x{width:36px;height:36px;font-size:1rem}
+.qz .prog{height:6px}
+.qz .count{font-size:.85rem}
+.qz .mode-tag{font-size:.75rem;margin:-6px 0 -4px}
+.qz .word{padding:0 8px;gap:10px;flex-direction:row;justify-content:center}
+.qz .word .w{font-size:clamp(1.5rem,7vw,2rem)}
+.qz .word .spk{width:38px;height:38px}
+.qz .word.listen{flex-direction:row;padding:4px 8px}
+.qz .play{width:64px;height:64px;font-size:.7rem;gap:2px}
+.qz .play svg{width:26px;height:26px}
+.qz .link{min-height:32px;padding:4px}
+.qz .ask{font-size:.92rem;margin:0}
+.qz .inps{gap:6px}
+.qz .inp{min-height:40px;padding:6px 12px;font-size:16px;border-radius:10px}
+.qz .sentence{padding:4px 10px;align-items:center;font-size:.92rem;line-height:1.35;gap:8px;border-radius:10px}
+.qz .spk.sm{width:30px;height:30px}
+.qz .spk.sm svg{width:14px;height:14px}
+.qz .mine{padding:5px 10px;font-size:.88rem;border-radius:10px}
+.qz .opts{gap:5px}
+.qz .opt{min-height:36px;padding:5px 12px;line-height:1.3;font-size:.95rem;border-radius:10px;border-width:1.5px}
+.qz .fb{font-size:.98rem}
+.qz .frac{font-size:1.15em}
+.qz .sticky{position:static;padding:2px 0 calc(4px + env(safe-area-inset-bottom,0px));gap:6px;margin-top:0}
+.qz .btn{min-height:44px;font-size:.95rem;border-radius:12px;padding:8px 14px}
+.qz .row2{gap:8px}
+.qz .btn{white-space:nowrap}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -454,7 +485,7 @@ function quizScreen(){
   let body='';
   if(Q.stage==='write'){
     body=`${sentence}
-      <p class="ask">${listen?'מה שמעת? ':''}${nm>1?`למילה יש ${nm} פירושים. כתבי כמה שאת יודעת`:'מה הפירוש בעברית?'}</p>
+      ${nm>1||listen?`<p class="ask">${listen?'מה שמעת? ':''}${nm>1?`${nm} פירושים · כתבי כמה שאת יודעת`:''}</p>`:''}
       <div class="inps">${M.map((_,k)=>`<input class="inp" id="inp${k}" data-k="${k}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="${k<nm-1?'next':'go'}" aria-label="פירוש ${k+1}" placeholder="${nm>1?`פירוש ${k+1}`:'כתבי כאן את הפירוש'}" value="${esc(Q.mine[k]||'')}">`).join('')}</div>
       <div class="sticky"><button class="btn" id="show">הצגת אפשרויות</button></div>`;
   }else{
@@ -469,12 +500,12 @@ function quizScreen(){
         return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}${Q.checked&&ok&&!on?' <small>(לא סומן)</small>':''}</button>`}).join('')}</div>
       ${fb}
       ${sentence}
-      <div class="sticky">${Q.checked?`<p class="ask center">ידעת את המילה?</p><div class="row2"><button class="btn knowno" id="markN">✗ לא ידעתי</button><button class="btn knowyes" id="markY">✓ ידעתי</button></div>`
+      <div class="sticky">${Q.checked?`<div class="row2"><button class="btn knowno" id="markN">✗ לא ידעתי</button><button class="btn knowyes" id="markY">✓ ידעתי</button></div>`
         :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>`}</div>`;
   }
-  app.innerHTML=`<div class="screen full">
+  app.innerHTML=`<div class="screen qz">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span></div>
-    <p class="mode-tag">${listen?'בוחן שמיעה':'בוחן קריאה'} · ${esc(Q.name)}</p>
+    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}</p>
     ${wordBox}
     ${body}
   </div>`;
