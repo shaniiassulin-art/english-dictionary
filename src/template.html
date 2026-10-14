@@ -254,11 +254,23 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .qz .others.sm{font-size:.85rem;padding:6px 12px}
 .oth{color:var(--muted);font-size:.85rem;margin-top:2px}
 .card .oth{font-size:.95rem}
+
+/* no pinch or double-tap zoom */
+html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%}
+button,a,input,label,summary{touch-action:manipulation}
+input,textarea,select{font-size:max(16px,1em)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 <div class="app" dir="rtl" id="app"></div>
 
+<script>
+/* iOS Safari ignores user-scalable=no, so block pinch and double-tap zoom here */
+(function(){const stop=e=>e.preventDefault();
+  ['gesturestart','gesturechange','gestureend'].forEach(t=>document.addEventListener(t,stop,{passive:false}));
+  document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
+})();
+</script>
 <script>
 /* ---------- cloud sync (Firestore REST) ---------- */
 const FB={key:'AIzaSyDH9rTvdftEKsj7lgM_FkdnQAnNCTQMME4',project:'english-dictionary-452b4'};
