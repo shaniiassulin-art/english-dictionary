@@ -262,7 +262,8 @@ let SYNC_ID=LS.get('dictSyncId');if(!SYNC_ID||SYNC_ID.length<20){SYNC_ID=newCode
 let SYNC={state:'idle',ready:false,applying:false,timer:null};
 const docUrl=id=>`https://firestore.googleapis.com/v1/projects/${FB.project}/databases/(default)/documents/dictionary/${encodeURIComponent(id)}?key=${FB.key}`;
 function dirty(){if(SYNC.applying)return;LS.set('dictUpdated',String(Date.now()));if(!SYNC.ready)return;clearTimeout(SYNC.timer);setSync('saving');SYNC.timer=setTimeout(push,1200)}
-function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}')})}
+let SDEL={};try{SDEL=JSON.parse(localStorage.getItem('dictSessDel')||'{}')}catch(e){}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}')})}
 async function push(){
   const t=+(LS.get('dictUpdated')||Date.now());
   try{const r=await fetch(docUrl(SYNC_ID),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:snapshot()},updated:{integerValue:String(t)}}})});
@@ -275,22 +276,26 @@ async function pull(){
 }
 function mergeData(a,b){
   const prog={...(a.prog||{})};for(const k in (b.prog||{}))prog[k]=Math.max(prog[k]||0,b.prog[k]||0);
+  const sdel={...(a.sdel||{})};for(const k in (b.sdel||{}))sdel[k]=Math.max(sdel[k]||0,b.sdel[k]||0);
   const sess={...(a.sess||{})};for(const k in (b.sess||{}))if(!sess[k]||(b.sess[k].t||0)>(sess[k].t||0))sess[k]=b.sess[k];
+  for(const k in sess)if(sdel[k]&&sdel[k]>=(sess[k].t||0))delete sess[k];
   const ka=a.know||migrateMist(a.mist),kb=b.know||migrateMist(b.mist);
   const know={...ka};for(const k in kb)if(!know[k]||(kb[k][1]||0)>(know[k][1]||0))know[k]=kb[k];
-  return{prog,sess,know};
+  return{prog,sess,sdel,know};
 }
 function applyRemote(d,t){
   SYNC.applying=true;
-  try{prog=d.prog||{};SESS=d.sess||{};KNOW=d.know||migrateMist(d.mist);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   if(!['quiz','cards'].includes(S.screen))draw();
 }
 async function syncNow(forceRemote){
   setSync('loading');
-  try{const rem=await pull(),loc=+(LS.get('dictUpdated')||0);
-    SYNC.ready=true;
-    if(rem&&(forceRemote||rem.updated>loc))applyRemote(rem.data,rem.updated);
-    else if(!rem||loc>rem.updated)await push();
+  try{const rem=await pull();SYNC.ready=true;
+    if(!rem){await push();setSync('ok');return}
+    const local=JSON.parse(snapshot()),merged=mergeData(rem.data,local);
+    const same=o=>JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{}});
+    if(same(merged)!==same(local))applyRemote(merged,Date.now());
+    if(same(merged)!==same(rem.data)){LS.set('dictUpdated',String(Date.now()));await push()}
     setSync('ok');
   }catch(e){SYNC.ready=true;setSync('error')}
 }
@@ -308,10 +313,10 @@ let prog={};try{prog=JSON.parse(localStorage.getItem('dictProg')||'{}')}catch(e)
 // migrate old keys "word|unit"
 for(const k of Object.keys(prog)){if(k.includes('|')){const e=k.split('|')[0];if(prog[k]>=1)prog[e]=1;delete prog[k]}}
 const save=()=>{try{localStorage.setItem('dictProg',JSON.stringify(prog))}catch(e){};dirty()};
-save();
+try{localStorage.setItem('dictProg',JSON.stringify(prog))}catch(e){}
 const W=Object.fromEntries(words.map(w=>[w.id,w]));
 let SESS={};try{SESS=JSON.parse(localStorage.getItem('dictSess')||'{}')}catch(e){}
-const saveSess=()=>{try{localStorage.setItem('dictSess',JSON.stringify(SESS))}catch(e){};dirty()};
+const saveSess=()=>{try{localStorage.setItem('dictSess',JSON.stringify(SESS));localStorage.setItem('dictSessDel',JSON.stringify(SDEL))}catch(e){};dirty()};
 const ids=a=>a.map(w=>w.id), objs=a=>a.map(i=>W[i]).filter(Boolean);
 /* "do I know this word": KNOW[id]=['y'|'n', timestamp] */
 function migrateMist(m){const o={};(m||[]).forEach(id=>o[id]=['n',1]);return o}
@@ -319,10 +324,10 @@ let KNOW=null;try{KNOW=JSON.parse(localStorage.getItem('dictKnow')||'null')}catc
 if(!KNOW){let m=[];try{m=JSON.parse(localStorage.getItem('dictMist')||'[]')}catch(e){}KNOW=migrateMist(m)}
 const saveKnow=()=>{try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){};dirty()};
 try{if(!localStorage.getItem('dictKnow'))localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
-const kst=w=>(KNOW[w.id]||[])[0];
+const kst=w=>{const v=(KNOW[w.id]||[])[0];return v==='y'||v==='n'?v:undefined};
 const isY=w=>kst(w)==='y', isN=w=>kst(w)==='n';
 const known=isY;
-function setKnow(id,v){if(v)KNOW[id]=[v,Date.now()];else delete KNOW[id];saveKnow()}
+function setKnow(id,v){KNOW[id]=[v||'u',Date.now()];saveKnow()}
 /* each entry in w.h is one meaning; near-synonyms are already grouped with " / " */
 const meanings=w=>w.h;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -363,7 +368,7 @@ function bindSettings(){
 }
 function pickList(ws){return [...shuffle(ws.filter(w=>!isY(w))),...shuffle(ws.filter(isY))]}
 function quizPanel(key,ws,title,name,from,noSet,cls){
-  if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)delete SESS[key];
+  if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)(SDEL[key]=Date.now(),delete SESS[key]);
   const ss=SESS[key];
   if(ss){const n=ss.ids.length,at=Math.min(ss.i+1,n);
     return `<section class="panel ${cls||''}"><h3>${title}</h3>
@@ -376,7 +381,7 @@ function quizPanel(key,ws,title,name,from,noSet,cls){
 function bindQuizPanel(key,ws,name,from){
   const st=app.querySelector(`[data-start="${key}"]`);if(st)st.onclick=()=>startQuiz(pickList(ws),name,from,key);
   const rs=app.querySelector(`[data-resume="${key}"]`);if(rs)rs.onclick=()=>resumeQuiz(key);
-  const rr=app.querySelector(`[data-restart="${key}"]`);if(rr)rr.onclick=()=>{delete SESS[key];saveSess();draw()};
+  const rr=app.querySelector(`[data-restart="${key}"]`);if(rr)rr.onclick=()=>{(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw()};
 }
 
 function home(){
@@ -435,7 +440,7 @@ function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'
   <div class="yn" role="group" aria-label="האם את יודעת את ${esc(w.e)}"><button class="yn-b y" data-k="${esc(w.id)}" data-v="y" aria-pressed="${st==='y'}" aria-label="יודעת">✓</button><button class="yn-b n" data-k="${esc(w.id)}" data-v="n" aria-pressed="${st==='n'}" aria-label="לא יודעת">✗</button></div></li>`}
 function bindRows(){
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
-  app.querySelectorAll('.yn-b').forEach(b=>b.onclick=()=>{const id=b.dataset.k,v=b.dataset.v;setKnow(id,(KNOW[id]||[])[0]===v?null:v);const y=window.scrollY||0;draw();window.scrollTo(0,y)});
+  app.querySelectorAll('.yn-b').forEach(b=>b.onclick=()=>{const id=b.dataset.k,v=b.dataset.v;setKnow(id,kst(W[id])===v?null:v);const y=window.scrollY||0;draw();window.scrollTo(0,y)});
 }
 function groupScreen(){
   const ws=group(S.l,S.g),nw=ws.filter(isN),un=ws.filter(w=>!kst(w)).length;
@@ -482,7 +487,7 @@ function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return fal
   Q={key,list:objs(s.ids),i:s.i,score:s.score||0,pts:s.pts||0,max:s.max||0,mist:objs(s.mist||[]),name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,...blankQ(),
     stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent};
   if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}return Q.i<Q.list.length}
-function resumeQuiz(key){if(!loadQ(key)){delete SESS[key];saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)speak(Q.list[Q.i].e)}
+function resumeQuiz(key){if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)speak(Q.list[Q.i].e)}
 function buildOpts(w){const right=meanings(w),need=Math.max(2,4-right.length);
   const pool=shuffle(words.filter(x=>Math.abs(x.l-w.l)<=1&&x.e.toLowerCase()!==w.e.toLowerCase()&&!meanings(x).some(m=>right.includes(m))));
   const wrongs=[];for(const x of pool){const m=shuffle(meanings(x))[0];if(m&&!right.includes(m)&&!wrongs.includes(m))wrongs.push(m);if(wrongs.length>=need)break}
@@ -492,7 +497,7 @@ function qShow(){const w=Q.list[Q.i];Q.opts=buildOpts(w);Q.sel=[];Q.stage='pick'
 function qCheck(){const nm=meanings(Q.list[Q.i]).length;Q.checked=true;const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
   Q.pts+=got;Q.max+=nm;saveQ();draw();const f=app.querySelector('.fb');f&&f.scrollIntoView({block:'nearest',behavior:'smooth'});return{got,bad,nm}}
 function qMark(v){const w=Q.list[Q.i],n=Q.list.length;setKnow(w.id,v);if(v==='y')Q.score++;else Q.mist.push(w);Q.i++;
-  if(Q.i>=n){delete SESS[Q.key];saveSess();S.active=null;stopVoice(true);go({screen:'result'});return true}
+  if(Q.i>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);go({screen:'result'});return true}
   Object.assign(Q,blankQ());saveQ();draw();window.scrollTo(0,0);
   if(!V.on){speak(Q.list[Q.i].e);if(Q.mode==='read'){const i=$('inp0');i&&i.focus({preventScroll:true})}}
   return false}
@@ -661,7 +666,7 @@ function result(){
 
 /* flashcards */
 let C=null;
-function saveC(){if(!C)return;if(C.i>=C.deck.length){delete SESS[C.key]}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g}}saveSess()}
+function saveC(){if(!C)return;if(C.i>=C.deck.length){(SDEL[C.key]=Date.now(),delete SESS[C.key])}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g}}saveSess()}
 function cardScreen(){
   const n=C.deck.length;
   if(C.i>=n){saveC();S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">✓</div><h2 style="margin-top:14px">סיימת את כל ${n} הכרטיסיות</h2></div><button class="btn" id="q">עכשיו לבוחן</button><button class="btn secondary" id="b">חזרה לקבוצה</button></div>`;
