@@ -394,7 +394,13 @@ const $=id=>document.getElementById(id);
 const TTS='speechSynthesis' in window;if(!TTS)document.documentElement.classList.add('no-tts');
 let voice=null;function pickVoice(){if(!TTS)return;const v=speechSynthesis.getVoices();voice=v.find(x=>/en[-_]US/i.test(x.lang)&&/Google|Samantha|Aria|Jenny|Natural/i.test(x.name))||v.find(x=>/en[-_]US/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null}
 if(TTS){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
-function speak(t,rate){if(!TTS)return;try{speechSynthesis.cancel();t=t.replace(/\s*\(.*?\)/g,'').replace(/…|\.\.\./g,', ').replace(/^\d+(st|nd|rd|th)\s*-\s*/,'').replace(/\s*-\s*10th$/,'');const u=new SpeechSynthesisUtterance(t);u.lang='en-US';if(voice)u.voice=voice;u.rate=rate||.85;speechSynthesis.speak(u)}catch(e){}}
+/* iOS drops an utterance started right after cancel(), so only cancel when something is playing and wait a moment */
+function speakNow(t,rate){const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.volume=1;if(voice)u.voice=voice;u.rate=rate||.85;try{speechSynthesis.resume()}catch(e){}speechSynthesis.speak(u)}
+function speak(t,rate){if(!TTS)return;try{t=t.replace(/\s*\(.*?\)/g,'').replace(/…|\.\.\./g,', ').replace(/^\d+(st|nd|rd|th)\s*-\s*/,'').replace(/\s*-\s*10th$/,'');
+  if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();setTimeout(()=>speakNow(t,rate),150)}else speakNow(t,rate)}catch(e){}}
+/* unlock speech on the first tap so later automatic reading (next word, resumed quiz) is allowed */
+(function(){if(!TTS)return;let done=false;const unlock=()=>{if(done)return;done=true;try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}};
+  ['touchend','click'].forEach(ev=>document.addEventListener(ev,unlock,{once:true,capture:true}))})();
 function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=esc(s);
   toks.filter(t=>t.length>1&&!['st','nd','rd','th','of','the','to','in','on','a'].includes(t)).forEach(t=>{const stem=t.length>4?t.slice(0,t.length-2):t;
     out=out.replace(new RegExp('\\b('+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[a-z]*)','i'),'<mark>$1</mark>')});return out}
