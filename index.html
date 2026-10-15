@@ -500,7 +500,8 @@ function home(){
 }
 
 function countLine(ws){const y=ws.filter(isY).length,n=ws.filter(isN).length;
-  return `<span class="kn">יודעת ${y}/${ws.length}</span>${n?` · <span class="unk">לא יודעת ${n}</span>`:''}`}
+  const u=ws.length-y-n;
+  return `<span class="kn">יודעת ${y}/${ws.length}</span>${n?` · <span class="unk">לא יודעת ${n}</span>`:''}${(y||n)&&u?` · לא סומנו ${u}`:''}`}
 function level(){
   const ws=byLv(S.l),n=nGroups(S.l),nw=ws.filter(isN);
   app.innerHTML=`<div class="screen">
