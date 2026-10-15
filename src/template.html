@@ -342,11 +342,12 @@ const LVN=['קל מאוד','קל','קל-בינוני','בינוני','בינונ
 const SET=50;
 /* one card per meaning: a word with several meanings appears several times, each asking one meaning and
    showing the others. Sibling cards are spread ~one group (50) apart so they never come one after another. */
-const RAW=D.map(r=>({e:r[0],h:r[1],l:r[2],s:r[3]}));
+/* optional 5th field {id, src}: an English form split out of a dictionary line ("know, knew" -> know / knew); src = old card ids its marks come from */
+const RAW=D.map(r=>({e:r[0],h:r[1],l:r[2],s:r[3],uid:(r[4]&&r[4].id)||r[0],src:r[4]&&r[4].src}));
 const words=[];
 for(let l=1;l<=10;l++){const prim=RAW.filter(r=>r.l===l),Np=prim.length||1,items=[];
   prim.forEach((r,p)=>{const n=r.h.length;r.h.forEach((m,k)=>items.push({key:k?((p+k*SET)%Np)+k*.01+.001:p,
-    w:{id:n>1?r.e+'#'+k:r.e,e:r.e,h:[m],others:r.h.filter((_,j)=>j!==k),l:r.l,s:Array.isArray(r.s)?(r.s[k]||r.s[0]):r.s}}))});
+    w:{id:n>1?r.uid+'#'+k:r.uid,src:r.src&&r.src[k],e:r.e,h:[m],others:r.h.filter((_,j)=>j!==k),l:r.l,s:Array.isArray(r.s)?(r.s[k]||r.s[0]):r.s}}))});
   items.sort((a,b)=>a.key-b.key);items.forEach(it=>words.push(it.w))}
 const WORDS_N=RAW.length;
 const byLv=l=>words.filter(w=>w.l===l);
@@ -360,7 +361,7 @@ try{localStorage.setItem('dictProg',JSON.stringify(prog))}catch(e){}
 const W=Object.fromEntries(words.map(w=>[w.id,w]));
 let SESS={};try{SESS=JSON.parse(localStorage.getItem('dictSess')||'{}')}catch(e){}
 const saveSess=()=>{try{localStorage.setItem('dictSess',JSON.stringify(SESS));localStorage.setItem('dictSessDel',JSON.stringify(SDEL))}catch(e){};dirty()};
-const ids=a=>a.map(w=>w.id), objs=a=>a.map(i=>W[i]||W[i+'#0']||W[String(i).replace(/#\d+$/,'')]).filter(Boolean);
+const ids=a=>a.map(w=>w.id), objs=a=>a.map(i=>W[i]||W[i+'#0']||W[String(i).replace(/#\d+$/,'')]||words.find(w=>w.src&&(w.src===i||w.src.replace(/#\d+$/,'')===i))).filter(Boolean);
 /* "do I know this word": KNOW[id]=['y'|'n', timestamp] */
 function migrateMist(m){const o={};(m||[]).forEach(id=>o[id]=['n',1]);return o}
 let KNOW=null;try{KNOW=JSON.parse(localStorage.getItem('dictKnow')||'null')}catch(e){}
@@ -378,6 +379,9 @@ function migSplit(flag,M){try{if(LS.get(flag))return;let ch=false;
   if(ch)try{saveKnow()}catch(e){}LS.set(flag,'1')}catch(e){}}
 migSplit('migSplit2',{mind:{0:[0],1:[1,2]},position:{0:[0,1],1:[2]}});
 migSplit('migSplit3',{post:{0:[0,1],1:[2,3],2:[4,5],3:[6]}});
+/* a form split out of a dictionary line keeps the mark of the card it came from */
+words.forEach(w=>{if(!w.src||KNOW[w.id])return;const b=w.src.replace(/#\d+$/,'');
+  const o=KNOW[w.src]||KNOW[b]||Object.keys(KNOW).filter(k=>k.startsWith(b+'#')).map(k=>KNOW[k]).sort((a,c)=>c[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()});
 /* a word that went back to one meaning keeps the newest mark of its former meaning cards */
 words.forEach(w=>{if(w.id===w.e&&!KNOW[w.id]){const o=Object.keys(KNOW).filter(k=>k.startsWith(w.e+'#')).map(k=>KNOW[k]).sort((a,b)=>b[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()}});
 try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
