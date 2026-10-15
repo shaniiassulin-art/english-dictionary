@@ -527,7 +527,7 @@ function groupScreen(){
   bindSettings();bindQuizPanel(gkey(),ws,name,'group');
   bindQuizPanel('N'+gkey(),nw,'לא יודעת · '+name,'group');
   $('fc').onclick=()=>{const k='C'+gkey(),ss=SESS[k];
-    C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'});if(C.deck[C.i])speak(C.deck[C.i].e)};
+    C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'})};
 }
 function wordsScreen(){
   const ws=group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
@@ -548,13 +548,15 @@ function wordsScreen(){
 /* quiz-logic */
 let Q=null;
 const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false});
-function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},rv:null,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});speak(list[0].e)}
+/* outside voice mode words are read only when a speaker button is pressed, except in the listening quiz, where the word is hidden */
+function autoSay(){if(Q&&Q.mode==='listen'&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
+function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},rv:null,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});autoSay()}
 function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),marks:Q.marks||{},name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent};saveSess()}
 function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return false;
   Q={key,list:objs(s.ids),i:s.i,score:s.score||0,pts:s.pts||0,max:s.max||0,mist:objs(s.mist||[]),marks:s.marks||{},rv:null,name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,...blankQ(),
     stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent};
   if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}return Q.i<Q.list.length}
-function resumeQuiz(key){if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)speak(Q.list[Q.i].e)}
+function resumeQuiz(key){if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)autoSay()}
 /* the correct meanings plus ONE wrong meaning that looks or sounds close, to make it confusing */
 const bigr=t=>{t=String(t).toLowerCase().replace(/\([^)]*\)/g,'').replace(/[^a-zא-ת]/g,'');const b=new Set();for(let i=0;i<t.length-1;i++)b.add(t.slice(i,i+2));return b};
 const jac=(a,b)=>{if(!a.size||!b.size)return 0;let n=0;a.forEach(x=>{if(b.has(x))n++});return n/(a.size+b.size-n)};
@@ -575,7 +577,7 @@ function qCheck(){const nm=meanings(Q.list[Q.i]).length;Q.checked=true;const got
 function qMark(v){const w=Q.list[Q.i],n=Q.list.length;setKnow(w.id,v);Q.marks=Q.marks||{};Q.marks[w.id]=v;if(v==='y')Q.score++;else Q.mist.push(w);Q.i++;
   if(Q.i>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);go({screen:'result'});return true}
   Object.assign(Q,blankQ());saveQ();draw();window.scrollTo(0,0);
-  if(!V.on){speak(Q.list[Q.i].e);if(Q.mode==='read'){const i=$('inp0');i&&i.focus({preventScroll:true})}}
+  if(!V.on){autoSay();if(Q.mode==='read'){const i=$('inp0');i&&i.focus({preventScroll:true})}}
   return false}
 
 /* ---------- voice mode: the app reads everything aloud and listens for answers ---------- */
@@ -745,10 +747,10 @@ function quizScreen(){
   $('exit').onclick=()=>{keepInput();stopVoice(true);saveQ();S.active=null;go({screen:Q.from})};
   $('say').onclick=()=>speak(w.e);
   const rv=$('reveal');if(rv)rv.onclick=()=>{keepInput();Q.shown=true;saveQ();draw()};
-  const ss=$('showSent');if(ss)ss.onclick=()=>{keepInput();Q.sent=true;saveQ();draw();speak(w.s,.9)};
+  const ss=$('showSent');if(ss)ss.onclick=()=>{keepInput();Q.sent=true;saveQ();draw()};
   const sy=$('saySent');if(sy)sy.onclick=()=>speak(w.s,.9);
   if(Q.stage==='write'){
-    const show=()=>{keepInput();qShow();if(listen&&!V.on)speak(w.e)};
+    const show=()=>{keepInput();qShow()};
     $('show').onclick=show;
     app.querySelectorAll('.inps .inp').forEach(inp=>{
       inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const nx=$('inp'+(+inp.dataset.k+1));if(nx)nx.focus();else show()}};
@@ -793,8 +795,8 @@ function cardScreen(){
   $('card').onclick=()=>{C.open=!C.open;draw()};
   $('say').onclick=()=>speak(w.e);
   $('saySent').onclick=()=>speak(w.s,.9);
-  $('prev').onclick=()=>{C.i--;C.open=false;saveC();draw();speak(C.deck[C.i].e)};
-  $('nxt').onclick=()=>{C.i++;C.open=false;saveC();draw();if(C.deck[C.i])speak(C.deck[C.i].e)};
+  $('prev').onclick=()=>{C.i--;C.open=false;saveC();draw()};
+  $('nxt').onclick=()=>{C.i++;C.open=false;saveC();draw()};
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.screen==='quiz'||S.screen==='cards'))$('exit')?.click()});
 (function boot(){
