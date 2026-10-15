@@ -656,8 +656,14 @@ const MIC='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-wid
 let V={on:false,token:0,status:'',lock:null,ac:null,miss:0};
 function setStatus(t){V.status=t;const el=$('vbarTxt');if(el)el.textContent=t}
 /* iOS: speech only plays if the first utterance starts inside the tap, never right after cancel(), and not while the mic is still closing */
-function sayNow(text,lang,res){try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;u.rate=lang==='he-IL'?1:.85;
-    let done=false;const fin=()=>{if(!done){done=true;res()}};u.onend=fin;u.onerror=fin;setTimeout(fin,text.length*300+5000);speechSynthesis.speak(u)}catch(e){res()}}
+/* iOS sometimes leaves the speech queue stuck after other audio played: if nothing starts within 1.5 s, reset and try once more */
+function sayNow(text,lang,res,retry){try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;u.rate=lang==='he-IL'?1:.85;
+    let done=false,started=false;const fin=()=>{if(!done){done=true;clearTimeout(t1);clearTimeout(t2);res()}};u.onstart=()=>{started=true};u.onend=fin;u.onerror=fin;
+    const t1=setTimeout(()=>{if(!started&&!done&&!retry&&!speechSynthesis.speaking){done=true;clearTimeout(t2);try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>sayNow(text,lang,res,true),100)}},1500);
+    const t2=setTimeout(fin,text.length*300+5000);try{speechSynthesis.resume()}catch(e){}speechSynthesis.speak(u)}catch(e){res()}}
+/* several short sentences, one after another (long utterances get cut on iPhone) */
+async function sayAll(parts,alive){for(const p of parts){if(!p)continue;await say(p,'he-IL');if(alive&&!alive())return false}return true}
+const heOpt=o=>o.replace(/ \/ /g,', ');
 async function say(text,lang){if(!text)return;
   /* give the phone time to switch from the microphone back to the speaker, or the start of the speech is cut */
   const gap=800-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
@@ -719,17 +725,20 @@ async function voiceLoop(){
       setStatus('מקריאה את המילה');await say(w.e,'en-US');if(!alive())return;
       /* example sentence right after the word (and show it on screen) */
       if(w.s){if(!Q.sent){Q.sent=true;saveQ();draw()}setStatus('מקריאה משפט לדוגמה');await wait(300);await say(w.s,'en-US');if(!alive())return}
-      /* the same text that is written above the answer box */
-      if(w.others.length){setStatus('מקריאה את הפירושים האחרים');await say('פירושים אחרים של המילה: '+w.others.map((o,i)=>(i+1)+': '+o.replace(/ \/ /g,', ')).join('. ')+'. מה הפירוש הנוסף?','he-IL');if(!alive())return}
+      /* read what is written on the screen */
+      setStatus('מקריאה את ההוראות');
+      if(w.others.length){if(!await sayAll(w.others.length===1?[`למילה יש פירוש אחר אחד: ${heOpt(w.others[0])}.`]:[`למילה יש ${w.others.length} פירושים אחרים.`,
+          ...w.others.map((o,i)=>`פירוש ${i+1}: ${heOpt(o)}.`)].concat(['מה הפירוש הנוסף? אמרי את הפירוש.']),alive))return}
+      else if(!await sayAll([Q.mode==='listen'?'מה שמעת? אמרי את הפירוש בעברית.':'מה הפירוש בעברית? אמרי את הפירוש.'],alive))return;
       const a=await ask(9000);if(!alive())return;if(snap()!==s0)continue;const t=a[0]||'';
       if(isStop(t)){stopVoice();return}
       if(isRepeat(t))continue;
       if(!t&&!(await miss()))continue;if(!V.on)return;
-      V.miss=0;Q.mine=t?[t]:[];qShow();continue;
+      V.miss=0;Q.mine=t?[t]:[];qShow();if(t){setStatus('שמעתי: '+t);await say('אמרת: '+t,'he-IL');if(!alive())return}continue;
     }
     if(!Q.checked){
-      const txt=Q.opts.map(([o],k)=>`${k+1}: ${o.replace(/ \/ /g,', ')}`).join('. ');
-      setStatus('מקריאה את האפשרויות');await say((nm>1?`בחרי ${nm} תשובות. `:'')+txt,'he-IL');if(!alive())return;
+      setStatus('מקריאה את האפשרויות');
+      if(!await sayAll([nm>1?`סמני את כל הפירושים הנכונים, ${nm} תשובות.`:'בחרי את הפירוש הנכון.',...Q.opts.map(([o],k)=>`תשובה ${k+1}: ${heOpt(o)}.`),'אמרי את מספר התשובה.'],alive))return;
       let sel=null,again=false;
       for(let tries=0;tries<3&&alive();tries++){const a=await ask(10000);if(!alive())return;if(snap()!==s0){again=true;break}
         if(isStop(a[0]||'')){stopVoice();return}
@@ -739,9 +748,9 @@ async function voiceLoop(){
         await say('לא הבנתי. אמרי את מספר התשובה','he-IL');if(!alive())return}
       if(again)continue;
       V.miss=0;Q.sel=sel||[];const r=qCheck();
-      const right=Q.opts.filter(o=>o[1]).map(o=>o[0].replace(/ \/ /g,', '));
-      const fb=r.got===nm&&!r.bad?'נכון!':`${r.got} מתוך ${nm}. ${nm>1?'התשובות הנכונות':'התשובה הנכונה'}: ${right.join('. ')}`;
-      setStatus('');await say(fb+'. ידעת את המילה?','he-IL');continue;
+      const right=Q.opts.filter(o=>o[1]).map(o=>heOpt(o[0]));
+      const fb=r.got===nm&&!r.bad?(nm>1?'כל הפירושים נכונים!':'נכון!'):`${r.got} מתוך ${nm}. ${r.got?'':'לא סימנת פירוש נכון. '}${r.bad?(r.bad===1?'סימנת פירוש שגוי אחד. ':`סימנת ${r.bad} פירושים שגויים. `):''}${nm>1?'התשובות הנכונות':'התשובה הנכונה'}: ${right.join(', ')}.`;
+      setStatus('');if(!await sayAll([fb,'ידעת את המילה? אמרי ידעתי או לא ידעתי.'],alive))return;continue;
     }
     const a=await ask(8000);if(!alive())return;if(snap()!==s0)continue;const t=vnorm(a.join(' '));
     if(isStop(t)){stopVoice();return}
