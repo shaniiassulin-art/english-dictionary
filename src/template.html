@@ -30,6 +30,10 @@ h2{font-size:1.5rem;font-weight:800}
 
 /* top nav */
 .nav{display:flex;align-items:center;gap:8px;min-height:48px}
+.nav .home-btn{margin-inline-start:auto}
+.home-btn{border:0;background:var(--surface);color:var(--muted);width:40px;height:40px;border-radius:50%;cursor:pointer;flex:none;display:inline-grid;place-items:center;padding:0}.home-btn svg{width:20px;height:20px}
+.search{margin:4px 0}
+#srchRes .words{margin-bottom:8px}
 .back{border:0;background:none;color:var(--accent);font-weight:700;padding:10px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .back::before{content:"→";font-size:1.2em}
 
@@ -439,8 +443,17 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 let S={screen:'home',l:1,g:0,mode:'read',active:null};
 try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards'].includes(S.screen))S.screen='home'}catch(e){}
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active}))}catch(e){}}
-function go(patch){Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
-function draw(){({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen})[S.screen]()}
+function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
+function draw(){({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen})[S.screen]();
+  const h=$('home');if(h)h.onclick=goHome}
+/* small house button: leave (a quiz or cards are saved as usual) and open the main screen */
+function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();if(S.screen==='quiz'&&Q&&Q.rv!=null){Q.rv=null}
+  if(S.screen==='quiz'||S.screen==='cards'){saveQ&&Q&&S.screen==='quiz'&&saveQ();S.active=null}go({screen:'home'})}
+/* swipe from right to left = back to the previous screen */
+(function(){let x0=null,y0=0,t0=0;
+  document.addEventListener('touchstart',e=>{const t=e.touches[0];if(e.touches.length>1||e.target.closest('input,textarea')){x0=null;return}x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
+  document.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
+    if(dx<-70&&Math.abs(dx)>2*Math.abs(dy)&&Date.now()-t0<800&&S.screen!=='home'){const b=$('bk')||$('exit')||$('back');b&&b.click()}},{passive:true})})();
 
 function settings(allLabel){
   return `<div class="set-box">
@@ -503,20 +516,33 @@ function countLine(ws){const y=ws.filter(isY).length,n=ws.filter(isN).length;
 function level(){
   const ws=byLv(S.l),n=nGroups(S.l),nw=ws.filter(isN);
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">כל הרמות</button></div>
+    <div class="nav"><button class="back" id="bk">כל הרמות</button>${HOME}</div>
     <div><h2>רמה ${S.l} · ${LVN[S.l-1]}</h2><p class="sub">${countLine(ws)}</p></div>
+    ${searchBox()}
     ${quizPanel('L'+S.l,ws,'בוחן על כל הרמה',`רמה ${S.l}`,'level')}
     ${catPanel('L'+S.l,ws)}
+    <button class="btn secondary" id="list">רשימת המילים ברמה · סימון ✓ / ✗</button>
     <p class="lbl">או תרגול לפי קבוצות של 50 מילים</p>
     <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
       return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">קבוצה ${g+1}</span><br><span class="d">${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
   bindSettings();bindQuizPanel('L'+S.l,ws,`רמה ${S.l}`,'level');bindCatPanel('L'+S.l,ws,`רמה ${S.l}`,'level');
+  $('list').onclick=()=>go({screen:'words',filter:'all',wl:'level'});bindSearch(ws);
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
 
 const gkey=()=>'G'+S.l+'-'+S.g;
+const HOME='<button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
+/* search by English word or Hebrew meaning */
+const snorm=s=>String(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').replace(/[-־'"״׳.,;:()\/]/g,' ').replace(/\s+/g,' ').trim();
+function searchHits(ws,q){q=snorm(q);if(!q)return null;return ws.filter(w=>snorm(w.e).includes(q)||snorm(w.h.join(' ')+' '+w.others.join(' ')).includes(q))}
+function searchBox(){return `<input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><div id="srchRes"></div>`}
+function bindSearch(ws){const inp=$('srch'),out=$('srchRes');if(!inp)return;
+  const show=()=>{S.q=inp.value;const hits=searchHits(ws,S.q);
+    out.innerHTML=hits===null?'':hits.length?`<p class="sub">${hits.length===1?'נמצאה מילה אחת':`נמצאו ${hits.length} מילים`}</p><ul class="words">${hits.slice(0,60).map(wordRow).join('')}</ul>${hits.length>60?'<p class="hint center">מוצגות 60 הראשונות. אפשר לדייק את החיפוש.</p>':''}`:'<p class="hint center">לא נמצאו מילים.</p>';
+    bindRows()};
+  inp.oninput=show;if(S.q)show()}
 function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div>${w.others.length?`<div class="oth">פירושים נוספים: ${esc(numText(w.others))}</div>`:''}<div class="ex">${highlight(w.s,w.e)}</div></div>
   <div class="yn" role="group" aria-label="האם את יודעת את ${esc(w.e)}"><button class="yn-b y" data-k="${esc(w.id)}" data-v="y" aria-pressed="${st==='y'}" aria-label="יודעת">✓</button><button class="yn-b n" data-k="${esc(w.id)}" data-v="n" aria-pressed="${st==='n'}" aria-label="לא יודעת">✗</button></div></li>`}
 function bindRows(){
@@ -527,34 +553,39 @@ function groupScreen(){
   const ws=group(S.l,S.g),nw=ws.filter(isN),un=ws.filter(w=>!kst(w)).length;
   const name=`קבוצה ${S.g+1} · רמה ${S.l}`;
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">רמה ${S.l}</button></div>
+    <div class="nav"><button class="back" id="bk">רמה ${S.l}</button>${HOME}</div>
     <div><h2>קבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · ${LVN[S.l-1]}</p>
       <p class="known-line">${countLine(ws)}</p></div>
+    ${searchBox()}
     <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
     ${quizPanel(gkey(),ws,'בוחן על כל הקבוצה',name,'group')}
     ${catPanel(gkey(),ws)||`<p class="hint center">אחרי שתסמני מילים (ידעתי / לא ידעתי) תוכלי לעשות כאן בוחן רק על המילים שלא ידעת, שידעת או שעוד לא סומנו.</p>`}
     <button class="btn secondary" id="fc">${SESS['C'+gkey()]?`המשך כרטיסיות · ${SESS['C'+gkey()].i+1} מתוך ${ws.length}`:'תרגול בכרטיסיות'}</button>
   </div>`;
   $('bk').onclick=()=>go({screen:'level'});
-  $('list').onclick=()=>go({screen:'words',filter:'all'});
+  $('list').onclick=()=>go({screen:'words',filter:'all',wl:'group'});bindSearch(ws);
   bindSettings();bindQuizPanel(gkey(),ws,name,'group');
   bindCatPanel(gkey(),ws,name,'group');
   $('fc').onclick=()=>{const k='C'+gkey(),ss=SESS[k];
     C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'})};
 }
 function wordsScreen(){
-  const ws=group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
-  const f=F[S.filter]?S.filter:'all',list=F[f];
+  const lv=S.wl==='level',ws=lv?byLv(S.l):group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
+  const f=F[S.filter]?S.filter:'all',up=lv?'level':'group';
+  const rows=()=>{const hits=searchHits(F[f],S.q),list=hits||F[f];
+    return list.length?`<ul class="words">${list.map(wordRow).join('')}</ul>`:`<p class="hint center">${hits?'לא נמצאו מילים.':'אין מילים כאן.'}</p>`};
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">קבוצה ${S.g+1}</button></div>
-    <div><h2>המילים בקבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · סמני ✓ אם את יודעת, ✗ אם לא. לחיצה נוספת מבטלת.</p></div>
+    <div class="nav"><button class="back" id="bk">${lv?`רמה ${S.l}`:`קבוצה ${S.g+1}`}</button>${HOME}</div>
+    <div><h2>${lv?`כל המילים ברמה ${S.l}`:`המילים בקבוצה ${S.g+1}`}</h2><p class="sub">${lv?'':`רמה ${S.l} · `}סמני ✓ אם את יודעת, ✗ אם לא. לחיצה נוספת מבטלת.</p></div>
+    <input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}">
     <div class="seg seg4" role="group" aria-label="סינון">${[['all','הכל'],['y','יודעת'],['n','לא יודעת'],['u','לא סומנו']].map(([k,t])=>`<button data-f="${k}" aria-pressed="${f===k}">${t} (${F[k].length})</button>`).join('')}</div>
-    ${list.length?`<ul class="words">${list.map(wordRow).join('')}</ul>`:'<p class="hint center">אין מילים כאן.</p>'}
+    <div id="wlist">${rows()}</div>
     <div class="sticky"><button class="btn" id="toQuiz">לבוחן</button></div>
   </div>`;
-  $('bk').onclick=()=>go({screen:'group'});
+  $('bk').onclick=()=>go({screen:up});
   app.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{S.filter=b.dataset.f;draw()});
-  $('toQuiz').onclick=()=>go({screen:'group'});
+  $('toQuiz').onclick=()=>go({screen:up});
+  $('srch').oninput=e=>{S.q=e.target.value;$('wlist').innerHTML=rows();bindRows()};
   bindRows();
 }
 
@@ -710,7 +741,7 @@ function reMark(w,v){Q.marks=Q.marks||{};const old=Q.marks[w.id]||kst(w);if(old=
 function reviewScreen(){
   const k=Q.rv,w=Q.list[k],n=Q.list.length,m=(Q.marks||{})[w.id]||kst(w);
   app.innerHTML=`<div class="screen qz">
-    <div class="qtop"><button class="x" id="back" aria-label="חזרה לבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${k+1} / ${n}</span></div>
+    <div class="qtop"><button class="x" id="back" aria-label="חזרה לבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${k+1} / ${n}</span></div>
     <p class="mode-tag">מילה קודמת · אפשר לשנות אם ידעת</p>
     <div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
     <div class="rv-ans"><span class="lbl">הפירוש שנשאלת עליו</span><b>${esc(label(w))}</b></div>
@@ -754,7 +785,7 @@ function quizScreen(){
         :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>`}</div>`;
   }
   app.innerHTML=`<div class="screen qz">
-    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button><div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span><button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span><button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
     <p class="vmsg" id="vmsg" hidden></p>
     <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}${Q.i>0?` · <button class="link inl" id="goPrev">→ למילה הקודמת</button>`:''}</p>
     ${wordBox}
@@ -807,7 +838,7 @@ function cardScreen(){
     $('b').onclick=()=>go({screen:'group'});return}
   const w=C.deck[C.i];
   app.innerHTML=`<div class="screen full">
-    <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button><div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span></div>
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button>${HOME}<div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span></div>
     <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span>${w.others.length?`<span class="oth">פירושים נוספים: ${esc(numText(w.others))}</span>`:''}<span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
     <div class="sticky"><div class="row2"><button class="btn secondary" id="say">${SPK} מילה</button><button class="btn secondary" id="saySent">${SPK} משפט</button></div>
     <div class="row2"><button class="btn secondary" id="prev" ${C.i?'':'disabled'}>הקודם</button><button class="btn" id="nxt">הבא</button></div></div>
