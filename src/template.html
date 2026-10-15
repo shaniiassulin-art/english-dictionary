@@ -536,7 +536,11 @@ const gkey=()=>'G'+S.l+'-'+S.g;
 const HOME='<button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
 /* search by English word or Hebrew meaning */
 const snorm=s=>String(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').replace(/[-־'"״׳.,;:()\/]/g,' ').replace(/\s+/g,' ').trim();
-function searchHits(ws,q){q=snorm(q);if(!q)return null;return ws.filter(w=>snorm(w.e).includes(q)||snorm(w.h.join(' ')+' '+w.others.join(' ')).includes(q))}
+function searchHits(ws,q){q=snorm(q);if(!q)return null;
+  const own=ws.filter(w=>snorm(w.e).includes(q)||snorm(w.h.join(' ')).includes(q)),got=new Set(own.map(w=>w.e));
+  /* a meaning whose card is in another group: show this word's card, which lists it under "other meanings" */
+  const via=ws.filter(w=>!got.has(w.e)&&snorm(w.others.join(' ')).includes(q)&&(got.add(w.e),true));
+  return ws.filter(w=>own.includes(w)||via.includes(w))}
 function searchBox(){return `<input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><div id="srchRes"></div>`}
 function bindSearch(ws){const inp=$('srch'),out=$('srchRes');if(!inp)return;
   const show=()=>{S.q=inp.value;const hits=searchHits(ws,S.q);
