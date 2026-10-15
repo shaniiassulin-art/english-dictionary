@@ -368,6 +368,8 @@ if(!KNOW){let m=[];try{m=JSON.parse(localStorage.getItem('dictMist')||'[]')}catc
 const saveKnow=()=>{try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){};dirty()};
 /* a mark saved for a whole word before it was split into cards carries over to each of its cards */
 words.forEach(w=>{if(w.id!==w.e&&KNOW[w.e]&&!KNOW[w.id])KNOW[w.id]=KNOW[w.e].slice()});
+/* project was split from 2 meanings into 3 (לתכנן / פרוייקט became two): move the old marks once */
+try{if(!LS.get('migProject3')){if(KNOW['project#1']&&!KNOW['project#2']){KNOW['project#2']=KNOW['project#1'];if(KNOW['project#0'])KNOW['project#1']=KNOW['project#0'].slice();else delete KNOW['project#1'];try{saveKnow()}catch(e){}}LS.set('migProject3','1')}}catch(e){}
 /* a word that went back to one meaning keeps the newest mark of its former meaning cards */
 words.forEach(w=>{if(w.id===w.e&&!KNOW[w.id]){const o=Object.keys(KNOW).filter(k=>k.startsWith(w.e+'#')).map(k=>KNOW[k]).sort((a,b)=>b[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()}});
 try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
