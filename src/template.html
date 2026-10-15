@@ -362,6 +362,8 @@ if(!KNOW){let m=[];try{m=JSON.parse(localStorage.getItem('dictMist')||'[]')}catc
 const saveKnow=()=>{try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){};dirty()};
 /* a mark saved for a whole word before it was split into cards carries over to each of its cards */
 words.forEach(w=>{if(w.id!==w.e&&KNOW[w.e]&&!KNOW[w.id])KNOW[w.id]=KNOW[w.e].slice()});
+/* a word that went back to one meaning keeps the newest mark of its former meaning cards */
+words.forEach(w=>{if(w.id===w.e&&!KNOW[w.id]){const o=Object.keys(KNOW).filter(k=>k.startsWith(w.e+'#')).map(k=>KNOW[k]).sort((a,b)=>b[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()}});
 try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
 const kst=w=>{const v=(KNOW[w.id]||[])[0];return v==='y'||v==='n'?v:undefined};
 const isY=w=>kst(w)==='y', isN=w=>kst(w)==='n';
