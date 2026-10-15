@@ -480,7 +480,7 @@ function home(){
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
-      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}${(()=>{const mk=ws.filter(x=>kst(x)).length;return mk&&mk<ws.length?` · לא סומנו ${ws.length-mk}`:''})()}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
@@ -563,13 +563,21 @@ function resumeQuiz(key){if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key])
 /* the correct meanings plus ONE wrong meaning that looks or sounds close, to make it confusing */
 const bigr=t=>{t=String(t).toLowerCase().replace(/\([^)]*\)/g,'').replace(/[^a-zא-ת]/g,'');const b=new Set();for(let i=0;i<t.length-1;i++)b.add(t.slice(i,i+2));return b};
 const jac=(a,b)=>{if(!a.size||!b.size)return 0;let n=0;a.forEach(x=>{if(b.has(x))n++});return n/(a.size+b.size-n)};
+/* meanings that say the same thing: their parts appear together on one dictionary line (e.g. "מצב, מעמד") */
+const mparts=m=>String(m).replace(/[\u0591-\u05C7]/g,'').replace(/\([^)]*\)/g,'').split(/[,;\/]/).map(x=>x.replace(/[-־'"״׳.]/g,'').replace(/\s+/g,' ').trim()).filter(x=>x.length>1);
+const SYN=(()=>{const g=new Map();for(const r of RAW)for(const m of r.h){const ps=mparts(m);for(const p of ps){if(!g.has(p))g.set(p,new Set());ps.forEach(q=>g.get(p).add(q))}}return g})();
+function synOf(right){const syn=new Set();right.forEach(r=>mparts(r).forEach(p=>{syn.add(p);(SYN.get(p)||[]).forEach(q=>syn.add(q))}));const arr=[...syn];return{syn,arr,sb:arr.map(bigr)}}
+/* at most one letter apart (הודות / תודות) */
+function near1(a,b){if(a===b)return true;const la=a.length,lb=b.length;if(Math.abs(la-lb)>1)return false;let i=0,j=0,d=0;
+  while(i<la&&j<lb){if(a[i]===b[j]){i++;j++;continue}if(++d>1)return false;if(la>lb)i++;else if(lb>la)j++;else{i++;j++}}return d+(la-i)+(lb-j)<=1}
+function sameMeaning(m,S){return mparts(m).some(p=>S.syn.has(p)||S.arr.some(q=>near1(p,q))||S.arr.some(q=>q.length>2&&p.length>2&&(p.includes(q)||q.includes(p)))||S.sb.some(b=>jac(b,bigr(p))>=.7))}
 function buildOpts(w){const right=meanings(w),rb=right.map(bigr),eb=bigr(w.e),parts=right.join(',').split(/[,;\/]/).map(x=>x.trim()).filter(Boolean);
-  const cands=[];
+  const cands=[],SY=synOf(right);
   for(const x of words){if(x===w||x.e.toLowerCase()===w.e.toLowerCase())continue;const xm=meanings(x);
     if(xm.some(m=>right.includes(m)))continue;
     const es=jac(eb,bigr(x.e));
-    for(const m of xm){if(parts.some(p=>m.includes(p))||(w.others||[]).includes(m))continue;
-      const hs=Math.max(...rb.map(b=>jac(b,bigr(m))));cands.push([m,Math.max(hs,es*.9)+(Math.abs(x.l-w.l)<=1?.05:0)])}}
+    for(const m of xm){if(parts.some(p=>m.includes(p))||(w.others||[]).includes(m)||sameMeaning(m,SY))continue;
+      const hs=Math.max(...rb.map(b=>jac(b,bigr(m))));if(hs>.75)continue;cands.push([m,hs+es*.25+(Math.abs(x.l-w.l)<=1?.05:0)])}}
   cands.sort((a,b)=>b[1]-a[1]);
   const top=cands.slice(0,6);const wrong=(top[Math.floor(Math.random()*top.length)]||['—'])[0];
   return shuffle([...right.map(t=>[t,1]),[wrong,0]])}
