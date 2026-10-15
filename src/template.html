@@ -170,6 +170,8 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .words li.bad .e::after{content:" · טעות";font-family:var(--he);font-size:.8rem;font-weight:700}
 .rm{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--bad-soft);color:var(--bad);cursor:pointer;font-size:.95rem}
 .mist-panel{background:var(--bad-soft)}
+.cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}
+.cat-panel .cat-N{background:var(--bad);color:var(--bg)}.cat-panel .cat-Y{background:var(--ok);color:var(--bg)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
 .mist-panel h3{color:var(--bad)}
 .mist-panel .btn{background:var(--bad);color:var(--bg)}
 .seg button:disabled{opacity:.4;cursor:default}
@@ -465,6 +467,15 @@ function quizPanel(key,ws,title,name,from,noSet,cls){
       <button class="link" data-restart="${key}">התחלה מחדש</button></section>`}
   return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}<button class="btn" data-start="${key}">${noSet?'בוחן על המילים שאני לא יודעת':'התחלת בוחן'} · ${ws.length} מילים</button></section>`;
 }
+/* quizzes on one marking category: ✗ don't know, ✓ know, unmarked. base = group/level key; 'N'+base keeps older saved sessions */
+const CATS=[['N','✗ לא ידעתי',isN,'לא יודעת'],['U','לא סומנו',w=>!kst(w),'לא סומנו'],['Y','✓ ידעתי',isY,'יודעת']];
+function catPanel(base,ws){if(!ws.some(w=>kst(w))&&!CATS.some(c=>SESS[c[0]+base]))return '';
+  const rows=CATS.map(([p,lbl,f])=>{const k=p+base,ss=SESS[k],n=ws.filter(f).length;
+    if(ss&&ss.kind==='quiz'&&ss.v===2){const at=Math.min(ss.i+1,ss.ids.length);
+      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><button class="link" data-restart="${k}">התחלה מחדש</button></div>`}
+    return n?`<div class="cat-row"><button class="btn cat-${p}" data-start="${k}">${lbl} · ${n===1?'מילה אחת':n+' מילים'}</button></div>`:''}).join('');
+  return rows?`<section class="panel cat-panel"><h3>בוחן לפי סימון</h3>${rows}</section>`:''}
+function bindCatPanel(base,ws,name,from){CATS.forEach(([p,,f,nm])=>bindQuizPanel(p+base,ws.filter(f),nm+' · '+name,from))}
 function bindQuizPanel(key,ws,name,from){
   const st=app.querySelector(`[data-start="${key}"]`);if(st)st.onclick=()=>startQuiz(pickList(ws),name,from,key);
   const rs=app.querySelector(`[data-resume="${key}"]`);if(rs)rs.onclick=()=>resumeQuiz(key);
@@ -495,13 +506,13 @@ function level(){
     <div class="nav"><button class="back" id="bk">כל הרמות</button></div>
     <div><h2>רמה ${S.l} · ${LVN[S.l-1]}</h2><p class="sub">${countLine(ws)}</p></div>
     ${quizPanel('L'+S.l,ws,'בוחן על כל הרמה',`רמה ${S.l}`,'level')}
-    ${nw.length||SESS['NL'+S.l]?quizPanel('NL'+S.l,nw,`המילים שאני לא יודעת ברמה (${nw.length})`,`לא יודעת · רמה ${S.l}`,'level',true,'mist-panel'):''}
+    ${catPanel('L'+S.l,ws)}
     <p class="lbl">או תרגול לפי קבוצות של 50 מילים</p>
     <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
       return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">קבוצה ${g+1}</span><br><span class="d">${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
-  bindSettings();bindQuizPanel('L'+S.l,ws,`רמה ${S.l}`,'level');bindQuizPanel('NL'+S.l,nw,`לא יודעת · רמה ${S.l}`,'level');
+  bindSettings();bindQuizPanel('L'+S.l,ws,`רמה ${S.l}`,'level');bindCatPanel('L'+S.l,ws,`רמה ${S.l}`,'level');
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
 
@@ -518,17 +529,16 @@ function groupScreen(){
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">רמה ${S.l}</button></div>
     <div><h2>קבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · ${LVN[S.l-1]}</p>
-      <p class="known-line">${countLine(ws)}${un?` · <span class="muted">לא סומנו ${un}</span>`:''}</p></div>
+      <p class="known-line">${countLine(ws)}</p></div>
     <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
     ${quizPanel(gkey(),ws,'בוחן על כל הקבוצה',name,'group')}
-    ${nw.length||SESS['N'+gkey()]?quizPanel('N'+gkey(),nw,`המילים שאני לא יודעת (${nw.length})`,'לא יודעת · '+name,'group',true,'mist-panel'):
-      `<p class="hint center">מילים שתסמני "לא ידעתי" בבוחן או ✗ ברשימה יופיעו כאן, ותוכלי לעשות עליהן בוחן.</p>`}
+    ${catPanel(gkey(),ws)||`<p class="hint center">אחרי שתסמני מילים (ידעתי / לא ידעתי) תוכלי לעשות כאן בוחן רק על המילים שלא ידעת, שידעת או שעוד לא סומנו.</p>`}
     <button class="btn secondary" id="fc">${SESS['C'+gkey()]?`המשך כרטיסיות · ${SESS['C'+gkey()].i+1} מתוך ${ws.length}`:'תרגול בכרטיסיות'}</button>
   </div>`;
   $('bk').onclick=()=>go({screen:'level'});
   $('list').onclick=()=>go({screen:'words',filter:'all'});
   bindSettings();bindQuizPanel(gkey(),ws,name,'group');
-  bindQuizPanel('N'+gkey(),nw,'לא יודעת · '+name,'group');
+  bindCatPanel(gkey(),ws,name,'group');
   $('fc').onclick=()=>{const k='C'+gkey(),ss=SESS[k];
     C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'})};
 }
