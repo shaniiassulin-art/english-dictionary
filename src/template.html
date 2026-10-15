@@ -370,6 +370,12 @@ const saveKnow=()=>{try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}ca
 words.forEach(w=>{if(w.id!==w.e&&KNOW[w.e]&&!KNOW[w.id])KNOW[w.id]=KNOW[w.e].slice()});
 /* project was split from 2 meanings into 3 (לתכנן / פרוייקט became two): move the old marks once */
 try{if(!LS.get('migProject3')){if(KNOW['project#1']&&!KNOW['project#2']){KNOW['project#2']=KNOW['project#1'];if(KNOW['project#0'])KNOW['project#1']=KNOW['project#0'].slice();else delete KNOW['project#1'];try{saveKnow()}catch(e){}}LS.set('migProject3','1')}}catch(e){}
+/* meanings split later (Oct 2026): old card k -> new cards, moved once */
+try{if(!LS.get('migSplit2')){const M={mind:{0:[0],1:[1,2]},position:{0:[0,1],1:[2]}};let ch=false;
+  for(const [e,m] of Object.entries(M)){const old={};Object.keys(m).forEach(k=>{if(KNOW[e+'#'+k])old[k]=KNOW[e+'#'+k].slice()});
+    if(!Object.keys(old).length)continue;Object.keys(m).forEach(k=>delete KNOW[e+'#'+k]);
+    for(const [k,ns] of Object.entries(m))if(old[k])ns.forEach(n=>KNOW[e+'#'+n]=old[k].slice());ch=true}
+  if(ch)try{saveKnow()}catch(e){}LS.set('migSplit2','1')}}catch(e){}
 /* a word that went back to one meaning keeps the newest mark of its former meaning cards */
 words.forEach(w=>{if(w.id===w.e&&!KNOW[w.id]){const o=Object.keys(KNOW).filter(k=>k.startsWith(w.e+'#')).map(k=>KNOW[k]).sort((a,b)=>b[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()}});
 try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
