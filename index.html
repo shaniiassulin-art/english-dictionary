@@ -373,7 +373,7 @@ try{localStorage.setItem('dictProg',JSON.stringify(prog))}catch(e){}
 const W=Object.fromEntries(words.map(w=>[w.id,w]));
 let SESS={};try{SESS=JSON.parse(localStorage.getItem('dictSess')||'{}')}catch(e){}
 const saveSess=()=>{try{localStorage.setItem('dictSess',JSON.stringify(SESS));localStorage.setItem('dictSessDel',JSON.stringify(SDEL))}catch(e){};dirty()};
-const ids=a=>a.map(w=>w.id), objs=a=>a.map(i=>W[i]).filter(Boolean);
+const ids=a=>a.map(w=>w.id), objs=a=>a.map(i=>W[i]||W[i+'#0']||W[String(i).replace(/#\d+$/,'')]).filter(Boolean);
 /* "do I know this word": KNOW[id]=['y'|'n', timestamp] */
 function migrateMist(m){const o={};(m||[]).forEach(id=>o[id]=['n',1]);return o}
 let KNOW=null;try{KNOW=JSON.parse(localStorage.getItem('dictKnow')||'null')}catch(e){}
@@ -626,7 +626,11 @@ function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(
 function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return false;
   Q={key,list:objs(s.ids),i:s.i,score:s.score||0,pts:s.pts||0,max:s.max||0,mist:objs(s.mist||[]),marks:s.marks||{},rv:null,name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,...blankQ(),
     stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent};
-  if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}return Q.i<Q.list.length}
+  if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}
+  /* a saved question whose meanings changed since (e.g. a meaning was split): ask it again with fresh options */
+  const w=Q.list[Q.i];if(w&&Q.opts){const right=Q.opts.filter(o=>o[1]).map(o=>o[0]),M=meanings(w);
+    if(right.length!==M.length||right.some(r=>!M.includes(r))){Object.assign(Q,blankQ(),{mine:Q.mine})}}
+  return Q.i<Q.list.length}
 function resumeQuiz(key){if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)autoSay()}
 /* the correct meanings plus ONE wrong meaning that looks or sounds close, to make it confusing */
 const bigr=t=>{t=String(t).toLowerCase().replace(/\([^)]*\)/g,'').replace(/[^a-zא-ת]/g,'');const b=new Set();for(let i=0;i<t.length-1;i++)b.add(t.slice(i,i+2));return b};
