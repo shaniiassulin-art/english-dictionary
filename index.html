@@ -233,6 +233,8 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .qz .prog{height:6px}
 .qz .count{font-size:.85rem}
 .qz .mode-tag{font-size:.8rem;margin:-4px 0 0}
+.wnav{display:flex;align-items:center;justify-content:space-between;gap:6px}.wnav .word{flex:1;min-width:0}
+.arr{border:0;background:var(--surface);color:var(--accent);width:44px;height:44px;border-radius:50%;font-size:1.3rem;font-weight:700;cursor:pointer;flex:none;padding:0}.arr:disabled{opacity:.3;cursor:default}
 .qz .word{padding:8px 8px 4px;gap:10px;flex-direction:row;justify-content:center}
 .qz .word .w{font-size:clamp(1.8rem,8vw,2.3rem)}
 .qz .word .spk{width:42px;height:42px}
@@ -788,7 +790,7 @@ function reviewScreen(){
   app.innerHTML=`<div class="screen qz">
     <div class="qtop"><button class="x" id="back" aria-label="חזרה לבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${k+1} / ${n}</span></div>
     <p class="mode-tag">מילה קודמת · אפשר לשנות אם ידעת</p>
-    <div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
+    <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${k>0?'':'disabled'}>→</button><div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div><button class="arr" id="navNext" aria-label="למילה הבאה">←</button></div>
     <div class="rv-ans"><span class="lbl">הפירוש שנשאלת עליו</span><b>${esc(label(w))}</b></div>
     ${w.others.length?`<div class="others sm">פירושים אחרים:${numList(w.others)}</div>`:''}
     <p class="rv-now">סימנת: <b class="${m==='y'?'kn':'unk'}">${m==='y'?'✓ ידעתי':m==='n'?'✗ לא ידעתי':'—'}</b></p>
@@ -797,7 +799,8 @@ function reviewScreen(){
   </div>`;
   $('say').onclick=()=>speak(w.e);
   $('markY').onclick=()=>reMark(w,'y');$('markN').onclick=()=>reMark(w,'n');
-  $('prev').onclick=()=>{if(Q.rv>0){Q.rv--;draw()}};
+  $('prev').onclick=()=>{if(Q.rv>0){Q.rv--;draw()}};$('navPrev').onclick=$('prev').onclick;
+  $('navNext').onclick=()=>{Q.rv++;if(Q.rv>=Q.i)Q.rv=null;draw()};
   const ret=()=>{Q.rv=null;draw()};$('ret').onclick=ret;$('back').onclick=ret;
 }
 function quizScreen(){
@@ -832,13 +835,15 @@ function quizScreen(){
   app.innerHTML=`<div class="screen qz">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span><button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
     <p class="vmsg" id="vmsg" hidden></p>
-    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}${Q.i>0?` · <button class="link inl" id="goPrev">→ למילה הקודמת</button>`:''}</p>
-    ${wordBox}
+    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}</p>
+    <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${Q.i>0?'':'disabled'}>→</button>${wordBox}<button class="arr" id="navNext" aria-label="דילוג למילה הבאה" ${Q.i<n-1?'':'disabled'}>←</button></div>
     ${body}
     ${V.on?`<div class="vbar" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="vbarTxt">${esc(V.status||'מצב קולי פעיל')}</span><button class="vstop" id="vstop">עצירה</button></div>`:''}
   </div>`;
   $('voiceBtn').onclick=()=>{if(V.on)stopVoice();else startVoice()};
-  const gp=$('goPrev');if(gp)gp.onclick=()=>{keepInput();stopVoice(true);saveQ();Q.rv=Q.i-1;draw()};
+  $('navPrev').onclick=()=>{if(Q.i<1)return;keepInput();stopVoice(true);saveQ();Q.rv=Q.i-1;draw()};
+  /* forward: skip this word for now (it stays unmarked) */
+  $('navNext').onclick=()=>{if(Q.i>=n-1)return;stopVoice(true);Q.i++;Object.assign(Q,blankQ());saveQ();draw();window.scrollTo(0,0);autoSay()};
   const vs=$('vstop');if(vs)vs.onclick=()=>stopVoice();
   function keepInput(){if(Q.stage==='write')Q.mine=M.map((_,k)=>($('inp'+k)||{}).value||'')}
   $('exit').onclick=()=>{keepInput();stopVoice(true);saveQ();S.active=null;go({screen:Q.from})};
