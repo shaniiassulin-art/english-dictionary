@@ -80,7 +80,8 @@ details.wl summary{cursor:pointer;color:var(--accent);font-weight:700;min-height
 .mine span{color:var(--muted)}
 .opts{display:flex;flex-direction:column;gap:10px}
 .opt{width:100%;text-align:right;min-height:58px;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 16px;font-size:1.08rem;cursor:pointer}
-.opt:hover:not(:disabled){border-color:var(--accent)}
+@media (hover:hover){.opt:hover:not(:disabled){border-color:var(--accent)}}
+.opt:focus:not(:focus-visible){outline:none}
 .opt:disabled{cursor:default}
 .opt.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:700}
 .opt.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
@@ -394,11 +395,19 @@ function audioEl(){if(!AU.el){const a=new Audio();a.preload='auto';a.setAttribut
 /* let the page's sound ignore the silent switch (Safari 16.4+) */
 function playbackSession(){try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(e){}}
 playbackSession();
+/* find out at once whether the audio folder is next to the page, so the first play already uses the right place
+   (a play() started later, after a failed attempt, is outside the tap and iOS may block it) */
+try{fetch(AUD_BASES[0]+'w/'+fnv(RAW[0].e)+'.mp3',{method:'HEAD',cache:'no-store'}).then(r=>{if(r.ok)AU.ok0=true;else AU.base=1}).catch(()=>{AU.base=1})}catch(e){}
 /* iOS only lets a media element play by itself after it was started once inside a tap */
 function unlockAudio(){if(AU.unlocked)return;AU.unlocked=true;playbackSession();const a=audioEl();
   if(!AU.end){a.src=SILENT;const p=a.play();p&&p.catch(()=>{AU.unlocked=false})}
   if(TTS)try{const u=new SpeechSynthesisUtterance(' ');u.volume=0;speechSynthesis.speak(u)}catch(e){}}
 ['touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,unlockAudio,{capture:true}));
+/* voice mode: a silent clip loops in a second <audio> element so the phone stays in "playback" mode
+   and the Hebrew device voice is heard (also on silent) without first pressing a speaker button */
+const KEEP={el:null};
+function keepAlive(on){try{if(on){if(!KEEP.el){const k=new Audio('data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAAKQAADUMAExMZGR8fHyUlKysrMTE3Nzc9PUJCSEhITk5UVFRaWmBgYGZmbGxscnJ4eH5+foODiYmJj4+VlZWbm6Ghp6enra2zs7O5ub+/v8TEysrK0NDW1tzc3OLi6Ojo7u709PT6+v//AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQD3gAAAAAAAA1DbDeXugAAAAAAAAAAAAAAAAD/8zDEAAAAA0gAAAAATEFNRVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zLEQQAAA0gAAAAAVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxIMAAANIAAAAAFVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MyxL0AAANIAAAAAFVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMsS9AAADSAAAAABVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zLEvQAAA0gAAAAAVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxL4AAANIAAAAAFVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MyxL0AAANIAAAAAFVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMsS9AAADSAAAAABVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zLEvQAAA0gAAAAAVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxL4AAANIAAAAAFVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxL4AAANIAAAAAFVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MyxL0AAANIAAAAAFVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMsS9AAADSAAAAABVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zLEvQAAA0gAAAAAVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxL4AAANIAAAAAFVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxL4AAANIAAAAAFVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MyxL0AAANIAAAAAFVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMsS9AAADSAAAAABVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zLEvQAAA0gAAAAAVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxL4AAANIAAAAAFVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxL4AAANIAAAAAFVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MyxL0AAANIAAAAAFVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMsS9AAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zDEvgAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU=');k.loop=true;k.setAttribute('playsinline','');KEEP.el=k}
+    if(KEEP.el.paused){const p=KEEP.el.play();p&&p.catch(()=>{})}}else if(KEEP.el)KEEP.el.pause()}catch(e){}}
 function stopAudio(){const a=AU.el;if(a){try{a.pause()}catch(e){}}if(AU.end){const f=AU.end;f(null)}}
 /* play audio/<kind>/<hash>.mp3; resolves true when it played to the end, false if no file could be played, null if stopped */
 function playFile(kind,text){stopAudio();const a=audioEl(),h=fnv(text);
@@ -579,7 +588,7 @@ function sayNow(text,lang,res){try{const u=new SpeechSynthesisUtterance(text);u.
     let done=false;const fin=()=>{if(!done){done=true;res()}};u.onend=fin;u.onerror=fin;setTimeout(fin,text.length*300+5000);speechSynthesis.speak(u)}catch(e){res()}}
 async function say(text,lang){if(!text)return;
   /* give the phone time to switch from the microphone back to the speaker, or the start of the speech is cut */
-  const gap=800-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();await waitQuiet();
+  const gap=800-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
   /* English word or sentence: recorded file (audible even on silent); Hebrew and missing files: device voice */
   if(lang==='en-US'&&(await playFile(WORDSET.has(text)?'w':'s',text))!==false)return;
   if(!TTS)return;
@@ -616,7 +625,7 @@ function parseSel(alts,opts){
   return null}
 function startVoice(){
   if(!SR){V.on=false;setStatus('');draw();alertBar('זיהוי דיבור לא נתמך בדפדפן הזה. נסי לפתוח את האתר ב־Safari או ב־Chrome.');return}
-  unlockAudio();
+  unlockAudio();keepAlive(true);
   V.on=true;V.denied=false;V.miss=0;S.voice=true;persist();
   try{V.ac=V.ac||new (window.AudioContext||window.webkitAudioContext)();V.ac.resume&&V.ac.resume()}catch(e){}
   try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}
@@ -625,7 +634,7 @@ function startVoice(){
   /* first utterance must start synchronously inside the tap, or iOS keeps the voice silent */
   sayNow('מצב קולי פועל','he-IL',()=>{if(V.on)voiceLoop()});
 }
-function stopVoice(silent){V.on=false;V.token++;S.voice=false;persist();stopAudio();try{speechSynthesis.cancel()}catch(e){}
+function stopVoice(silent){V.on=false;V.token++;S.voice=false;persist();stopAudio();keepAlive(false);try{speechSynthesis.cancel()}catch(e){}
   try{V.lock&&V.lock.release()}catch(e){}V.lock=null;setStatus('');if(!silent&&S.screen==='quiz')draw()}
 function alertBar(t){const el=$('vmsg');if(el){el.textContent=t;el.hidden=false}}
 async function voiceLoop(){
