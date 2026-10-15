@@ -379,6 +379,7 @@ function migSplit(flag,M){try{if(LS.get(flag))return;let ch=false;
   if(ch)try{saveKnow()}catch(e){}LS.set(flag,'1')}catch(e){}}
 migSplit('migSplit2',{mind:{0:[0],1:[1,2]},position:{0:[0,1],1:[2]}});
 migSplit('migSplit3',{post:{0:[0,1],1:[2,3],2:[4,5],3:[6]}});
+migSplit('migSplit4',{"record":{"0":[0],"1":[1],"2":[2,3]},"range":{"0":[0,1],"1":[2]},"rule":{"0":[0],"1":[1,2],"2":[3]},"stock":{"0":[0,1],"1":[2]},"master":{"0":[0],"1":[1,2],"2":[3]},"score":{"0":[0],"1":[1,2]},"treat":{"0":[0],"1":[1,2],"2":[3]},"exercise":{"0":[0,1],"1":[2]},"abuse":{"0":[0,1],"1":[2,3]},"decline":{"0":[0,1],"1":[2]},"flip":{"0":[0,1],"1":[2]},"grasp":{"0":[0,1],"1":[2]}});
 /* a form split out of a dictionary line keeps the mark of the card it came from */
 words.forEach(w=>{if(!w.src||KNOW[w.id])return;const b=w.src.replace(/#\d+$/,'');
   const o=KNOW[w.src]||KNOW[b]||Object.keys(KNOW).filter(k=>k.startsWith(b+'#')).map(k=>KNOW[k]).sort((a,c)=>c[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()});
