@@ -33,6 +33,7 @@ h2{font-size:1.5rem;font-weight:800}
 .nav .home-btn{margin-inline-start:auto}
 .home-btn{border:0;background:var(--surface);color:var(--muted);width:40px;height:40px;border-radius:50%;cursor:pointer;flex:none;display:inline-grid;place-items:center;padding:0}.home-btn svg{width:20px;height:20px}
 .search{margin:0;padding-inline-end:44px}.sbox{position:relative;margin:4px 0}.sclear{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:var(--surface);color:var(--muted);font-size:1rem;cursor:pointer;padding:0}.sclear[hidden]{display:none}
+.sticky .row2.quick{margin-top:8px}
 .today{display:flex;flex-direction:column;gap:6px;width:100%;text-align:right;border:0;border-radius:16px;background:var(--accent-soft);padding:14px 16px;cursor:pointer;color:var(--ink);font:inherit}
 .today .td-top{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted)}.today .td-hist{color:var(--accent);font-weight:700}
 .today .td-num{font-size:1.05rem}.today .td-num b{font-size:1.5rem}.today.done{background:var(--ok-soft)}.today.done .bar2 i,.days li.done .bar2 i{background:var(--ok)}
@@ -283,7 +284,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .rv-ans{background:var(--ok-soft);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
 .rv-ans .lbl{font-size:.8rem;margin:0}
 .rv-now{margin:0;text-align:center}
-.btn.knowyes[aria-pressed="false"],.btn.knowno[aria-pressed="false"]{opacity:.55}
+.row2:has([aria-pressed="true"]) .btn.knowyes[aria-pressed="false"],.row2:has([aria-pressed="true"]) .btn.knowno[aria-pressed="false"]{opacity:.55}
 .qz .btn.secondary{background:var(--surface);color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -867,7 +868,8 @@ function quizScreen(){
       ${w.others.length?`<div class="others">פירושים אחרים של המילה:${numList(w.others)}מה הפירוש הנוסף?</div>`:''}
       ${listen&&!w.others.length?`<p class="ask">מה שמעת?</p>`:''}
       <div class="inps">${M.map((_,k)=>`<input class="inp" id="inp${k}" data-k="${k}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="${k<nm-1?'next':'go'}" aria-label="פירוש ${k+1}" placeholder="${nm>1?`פירוש ${k+1}`:'כתבי כאן את הפירוש'}" value="${esc(Q.mine[k]||'')}">`).join('')}</div>
-      <div class="sticky"><button class="btn" id="show">הצגת אפשרויות</button></div>`;
+      <div class="sticky"><button class="btn" id="show">הצגת אפשרויות</button>
+        <div class="row2 quick"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div></div>`;
   }else{
     const mine=(Q.mine||[]).filter(x=>x&&x.trim());
     let fb='';
@@ -908,6 +910,8 @@ function quizScreen(){
   if(Q.stage==='write'){
     const show=()=>{keepInput();qShow()};
     $('show').onclick=show;
+    /* mark right away, without opening the options */
+    $('markY').onclick=()=>{keepInput();qMark('y')};$('markN').onclick=()=>{keepInput();qMark('n')};
     app.querySelectorAll('.inps .inp').forEach(inp=>{
       inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const nx=$('inp'+(+inp.dataset.k+1));if(nx)nx.focus();else show()}};
       inp.oninput=()=>{keepInput();clearTimeout(window._sv);window._sv=setTimeout(saveQ,400)}});
