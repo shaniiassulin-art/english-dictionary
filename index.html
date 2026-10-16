@@ -43,7 +43,8 @@ h2{font-size:1.5rem;font-weight:800}
 .nav{display:flex;align-items:center;gap:8px;min-height:48px}
 .nav .home-btn{margin-inline-start:auto}
 .home-btn{border:0;background:var(--surface);color:var(--muted);width:40px;height:40px;border-radius:50%;cursor:pointer;flex:none;display:inline-grid;place-items:center;padding:0}.home-btn svg{width:20px;height:20px}
-.search{margin:4px 0}
+.search{margin:0;padding-inline-end:44px}.sbox{position:relative;margin:4px 0}.sclear{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:var(--surface);color:var(--muted);font-size:1rem;cursor:pointer;padding:0}.sclear[hidden]{display:none}
+input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 #srchRes .words{margin-bottom:8px}
 .back{border:0;background:none;color:var(--accent);font-weight:700;padding:10px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .back::before{content:"→";font-size:1.2em}
@@ -480,6 +481,9 @@ function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
+  /* ✕ in the search box clears it */
+  const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
+    sc.addEventListener('mousedown',e=>e.preventDefault());sc.onclick=()=>{si.value='';si.dispatchEvent(new Event('input'));sc.hidden=true;si.focus()}}
   const h=$('home');if(h)h.onclick=goHome}
 /* small house button: leave (a quiz or cards are saved as usual) and open the main screen */
 function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
@@ -505,8 +509,14 @@ function bindSettings(){
 }
 /* a new random order for every quiz; the same English word never comes close to itself;
    a list spanning several levels stays in level order (shuffled inside each level) */
-function spreadShuffle(ws){const a=shuffle(ws),out=[],gap=Math.min(12,Math.max(1,Math.floor(a.length/4)));
-  while(a.length){const recent=new Set(out.slice(-gap).map(w=>w.e.toLowerCase()));let j=a.findIndex(w=>!recent.has(w.e.toLowerCase()));if(j<0)j=0;out.push(a.splice(j,1)[0])}return out}
+function spreadShuffle(ws){const n=ws.length,slot=new Array(n).fill(null),grp={};
+  shuffle(ws).forEach(w=>{const k=w.e.toLowerCase();(grp[k]=grp[k]||[]).push(w)});
+  /* repeated words first: spread evenly over the whole quiz (as far apart as possible), the rest fill the gaps at random */
+  const reps=Object.values(grp).filter(g=>g.length>1).sort((x,y)=>y.length-x.length),singles=Object.values(grp).filter(g=>g.length===1).map(g=>g[0]);
+  for(const g of reps){const step=n/g.length,off=Math.random()*step;
+    g.forEach((w,i)=>{let p=Math.min(n-1,Math.floor(off+i*step)),d=0;
+      while(true){if(p+d<n&&!slot[p+d]){slot[p+d]=w;break}if(p-d>=0&&!slot[p-d]){slot[p-d]=w;break}d++}})}
+  let k=0;for(let i=0;i<n;i++)if(!slot[i])slot[i]=singles[k++];return slot}
 function pickList(ws){const out=[];for(let l=1;l<=10;l++){const lw=ws.filter(w=>w.l===l);if(lw.length)out.push(...spreadShuffle(lw))}return out}
 function quizPanel(key,ws,title,name,from,noSet,cls){
   if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)(SDEL[key]=Date.now(),delete SESS[key]);
@@ -523,6 +533,8 @@ function quizPanel(key,ws,title,name,from,noSet,cls){
 const CATS=[['N','✗ לא ידעתי',isN,'לא יודעת'],['U','לא סומנו',w=>!kst(w),'לא סומנו'],['Y','✓ ידעתי',isY,'יודעת']];
 function catPanel(base,ws){if(!ws.some(w=>kst(w))&&!CATS.some(c=>SESS[c[0]+base]))return '';
   const rows=CATS.map(([p,lbl,f])=>{const k=p+base,ss=SESS[k],n=ws.filter(f).length;
+    /* nothing left in this category (e.g. every word is marked): drop its unfinished quiz */
+    if(!n&&ss){SDEL[k]=Date.now();delete SESS[k];saveSess();return ''}
     if(ss&&ss.kind==='quiz'&&ss.v===2){const at=Math.min(ss.i+1,ss.ids.length);
       return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><button class="link" data-restart="${k}">התחלה מחדש</button></div>`}
     return n?`<div class="cat-row"><button class="btn cat-${p}" data-start="${k}">${lbl} · ${n===1?'מילה אחת':n+' מילים'}</button></div>`:''}).join('');
@@ -584,7 +596,7 @@ function searchHits(ws,q){q=snorm(q);if(!q)return null;
   /* a meaning whose card is in another group: show this word's card, which lists it under "other meanings" */
   const via=ws.filter(w=>!got.has(w.e)&&snorm(w.others.join(' ')).includes(q)&&(got.add(w.e),true));
   return ws.filter(w=>own.includes(w)||via.includes(w))}
-function searchBox(){return `<input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><div id="srchRes"></div>`}
+function searchBox(){return `<div class="sbox"><input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><button class="sclear" id="sclear" aria-label="מחיקת החיפוש" ${S.q?'':'hidden'}>✕</button></div><div id="srchRes"></div>`}
 function bindSearch(ws){const inp=$('srch'),out=$('srchRes');if(!inp)return;
   const show=()=>{S.q=inp.value;const hits=searchHits(ws,S.q);
     out.innerHTML=hits===null?'':hits.length?`<p class="sub">${hits.length===1?'נמצאה מילה אחת':`נמצאו ${hits.length} מילים`}</p><ul class="words">${hits.slice(0,60).map(wordRow).join('')}</ul>${hits.length>60?'<p class="hint center">מוצגות 60 הראשונות. אפשר לדייק את החיפוש.</p>':''}`:'<p class="hint center">לא נמצאו מילים.</p>';
@@ -624,7 +636,7 @@ function wordsScreen(){
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">${lv?`רמה ${S.l}`:`קבוצה ${S.g+1}`}</button>${HOME}</div>
     <div><h2>${lv?`כל המילים ברמה ${S.l}`:`המילים בקבוצה ${S.g+1}`}</h2><p class="sub">${lv?'':`רמה ${S.l} · `}סמני ✓ אם את יודעת, ✗ אם לא. לחיצה נוספת מבטלת.</p></div>
-    <input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}">
+    <div class="sbox"><input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><button class="sclear" id="sclear" aria-label="מחיקת החיפוש" ${S.q?'':'hidden'}>✕</button></div>
     <div class="seg seg4" role="group" aria-label="סינון">${[['all','הכל'],['y','יודעת'],['n','לא יודעת'],['u','לא סומנו']].map(([k,t])=>`<button data-f="${k}" aria-pressed="${f===k}">${t} (${F[k].length})</button>`).join('')}</div>
     <div id="wlist">${rows()}</div>
     <div class="sticky"><button class="btn" id="toQuiz">לבוחן</button></div>
@@ -798,7 +810,7 @@ async function voiceLoop(){
       if(again)continue;
       V.miss=0;Q.sel=sel||[];const r=qCheck();
       const right=Q.opts.filter(o=>o[1]).map(o=>heOpt(o[0]));
-      const fb=r.got===nm&&!r.bad?(nm>1?'כל הפירושים נכונים!':'נכון!'):`${r.got} מתוך ${nm}. ${r.got?'':'לא סימנת פירוש נכון. '}${r.bad?(r.bad===1?'סימנת פירוש שגוי אחד. ':`סימנת ${r.bad} פירושים שגויים. `):''}${nm>1?'התשובות הנכונות':'התשובה הנכונה'}: ${right.join(', ')}.`;
+      const fb=r.got===nm&&!r.bad?'נכון!':`לא נכון. ${nm>1?'התשובות הנכונות':'התשובה הנכונה'}: ${right.join(', ')}.`;
       setStatus('');if(!await sayAll([fb,'ידעת את המילה? אמרי ידעתי או לא ידעתי.'],alive))return;continue;
     }
     const a=await ask(8000);if(!alive())return;if(snap()!==s0)continue;const t=vnorm(a.join(' '));
@@ -827,7 +839,7 @@ function quizScreen(){
     const mine=(Q.mine||[]).filter(x=>x&&x.trim());
     let fb='';
     if(Q.checked){const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
-      if(!Q.old)fb=`<p class="fb ${got===nm&&!bad?'ok':got?'part':'bad'}" role="status" aria-live="polite"><span class="frac">${got}/${nm}</span> ${got===nm?(nm>1?'כל הפירושים נכונים':'נכון!'):got?'מהפירושים הנכונים':'לא סימנת פירוש נכון'}${bad?` · סימנת ${bad===1?'פירוש שגוי אחד':bad+' פירושים שגויים'}`:''}</p>`}
+      if(!Q.old)fb=`<p class="fb ${got===nm&&!bad?'ok':'bad'}" role="status" aria-live="polite">${got===nm&&!bad?'נכון!':'לא נכון'}</p>`}
     body=`${w.others.length?`<div class="others sm">פירושים אחרים:${numList(w.others)}</div>`:''}<p class="mine"><span>מה שכתבת:</span> ${mine.length?mine.map(esc).join(' · '):'<span>(לא נכתב)</span>'}</p>
       ${Q.checked?'':`<p class="ask">${nm>1?`סמני את כל הפירושים הנכונים (${nm})`:'בחרי את הפירוש הנכון'}</p>`}
       <div class="opts">${Q.opts.map(([t,ok],k)=>{const on=Q.sel.includes(k);let c=on?' on':'',pre='';
