@@ -515,14 +515,19 @@ function bindSettings(){
 }
 /* a new random order for every quiz; the same English word never comes close to itself;
    a list spanning several levels stays in level order (shuffled inside each level) */
+/* repeated English words are placed at least 300 cards apart; when the quiz is too short for that,
+   as far apart as it allows. The other cards fill the gaps in random order. */
+const MINGAP=300;
 function spreadShuffle(ws){const n=ws.length,slot=new Array(n).fill(null),grp={};
   shuffle(ws).forEach(w=>{const k=w.e.toLowerCase();(grp[k]=grp[k]||[]).push(w)});
-  /* repeated words first: spread evenly over the whole quiz (as far apart as possible), the rest fill the gaps at random */
   const reps=Object.values(grp).filter(g=>g.length>1).sort((x,y)=>y.length-x.length),singles=Object.values(grp).filter(g=>g.length===1).map(g=>g[0]);
-  for(const g of reps){const step=n/g.length,off=Math.random()*step;
-    g.forEach((w,i)=>{let p=Math.min(n-1,Math.floor(off+i*step)),d=0;
-      while(true){if(p+d<n&&!slot[p+d]){slot[p+d]=w;break}if(p-d>=0&&!slot[p-d]){slot[p-d]=w;break}d++}})}
-  let k=0;for(let i=0;i<n;i++)if(!slot[i])slot[i]=singles[k++];return slot}
+  for(const g of reps){const k=g.length;let gap=Math.min(MINGAP,Math.floor((n-1)/(k-1))),done=false;
+    /* first a random start where every copy lands on a free place at this distance; if there is none, a slightly smaller distance */
+    while(!done&&gap>0){const offs=shuffle([...Array(n-(k-1)*gap).keys()]);
+      for(const o of offs)if(g.every((_,i)=>!slot[o+i*gap])){g.forEach((w,i)=>slot[o+i*gap]=w);done=true;break}
+      if(!done)gap--}
+    if(!done)g.forEach(w=>{const f=slot.indexOf(null);slot[f]=w})}
+  let j=0;for(let i=0;i<n;i++)if(!slot[i])slot[i]=singles[j++];return slot}
 function pickList(ws){const out=[];for(let l=1;l<=10;l++){const lw=ws.filter(w=>w.l===l);if(lw.length)out.push(...spreadShuffle(lw))}return out}
 function quizPanel(key,ws,title,name,from,noSet,cls){
   if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)(SDEL[key]=Date.now(),delete SESS[key]);
