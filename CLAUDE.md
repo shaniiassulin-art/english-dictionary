@@ -11,3 +11,4 @@
 - Voice mode (mic button in the quiz): plays the English word from its mp3, reads the Hebrew parts with he-IL speech synthesis and listens with Web Speech recognition in Hebrew; commands: numbers / option text, "ידעתי", "לא ידעתי", "חזור", "עצור".
 - Navigation: level and group screens have a search box (English or Hebrew) and a ✓/✗ word list (`S.wl` = level|group); a house button returns to the main screen; swiping right-to-left presses the screen's back button.
 - Quiz arrows beside the word: → goes back to earlier words (review / change the mark), ← skips forward (the skipped word stays unmarked; in review it moves toward the current word).
+- Auto-play mode ("אוטו" button in the quiz and cards top bar, localStorage `dictAuto`): reads each new word aloud when moving to it; otherwise words play only from a speaker button (except the listening quiz and voice mode).

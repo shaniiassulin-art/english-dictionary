@@ -261,6 +261,8 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .qz .mic{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .qz .mic svg{width:18px;height:18px}
 .qz .mic.on{background:var(--bad);color:var(--bg)}
+.autob{flex:none;height:40px;border-radius:20px;border:0;background:var(--surface);color:var(--accent);display:inline-flex;align-items:center;gap:4px;padding:0 10px;font-weight:700;font-size:.8rem;cursor:pointer}
+.autob svg{width:16px;height:16px}.autob.on{background:var(--accent);color:var(--bg)}
 .vbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));font-size:.95rem}
 .vbar span#vbarTxt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vbar .dot{width:10px;height:10px;border-radius:50%;background:var(--bad);flex:none;animation:vp 1.2s ease-in-out infinite}
@@ -601,7 +603,7 @@ function groupScreen(){
   bindSettings();bindQuizPanel(gkey(),ws,name,'group');
   bindCatPanel(gkey(),ws,name,'group');
   $('fc').onclick=()=>{const k='C'+gkey(),ss=SESS[k];
-    C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'})};
+    C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'});if(AUTO&&C.deck[C.i])speak(C.deck[C.i].e)};
 }
 function wordsScreen(){
   const lv=S.wl==='level',ws=lv?byLv(S.l):group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
@@ -627,7 +629,11 @@ function wordsScreen(){
 let Q=null;
 const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false});
 /* outside voice mode words are read only when a speaker button is pressed, except in the listening quiz, where the word is hidden */
-function autoSay(){if(Q&&Q.mode==='listen'&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
+/* auto-play mode (button in the quiz / cards top bar, remembered on this device): read each new word aloud */
+let AUTO=LS.get('dictAuto')==='1';
+const AUTOBTN=()=>`<button class="autob${AUTO?' on':''}" id="autoBtn" aria-pressed="${AUTO}" aria-label="השמעה אוטומטית של כל מילה">${SPK}<span>${AUTO?'אוטו פועל':'אוטו'}</span></button>`;
+function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>{AUTO=!AUTO;LS.set('dictAuto',AUTO?'1':'0');draw();if(AUTO&&cur)speak(cur)}}
+function autoSay(){if(Q&&(Q.mode==='listen'||AUTO)&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
 function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},rv:null,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});autoSay()}
 function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),marks:Q.marks||{},name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent};saveSess()}
 function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return false;
@@ -833,14 +839,14 @@ function quizScreen(){
         :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>`}</div>`;
   }
   app.innerHTML=`<div class="screen qz">
-    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span><button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span>${AUTOBTN()}<button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
     <p class="vmsg" id="vmsg" hidden></p>
     <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}</p>
     <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${Q.i>0?'':'disabled'}>→</button>${wordBox}<button class="arr" id="navNext" aria-label="דילוג למילה הבאה" ${Q.i<n-1?'':'disabled'}>←</button></div>
     ${body}
     ${V.on?`<div class="vbar" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="vbarTxt">${esc(V.status||'מצב קולי פעיל')}</span><button class="vstop" id="vstop">עצירה</button></div>`:''}
   </div>`;
-  $('voiceBtn').onclick=()=>{if(V.on)stopVoice();else startVoice()};
+  $('voiceBtn').onclick=()=>{if(V.on)stopVoice();else startVoice()};bindAuto(w.e);
   $('navPrev').onclick=()=>{if(Q.i<1)return;keepInput();stopVoice(true);saveQ();Q.rv=Q.i-1;draw()};
   /* forward: skip this word for now (it stays unmarked) */
   $('navNext').onclick=()=>{if(Q.i>=n-1)return;stopVoice(true);Q.i++;Object.assign(Q,blankQ());saveQ();draw();window.scrollTo(0,0);autoSay()};
@@ -888,7 +894,7 @@ function cardScreen(){
     $('b').onclick=()=>go({screen:'group'});return}
   const w=C.deck[C.i];
   app.innerHTML=`<div class="screen full">
-    <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button>${HOME}<div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span></div>
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button>${HOME}<div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span>${AUTOBTN()}</div>
     <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span>${w.others.length?`<span class="oth">פירושים נוספים: ${esc(numText(w.others))}</span>`:''}<span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
     <div class="sticky"><div class="row2"><button class="btn secondary" id="say">${SPK} מילה</button><button class="btn secondary" id="saySent">${SPK} משפט</button></div>
     <div class="row2"><button class="btn secondary" id="prev" ${C.i?'':'disabled'}>הקודם</button><button class="btn" id="nxt">הבא</button></div></div>
@@ -897,8 +903,9 @@ function cardScreen(){
   $('card').onclick=()=>{C.open=!C.open;draw()};
   $('say').onclick=()=>speak(w.e);
   $('saySent').onclick=()=>speak(w.s,.9);
-  $('prev').onclick=()=>{C.i--;C.open=false;saveC();draw()};
-  $('nxt').onclick=()=>{C.i++;C.open=false;saveC();draw()};
+  const cardSay=()=>{if(AUTO&&C.deck[C.i])speak(C.deck[C.i].e)};bindAuto(w.e);
+  $('prev').onclick=()=>{C.i--;C.open=false;saveC();draw();cardSay()};
+  $('nxt').onclick=()=>{C.i++;C.open=false;saveC();draw();cardSay()};
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.screen==='quiz'||S.screen==='cards'))$('exit')?.click()});
 (function boot(){
