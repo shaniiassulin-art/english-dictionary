@@ -14,19 +14,19 @@
 <style>
 /* Layout: one screen at a time, like an app — levels → groups → group → quiz. One accent, lots of space. */
 :root{
-  --bg:#ffffff; --surface:#f4f6f9; --ink:#141a22; --muted:#545e6c; --line:#e3e7ec;
-  --accent:#2453c7; --accent-ink:#ffffff; --accent-soft:#eaf0fc;
-  --ok:#1f7a45; --ok-soft:#e6f4ec; --bad:#b4282e; --bad-soft:#fbeaea;
+  --bg:#fbfaf8; --surface:#f2f1ee; --ink:#2b2f36; --muted:#6b707a; --line:#e6e3de;
+  --accent:#4f7096; --accent-ink:#ffffff; --accent-soft:#edf1f6;
+  --ok:#4c7f62; --ok-soft:#eef4ef; --bad:#a85a5a; --bad-soft:#f8eeed;
   --he:"Assistant",Arial,sans-serif; --en:"Source Serif 4",Georgia,serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111418; --surface:#1b2027; --ink:#eef1f5; --muted:#b0b9c5; --line:#2c333d;
-  --accent:#8fb0ff; --accent-ink:#0c1530; --accent-soft:#1d2840;
-  --ok:#6fd39a; --ok-soft:#173226; --bad:#ff8a8a; --bad-soft:#3a1d1f; color-scheme:dark}}
+  --bg:#16181b; --surface:#202328; --ink:#e9e7e3; --muted:#a3a8b0; --line:#2e3238;
+  --accent:#9db6d4; --accent-ink:#15202d; --accent-soft:#232c37;
+  --ok:#8fc2a3; --ok-soft:#1d2b23; --bad:#d9a0a0; --bad-soft:#33221f; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#111418; --surface:#1b2027; --ink:#eef1f5; --muted:#b0b9c5; --line:#2c333d;
-  --accent:#8fb0ff; --accent-ink:#0c1530; --accent-soft:#1d2840;
-  --ok:#6fd39a; --ok-soft:#173226; --bad:#ff8a8a; --bad-soft:#3a1d1f; color-scheme:dark}
+  --bg:#16181b; --surface:#202328; --ink:#e9e7e3; --muted:#a3a8b0; --line:#2e3238;
+  --accent:#9db6d4; --accent-ink:#15202d; --accent-soft:#232c37;
+  --ok:#8fc2a3; --ok-soft:#1d2b23; --bad:#d9a0a0; --bad-soft:#33221f; color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--he);font-size:18px;line-height:1.55}
@@ -34,8 +34,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--he);font-size:18px;
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 h1,h2{margin:0;line-height:1.2;text-wrap:balance}
-h1{font-size:1.8rem;font-weight:800}
-h2{font-size:1.5rem;font-weight:800}
+h1{font-size:1.7rem;font-weight:700;letter-spacing:-.01em}
+h2{font-size:1.4rem;font-weight:700}
 .sub{color:var(--muted);margin:.35rem 0 0}
 .screen{display:flex;flex-direction:column;gap:20px}
 
@@ -51,6 +51,22 @@ h2{font-size:1.5rem;font-weight:800}
 .days{list-style:none;margin:0;padding:0}.days li{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--line)}.days .bar2{grid-column:1/-1;display:block;background:var(--surface)}.today .bar2{display:block}.days .dn{font-weight:700}.days li.done .dn{color:var(--ok)}
 .totop{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;z-index:20;width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:var(--bg);font-size:1.4rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}.totop[hidden]{display:none}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+/* calm look: lighter weights, hairline borders, softer shadows */
+.btn{font-weight:600;border-radius:12px;box-shadow:none}
+.item,.panel,.today{border:1px solid var(--line);box-shadow:none}
+.item{background:var(--bg)}.panel{background:var(--bg)}
+.totop{background:var(--ink);opacity:.75}
+/* word extras: tip / usage / my note / sentence translation */
+.xtras{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.xbtn{border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:999px;padding:6px 14px;font-size:.88rem;font-weight:600;cursor:pointer}
+.xbtn[aria-expanded="true"]{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.xbtn.has::after{content:" •";color:var(--accent)}
+.xbox{background:var(--surface);border-radius:12px;padding:12px 14px;font-size:.98rem;line-height:1.6}
+.xbox b{display:block;font-size:.8rem;color:var(--muted);font-weight:600;margin-bottom:2px}
+.xbox textarea{width:100%;min-height:80px;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;background:var(--bg);color:var(--ink);resize:vertical}
+.trans{display:block;margin-top:6px;color:var(--muted);font-family:var(--he);font-size:.95rem;direction:rtl;text-align:right}
+.scol{flex:1;min-width:0}.cardx{display:flex;flex-direction:column;gap:8px}.words .xtras{justify-content:flex-start;margin-top:6px}
+.trbtn{border:0;background:none;color:var(--accent);font-size:.85rem;font-weight:600;padding:4px 0 0;cursor:pointer;display:block;margin-inline-start:auto}
 #srchRes .words{margin-bottom:8px}
 .back{border:0;background:none;color:var(--accent);font-weight:700;padding:10px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .back::before{content:"→";font-size:1.2em}
@@ -107,7 +123,7 @@ details.wl summary{cursor:pointer;color:var(--accent);font-weight:700;min-height
 .opt:disabled{cursor:default}
 .opt.right{border-color:var(--ok);background:var(--ok-soft);color:var(--ok);font-weight:700}
 .opt.wrong{border-color:var(--bad);background:var(--bad-soft);color:var(--bad)}
-.fb{margin:0;font-weight:800;font-size:1.15rem;text-align:center}
+.fb{margin:0;font-weight:700;font-size:1.1rem;text-align:center}
 .fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)}
 .fb:empty{display:none}
 
@@ -157,7 +173,7 @@ button,.item,.opt{touch-action:manipulation;-webkit-tap-highlight-color:transpar
 .item .grow{flex:1;min-width:0}
 .item .num{flex:none;width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:800;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
 .panel{background:var(--surface);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:16px}
-.panel h3{margin:0;font-size:1.2rem;font-weight:800}
+.panel h3{margin:0;font-size:1.1rem;font-weight:700}
 .panel .seg{background:var(--bg)}
 .panel .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);box-shadow:none}
 .set-box{display:flex;flex-direction:column;gap:14px}
@@ -193,9 +209,9 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .rm{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--bad-soft);color:var(--bad);cursor:pointer;font-size:.95rem}
 .mist-panel{background:var(--bad-soft)}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}
-.cat-panel .cat-N{background:var(--bad);color:var(--bg)}.cat-panel .cat-Y{background:var(--ok);color:var(--bg)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
+.cat-panel .cat-N{background:var(--bad-soft);color:var(--bad)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
 .mist-panel h3{color:var(--bad)}
-.mist-panel .btn{background:var(--bad);color:var(--bg)}
+.mist-panel .btn{background:var(--bad-soft);color:var(--bad)}
 .seg button:disabled{opacity:.4;cursor:default}
 
 .sync-state{margin:.3rem 0 0;font-size:.9rem;font-weight:600;color:var(--muted);min-height:1.2em}
@@ -228,8 +244,8 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .opt.dim{opacity:.5}
 .fb.part{color:#b26b00}
 .frac{font-variant-numeric:tabular-nums;font-size:1.3em;margin-inline-end:6px}
-.btn.knowyes{background:var(--ok);color:var(--bg)}
-.btn.knowno{background:var(--bad);color:var(--bg)}
+.btn.knowyes{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}
+.btn.knowno{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}
 .sticky .ask{margin:0}
 
 /* compact quiz: everything fits on one phone screen, also above the keyboard */
@@ -267,7 +283,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 
 .qz .mic{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .qz .mic svg{width:18px;height:18px}
-.qz .mic.on{background:var(--bad);color:var(--bg)}
+.qz .mic.on{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
 .autob{flex:none;height:40px;border-radius:20px;border:0;background:var(--surface);color:var(--accent);display:inline-flex;align-items:center;gap:4px;padding:0 10px;font-weight:700;font-size:.8rem;cursor:pointer}
 .autob svg{width:16px;height:16px}.autob.on{background:var(--accent);color:var(--bg)}
 .vbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));font-size:.95rem}
@@ -329,9 +345,12 @@ const dayKey=(t=Date.now())=>{const d=new Date(t-5*3600e3);return d.getFullYear(
 const dayDate=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12)};
 const dayLabel=k=>dayDate(k).toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'numeric',year:'numeric'});
 const dayCount=k=>(DAYS[k]||[]).length;
+/* my own notes per card: NOTES[id]=[text, timestamp] (synced, newest wins) */
+let NOTES={};try{NOTES=JSON.parse(localStorage.getItem('dictNotes')||'{}')}catch(e){}
+function saveNotes(){LS.set('dictNotes',JSON.stringify(NOTES));dirty()}
 function saveDays(){LS.set('dictDays',JSON.stringify(DAYS));dirty()}
 function logDay(id){const k=dayKey();const a=DAYS[k]=DAYS[k]||[];if(!a.includes(id)){a.push(id);saveDays()}}
-function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}')})}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}')})}
 async function push(){
   const t=+(LS.get('dictUpdated')||Date.now());
   try{const r=await fetch(docUrl(SYNC_ID),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:snapshot()},updated:{integerValue:String(t)}}})});
@@ -350,11 +369,12 @@ function mergeData(a,b){
   const ka=a.know||migrateMist(a.mist),kb=b.know||migrateMist(b.mist);
   const know={...ka};for(const k in kb)if(!know[k]||(kb[k][1]||0)>(know[k][1]||0))know[k]=kb[k];
   const days={};for(const s of [a.days||{},b.days||{}])for(const k in s)days[k]=[...new Set([...(days[k]||[]),...s[k]])].sort();
-  return{prog,sess,sdel,know,days};
+  const notes={...(a.notes||{})};for(const k in (b.notes||{}))if(!notes[k]||(b.notes[k][1]||0)>(notes[k][1]||0))notes[k]=b.notes[k];
+  return{prog,sess,sdel,know,days,notes};
 }
 function applyRemote(d,t){
   SYNC.applying=true;
-  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   if(!['quiz','cards'].includes(S.screen))draw();
 }
 async function syncNow(forceRemote){
@@ -362,7 +382,7 @@ async function syncNow(forceRemote){
   try{const rem=await pull();SYNC.ready=true;
     if(!rem){await push();setSync('ok');return}
     const local=JSON.parse(snapshot()),merged=mergeData(rem.data,local);
-    const same=o=>JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))});
+    const same=o=>JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))});
     if(same(merged)!==same(local))applyRemote(merged,Date.now());
     if(same(merged)!==same(rem.data)){LS.set('dictUpdated',String(Date.now()));await push()}
     setSync('ok');
@@ -388,6 +408,28 @@ for(let l=1;l<=10;l++){const prim=RAW.filter(r=>r.l===l),Np=prim.length||1,items
 {const all={};RAW.forEach(r=>{const k=r.e.toLowerCase();(all[k]=all[k]||[]).push(...r.h)});
   words.forEach(w=>{const ms=all[w.e.toLowerCase()];if(ms.length>1)w.others=[...new Set(ms.filter(m=>m!==w.h[0]))]})}
 const WORDS_N=RAW.length;
+/* per card: tr = Hebrew translation of the example sentence, use = usage notes, tip = how to remember the meaning */
+const EXTRA={};
+const XO={};
+/* buttons under a word: tip / usage notes (only once the meaning may be seen) and my own note (always) */
+function xtras(w,reveal){const x=EXTRA[w.id]||{},o=XO[w.id],note=(NOTES[w.id]||[])[0]||'';
+  const b=(k,l,has)=>`<button class="xbtn${has?' has':''}" data-xt="${k}" data-xid="${esc(w.id)}" aria-expanded="${o===k}">${l}</button>`;
+  let h=`<div class="xwrap" data-xw="${esc(w.id)}" data-rv="${reveal?1:0}"><div class="xtras">${reveal&&x.tip?b('tip','💡 טיפ לזכירה'):''}${reveal&&x.use?b('use','דגשים'):''}${b('note','✎ הערות שלי',!!note)}</div>`;
+  if(o==='tip'&&reveal&&x.tip)h+=`<div class="xbox">${esc(x.tip)}</div>`;
+  if(o==='use'&&reveal&&x.use)h+=`<div class="xbox">${esc(x.use)}</div>`;
+  if(o==='note')h+=`<div class="xbox"><textarea data-note="${esc(w.id)}" placeholder="כתבי כאן הערה משלך על המילה">${esc(note)}</textarea></div>`;
+  return h+'</div>'}
+/* Hebrew translation of the example sentence, behind a small button */
+function trPart(w,reveal){const tr=(EXTRA[w.id]||{}).tr;return reveal&&tr?`<button class="trbtn" data-tr="1">תרגום לעברית</button><span class="trans" hidden>${esc(tr)}</span>`:''}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-xt]');
+  if(b){const id=b.dataset.xid,k=b.dataset.xt,wrap=b.closest('[data-xw]');XO[id]=XO[id]===k?null:k;
+    const tmp=document.createElement('div');tmp.innerHTML=xtras(W[id],wrap.dataset.rv==='1');wrap.replaceWith(tmp.firstElementChild);
+    if(XO[id]==='note'){const ta=document.querySelector(`[data-note="${CSS.escape(id)}"]`);ta&&ta.focus()}return}
+  const t=e.target.closest('[data-tr]');
+  if(t){const s=t.nextElementSibling;if(s){s.hidden=!s.hidden;t.textContent=s.hidden?'תרגום לעברית':'הסתרת התרגום'}}});
+document.addEventListener('input',e=>{const ta=e.target.closest&&e.target.closest('[data-note]');if(!ta)return;const id=ta.dataset.note,v=ta.value.trim();
+  if(v)NOTES[id]=[ta.value,Date.now()];else NOTES[id]=['',Date.now()];clearTimeout(window._nt);window._nt=setTimeout(saveNotes,500)});
 const byLv=l=>words.filter(w=>w.l===l);
 const group=(l,g)=>byLv(l).slice(g*SET,g*SET+SET);
 const nGroups=l=>Math.ceil(byLv(l).length/SET);
@@ -647,7 +689,7 @@ function bindSearch(ws){const inp=$('srch'),out=$('srchRes');if(!inp)return;
     out.innerHTML=hits===null?'':hits.length?`<p class="sub">${hits.length===1?'נמצאה מילה אחת':`נמצאו ${hits.length} מילים`}</p><ul class="words">${hits.slice(0,60).map(wordRow).join('')}</ul>${hits.length>60?'<p class="hint center">מוצגות 60 הראשונות. אפשר לדייק את החיפוש.</p>':''}`:'<p class="hint center">לא נמצאו מילים.</p>';
     bindRows()};
   inp.oninput=show;if(S.q)show()}
-function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div>${w.others.length?`<div class="oth">פירושים נוספים: ${esc(numText(w.others))}</div>`:''}<div class="ex">${highlight(w.s,w.e)}</div></div>
+function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div>${w.others.length?`<div class="oth">פירושים נוספים: ${esc(numText(w.others))}</div>`:''}<div class="ex">${highlight(w.s,w.e)}</div>${trPart(w,true)}${xtras(w,true)}</div>
   <div class="yn" role="group" aria-label="האם את יודעת את ${esc(w.e)}"><button class="yn-b y" data-k="${esc(w.id)}" data-v="y" aria-pressed="${st==='y'}" aria-label="יודעת">✓</button><button class="yn-b n" data-k="${esc(w.id)}" data-v="n" aria-pressed="${st==='n'}" aria-label="לא יודעת">✗</button></div></li>`}
 function bindRows(){
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
@@ -872,7 +914,8 @@ async function voiceLoop(){
 function quizScreen(){
   const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',M=meanings(w),nm=M.length;
   const showWord=!listen||Q.shown||Q.stage==='pick';
-  const sentence=Q.sent||Q.checked?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
+  const rv=Q.checked||!!(Q.marks||{})[w.id];
+  const sentence=Q.sent||Q.checked?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span>${trPart(w,rv)}</div></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
   const wordBox=showWord?`<div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>`
     :`<div class="word listen"><button class="play" id="say" aria-label="השמעת המילה שוב">${SPK}<span>השמעה חוזרת</span></button><button class="link" id="reveal">הצגת המילה כתובה</button></div>`;
   let body='';
@@ -904,6 +947,7 @@ function quizScreen(){
     <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)} · <span class="${dayCount(dayKey())>=GOAL?'kn':''}">היום ${dayCount(dayKey())}/${GOAL}</span></p>
     <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${Q.i>0?'':'disabled'}>→</button>${wordBox}<button class="arr" id="navNext" aria-label="למילה הבאה" ${Q.i<n-1?'':'disabled'}>←</button></div>
     ${sentence}
+    ${xtras(w,rv)}
     ${body}
     ${V.on?`<div class="vbar" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="vbarTxt">${esc(V.status||'מצב קולי פעיל')}</span><button class="vstop" id="vstop">עצירה</button></div>`:''}
   </div>`;
@@ -915,7 +959,7 @@ function quizScreen(){
   function keepInput(){if(Q.stage==='write')Q.mine=M.map((_,k)=>($('inp'+k)||{}).value||'')}
   $('exit').onclick=()=>{keepInput();stopVoice(true);saveQ();S.active=null;go({screen:Q.from})};
   $('say').onclick=()=>speak(w.e);
-  const rv=$('reveal');if(rv)rv.onclick=()=>{keepInput();Q.shown=true;saveQ();draw()};
+  const rvb=$('reveal');if(rvb)rvb.onclick=()=>{keepInput();Q.shown=true;saveQ();draw()};
   const ss=$('showSent');if(ss)ss.onclick=()=>{keepInput();Q.sent=true;saveQ();draw();if(AUTO)speak(w.s,.9)};
   const sy=$('saySent');if(sy)sy.onclick=()=>speak(w.s,.9);
   /* speaker buttons must not take the focus from the answer box (that closes the keyboard on iPhone) */
@@ -963,6 +1007,7 @@ function cardScreen(){
   app.innerHTML=`<div class="screen full">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button>${HOME}<div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span>${AUTOBTN()}</div>
     <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span>${w.others.length?`<span class="oth">פירושים נוספים: ${esc(numText(w.others))}</span>`:''}<span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
+    ${C.open?`<div class="cardx">${trPart(w,true)}${xtras(w,true)}</div>`:''}
     <div class="sticky"><div class="row2"><button class="btn secondary" id="say">${SPK} מילה</button><button class="btn secondary" id="saySent">${SPK} משפט</button></div>
     <div class="row2"><button class="btn secondary" id="prev" ${C.i?'':'disabled'}>הקודם</button><button class="btn" id="nxt">הבא</button></div></div>
   </div>`;
