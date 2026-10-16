@@ -412,7 +412,7 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-xt]');
   if(b){const id=b.dataset.xid,k=b.dataset.xt,wrap=b.closest('[data-xw]');XO[id]=XO[id]===k?null:k;
     const tmp=document.createElement('div');tmp.innerHTML=xtras(W[id],wrap.dataset.rv==='1');wrap.replaceWith(tmp.firstElementChild);
-    if(XO[id]==='note'){const ta=document.querySelector(`[data-note="${CSS.escape(id)}"]`);ta&&ta.focus()}return}
+    if(XO[id]==='note'){const ta=[...document.querySelectorAll('[data-note]')].find(x=>x.dataset.note===id);ta&&ta.focus()}return}
   const t=e.target.closest('[data-tr]');
   if(t){const s=t.nextElementSibling;if(s){s.hidden=!s.hidden;t.textContent=s.hidden?'תרגום לעברית':'הסתרת התרגום'}}});
 document.addEventListener('input',e=>{const ta=e.target.closest&&e.target.closest('[data-note]');if(!ta)return;const id=ta.dataset.note,v=ta.value.trim();
