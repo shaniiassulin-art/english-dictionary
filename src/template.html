@@ -616,9 +616,9 @@ function wordsScreen(){
 let Q=null;
 const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false});
 /* outside voice mode words are read only when a speaker button is pressed, except in the listening quiz, where the word is hidden */
-/* auto-play mode (button in the quiz / cards top bar, remembered on this device): read each new word aloud */
+/* "מצב רץ" auto-play mode (button in the quiz / cards top bar, remembered on this device): read each new word aloud */
 let AUTO=LS.get('dictAuto')==='1';
-const AUTOBTN=()=>`<button class="autob${AUTO?' on':''}" id="autoBtn" aria-pressed="${AUTO}" aria-label="השמעה אוטומטית של כל מילה">${SPK}<span>${AUTO?'אוטו פועל':'אוטו'}</span></button>`;
+const AUTOBTN=()=>`<button class="autob${AUTO?' on':''}" id="autoBtn" aria-pressed="${AUTO}" aria-label="מצב רץ: השמעה אוטומטית של כל מילה">${SPK}<span>${AUTO?'מצב רץ פועל':'מצב רץ'}</span></button>`;
 function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>{AUTO=!AUTO;LS.set('dictAuto',AUTO?'1':'0');draw();if(AUTO&&cur)speak(cur)}}
 function autoSay(){if(Q&&(Q.mode==='listen'||AUTO)&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
 function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},rv:null,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});autoSay()}
