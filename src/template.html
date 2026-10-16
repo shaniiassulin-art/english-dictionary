@@ -882,7 +882,8 @@ function quizScreen(){
         return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}</button>`}).join('')}</div>
       ${fb}
       <div class="sticky">${Q.checked?`${(Q.marks||{})[w.id]?`<p class="rv-now">סימנת: <b class="${Q.marks[w.id]==='y'?'kn':'unk'}">${Q.marks[w.id]==='y'?'✓ ידעתי':'✗ לא ידעתי'}</b></p>`:''}<div class="row2"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>`
-        :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>`}</div>`;
+        :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>
+        <div class="row2 quick"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>`}</div>`;
   }
   app.innerHTML=`<div class="screen qz">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span>${AUTOBTN()}<button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
@@ -919,6 +920,7 @@ function quizScreen(){
     app.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const k=+b.dataset.k;
       if(nm===1)Q.sel=Q.sel.includes(k)?[]:[k];else Q.sel=Q.sel.includes(k)?Q.sel.filter(x=>x!==k):[...Q.sel,k];saveQ();draw()});
     $('check').onclick=()=>qCheck();
+    $('markY').onclick=()=>qMark('y');$('markN').onclick=()=>qMark('n');
   }else{
     $('markY').onclick=()=>qMark('y');$('markN').onclick=()=>qMark('n');
   }
