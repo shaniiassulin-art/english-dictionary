@@ -369,6 +369,10 @@ for(let l=1;l<=10;l++){const prim=RAW.filter(r=>r.l===l),Np=prim.length||1,items
   prim.forEach((r,p)=>{const n=r.h.length;r.h.forEach((m,k)=>items.push({key:k?((p+k*SET)%Np)+k*.01+.001:p,
     w:{id:n>1?r.uid+'#'+k:r.uid,src:r.src&&r.src[k],e:r.e,h:[m],others:r.h.filter((_,j)=>j!==k),l:r.l,s:Array.isArray(r.s)?(r.s[k]||r.s[0]):r.s}}))});
   items.sort((a,b)=>a.key-b.key);items.forEach(it=>words.push(it.w))}
+/* the same English word can come from separate dictionary lines (spring: מעיין, אביב / קפיץ, לקפוץ):
+   every card shows all the other meanings of that English word */
+{const all={};RAW.forEach(r=>{const k=r.e.toLowerCase();(all[k]=all[k]||[]).push(...r.h)});
+  words.forEach(w=>{const ms=all[w.e.toLowerCase()];if(ms.length>1)w.others=[...new Set(ms.filter(m=>m!==w.h[0]))]})}
 const WORDS_N=RAW.length;
 const byLv=l=>words.filter(w=>w.l===l);
 const group=(l,g)=>byLv(l).slice(g*SET,g*SET+SET);
