@@ -33,6 +33,7 @@ h2{font-size:1.5rem;font-weight:800}
 .nav .home-btn{margin-inline-start:auto}
 .home-btn{border:0;background:var(--surface);color:var(--muted);width:40px;height:40px;border-radius:50%;cursor:pointer;flex:none;display:inline-grid;place-items:center;padding:0}.home-btn svg{width:20px;height:20px}
 .search{margin:0;padding-inline-end:44px}.sbox{position:relative;margin:4px 0}.sclear{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:var(--surface);color:var(--muted);font-size:1rem;cursor:pointer;padding:0}.sclear[hidden]{display:none}
+.totop{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;z-index:20;width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:var(--bg);font-size:1.4rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}.totop[hidden]{display:none}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 #srchRes .words{margin-bottom:8px}
 .back{border:0;background:none;color:var(--accent);font-weight:700;padding:10px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
@@ -465,6 +466,10 @@ try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['ho
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
+/* ↑ button: back to the top of long pages */
+const toTop=document.createElement('button');toTop.className='totop';toTop.setAttribute('aria-label','חזרה לראש הדף');toTop.textContent='↑';toTop.hidden=true;
+toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});document.body.appendChild(toTop);
+window.addEventListener('scroll',()=>{toTop.hidden=window.scrollY<500},{passive:true});
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
@@ -710,11 +715,14 @@ function sayNow(text,lang,res,retry){try{const u=new SpeechSynthesisUtterance(te
     const t1=setTimeout(()=>{if(!started&&!done&&!retry&&!speechSynthesis.speaking){done=true;clearTimeout(t2);try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>sayNow(text,lang,res,true),100)}},1500);
     const t2=setTimeout(fin,text.length*300+5000);try{speechSynthesis.resume()}catch(e){}speechSynthesis.speak(u)}catch(e){res()}}
 /* several short sentences, one after another (long utterances get cut on iPhone) */
-async function sayAll(parts,alive){for(const p of parts){if(!p)continue;await say(p,'he-IL');if(alive&&!alive())return false}return true}
+/* parts are joined into as few utterances as possible (each new utterance adds a pause on iPhone), max ~220 letters each */
+async function sayAll(parts,alive){const chunks=[];let cur='';for(const p of parts.filter(Boolean)){if(cur&&cur.length+p.length>220){chunks.push(cur);cur=''}cur+=(cur?' ':'')+p}if(cur)chunks.push(cur);
+  for(const c of chunks){await say(c,'he-IL');if(alive&&!alive())return false}return true}
+const HNUM=['אחד','שתיים','שלוש','ארבע','חמש','שש','שבע','שמונה','תשע','עשר'];
 const heOpt=o=>o.replace(/ \/ /g,', ');
 async function say(text,lang){if(!text)return;
   /* give the phone time to switch from the microphone back to the speaker, or the start of the speech is cut */
-  const gap=800-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
+  const gap=350-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
   /* English word or sentence: recorded file (audible even on silent); Hebrew and missing files: device voice */
   if(lang==='en-US'&&(await playFile(WORDSET.has(text)?'w':'s',text))!==false)return;
   if(!TTS)return;
@@ -724,7 +732,7 @@ async function say(text,lang){if(!text)return;
 async function waitQuiet(){const t0=Date.now();while(Date.now()-t0<15000){
   const sp=TTS&&(speechSynthesis.speaking||speechSynthesis.pending),au=AU.el&&!AU.el.paused&&!AU.el.ended;if(!sp&&!au)return;await wait(100)}}
 /* let the last words finish before the microphone opens (opening it cuts the sound) */
-async function ask(ms){await waitQuiet();await wait(500);if(!V.on)return[];beep();await wait(200);return listen(ms)}
+async function ask(ms){await waitQuiet();await wait(150);if(!V.on)return[];beep();await wait(120);return listen(ms)}
 function beep(){try{const ac=V.ac;if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.value=.12;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.12)}catch(e){}}
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 function listen(ms){return new Promise(res=>{let r;try{r=new SR()}catch(e){res([]);return}
@@ -758,7 +766,7 @@ function startVoice(){
   try{speechSynthesis.cancel()}catch(e){}
   draw();
   /* first utterance must start synchronously inside the tap, or iOS keeps the voice silent */
-  sayNow('מצב קולי פועל','he-IL',()=>{if(V.on)voiceLoop()});
+  sayNow('מצב קולי פועל','he-IL',()=>{if(V.on)setTimeout(()=>{if(V.on)voiceLoop()},600)});
 }
 function stopVoice(silent){V.on=false;V.token++;S.voice=false;persist();stopAudio();keepAlive(false);try{speechSynthesis.cancel()}catch(e){}
   try{V.lock&&V.lock.release()}catch(e){}V.lock=null;setStatus('');if(!silent&&S.screen==='quiz')draw()}
@@ -772,21 +780,20 @@ async function voiceLoop(){
     if(Q.stage==='write'){
       setStatus('מקריאה את המילה');await say(w.e,'en-US');if(!alive())return;
       /* example sentence right after the word (and show it on screen) */
-      if(w.s){if(!Q.sent){Q.sent=true;saveQ();draw()}setStatus('מקריאה משפט לדוגמה');await wait(300);await say(w.s,'en-US');if(!alive())return}
+      if(w.s){if(!Q.sent){Q.sent=true;saveQ();draw()}setStatus('מקריאה משפט לדוגמה');await wait(80);await say(w.s,'en-US');if(!alive())return}
       /* read what is written on the screen */
       setStatus('מקריאה את ההוראות');
-      if(w.others.length){if(!await sayAll(w.others.length===1?[`למילה יש פירוש אחר אחד: ${heOpt(w.others[0])}.`]:[`למילה יש ${w.others.length} פירושים אחרים.`,
-          ...w.others.map((o,i)=>`פירוש ${i+1}: ${heOpt(o)}.`)].concat(['מה הפירוש הנוסף? אמרי את הפירוש.']),alive))return}
+      if(w.others.length){if(!await sayAll(['פירושים אחרים של המילה:',...w.others.map((o,i)=>`${HNUM[i]||i+1} - ${heOpt(o)}.`),'מה הפירוש הנוסף?'],alive))return}
       else if(!await sayAll([Q.mode==='listen'?'מה שמעת? אמרי את הפירוש בעברית.':'מה הפירוש בעברית? אמרי את הפירוש.'],alive))return;
       const a=await ask(9000);if(!alive())return;if(snap()!==s0)continue;const t=a[0]||'';
       if(isStop(t)){stopVoice();return}
       if(isRepeat(t))continue;
       if(!t&&!(await miss()))continue;if(!V.on)return;
-      V.miss=0;Q.mine=t?[t]:[];qShow();if(t){setStatus('שמעתי: '+t);await say('אמרת: '+t,'he-IL');if(!alive())return}continue;
+      V.miss=0;Q.mine=t?[t]:[];qShow();continue;
     }
     if(!Q.checked){
       setStatus('מקריאה את האפשרויות');
-      if(!await sayAll([nm>1?`סמני את כל הפירושים הנכונים, ${nm} תשובות.`:'בחרי את הפירוש הנכון.',...Q.opts.map(([o],k)=>`תשובה ${k+1}: ${heOpt(o)}.`),'אמרי את מספר התשובה.'],alive))return;
+      if(!await sayAll(['מה הפירוש הנכון?',...Q.opts.map(([o],k)=>`${HNUM[k]||k+1} - ${heOpt(o)}.`)],alive))return;
       let sel=null,again=false;
       for(let tries=0;tries<3&&alive();tries++){const a=await ask(10000);if(!alive())return;if(snap()!==s0){again=true;break}
         if(isStop(a[0]||'')){stopVoice();return}
@@ -797,8 +804,8 @@ async function voiceLoop(){
       if(again)continue;
       V.miss=0;Q.sel=sel||[];const r=qCheck();
       const right=Q.opts.filter(o=>o[1]).map(o=>heOpt(o[0]));
-      const fb=r.got===nm&&!r.bad?'נכון!':`לא נכון. ${nm>1?'התשובות הנכונות':'התשובה הנכונה'}: ${right.join(', ')}.`;
-      setStatus('');if(!await sayAll([fb,'ידעת את המילה? אמרי ידעתי או לא ידעתי.'],alive))return;continue;
+      const fb=r.got===nm&&!r.bad?'נכון!':'לא נכון.';
+      setStatus('');if(!await sayAll([fb,'ידעת או לא ידעת?'],alive))return;continue;
     }
     const a=await ask(8000);if(!alive())return;if(snap()!==s0)continue;const t=vnorm(a.join(' '));
     if(isStop(t)){stopVoice();return}
@@ -817,7 +824,7 @@ function quizScreen(){
     :`<div class="word listen"><button class="play" id="say" aria-label="השמעת המילה שוב">${SPK}<span>השמעה חוזרת</span></button><button class="link" id="reveal">הצגת המילה כתובה</button></div>`;
   let body='';
   if(Q.stage==='write'){
-    body=`${sentence}
+    body=`
       ${w.others.length?`<div class="others">פירושים אחרים של המילה:${numList(w.others)}מה הפירוש הנוסף?</div>`:''}
       ${listen&&!w.others.length?`<p class="ask">מה שמעת?</p>`:''}
       <div class="inps">${M.map((_,k)=>`<input class="inp" id="inp${k}" data-k="${k}" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="${k<nm-1?'next':'go'}" aria-label="פירוש ${k+1}" placeholder="${nm>1?`פירוש ${k+1}`:'כתבי כאן את הפירוש'}" value="${esc(Q.mine[k]||'')}">`).join('')}</div>
@@ -831,9 +838,8 @@ function quizScreen(){
       ${Q.checked?'':`<p class="ask">${nm>1?`סמני את כל הפירושים הנכונים (${nm})`:'בחרי את הפירוש הנכון'}</p>`}
       <div class="opts">${Q.opts.map(([t,ok],k)=>{const on=Q.sel.includes(k);let c=on?' on':'',pre='';
         if(Q.checked){c='';if(ok&&on){c=' right';pre='✓ '}else if(ok){c=' missed';pre='✓ '}else if(on){c=' wrong';pre='✗ '}else c=' dim'}
-        return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}${Q.checked&&ok&&!on?' <small>(לא סומן)</small>':''}</button>`}).join('')}</div>
+        return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}</button>`}).join('')}</div>
       ${fb}
-      ${sentence}
       <div class="sticky">${Q.checked?`${(Q.marks||{})[w.id]?`<p class="rv-now">סימנת: <b class="${Q.marks[w.id]==='y'?'kn':'unk'}">${Q.marks[w.id]==='y'?'✓ ידעתי':'✗ לא ידעתי'}</b></p>`:''}<div class="row2"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>`
         :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>`}</div>`;
   }
@@ -842,6 +848,7 @@ function quizScreen(){
     <p class="vmsg" id="vmsg" hidden></p>
     <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}</p>
     <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${Q.i>0?'':'disabled'}>→</button>${wordBox}<button class="arr" id="navNext" aria-label="למילה הבאה" ${Q.i<n-1?'':'disabled'}>←</button></div>
+    ${sentence}
     ${body}
     ${V.on?`<div class="vbar" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="vbarTxt">${esc(V.status||'מצב קולי פעיל')}</span><button class="vstop" id="vstop">עצירה</button></div>`:''}
   </div>`;
@@ -854,7 +861,7 @@ function quizScreen(){
   $('exit').onclick=()=>{keepInput();stopVoice(true);saveQ();S.active=null;go({screen:Q.from})};
   $('say').onclick=()=>speak(w.e);
   const rv=$('reveal');if(rv)rv.onclick=()=>{keepInput();Q.shown=true;saveQ();draw()};
-  const ss=$('showSent');if(ss)ss.onclick=()=>{keepInput();Q.sent=true;saveQ();draw()};
+  const ss=$('showSent');if(ss)ss.onclick=()=>{keepInput();Q.sent=true;saveQ();draw();if(AUTO)speak(w.s,.9)};
   const sy=$('saySent');if(sy)sy.onclick=()=>speak(w.s,.9);
   /* speaker buttons must not take the focus from the answer box (that closes the keyboard on iPhone) */
   ['say','saySent','autoBtn'].forEach(id=>{const b=$(id);if(!b)return;b.addEventListener('mousedown',e=>e.preventDefault());
