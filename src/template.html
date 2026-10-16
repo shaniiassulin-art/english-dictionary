@@ -33,6 +33,10 @@ h2{font-size:1.5rem;font-weight:800}
 .nav .home-btn{margin-inline-start:auto}
 .home-btn{border:0;background:var(--surface);color:var(--muted);width:40px;height:40px;border-radius:50%;cursor:pointer;flex:none;display:inline-grid;place-items:center;padding:0}.home-btn svg{width:20px;height:20px}
 .search{margin:0;padding-inline-end:44px}.sbox{position:relative;margin:4px 0}.sclear{position:absolute;inset-inline-end:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;border:0;background:var(--surface);color:var(--muted);font-size:1rem;cursor:pointer;padding:0}.sclear[hidden]{display:none}
+.today{display:flex;flex-direction:column;gap:6px;width:100%;text-align:right;border:0;border-radius:16px;background:var(--accent-soft);padding:14px 16px;cursor:pointer;color:var(--ink);font:inherit}
+.today .td-top{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted)}.today .td-hist{color:var(--accent);font-weight:700}
+.today .td-num{font-size:1.05rem}.today .td-num b{font-size:1.5rem}.today.done{background:var(--ok-soft)}.today.done .bar2 i,.days li.done .bar2 i{background:var(--ok)}
+.days{list-style:none;margin:0;padding:0}.days li{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--line)}.days .bar2{grid-column:1/-1;display:block;background:var(--surface)}.today .bar2{display:block}.days .dn{font-weight:700}.days li.done .dn{color:var(--ok)}
 .totop{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;z-index:20;width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:var(--bg);font-size:1.4rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}.totop[hidden]{display:none}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 #srchRes .words{margin-bottom:8px}
@@ -304,7 +308,16 @@ let SYNC={state:'idle',ready:false,applying:false,timer:null};
 const docUrl=id=>`https://firestore.googleapis.com/v1/projects/${FB.project}/databases/(default)/documents/dictionary/${encodeURIComponent(id)}?key=${FB.key}`;
 function dirty(){if(SYNC.applying)return;LS.set('dictUpdated',String(Date.now()));if(!SYNC.ready)return;clearTimeout(SYNC.timer);setSync('saving');SYNC.timer=setTimeout(push,1200)}
 let SDEL={};try{SDEL=JSON.parse(localStorage.getItem('dictSessDel')||'{}')}catch(e){}
-function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}')})}
+/* daily counter: cards marked (✓ or ✗) each day; a day starts at 05:00. DAYS = {"2026-10-16": [card ids]} */
+let DAYS={};try{DAYS=JSON.parse(localStorage.getItem('dictDays')||'{}')}catch(e){}
+const GOAL=240;
+const dayKey=(t=Date.now())=>{const d=new Date(t-5*3600e3);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const dayDate=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12)};
+const dayLabel=k=>dayDate(k).toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'numeric',year:'numeric'});
+const dayCount=k=>(DAYS[k]||[]).length;
+function saveDays(){LS.set('dictDays',JSON.stringify(DAYS));dirty()}
+function logDay(id){const k=dayKey();const a=DAYS[k]=DAYS[k]||[];if(!a.includes(id)){a.push(id);saveDays()}}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}')})}
 async function push(){
   const t=+(LS.get('dictUpdated')||Date.now());
   try{const r=await fetch(docUrl(SYNC_ID),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:snapshot()},updated:{integerValue:String(t)}}})});
@@ -322,11 +335,12 @@ function mergeData(a,b){
   for(const k in sess)if(sdel[k]&&sdel[k]>=(sess[k].t||0))delete sess[k];
   const ka=a.know||migrateMist(a.mist),kb=b.know||migrateMist(b.mist);
   const know={...ka};for(const k in kb)if(!know[k]||(kb[k][1]||0)>(know[k][1]||0))know[k]=kb[k];
-  return{prog,sess,sdel,know};
+  const days={};for(const s of [a.days||{},b.days||{}])for(const k in s)days[k]=[...new Set([...(days[k]||[]),...s[k]])].sort();
+  return{prog,sess,sdel,know,days};
 }
 function applyRemote(d,t){
   SYNC.applying=true;
-  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   if(!['quiz','cards'].includes(S.screen))draw();
 }
 async function syncNow(forceRemote){
@@ -334,7 +348,7 @@ async function syncNow(forceRemote){
   try{const rem=await pull();SYNC.ready=true;
     if(!rem){await push();setSync('ok');return}
     const local=JSON.parse(snapshot()),merged=mergeData(rem.data,local);
-    const same=o=>JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{}});
+    const same=o=>JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))});
     if(same(merged)!==same(local))applyRemote(merged,Date.now());
     if(same(merged)!==same(rem.data)){LS.set('dictUpdated',String(Date.now()));await push()}
     setSync('ok');
@@ -395,7 +409,7 @@ try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
 const kst=w=>{const v=(KNOW[w.id]||[])[0];return v==='y'||v==='n'?v:undefined};
 const isY=w=>kst(w)==='y', isN=w=>kst(w)==='n';
 const known=isY;
-function setKnow(id,v){KNOW[id]=[v||'u',Date.now()];saveKnow()}
+function setKnow(id,v){KNOW[id]=[v||'u',Date.now()];saveKnow();if(v==='y'||v==='n')logDay(id)}
 /* each entry in w.h is one meaning; near-synonyms are already grouped with " / " */
 const meanings=w=>w.h;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -471,7 +485,7 @@ const toTop=document.createElement('button');toTop.className='totop';toTop.setAt
 toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});document.body.appendChild(toTop);
 window.addEventListener('scroll',()=>{toTop.hidden=window.scrollY<500},{passive:true});
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen})[S.screen]();
+  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -538,6 +552,20 @@ function bindQuizPanel(key,ws,name,from){
   const rr=app.querySelector(`[data-restart="${key}"]`);if(rr)rr.onclick=()=>{(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw()};
 }
 
+/* today's progress toward the daily goal (the day turns over at 05:00) */
+function todayCard(){const k=dayKey(),n=dayCount(k),p=Math.min(100,n/GOAL*100);
+  return `<button class="today${n>=GOAL?' done':''}" id="today" aria-label="ההתקדמות של היום, לחיצה להיסטוריה">
+    <span class="td-top"><span class="td-date">היום · ${esc(dayLabel(k))}</span><span class="td-hist">היסטוריה ‹</span></span>
+    <span class="td-num"><b>${n}</b> / ${GOAL} מילים${n>=GOAL?' · עמדת ביעד! ✓':` · נשארו ${GOAL-n}`}</span>
+    <span class="bar2"><i style="width:${p}%"></i></span></button>`}
+function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(DAYS)])].sort().reverse();
+  const tot=ks.reduce((s,k)=>s+dayCount(k),0),hit=ks.filter(k=>dayCount(k)>=GOAL).length;
+  app.innerHTML=`<div class="screen">
+    <div class="nav"><button class="back" id="bk">מסך ראשי</button>${HOME}</div>
+    <div><h2>כמה מילים עשיתי בכל יום</h2><p class="sub">יעד יומי: ${GOAL} מילים · יום מתחלף ב־05:00 · סה"כ ${tot.toLocaleString()} מילים ב־${ks.filter(k=>dayCount(k)).length} ימים · עמדת ביעד ${hit} פעמים</p></div>
+    <ul class="days">${ks.map(k=>{const n=dayCount(k);return `<li class="${n>=GOAL?'done':''}"><span class="dd">${k===today?'<b>היום</b> · ':''}${esc(dayLabel(k))}</span><span class="dn">${n} / ${GOAL}${n>=GOAL?' ✓':''}</span><span class="bar2"><i style="width:${Math.min(100,n/GOAL*100)}%"></i></span></li>`}).join('')}</ul>
+  </div>`;
+  $('bk').onclick=()=>go({screen:'home'})}
 function home(){
   const k=words.filter(known).length;
   app.innerHTML=`<div class="screen">
@@ -545,6 +573,7 @@ function home(){
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
+    ${todayCard()}
     ${searchBox()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
@@ -554,6 +583,7 @@ function home(){
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
+  $('today').onclick=()=>go({screen:'days'});
   bindSearch(words);bindSettings();bindQuizPanel('ALL',words,'כל המילים','home');bindCatPanel('ALL',words,'כל המילים','home');
 }
 
@@ -846,7 +876,7 @@ function quizScreen(){
   app.innerHTML=`<div class="screen qz">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span>${AUTOBTN()}<button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
     <p class="vmsg" id="vmsg" hidden></p>
-    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)}</p>
+    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)} · <span class="${dayCount(dayKey())>=GOAL?'kn':''}">היום ${dayCount(dayKey())}/${GOAL}</span></p>
     <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${Q.i>0?'':'disabled'}>→</button>${wordBox}<button class="arr" id="navNext" aria-label="למילה הבאה" ${Q.i<n-1?'':'disabled'}>←</button></div>
     ${sentence}
     ${body}
