@@ -1,0 +1,482 @@
+{
+"lens": {
+"use": "עדשה: contact lenses = עדשות מגע.\nגם עדשת מצלמה.",
+"tip": "lens – 'לנס', כמו 'עדשה' של מצלמה 🔍."
+},
+"substitute": {
+"use": "תחליף: a substitute for.\nsubstitute A for B = להשתמש ב-A במקום B.\nsubstitute teacher = מורה מחליף.",
+"tip": "sub (במקום) + stitute (לעמוד) = לעמוד במקום מישהו."
+},
+"notion#0": {
+"use": "מושג, רעיון: I have no notion = אין לי מושג.",
+"tip": "notion – 'נושן', note = לשים לב: מה שיש לך בראש."
+},
+"reflection": {
+"use": "השתקפות: her reflection in the water.\nגם הרהור.",
+"tip": "reflect = לשקף.\nreflection = מה שרואים במראה 🪞."
+},
+"genre": {
+"use": "ז'אנר, סוגה: a music genre.",
+"tip": "genre – 'ז'אנר', אותה מילה בעברית."
+},
+"surveillance": {
+"use": "מעקב: under surveillance = תחת מעקב.",
+"tip": "sur (מעל) + veil (להשגיח) = להשגיח מלמעלה 📹."
+},
+"loyalty": {
+"use": "נאמנות: loyalty to.\nloyal = נאמן.",
+"tip": "loyal – 'לויאל', כמו כלב נאמן 🐕."
+},
+"propaganda": {
+"use": "תעמולה: war propaganda.",
+"tip": "propaganda – 'פרופגנדה', אותה מילה בעברית."
+},
+"rat": {
+"use": "עכברוש.\nבסלנג: בוגד, מלשין.",
+"tip": "rat – 'ראט', גדול מ-mouse 🐀."
+},
+"treasure": {
+"use": "אוצר: buried treasure.\nפועל: להוקיר.",
+"tip": "treasure – 'טרז'ר', Treasure Island = אי המטמון 💰."
+},
+"unfair": {
+"use": "לא הוגן: That's unfair!",
+"tip": "un (לא) + fair (הוגן) = לא הוגן."
+},
+"moreover": {
+"use": "יתרה מזאת (רשמי): It's cheap; moreover, it's clean.",
+"tip": "more (עוד) + over (מעל) = ומעבר לזה."
+},
+"acceptance": {
+"use": "קבלה, הסכמה: acceptance letter = מכתב קבלה.\nגם השלמה עם מצב (acceptance of loss).",
+"tip": "accept = לקבל.\nacceptance = הקבלה עצמה, כמו מכתב 'התקבלת!' 🎓."
+},
+"react": {
+"use": "react to = להגיב ל-.\nreaction = תגובה.",
+"tip": "re + act = לפעול בחזרה."
+},
+"annually": {
+"use": "מדי שנה: The festival takes place annually.",
+"tip": "annual = שנתי (anno = שנה)."
+},
+"warrior": {
+"use": "לוחם (לרוב בהקשר היסטורי או ספרותי): a brave warrior.",
+"tip": "war = מלחמה.\nwarrior = איש המלחמה ⚔."
+},
+"trace#1": {
+"use": "עקבה, סימן: no trace = בלי עקבות.",
+"tip": "trace – 'טרייס', השאיר עקבות 👣."
+},
+"creature": {
+"use": "יצור: a strange creature, sea creatures = יצורי ים.",
+"tip": "create = ליצור.\ncreature = כל מה שנברא, 'בריאה' 🐙."
+},
+"retain": {
+"use": "לשמור, להחזיק (רשמי): retain water / information.",
+"tip": "re + tain (להחזיק) = להחזיק בחזרה."
+},
+"flew": {
+"use": "עבר של fly: fly – flew – flown.",
+"tip": "flew – 'פלוּ', עף."
+},
+"infinite": {
+"use": "אינסופי: The universe seems infinite.\ninfinity = אינסוף.",
+"tip": "in (לא) + finite (סופי) = אין סוף ♾."
+},
+"counsel#0": {
+"use": "לייעץ: counsel students.",
+"tip": "counselor = יועץ בית ספרי."
+},
+"bare#1": {
+"use": "ריק, חשוף: bare walls.",
+"tip": "bare = חשוף, בלי כלום."
+},
+"exhibit": {
+"use": "להציג בתערוכה: exhibit paintings.\nשם עצם: מוצג.",
+"tip": "exhibition = תערוכה."
+},
+"indigenous": {
+"use": "ילידי: indigenous people.",
+"tip": "indigenous – 'אינדיג'נוס', נולד במקום."
+},
+"casino": {
+"use": "קזינו: lose money at the casino.",
+"tip": "casino 🎰, באיטלקית 'בית קטן'."
+},
+"shy": {
+"use": "ביישן: a shy girl.\nshyness = ביישנות.",
+"tip": "shy – 'שאיי', מתביישת להגיד 'שלום'."
+},
+"earthquake": {
+"use": "רעידת אדמה: a strong earthquake.",
+"tip": "earth (אדמה) + quake (רעד)."
+},
+"farmer": {
+"use": "חקלאי, חוואי: a dairy farmer = רפתן.",
+"tip": "farm = חווה.\nfarmer = מי שעובד בחווה 👨‍🌾."
+},
+"accomplished": {
+"use": "מוכשר, מיומן: an accomplished pianist.",
+"tip": "accomplish = להשיג.\nמי שהשיג הרבה."
+},
+"convenient": {
+"use": "נוח, מתאים מבחינת זמן או מקום: Is 5 convenient for you?",
+"tip": "convenience store = מכולת 'נוחה' שפתוחה תמיד 🏪."
+},
+"inform": {
+"use": "inform someone of/about = לעדכן מישהו על.\ninformation = מידע.",
+"tip": "in + form: להכניס צורה (מידע) לראש של מישהו ℹ."
+},
+"grain#1": {
+"use": "לטחון (שימוש נדיר). הנפוץ: grind.",
+"tip": "grain = גרגר: הופכים את הגרגרים לקמח."
+},
+"swift": {
+"use": "מהיר, מיידי: a swift reply.\nswiftly = במהירות.",
+"tip": "swift – 'סוויפט', גם שם של ציפור מהירה מאוד (סיס) 🐦."
+},
+"compromise": {
+"use": "פשרה; להתפשר: reach a compromise.",
+"tip": "compromise – 'קומפרומיס', אותה מילה."
+},
+"urgent": {
+"use": "דחוף: an urgent message.\nurgency = דחיפות.",
+"tip": "urge = לדחוק.\nurgent = משהו שדוחק, צריך מייד ⚠."
+},
+"cattle": {
+"use": "בקר (תמיד ברבים): The cattle are eating.",
+"tip": "cattle – 'קטל', פרות 🐄."
+},
+"eliminate#0": {
+"use": "לחסל, לסלק: eliminate the problem.",
+"tip": "eliminate – 'אלימינייט', להוציא."
+},
+"strain#0": {
+"use": "מאמץ, מתח: a strain on the eyes.",
+"tip": "strain – 'סטריין', מתיחה."
+},
+"barrier": {
+"use": "מחסום: a language barrier.",
+"tip": "bar = מוט, מחסום 🚧."
+},
+"crop#0": {
+"use": "לחתוך, לקצץ: crop a photo.",
+"tip": "Crop = כלי החיתוך בעריכת תמונות."
+},
+"elderly": {
+"use": "קשיש (מנומס יותר מ-old): elderly people.\nthe elderly = הקשישים.",
+"tip": "elder = בכור, מבוגר.\nelderly = בגיל מבוגר."
+},
+"timeline": {
+"use": "ציר זמן: make a timeline of the war.",
+"tip": "time (זמן) + line (קו)."
+},
+"decrease#1": {
+"use": "לרדת, להפחית: The number decreased.",
+"tip": "de (למטה) + crease (גדילה)."
+},
+"twins": {
+"use": "תאומים: identical twins = תאומים זהים.",
+"tip": "twin – 'טווין', two = שניים 👯."
+},
+"flip#2": {
+"use": "להעיף: flip a coin = להטיל מטבע.",
+"tip": "flip a coin = עץ או פלי 🪙."
+},
+"awake": {
+"use": "ער (תואר): stay awake, wide awake = ער לגמרי.",
+"tip": "wake up = להתעורר.\nawake = במצב של ער ☕."
+},
+"resolve#1": {
+"use": "לפתור: resolve a problem.",
+"tip": "re + solve (לפתור)."
+},
+"cow": {
+"use": "פרה: milk a cow.\nזכר: bull.",
+"tip": "cow – 'קאו', נשמע כמו 'מוּ' של פרה 🐮."
+},
+"organ#0": {
+"use": "עוגב: play the organ.",
+"tip": "organ – 'אורגן', עוגב בכנסייה 🎹."
+},
+"harsh": {
+"use": "קשה, נוקשה: harsh winter, harsh words.",
+"tip": "harsh – 'הארש', כמו 'הרס'."
+},
+"instruction": {
+"use": "הוראה: follow the instructions.",
+"tip": "instruct = להורות.\nהוראות הפעלה."
+},
+"lecture": {
+"use": "הרצאה: give a lecture.",
+"tip": "lecture – 'לקצ'ר', כמו 'לקטור' = מרצה."
+},
+"notion#1": {
+"use": "נטייה, רעיון לעשות משהו.",
+"tip": "notion = מחשבה, רעיון."
+},
+"blank": {
+"use": "ריק: leave it blank.\nfill in the blanks = השלם את החסר.",
+"tip": "blank – 'בלאנק', דף ריק."
+},
+"inventory": {
+"use": "מלאי, רשימת מלאי: take inventory = לספור מלאי.",
+"tip": "invent = למצוא.\ninventory = רשימת כל מה שנמצא במחסן 📦."
+},
+"lean": {
+"use": "להישען: lean on/against.",
+"tip": "lean – 'לין', להטות את הגוף."
+},
+"genes": {
+"use": "גנים: You got it from your genes = זה תורשתי.",
+"tip": "genes נשמע בדיוק כמו jeans (ג'ינס).\nמה שעובר מההורים 🧬."
+},
+"grandmother": {
+"use": "סבתא.\nבדיבור: grandma.",
+"tip": "grand + mother = 'האמא הגדולה'."
+},
+"justify": {
+"use": "להצדיק: justify violence.",
+"tip": "just = צודק.\njustify = להראות שצודק."
+},
+"missile": {
+"use": "טיל: fire a missile = לשגר טיל.",
+"tip": "missile – 'מיסייל', כמו mission = משימה: טיל שנשלח למשימה 🚀."
+},
+"curve": {
+"use": "עקומה, פנייה: a sharp curve.",
+"tip": "curve – 'קרב', קו מעוקל."
+},
+"zoo": {
+"use": "גן חיות: go to the zoo.",
+"tip": "zoo – 'זוּ', zoology = תורת החיים 🦁."
+},
+"ingredients": {
+"use": "מרכיבים: mix the ingredients.",
+"tip": "ingredient – 'אינגרדיאנט', מה שנכנס (in) למתכון."
+},
+"horn#0": {
+"use": "קרן של בעל חיים: The bull has long horns.",
+"tip": "horn – 'הורן', unicorn = חד-קרן 🦄."
+},
+"pepper": {
+"use": "פלפל (תבלין או ירק): salt and pepper.",
+"tip": "pepper – 'פפר', כמו ד\"ר פפר 🌶."
+},
+"availability": {
+"use": "זמינות: check availability = לבדוק זמינות.",
+"tip": "available = זמין.\navailability = האם יש מקום פנוי."
+},
+"activist": {
+"use": "פעיל חברתי: a human rights activist.",
+"tip": "active = פעיל.\nאקטיביסט = מי שפועל למען מטרה ✊."
+},
+"bend": {
+"use": "לכופף: bend – bent – bent.",
+"tip": "bend – 'בנד', עיקול."
+},
+"combine": {
+"use": "לשלב, לחבר: combine A with B.\ncombination = שילוב.",
+"tip": "combine – 'קומביין'.\nקומבינציה = שילוב של כמה דברים."
+},
+"yield#1": {
+"use": "להניב: yield fruit / results.",
+"tip": "yield – 'ייל'ד', תפוקה."
+},
+"mere": {
+"use": "רק, גרידא: a mere child = רק ילד.\nmerely = רק.",
+"tip": "mere – 'מיר', משהו 'רק' קטן."
+},
+"acquire": {
+"use": "לרכוש: acquire a skill.",
+"tip": "acquire – 'אקוויר', לקבל."
+},
+"counsel#1": {
+"use": "עצה: good counsel.\nגם עורך דין בבית משפט.",
+"tip": "counselor = יועץ.\ncounsel = עצה."
+},
+"alike": {
+"use": "דומים: look alike = נראים דומים.\nבא אחרי הפועל.",
+"tip": "like = כמו.\nalike = כמו זה כמו זה."
+},
+"profession": {
+"use": "מקצוע: a hard profession.\nprofessional = מקצועי.",
+"tip": "professional = מקצועי."
+},
+"boundary": {
+"use": "גבול: the boundary between two countries.\nגם גבולות אישיים.",
+"tip": "bound = קשור, מוגבל.\nboundary = הקו שמגביל."
+},
+"infected": {
+"use": "מזוהם, נדבק: infected with.",
+"tip": "infection = זיהום."
+},
+"publisher": {
+"use": "הוצאה לאור, מו\"ל: the publisher printed the book.",
+"tip": "publish = לפרסם.\npublisher = מי שמפרסם ספרים 📚."
+},
+"cage": {
+"use": "כלוב: a bird in a cage.",
+"tip": "cage – 'קייג''. ציפור בכלוב 🐦."
+},
+"companion": {
+"use": "בן לוויה, חבר לדרך: my only companion.",
+"tip": "com (עם) + pan (לחם) = מי שאוכלים איתו לחם 🍞."
+},
+"courtesy": {
+"use": "נימוס, אדיבות: out of courtesy = מתוך נימוס.",
+"tip": "court = חצר המלוכה: נימוסים של חצר המלך 👑."
+},
+"observation": {
+"use": "השגחה, תצפית: under observation.",
+"tip": "observe = להתבונן 👀."
+},
+"cabin": {
+"use": "בקתה: a cabin in the woods.\nבמטוס: תא הנוסעים.",
+"tip": "cabin – 'קבין', בקתת עץ."
+},
+"flexible": {
+"use": "גמיש: flexible hours = שעות גמישות.",
+"tip": "flex = לכופף.\nflexible = שאפשר לכופף 🤸."
+},
+"retreat": {
+"use": "לסגת: The army retreated.\nשם עצם: נסיגה; גם מקום מפלט.",
+"tip": "re + treat = לחזור אחורה."
+},
+"owe": {
+"use": "להיות חייב: owe someone money.\nowe it to = חייב את זה ל-.",
+"tip": "owe – 'אוֹ', IOU = I owe you = אני חייב לך."
+},
+"separation": {
+"use": "פרידה, הפרדה: separation from family.",
+"tip": "separate = נפרד.\nseparation = הפרידה עצמה."
+},
+"valve": {
+"use": "שסתום: close the valve.\nגם מסתם בלב.",
+"tip": "valve – 'ואלב', כמו ברז קטן שפותח וסוגר."
+},
+"eagle": {
+"use": "נשר, עיט: an eagle flew.",
+"tip": "eagle – 'איגל', הסמל של אמריקה 🦅."
+},
+"lip": {
+"use": "שפה (בפה): bite your lip.\nlipstick = שפתון.",
+"tip": "lip – 'ליפ', ליפסטיק = שפתון 💄."
+},
+"eliminate#1": {
+"use": "להדיח מתחרות: be eliminated.",
+"tip": "eliminate = להוציא מהתחרות."
+},
+"miracle": {
+"use": "נס: It's a miracle!\nmiraculous = ניסי.",
+"tip": "miracle – 'מירקל', mirror (מראה): לראות משהו מופלא ✨."
+},
+"strain#1": {
+"use": "להתאמץ: strain to hear.\nלמתוח שריר.",
+"tip": "strain = מתח.\nלמתוח את עצמך עד הקצה."
+},
+"colony": {
+"use": "מושבה: a British colony.",
+"tip": "colony – 'קולוני', קולוניאליזם 🏴."
+},
+"crop#1": {
+"use": "יבול: the main crop.\ncrops = גידולים.",
+"tip": "crop – 'קרופ', מה שקוצרים מהשדה 🌽."
+},
+"divide": {
+"use": "לחלק: divide into = לחלק ל-.\ndivision = חילוק.",
+"tip": "divide – 'דיוויד', כמו דוד שחילק את הממלכה ➗."
+},
+"occasional": {
+"use": "מדי פעם, לא קבוע: occasional storms.",
+"tip": "occasion = הזדמנות."
+},
+"appreciation": {
+"use": "הערכה, הוקרה: show your appreciation.",
+"tip": "appreciate = להעריך."
+},
+"tribe": {
+"use": "שבט: the twelve tribes = שנים עשר השבטים.",
+"tip": "tribe – 'טרייב', כמו tribute: שבט שמשלם מס."
+},
+"unfortunate": {
+"use": "מצער, אומלל: an unfortunate accident.",
+"tip": "un + fortunate (בר מזל)."
+},
+"organ#1": {
+"use": "איבר בגוף: vital organs.\norgan donor = תורם איברים.",
+"tip": "organ – 'אורגן', כמו organism = אורגניזם, כל האיברים יחד."
+},
+"variable": {
+"use": "משתנה: variable weather.\nבמתמטיקה: משתנה (x).",
+"tip": "vary = להשתנות.\nvariable = משהו שמשתנה."
+},
+"oriented": {
+"use": "מכוון ל-: oriented toward beginners.",
+"tip": "orient = לכוון (אוריינטציה)."
+},
+"pursuit": {
+"use": "in pursuit of = בחיפוש אחר, במרדף אחרי.",
+"tip": "pursue = לרדוף.\nThe Pursuit of Happyness = המרדף אחר האושר."
+},
+"cruel": {
+"use": "אכזרי: cruel to animals.\ncruelty = אכזריות.",
+"tip": "cruel – 'קרוּאל', קרואלה דה ויל 🐾."
+},
+"interface": {
+"use": "ממשק: a simple interface.",
+"tip": "inter (בין) + face (פנים) = הפנים שבין אדם למחשב 💻."
+},
+"charm": {
+"use": "קסם אישי.\ncharming = מקסים.",
+"tip": "charm – 'צ'ארם', מקסים."
+},
+"deer": {
+"use": "צבי, אייל: a deer ran.\nבריבוי: deer.",
+"tip": "deer – 'דיר' 🦌, כמו dear (יקר)."
+},
+"blew#0": {
+"use": "עבר של blow (לנשוף): blow – blew – blown.\nThe wind blew = הרוח נשבה.",
+"tip": "blew – 'בלוּ', נשמע כמו blue (כחול), כמו רוח בשמיים כחולים."
+},
+"jungle": {
+"use": "ג'ונגל: Monkeys live in the jungle.",
+"tip": "jungle – 'ג'אנגל', ספר הג'ונגל 🐒."
+},
+"leaf (leaves)|leaf": {
+"use": "עלה של עץ.\nבריבוי: leaves (ה-f הופכת ל-v).",
+"tip": "leaf – 'ליף'. turn over a new leaf = לפתוח דף חדש 🍃."
+},
+"alternate#0": {
+"use": "alternate between = לסירוגין.",
+"tip": "alternative = חלופה."
+},
+"athlete": {
+"use": "ספורטאי, אתלט.\nathletic = ספורטיבי.",
+"tip": "athlete – 'אתליט', אתלטיקה קלה 🏃."
+},
+"attraction": {
+"use": "אטרקציה: a tourist attraction.\nגם משיכה.",
+"tip": "attract = למשוך.\nattraction = מה שמושך תיירים 🎡."
+},
+"investing": {
+"use": "invest in = להשקיע ב-.",
+"tip": "investment = השקעה 📈."
+},
+"horn#1": {
+"use": "צופר: honk the horn = לצפור.",
+"tip": "horn = קרן: פעם תקעו בקרן כמו בשופר 📯."
+},
+"mild": {
+"use": "מתון, נעים: mild weather.\nגם עדין (mild cheese).",
+"tip": "mild – 'מיילד', כמו טעם עדין ולא חריף."
+},
+"urge#0": {
+"use": "urge someone to = להפציר במישהו ל-.",
+"tip": "urge = לדחוק, מאותו שורש כמו urgent = דחוף."
+},
+"noon": {
+"use": "צהריים, 12:00: at noon.\nafternoon = אחר הצהריים.",
+"tip": "noon – 'נוּן', after + noon = אחר הצהריים 🕛."
+}
+}

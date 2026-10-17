@@ -81,7 +81,7 @@
 },
 "mass#1": {
 "use": "מסה (פיזיקה), כמות חומר.\nגם המון: masses of people.",
-"tip": "מסה = mass, אותה מילה."
+"tip": "mass = 'מסה', כמו בפיזיקה: כמות החומר בגוף ⚖."
 },
 "owner": {
 "use": "the owner of = הבעלים של.\nown = להחזיק בבעלות.",
@@ -93,7 +93,7 @@
 },
 "hall#1": {
 "use": "אולם גדול: concert hall, city hall (עירייה).",
-"tip": "hall – 'הול', היכל."
+"tip": "hall – 'הול', כמו Carnegie Hall, אולם קונצרטים 🎻."
 },
 "score#0": {
 "use": "לחרוץ קו (במלאכה, בישול).",
@@ -101,11 +101,11 @@
 },
 "scale#0": {
 "use": "on a scale of 1 to 10 = בסולם מ-1 עד 10.\nגם מאזניים, קנה מידה.",
-"tip": "סקאלה = סולם."
+"tip": "scale = סולם: on a scale of 1 to 10 = ציון מ-1 עד 10 📏."
 },
 "lake": {
 "use": "swim in a lake.\nהכנרת = the Sea of Galilee, אבל זה בעצם lake.",
-"tip": "lake – 'לייק', כמו לגונה."
+"tip": "lake – 'לייק'. Swan Lake = אגם הברבורים 🦢."
 },
 "mouth": {
 "use": "פה; גם שפך נהר (the mouth of the river).",
@@ -124,8 +124,8 @@
 "tip": "wed = להינשא.\nwedding = טקס הנישואים 💍."
 },
 "budget": {
-"use": "תקציב: on a budget = בתקציב מוגבל.\nגם פועל: לתקצב.",
-"tip": "באדג'ט = תקציב."
+"use": "תקציב: on a budget = בתקציב מוגבל.\nlow-budget = בתקציב נמוך.\nפועל: לתקצב.",
+"tip": "budget = 'באדג'ט', תקציב.\nכמו 'תיק' (bougette) שבו שמים את הכסף 👛."
 },
 "target": {
 "use": "מטרה: reach a target.\nגם מטרה לירי.",
@@ -145,7 +145,7 @@
 },
 "metal": {
 "use": "מתכת: made of metal.\nheavy metal = סגנון מוזיקה.",
-"tip": "מטאל = מתכת."
+"tip": "metal = 'מטאל', מתכת.\nheavy metal = מוזיקה 'כבדה' כמו מתכת 🤘."
 },
 "Dead Sea": {
 "use": "ים המלח: the Dead Sea.\nתמיד עם the.",
@@ -181,7 +181,7 @@
 },
 "artist": {
 "use": "אמן, צייר, אמן במה.",
-"tip": "art = אמנות.\nart + ist = אמן 🎨."
+"tip": "art (אמנות) + ist (מי שעוסק) = אמן 🎨."
 },
 "stone": {
 "use": "אבן: made of stone.\nthe Stone Age = תקופת האבן.",
@@ -200,12 +200,12 @@
 "tip": "wild – 'ווילד', ווילד ווסט = המערב הפרוע."
 },
 "institute#0": {
-"use": "מכון: a research institute, Weizmann Institute.",
-"tip": "institute – 'אינסטיטוט', כמו 'מכון ויצמן' = Weizmann Institute."
+"use": "מכון מחקר או לימודים: a science institute.\nWeizmann Institute = מכון ויצמן.",
+"tip": "institute = 'אינסטיטוט', מוסד שהוקם (institution) 🏛."
 },
 "method": {
-"use": "שיטה: a method of/for learning.",
-"tip": "method – 'מתוד', כמו 'מתודה' בעברית = שיטה."
+"use": "שיטה, דרך פעולה: a method for learning.\nmethodical = שיטתי.",
+"tip": "method = 'מתודה' בעברית.\nשיטה מסודרת לעשות משהו."
 },
 "score#1": {
 "use": "score a goal = להבקיע שער.\nscore points = לצבור נקודות.",
@@ -213,7 +213,7 @@
 },
 "scale#1": {
 "use": "לטפס על משהו גבוה: scale a wall.",
-"tip": "scale = סולם: מטפסים בו."
+"tip": "scale = סולם: לטפס כמו על סולם 🧗."
 },
 "strength": {
 "use": "כוח, חוזק: physical strength.\nstrengths and weaknesses = חוזקות וחולשות.",
@@ -281,7 +281,7 @@
 },
 "run, ran|run": {
 "use": "run – ran – run.\nrun a business = לנהל עסק.\nrun out of = להיגמר.",
-"tip": "run – 'ראן', לרוץ 🏃."
+"tip": "run – 'ראן' 🏃.\nrun – ran – run: הצורה השלישית זהה להווה."
 },
 "waste#1": {
 "use": "פסולת: toxic waste.\nגם בזבוז: a waste of time.",
@@ -296,8 +296,8 @@
 "tip": "bridge – 'בריג''. גשר ברוקלין."
 },
 "copy": {
-"use": "להעתיק; גם עותק.\ncopy and paste.",
-"tip": "קופי = העתקה."
+"use": "להעתיק: copy homework.\nשם עצם: עותק (a copy of).\ncopy and paste = העתק והדבק.",
+"tip": "copy = 'קופי', כמו מכונת צילום = copy machine 📠."
 },
 "sum up": {
 "use": "לסכם: to sum up = לסיכום.",
@@ -316,7 +316,7 @@
 "tip": "back (מאחור) + ground (קרקע) = מה שמאחור."
 },
 "length": {
-"use": "אורך: the length of the room.\nlong → length.",
+"use": "אורך: the length of the room.\nat length = באריכות.",
 "tip": "long (ארוך) → length (אורך).\nכמו strong → strength."
 },
 "rare#0": {
@@ -345,7 +345,7 @@
 },
 "alive": {
 "use": "חי (אחרי פועל): He is alive.\nלפני שם עצם אומרים living: living things.",
-"tip": "a + live (לחיות) = בחיים."
+"tip": "a + live (לחיות) = בחיים.\nStayin' Alive = להישאר בחיים 🎵."
 },
 "horse": {
 "use": "ride a horse = לרכוב על סוס.",
@@ -353,11 +353,11 @@
 },
 "map": {
 "use": "מפה: on the map.\nפועל: למפות.",
-"tip": "map – 'מאפ', כמו 'מפה' 🗺."
+"tip": "map = 'מאפ', כמו Google Maps 🗺."
 },
 "balance": {
 "use": "lose your balance = לאבד שיווי משקל.\nwork-life balance = איזון.",
-"tip": "בלאנס = איזון ⚖."
+"tip": "balance = 'בלאנס', איזון.\nכמו מאזניים שעומדים ישר ⚖."
 },
 "wild#1": {
 "use": "in the wild = בטבע הפראי, לא בגן חיות.",
@@ -365,7 +365,7 @@
 },
 "volume#0": {
 "use": "כרך של ספר: volume 2.\nגם עוצמת שמע, נפח.",
-"tip": "וולום = כרך."
+"tip": "volume = כרך.\nכרך 1, כרך 2 = volume 1, volume 2 📚."
 },
 "request": {
 "use": "בקשה: make a request.\nפועל: request something (רשמי).",
@@ -380,12 +380,12 @@
 "tip": "score – 'סקור', כמו לוח התוצאות במשחק."
 },
 "vehicle": {
-"use": "כלי רכב (רשמי).",
-"tip": "vehicle – 'ויהיקל', מוביל."
+"use": "כלי רכב (רשמי): a motor vehicle.\nבדיבור: car.",
+"tip": "vehicle – 'ויהיקל', כמו 'וגון' = עגלה שמובילה 🚗."
 },
 "grade#1": {
 "use": "ציון: get a good grade.\nגם כיתה (in 5th grade).",
-"tip": "grade = דרגה, ציון."
+"tip": "grade = ציון, וגם כיתה: in 5th grade = בכיתה ה' 📝."
 },
 "corner": {
 "use": "on the corner = בפינת הרחוב.\nin the corner = בפינת החדר.",
@@ -404,8 +404,8 @@
 "tip": "aid – 'אייד', כמו first aid 🩹."
 },
 "develop": {
-"use": "לפתח: develop skills.\ndevelopment = פיתוח.",
-"tip": "developer = מפתח תוכנה."
+"use": "לפתח: develop skills.\nלהתפתח: The city developed fast.\ndevelopment = פיתוח.",
+"tip": "developer = מפתח תוכנה 👩‍💻."
 },
 "unique": {
 "use": "ייחודי: unique in the world.",
@@ -420,8 +420,8 @@
 "tip": "various = שונים.\nvariety = הרבה סוגים שונים."
 },
 "conversation": {
-"use": "שיחה: have a conversation.",
-"tip": "converse = לשוחח.\nconversation – 'קונברסיישן'."
+"use": "שיחה: have a conversation with.",
+"tip": "converse = לשוחח.\nconversation – 'קונברסיישן' 💬."
 },
 "fly#0": {
 "use": "לעוף; לטוס: fly to Paris.\nfly – flew – flown.",
@@ -433,7 +433,7 @@
 },
 "file": {
 "use": "קובץ במחשב; תיק במשרד.\nsave a file.",
-"tip": "פייל = קובץ 📁."
+"tip": "file = 'פייל', קובץ במחשב 📁.\nגם תיק במשרד."
 },
 "firm#1": {
 "use": "תקיף, נחוש: be firm with = להיות תקיף עם.",
@@ -445,11 +445,11 @@
 },
 "treat#0": {
 "use": "treat someone well/badly = להתייחס טוב/רע.",
-"tip": "treat = טיפול, יחס."
+"tip": "treat = להתייחס.\nTreat others as you want to be treated = עשה לאחרים כפי שתרצה שיעשו לך."
 },
 "forever": {
-"use": "לנצח: forever and ever = לעולם ועד.",
-"tip": "for + ever = לתמיד ♾."
+"use": "לנצח, לתמיד: forever and ever.\nלוקח לך forever = לוקח לך נצח.",
+"tip": "for (ל-) + ever (תמיד) = לתמיד ♾."
 },
 "edge#0": {
 "use": "קצה: the edge of the table.\non edge = מתוח.",
@@ -469,14 +469,14 @@
 },
 "arm#0": {
 "use": "לחמש: armed with = חמוש ב-.\narms = נשק.",
-"tip": "arm = זרוע: לתת לה נשק."
+"tip": "arm = זרוע.\nלחמש = לתת לזרוע נשק. arms = כלי נשק 🔫."
 },
 "run, ran|ran": {
 "use": "עבר של run: run – ran – run.",
 "tip": "ran – 'ראן', רץ.\nכמו swim – swam."
 },
 "audience": {
-"use": "קהל (בהופעה, הרצאה).",
-"tip": "audio = שמיעה.\nקהל ששומע."
+"use": "קהל של הופעה, הרצאה או תוכנית: a large audience.",
+"tip": "audio = שמיעה.\naudience = מי שבא לשמוע 👂."
 }
 }

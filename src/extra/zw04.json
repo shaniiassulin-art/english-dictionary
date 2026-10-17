@@ -37,7 +37,7 @@
 },
 "plot#2": {
 "use": "חלקת אדמה: a plot of land.",
-"tip": "plot = שטח קטן מסומן."
+"tip": "plot = שטח קטן מסומן, חלקת ירקות 🥕."
 },
 "height": {
 "use": "גובה: What is your height? = מה הגובה שלך?\nhigh → height.",
@@ -57,7 +57,7 @@
 },
 "regularly": {
 "use": "באופן קבוע, בקביעות: exercise regularly.",
-"tip": "regular = רגיל, קבוע."
+"tip": "regular = רגיל, קבוע.\nregularly = על בסיס קבוע 🔁."
 },
 "resistance#1": {
 "use": "תנועת מחתרת: the French Resistance.",
@@ -85,7 +85,7 @@
 },
 "external": {
 "use": "חיצוני: external walls.\nההפך: internal.",
-"tip": "ex = בחוץ. אקסטרני."
+"tip": "ex = בחוץ.\nexternal = חיצוני, כמו 'דיסק און קי חיצוני' (external drive)."
 },
 "license#0": {
 "use": "רישיון: driver's license.",
@@ -96,8 +96,8 @@
 "tip": "steam – 'סטים', רכבת קיטור 🚂."
 },
 "introduction#0": {
-"use": "מבוא, הקדמה של ספר.",
-"tip": "intro = אינטרו, הפתיחה."
+"use": "מבוא, הקדמה של ספר: Read the introduction.",
+"tip": "intro = 'אינטרו', הפתיחה של שיר או ספר."
 },
 "recognize": {
 "use": "לזהות: recognize someone.\nגם להכיר ב- (recognize a state).",
@@ -113,7 +113,7 @@
 },
 "singer": {
 "use": "זמר/ת: a famous singer.",
-"tip": "sing (לשיר) + er = מי ששר 🎤."
+"tip": "sing (לשיר) + er = מי ששר.\nכמו singer-songwriter = זמר-יוצר 🎤."
 },
 "plate#1": {
 "use": "לוחית: license plate = לוחית רישוי.",
@@ -140,20 +140,20 @@
 "tip": "quote – 'קווט', 'קוטס' = ציטוטים במרכאות."
 },
 "defeat": {
-"use": "תבוסה; פועל: להביס.",
-"tip": "de + feat (הישג) = ביטול ההישג."
+"use": "תבוסה: a heavy defeat.\nפועל: להביס (defeat the enemy).",
+"tip": "de (ביטול) + feat (הישג) = ביטול ההישג."
 },
 "entitled": {
 "use": "entitled to = זכאי ל-.\nגם 'נקרא בשם' (a book entitled...).",
-"tip": "title = תואר, זכות."
+"tip": "title = תואר, זכות.\nentitled = שיש לו זכות על."
 },
 "nose": {
 "use": "אף: blow your nose = לקנח את האף.",
-"tip": "nose – 'נוֹז' 👃."
+"tip": "nose – 'נוֹז' 👃, nosy = חטטן, מכניס את האף."
 },
 "sight#1": {
-"use": "כוונת של נשק.",
-"tip": "sight = ראייה: מה שמכוונים דרכו."
+"use": "כוונת של נשק: look through the sight.",
+"tip": "sight = ראייה: המקום שמכוונים דרכו את העין 🎯."
 },
 "hardly ever": {
 "use": "כמעט אף פעם, לפני הפועל: I hardly ever...",
@@ -164,8 +164,8 @@
 "tip": "bread – 'ברד', ברד ופיתות 🍞."
 },
 "convention#0": {
-"use": "כנס גדול: a convention center.",
-"tip": "convene = להתכנס."
+"use": "כנס גדול: a convention center = מרכז כנסים.",
+"tip": "convene = להתכנס: אנשים מתכנסים לכנס."
 },
 "document#0": {
 "use": "לתעד: document every step.",
@@ -181,7 +181,7 @@
 },
 "raw#1": {
 "use": "גולמי: raw materials = חומרי גלם.",
-"tip": "raw = לא מבושל, לא מעובד."
+"tip": "raw = לא מבושל: גם חומר 'לא מבושל', לא מעובד."
 },
 "inner": {
 "use": "פנימי: inner peace = שקט פנימי.",
@@ -193,19 +193,19 @@
 },
 "visual": {
 "use": "חזותי: a visual aid = עזר חזותי.",
-"tip": "vision = ראייה 👁."
+"tip": "vision = ראייה 👁.\nvisual = שמשתמש בראייה."
 },
 "graduate": {
 "use": "graduate from = לסיים.\nכשם עצם: בוגר.",
-"tip": "graduation = טקס סיום 🎓."
+"tip": "graduation = טקס סיום 🎓.\ngrade = דרגה: עולים בדרגה."
 },
 "plot#3": {
 "use": "עלילה: the plot of the movie.",
 "tip": "plot twist = תפנית בעלילה."
 },
 "tower": {
-"use": "מגדל: the Eiffel Tower.",
-"tip": "tower – 'טאואר', מגדל גבוה 🗼."
+"use": "מגדל: the Eiffel Tower, a clock tower.",
+"tip": "tower – 'טאואר', Tower of London 🗼."
 },
 "neighborhood": {
 "use": "שכונה: a quiet neighborhood.",
@@ -216,12 +216,12 @@
 "tip": "engine (מנוע) + er = מי שבונה מנועים ⚙."
 },
 "shoulder": {
-"use": "כתף: on my shoulder.",
+"use": "כתף: on my shoulder.\nshoulder to shoulder = כתף אל כתף.",
 "tip": "shoulder – 'שולדר'.\na shoulder to cry on = כתף לבכות עליה."
 },
 "initially": {
-"use": "בהתחלה.",
-"tip": "initial = ראשוני (ראשי תיבות)."
+"use": "בהתחלה: Initially, I didn't like it.",
+"tip": "initial = ראשוני.\ninitials = ראשי תיבות של השם."
 },
 "barely": {
 "use": "בקושי: I barely slept.",
@@ -233,15 +233,15 @@
 },
 "bush#0": {
 "use": "שיח: hide in a bush.",
-"tip": "bush – 'בוש', שיח קטן 🌿."
+"tip": "bush – 'בוש', שיח נמוך 🌿."
 },
 "rising#1": {
 "use": "עולה: rising prices = מחירים עולים.",
-"tip": "rise = לעלות 📈."
+"tip": "rise = לעלות 📈.\nsunrise = השמש עולה."
 },
 "extensive": {
 "use": "נרחב, רחב היקף: extensive damage.",
-"tip": "extend = להרחיב."
+"tip": "extend = להרחיב.\nextensive = רחב היקף."
 },
 "vast": {
 "use": "עצום, רחב ידיים: a vast desert.",
@@ -257,43 +257,43 @@
 },
 "speaker": {
 "use": "דובר, נואם; גם רמקול.",
-"tip": "speak (לדבר) + er = מי שמדבר 🔊."
+"tip": "speak (לדבר) + er = מי שמדבר, וגם רמקול שמדבר 🔊."
 },
 "license#1": {
-"use": "לתת רישיון.",
-"tip": "license = רישיון."
+"use": "לתת רישיון: The city licensed the shop.",
+"tip": "license = רישיון.\nלתת רישיון = to license."
 },
 "coal": {
-"use": "פחם: burn coal.",
-"tip": "coal – 'קוֹל', פחם שחור."
+"use": "פחם: burn coal for heat.",
+"tip": "coal – 'קוֹל', פחם שחור ⚫."
 },
 "introduction#1": {
 "use": "היכרות: make an introduction = להכיר בין אנשים.",
 "tip": "introduce = להציג.\nintroduction = הצגה, היכרות."
 },
 "highway": {
-"use": "כביש מהיר.",
-"tip": "high (גבוה/ראשי) + way (דרך)."
+"use": "כביש מהיר, כביש ראשי: on the highway.",
+"tip": "high (ראשי) + way (דרך) = הדרך הראשית 🛣."
 },
 "tone": {
-"use": "טון: tone of voice = טון דיבור.",
-"tip": "tone = טון."
+"use": "טון: tone of voice = טון דיבור.\nDon't use that tone with me!",
+"tip": "tone = 'טון', כמו בעברית."
 },
 "monster": {
 "use": "מפלצת: afraid of monsters.",
 "tip": "monster – 'מונסטר' 👹, Monsters Inc."
 },
 "philosophy": {
-"use": "פילוסופיה.",
-"tip": "philo (אהבה) + sophy (חוכמה)."
+"use": "פילוסופיה: study philosophy.",
+"tip": "philo (אהבה) + sophy (חוכמה) = אהבת החוכמה."
 },
 "primarily": {
 "use": "בעיקר: primarily for children.",
-"tip": "primary = ראשי, ראשוני."
+"tip": "primary = ראשי, ראשוני (primary school = בית ספר יסודי)."
 },
 "meanwhile": {
-"use": "בינתיים.",
-"tip": "mean (אמצע) + while (זמן)."
+"use": "בינתיים: Meanwhile, I'll make tea.",
+"tip": "mean (אמצע) + while (זמן) = בזמן שבאמצע."
 },
 "regardless": {
 "use": "regardless of = בלי קשר ל-.",
@@ -305,7 +305,7 @@
 },
 "relative#0": {
 "use": "יחסי: Size is relative.",
-"tip": "relativity = תורת היחסות."
+"tip": "relativity = תורת היחסות של איינשטיין: הכול יחסי."
 },
 "earn": {
 "use": "להרוויח בעבודה: earn money.",
@@ -321,19 +321,19 @@
 },
 "suspect#1": {
 "use": "לחשוד: suspect that... / suspect someone of.",
-"tip": "suspicious = חשדן 🕵."
+"tip": "suspicious = חשדן 🕵.\nsuspect = לחשוד."
 },
 "rescue": {
-"use": "להציל; הצלה.",
-"tip": "rescue – 'רסקיו', צוות חילוץ."
+"use": "להציל; הצלה: rescue team = צוות חילוץ.",
+"tip": "rescue – 'רסקיו', כמו חילוץ והצלה 🚁."
 },
 "sharp": {
-"use": "חד; at 5 sharp = בדיוק בחמש.",
-"tip": "sharp – 'שארפ', מחדד ✏."
+"use": "חד: a sharp knife.\nat 5 sharp = בדיוק בחמש.",
+"tip": "sharp – 'שארפ', מחדד = sharpener ✏."
 },
 "practical": {
 "use": "מעשי: practical advice.",
-"tip": "practice = תרגול, עשייה."
+"tip": "practice = תרגול, עשייה.\npractical = שאפשר לעשות בפועל."
 },
 "tie#1": {
 "use": "לקשור: tie your shoes.",
@@ -353,7 +353,7 @@
 },
 "bone": {
 "use": "עצם: break a bone = לשבור עצם.",
-"tip": "bone – 'בון' 🦴."
+"tip": "bone – 'בון' 🦴, כלב עם עצם."
 },
 "occur": {
 "use": "לקרות: When did it occur?\noccur to = לעלות בדעתו.",
@@ -361,31 +361,31 @@
 },
 "document#1": {
 "use": "מסמך: sign a document.",
-"tip": "document = דוקומנט 📄."
+"tip": "document = 'דוקומנט', מסמך 📄."
 },
 "defend": {
 "use": "להגן: defend against.\ndefense = הגנה.",
-"tip": "defense = הגנה 🛡."
+"tip": "defense = הגנה 🛡.\ndefender = מגן בכדורגל."
 },
 "gap": {
-"use": "פער, רווח.",
-"tip": "Mind the gap! = היזהרו מהרווח."
+"use": "פער, רווח: a gap between.\ngender gap = פער מגדרי.",
+"tip": "Mind the gap! = היזהרו מהרווח (ברכבת בלונדון)."
 },
 "operate#1": {
 "use": "להפעיל: operate a machine.",
-"tip": "operator = מפעיל."
+"tip": "operator = מפעיל.\noperate a machine = להפעיל מכונה."
 },
 "raw#2": {
-"use": "גס, לא מעודן.",
-"tip": "raw = לא מעובד."
+"use": "גס, לא מעודן: a raw joke.",
+"tip": "raw = לא מעובד: בדיחה 'לא מעובדת', גסה."
 },
 "province": {
 "use": "מחוז: a northern province.",
 "tip": "province = 'פרובינציה', מחוז מרוחק מהמרכז."
 },
 "reputation": {
-"use": "מוניטין: good reputation.",
-"tip": "reputation = רפוטציה."
+"use": "מוניטין, שם: a good reputation.",
+"tip": "reputation = 'רפוטציה', מה שאנשים אומרים עליך."
 },
 "ice cream": {
 "use": "גלידה: an ice cream cone.",
@@ -393,22 +393,22 @@
 },
 "mirror": {
 "use": "מראה: look in the mirror.",
-"tip": "mirror – 'מירור' 🪞."
+"tip": "mirror – 'מירור' 🪞, Mirror mirror on the wall."
 },
 "fishing": {
 "use": "דיג: go fishing = ללכת לדוג.",
-"tip": "fish = דג 🎣."
+"tip": "fish = דג 🎣.\ngo fishing = ללכת לדוג."
 },
 "gate": {
 "use": "שער: the front gate.\nבשדה התעופה: gate 5.",
 "tip": "gate – 'גֵייט', שער עלייה למטוס."
 },
 "elsewhere": {
-"use": "במקום אחר.",
-"tip": "else (אחר) + where (איפה)."
+"use": "במקום אחר: Let's go elsewhere.",
+"tip": "else (אחר) + where (איפה) = במקום אחר."
 },
 "repeat#1": {
-"use": "שידור חוזר.",
+"use": "שידור חוזר: a repeat of the show.",
 "tip": "repeat = חוזר על עצמו 🔁."
 },
 "argue": {
@@ -417,19 +417,19 @@
 },
 "bedroom": {
 "use": "חדר שינה: my bedroom.",
-"tip": "bed (מיטה) + room (חדר) 🛏."
+"tip": "bed (מיטה) + room (חדר) = חדר המיטה 🛏."
 },
 "bush#1": {
 "use": "the bush = שטח פראי באפריקה או באוסטרליה.",
 "tip": "bush = שיחים: שטח מלא שיחים."
 },
 "carefully": {
-"use": "בזהירות.",
-"tip": "care = זהירות."
+"use": "בזהירות: drive carefully.",
+"tip": "care = זהירות.\ncare + ful + ly = בזהירות."
 },
 "adventure": {
-"use": "הרפתקה.",
-"tip": "adventure – 'אדוונצ'ר'."
+"use": "הרפתקה: a great adventure.",
+"tip": "adventure – 'אדוונצ'ר', כמו משחקי הרפתקאות 🗺."
 },
 "establish": {
 "use": "לייסד: established in 1950.",
@@ -441,7 +441,7 @@
 },
 "superior": {
 "use": "עליון, טוב יותר: superior to.\nגם ממונה בעבודה.",
-"tip": "super = מעל."
+"tip": "super = מעל.\nsuperior = מעל האחרים."
 },
 "thick": {
 "use": "עבה; סמיך: a thick book, thick soup.\nההפך: thin.",
@@ -449,15 +449,15 @@
 },
 "sensitive": {
 "use": "רגיש: sensitive skin, sensitive to.",
-"tip": "sense = חוש.\nsensitive = חש הרבה."
+"tip": "sense = חוש.\nsensitive = חש הרבה, רגיש."
 },
 "contrast#0": {
 "use": "contrast with = לעמוד בניגוד ל-.",
-"tip": "contrast = קונטרסט."
+"tip": "contrast = 'קונטרסט', ניגוד בין צבעים."
 },
 "moral": {
 "use": "מוסר השכל: the moral of the story.\nכתואר: מוסרי.",
-"tip": "moral = מוסר."
+"tip": "moral = מוסר.\nmoral of the story = מוסר ההשכל."
 },
 "package": {
 "use": "חבילה: a package came.",
@@ -469,14 +469,14 @@
 },
 "soldier": {
 "use": "חייל: a brave soldier.",
-"tip": "soldier – 'סולג'ר'."
+"tip": "soldier – 'סולג'ר', כמו 'סולדאט' = חייל 🪖."
 },
 "transition": {
 "use": "מעבר: the transition to a new school.",
-"tip": "trans = מעבר (transfer, transport)."
+"tip": "trans = מעבר (transfer, transport).\ntransition = המעבר."
 },
 "alongside": {
 "use": "לצד: work alongside someone.",
-"tip": "along (לאורך) + side (צד) = לצד."
+"tip": "along (לאורך) + side (צד) = צד לצד."
 }
 }

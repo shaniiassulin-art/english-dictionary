@@ -1,0 +1,482 @@
+{
+"wound#0": {
+"use": "פצע: clean a wound.\nנשמע 'ווּנד'.\nwounded = פצוע.",
+"tip": "wound – 'וונד', דומה ל'וונדה' שנפצעה 🩹."
+},
+"spy": {
+"use": "מרגל; לרגל: spy on someone = לרגל אחרי.",
+"tip": "spy – 'ספאיי', כמו סרטי ריגול 🕵."
+},
+"furthermore": {
+"use": "יתרה מזאת (רשמי), בתחילת משפט.",
+"tip": "further (רחוק יותר) + more (עוד) = עוד יותר מזה."
+},
+"instantly": {
+"use": "מיד, ברגע: The pain stopped instantly.",
+"tip": "instant = מיידי (קפה נמס = instant coffee)."
+},
+"subsequently": {
+"use": "לאחר מכן, כתוצאה מכך (רשמי).",
+"tip": "sub + sequent (רצף) = מה שבא אחר כך ברצף."
+},
+"baker": {
+"use": "אופה: the baker.\nbakery = מאפייה.",
+"tip": "bake (לאפות) + er = אופה 🥖."
+},
+"complain": {
+"use": "complain about = להתלונן על.\ncomplaint = תלונה.",
+"tip": "complain – 'קומפליין', כמו 'קומפלקסים' של מתלונן."
+},
+"asset": {
+"use": "נכס, יתרון: a great asset.",
+"tip": "asset – 'אסט', נכס שווה."
+},
+"burden": {
+"use": "נטל, עול: a burden on someone.",
+"tip": "burden – 'ברדן', משא כבד."
+},
+"casual#0": {
+"use": "אגבי, לא מתוכנן: a casual remark = הערה אגבית.\ncasually = כבדרך אגב.",
+"tip": "casual = לא רשמי, 'קז'ואל', כאילו בדרך אגב."
+},
+"controversial": {
+"use": "שנוי במחלוקת: a controversial topic.",
+"tip": "controversy = מחלוקת, 'קונטרוברסלי'."
+},
+"discipline#0": {
+"use": "תחום לימוד: an academic discipline.",
+"tip": "disciple = תלמיד.\ndiscipline = תחום שלומדים."
+},
+"pole#0": {
+"use": "מוט: flag pole = תורן דגל.",
+"tip": "pole – 'פול', כמו 'פול דאנס' על מוט."
+},
+"strict": {
+"use": "קפדני: strict with someone.\nstrict rules.",
+"tip": "strict – 'סטריקט', כמו restrict = להגביל."
+},
+"palm#0": {
+"use": "כף יד: in the palm of my hand.\nread someone's palm = לקרוא בכף היד.",
+"tip": "palm reading = קריאה בכף היד ✋."
+},
+"recipe": {
+"use": "מתכון: a recipe for cake.\nנשמע 'רֶסיפי'.",
+"tip": "recipe – 'רסיפי', כמו 'רצפט'."
+},
+"rubber": {
+"use": "גומי: a rubber ball.\nבבריטית גם מחק.",
+"tip": "rubber – 'ראבר', rub = לשפשף (מחק משפשף)."
+},
+"substance#0": {
+"use": "חומר: a dangerous substance.\nillegal substances = סמים.",
+"tip": "substance – 'סאבסטנס', חומר."
+},
+"photograph": {
+"use": "צילום: take a photograph.\nphotographer = צלם.",
+"tip": "photo (אור) + graph (כתיבה) = כתיבה באור 📷."
+},
+"snake": {
+"use": "נחש: a poisonous snake.\nגם אדם בוגדני (סלנג).",
+"tip": "snake – 'סנייק', נשמע כמו 'ססס' של נחש 🐍."
+},
+"syndrome": {
+"use": "תסמונת: Down syndrome.",
+"tip": "syndrome – 'סינדרום', כמו בעברית."
+},
+"climb": {
+"use": "לטפס: climb a mountain.\nה-b לא נשמעת: 'קליים'.",
+"tip": "climb – 'קליים', כמו 'קליימבינג' = טיפוס 🧗."
+},
+"delete": {
+"use": "למחוק: delete a file / an email.\ndeletion = מחיקה.",
+"tip": "Delete – המקש שמוחק ⌫."
+},
+"useless": {
+"use": "חסר תועלת: a useless phone.",
+"tip": "use (שימוש) + less (בלי) = בלי שימוש."
+},
+"briefly": {
+"use": "בקצרה: explain briefly.",
+"tip": "brief = קצר.\nתדריך = briefing."
+},
+"amateur": {
+"use": "חובבן: an amateur photographer.\nההפך: professional.",
+"tip": "amateur – 'אמטור', amor = אהבה: עושה מאהבה, לא בשביל כסף."
+},
+"imagination": {
+"use": "דמיון: use your imagination.",
+"tip": "imagine (לדמיין) → imagination."
+},
+"canal": {
+"use": "תעלה מלאכותית: the Suez Canal.\n≠ channel (ערוץ).",
+"tip": "canal – 'קנאל', כמו תעלת סואץ."
+},
+"twist#0": {
+"use": "תפנית, סיבוך: a plot twist = תפנית בעלילה.",
+"tip": "twist – 'טוויסט', תפנית בעלילה."
+},
+"fluid": {
+"use": "נוזל: drink plenty of fluids = לשתות הרבה.\nכתואר: זורם, גמיש.",
+"tip": "fluid – 'פלואיד', כמו 'פלואידים' = נוזלים 💧."
+},
+"tension": {
+"use": "מתח: tension between them.\nגם מתח פיזי בחבל.",
+"tip": "tense = מתוח.\nטנשן = מתח."
+},
+"fever": {
+"use": "חום (מחלה): a high fever.\nhave a fever = יש לו חום.",
+"tip": "fever – 'פיבר', חום גבוה 🤒."
+},
+"magical": {
+"use": "קסום: a magical night.\nmagic = קסם.",
+"tip": "magic (קסם) + al = קסום ✨."
+},
+"blood vessel": {
+"use": "כלי דם: arteries and veins are blood vessels.",
+"tip": "blood (דם) + vessel (כלי)."
+},
+"clever": {
+"use": "פיקח, חכם: a clever girl.",
+"tip": "clever – 'קלבר', מהיר מחשבה 💡."
+},
+"stroke#2": {
+"use": "שבץ מוחי: have a stroke = לעבור שבץ.",
+"tip": "stroke = מכה פתאומית במוח."
+},
+"continuous": {
+"use": "מתמשך, רצוף: continuous noise.",
+"tip": "continue = להמשיך."
+},
+"evaluation": {
+"use": "הערכה: an evaluation of my work.",
+"tip": "value = ערך.\nלקבוע את הערך."
+},
+"identical": {
+"use": "זהה: identical to.\nidentical twins = תאומים זהים.",
+"tip": "identity = זהות.\nidentical = עם אותה זהות בדיוק 👯."
+},
+"scientist": {
+"use": "מדען: a famous scientist.",
+"tip": "science (מדע) + ist = מי שעוסק במדע 🔬."
+},
+"creator": {
+"use": "יוצר: the creator of the game.\nThe Creator = הבורא.",
+"tip": "create (ליצור) + or."
+},
+"wealthy": {
+"use": "עשיר, אמיד: a wealthy family.\nthe wealthy = העשירים.",
+"tip": "wealth = עושר.\nwealthy = בעל עושר 💰."
+},
+"gradually": {
+"use": "בהדרגה: It gradually got warmer.\ngradual = הדרגתי.",
+"tip": "grade = דרגה: דרגה אחרי דרגה."
+},
+"relating": {
+"use": "relating to = הנוגע ל-.",
+"tip": "relate = להיות קשור."
+},
+"sink#0": {
+"use": "כיור: kitchen sink = כיור מטבח.",
+"tip": "sink – 'סינק', כיור."
+},
+"poet": {
+"use": "משורר.\npoem = שיר, poetry = שירה.",
+"tip": "poet – 'פואט', כמו 'פואטי' = שירי."
+},
+"slavery": {
+"use": "עבדות: the abolition of slavery = ביטול העבדות.",
+"tip": "slave = עבד.\nslavery = מצב של עבדות ⛓."
+},
+"transaction": {
+"use": "עסקה, העברה כספית: a bank transaction.",
+"tip": "trans + action = פעולה שעוברת בין צדדים."
+},
+"veteran#0": {
+"use": "חייל משוחרר: a war veteran.",
+"tip": "veteran – 'וטרן', כמו 'ותיק'."
+},
+"vulnerable": {
+"use": "פגיע: vulnerable to = פגיע ל-.\nvulnerability = פגיעות.",
+"tip": "vulnerable – 'וולנרבל', פגיע."
+},
+"snap#0": {
+"use": "make it snappy = תזדרז (סלנג).",
+"tip": "snap = הקשת אצבעות: מהר! 🫰"
+},
+"additionally": {
+"use": "בנוסף: Additionally, the price includes lunch.",
+"tip": "add = להוסיף ➕.\nadditionally = בתוספת."
+},
+"8th - eighth": {
+"use": "השמיני: his eighth book.",
+"tip": "eight + h = eighth (רק h אחת)."
+},
+"communicate": {
+"use": "לתקשר: communicate with.",
+"tip": "communication = תקשורת 📞."
+},
+"resist": {
+"use": "לעמוד בפני, להתנגד: resist temptation.",
+"tip": "resistance = התנגדות."
+},
+"opponent": {
+"use": "יריב: beat an opponent = לנצח יריב.",
+"tip": "oppose = להתנגד.\nopponent = מי שעומד מולך 🥊."
+},
+"privilege": {
+"use": "זכות, פריבילגיה: It's a privilege.",
+"tip": "privilege – 'פריבילג''."
+},
+"flavor#1": {
+"use": "טעם: What flavor? = איזה טעם?",
+"tip": "flavor – 'פלייבר', טעמים בגלידה 🍦."
+},
+"tourist": {
+"use": "תייר: full of tourists.\ntourism = תיירות.",
+"tip": "tour (סיור) + ist = מי שעושה סיור 📸."
+},
+"dealt": {
+"use": "עבר של deal: deal – dealt – dealt.\ndealt with = טיפל ב-; dealt cards = חילק קלפים.",
+"tip": "deal – dealt, כמו feel – felt.\nנשמע 'דֶלט'."
+},
+"generous": {
+"use": "נדיב: generous with money.\ngenerosity = נדיבות.",
+"tip": "generous – 'ג'נרוס', נדיב."
+},
+"implement": {
+"use": "ליישם: implement a plan.",
+"tip": "implement – 'אימפלמנט'."
+},
+"dose": {
+"use": "מינון: a dose of medicine.",
+"tip": "dose – 'דוז', כמו 'דוזה' 💊."
+},
+"cloth#1": {
+"use": "בד, מטלית.\nclothes = בגדים.",
+"tip": "cloth = בד.\nclothes = בגדים עשויים בד."
+},
+"flip#0": {
+"use": "להפוך: flip the pancake.",
+"tip": "flip – 'פליפ', כמו flip-flop."
+},
+"solely": {
+"use": "באופן בלעדי, רק: solely responsible = האחראי הבלעדי.",
+"tip": "sole = יחיד (sole owner = הבעלים היחיד)."
+},
+"wrap": {
+"use": "לעטוף: wrap a gift.\nwrapping paper = נייר עטיפה.",
+"tip": "wrap – 'ראפ', כמו 'ראפ' = עטיפה 🌯."
+},
+"cave": {
+"use": "מערה: bats live in caves.",
+"tip": "cave – 'קייב', caveman = איש המערות 🦴."
+},
+"beside": {
+"use": "ליד: sit beside me.\nשימו לב: besides (עם s) = בנוסף.",
+"tip": "by + side = לצד, ממש ליד."
+},
+"lobby#1": {
+"use": "לשדל, להפעיל לחץ: lobby for.",
+"tip": "lobby = שדולה, לוביסט."
+},
+"distant": {
+"use": "רחוק: distant thunder, a distant relative = קרוב רחוק.",
+"tip": "distance = מרחק.\ndistant = במרחק רב."
+},
+"bacteria": {
+"use": "חיידקים (רבים): some bacteria are good.",
+"tip": "bacteria – 'בקטריה' 🦠."
+},
+"coin": {
+"use": "מטבע: a gold coin.\ntoss a coin = להטיל מטבע.",
+"tip": "coin – 'קוין', ביטקוין 🪙."
+},
+"destiny": {
+"use": "גורל, ייעוד: It was her destiny.",
+"tip": "destiny – 'דסטיני', destination = יעד."
+},
+"widespread": {
+"use": "נפוץ, נרחב: widespread fear.",
+"tip": "wide (רחב) + spread (מפוזר)."
+},
+"qualify": {
+"use": "qualify for = לעלות שלב, להיות זכאי.",
+"tip": "qualification = הכשרה."
+},
+"cargo": {
+"use": "מטען של ספינה או מטוס: a cargo ship.",
+"tip": "cargo – 'קרגו', כמו car + go."
+},
+"commentary": {
+"use": "פרשנות: sports commentary = שידור עם פרשנות.",
+"tip": "comment = הערה.\ncommentator = פרשן."
+},
+"preserve": {
+"use": "לשמר: preserve old buildings.\nגם לשמר מזון (preserves = ריבה).",
+"tip": "pre + serve = לשמור מראש."
+},
+"respective": {
+"use": "של כל אחד: their respective homes.",
+"tip": "respectively = בהתאמה."
+},
+"insight": {
+"use": "תובנה: insight into = הבנה עמוקה של.",
+"tip": "in (פנימה) + sight (ראייה) = לראות פנימה 💡."
+},
+"namely#1": {
+"use": "כלומר: two students, namely Dan and Ruth.",
+"tip": "name = שם: 'בשמם'."
+},
+"trace#0": {
+"use": "לאתר, לעקוב: trace a call.\ntrace back = לעקוב אחורה למקור.",
+"tip": "trace – 'טרייס', לעקוב אחרי עקבות."
+},
+"boot": {
+"use": "מגף: rain boots.\nבמחשב: boot = לאתחל.",
+"tip": "boot – 'בוּט' 👢, גם אתחול המחשב (reboot)."
+},
+"excitement": {
+"use": "התרגשות: full of excitement.",
+"tip": "excited = נרגש 🎉.\nexcitement = התרגשות."
+},
+"raid": {
+"use": "פשיטה: a police raid.\nפועל: לפשוט על.",
+"tip": "raid – 'רייד', פשיטה."
+},
+"blade": {
+"use": "להב: the blade of a knife.\nrazor blade = סכין גילוח.",
+"tip": "blade – 'בלייד', סכין חדה."
+},
+"accessible": {
+"use": "נגיש: accessible to wheelchairs.\naccessibility = נגישות.",
+"tip": "access = גישה ♿.\naccessible = שיש אליו גישה."
+},
+"assignment": {
+"use": "מטלה: homework assignment.\nגם משימה בעבודה.",
+"tip": "assign = להטיל משימה."
+},
+"bare#0": {
+"use": "חשוף: bare feet = רגליים יחפות.\nwith bare hands = בידיים חשופות.",
+"tip": "bare – 'בֵּר', barefoot = יחף."
+},
+"restore": {
+"use": "לשחזר, לשקם: restore an old house.\nrestoration = שחזור.",
+"tip": "restore – 'ריסטור', כמו Restore במחשב."
+},
+"sink#1": {
+"use": "לשקוע: sink – sank – sunk.",
+"tip": "sink – הטיטאניק שקעה."
+},
+"significance": {
+"use": "חשיבות, משמעות: the significance of this.",
+"tip": "significant = משמעותי."
+},
+"collapse": {
+"use": "לקרוס: The bridge collapsed.\nשם עצם: קריסה.",
+"tip": "collapse – 'קולפס', קריסה."
+},
+"nominated": {
+"use": "מועמד: nominated for an award.",
+"tip": "nomination = מועמדות לאוסקר 🏆."
+},
+"unnecessary": {
+"use": "מיותר, לא נחוץ: unnecessary things.",
+"tip": "un + necessary = לא נחוץ."
+},
+"conscious": {
+"use": "בהכרה: He was conscious.\nמודע: conscious of = מודע ל-.",
+"tip": "conscious – 'קונשס', תודעה."
+},
+"veteran#1": {
+"use": "ותיק: a veteran teacher.",
+"tip": "veteran = ותיק: מי שנמצא הרבה שנים בתחום."
+},
+"acknowledge": {
+"use": "להודות ב-, להכיר ב-: acknowledge a mistake.",
+"tip": "ac + knowledge (ידיעה)."
+},
+"rival": {
+"use": "יריב: old rivals.\nrivalry = יריבות.",
+"tip": "rival – 'ראייבל', יריבות."
+},
+"snap#1": {
+"use": "להישבר בבת אחת (בקול): The branch snapped.",
+"tip": "snap = קול נקישה, כמו ענף שנשבר בבת אחת 🌿."
+},
+"tropical": {
+"use": "טרופי: tropical fruit, tropical weather.",
+"tip": "tropics = האזורים החמים ליד קו המשווה 🌴."
+},
+"examine": {
+"use": "לבדוק לעומק: examine a patient / a document.",
+"tip": "exam = מבחן, בדיקה.\nexamine = לבדוק 🩺."
+},
+"grain#0": {
+"use": "דגן: Rice is a grain.\nגם גרגר: a grain of sand.",
+"tip": "grain – 'גריין', גרנולה 🌾."
+},
+"knees": {
+"use": "ברכיים: on my knees = על הברכיים.",
+"tip": "knee – 'ני', ה-k שקטה."
+},
+"spray": {
+"use": "לרסס: spray water.\nשם עצם: תרסיס.",
+"tip": "spray – 'ספריי', כמו תרסיס בושם."
+},
+"cancel": {
+"use": "לבטל: cancel a trip / a meeting.\ncancellation = ביטול.",
+"tip": "Cancel = כפתור 'ביטול' ❌."
+},
+"carpet": {
+"use": "שטיח (גדול): red carpet = השטיח האדום.",
+"tip": "carpet – 'קרפט', השטיח האדום."
+},
+"demonstrate#1": {
+"use": "להדגים: demonstrate how it works.",
+"tip": "demo = הדגמה, כמו 'דמו' של משחק."
+},
+"garbage": {
+"use": "זבל: take out the garbage.\nבבריטית: rubbish.",
+"tip": "garbage – 'גרבג'', garbage truck = משאית זבל 🗑."
+},
+"liver": {
+"use": "כבד (איבר): Alcohol hurts the liver.",
+"tip": "liver – 'ליבר', live: בלי כבד אי אפשר לחיות."
+},
+"simultaneously": {
+"use": "בו-זמנית: They spoke simultaneously.",
+"tip": "simultaneous = סימולטני."
+},
+"contrary": {
+"use": "contrary to = בניגוד ל-.\non the contrary = להפך.",
+"tip": "contra = נגד.\nלהפך = in contrast."
+},
+"artistic": {
+"use": "אמנותי: an artistic family.",
+"tip": "artist (אמן) + ic = אמנותי 🎨."
+},
+"colonial": {
+"use": "קולוניאלי: colonial buildings.",
+"tip": "colony = מושבה.\nקולוניאלי = של תקופת המושבות."
+},
+"decrease#0": {
+"use": "ירידה, הפחתה: a decrease in prices.",
+"tip": "de (למטה) + crease = ירידה 📉."
+},
+"partial": {
+"use": "חלקי: a partial answer.\npartially = באופן חלקי.",
+"tip": "part = חלק.\npartial = רק חלק מזה."
+},
+"flip#1": {
+"use": "סלטה: do a flip in the air.",
+"tip": "flip = היפוך באוויר 🤸, backflip = סלטה לאחור."
+},
+"resolve#0": {
+"use": "נחוש: resolved to win.\nשם עצם: נחישות.",
+"tip": "resolve = החלטה נחושה."
+},
+"defeated": {
+"use": "מובס: the defeated team.\ndefeat = להביס.",
+"tip": "defeat = תבוסה.\ndefeated = מי שהפסיד."
+}
+}

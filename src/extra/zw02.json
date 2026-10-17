@@ -45,7 +45,7 @@
 },
 "volume#1": {
 "use": "עוצמת קול: turn up/down the volume.",
-"tip": "volume = ווליום 🔊."
+"tip": "volume = 'ווליום' 🔊, כפתור העוצמה בטלפון."
 },
 "plane#0": {
 "use": "מטוס: by plane = במטוס, get on the plane = לעלות למטוס.",
@@ -53,7 +53,7 @@
 },
 "useful": {
 "use": "שימושי: useful for.\nההפך: useless.",
-"tip": "use + ful = מלא שימוש."
+"tip": "use (שימוש) + ful (מלא) = שימושי, מלא שימוש 🔧."
 },
 "grade#2": {
 "use": "דרגה, רמה בסולם: a high grade, top grade.",
@@ -76,8 +76,8 @@
 "tip": "will = רצון.\nwilling = מוכן מרצון."
 },
 "zone": {
-"use": "אזור: no-parking zone, time zone (אזור זמן).",
-"tip": "zone – 'זון', כמו 'אזור'."
+"use": "אזור: no-parking zone = אזור אסור לחנייה.\ntime zone = אזור זמן.",
+"tip": "zone = 'זון', comfort zone = אזור הנוחות."
 },
 "entirely": {
 "use": "לגמרי, לחלוטין: I entirely agree = אני מסכימה לגמרי.",
@@ -112,8 +112,8 @@
 "tip": "fuel – 'פיוּאל'.\nכמו 'פיול' שממלא את המיכל ⛽."
 },
 "kick": {
-"use": "לבעוט; גם בעיטה.\nkick off = להתחיל.",
-"tip": "kick – 'קיק', קיקבוקס."
+"use": "לבעוט: kick the ball.\nשם עצם: בעיטה.\nkick off = לפתוח, להתחיל.",
+"tip": "kick – 'קיק', קיקבוקס = אגרופים ובעיטות 🥋."
 },
 "valley": {
 "use": "עמק: in the valley.\nSilicon Valley = עמק הסיליקון.",
@@ -124,8 +124,8 @@
 "tip": "sky – 'סקיי', כמו skyscraper = גורד שחקים."
 },
 "bear#0": {
-"use": "דוב: a brown bear.\nגם פועל: לסבול (can't bear).",
-"tip": "bear – 'בֵּר', טדי בר 🧸."
+"use": "דוב: a brown bear.\nteddy bear = דובי.\nגם פועל: לסבול.",
+"tip": "bear – 'בֵּר', teddy bear = דובי 🧸."
 },
 "boat": {
 "use": "סירה: by boat = בסירה, on a boat.\nship = ספינה גדולה.",
@@ -144,12 +144,12 @@
 "tip": "duty – 'דיוטי', דיוטי פרי ✈."
 },
 "climate": {
-"use": "אקלים: climate change = שינוי אקלים.",
-"tip": "קלימה = אקלים."
+"use": "אקלים: climate change = שינוי אקלים.\nweather = מזג אוויר יומי.",
+"tip": "climate – 'קליימט', כמו 'אקלים' 🌍."
 },
 "arm#1": {
-"use": "זרוע: break an arm.\narms = גם נשק.",
-"tip": "arm – 'ארם', זרוע 💪."
+"use": "זרוע: break your arm.\narm in arm = שלובי זרועות.",
+"tip": "arm – 'ארם', armchair = כורסה עם 'זרועות' 🪑."
 },
 "hundred": {
 "use": "a hundred / one hundred = מאה.\nhundreds of = מאות.\nאחרי מספר בלי s: two hundred.",
@@ -177,7 +177,7 @@
 },
 "mix": {
 "use": "לערבב: mix A with B.\nmixture = תערובת.",
-"tip": "mix – 'מיקס', מיקסר."
+"tip": "mix – 'מיקס', כמו מיקסר במטבח."
 },
 "purchase": {
 "use": "לרכוש (רשמי מ-buy): purchase tickets.\nשם עצם: רכישה.",
@@ -196,20 +196,20 @@
 "tip": "enemy – 'אנמי', ההפך מ-friend."
 },
 "ensure": {
-"use": "להבטיח, לוודא: ensure that...",
-"tip": "en + sure = להפוך לבטוח."
+"use": "לוודא, להבטיח: ensure that the door is closed.",
+"tip": "en (לעשות) + sure (בטוח) = לעשות שיהיה בטוח ✔."
 },
 "limit": {
-"use": "speed limit = מהירות מותרת.\nלהגביל: limit to.",
-"tip": "לימיט = גבול."
+"use": "גבול: speed limit = מהירות מותרת.\nפועל: להגביל (limit to).",
+"tip": "limit = 'לימיט'.\nThe sky's the limit = השמיים הם הגבול."
 },
 "profit": {
 "use": "רווח: make a profit.\nprofitable = רווחי.",
 "tip": "profit – 'פרופיט', ההפך מ-loss."
 },
 "stress#1": {
-"use": "לחץ, מתח: under stress.\nstressful = מלחיץ.",
-"tip": "סטרס = לחץ 😰."
+"use": "לחץ, מתח: under stress = בלחץ.\nstressed = לחוץ.",
+"tip": "stress = 'סטרס', כמו בעברית 😰."
 },
 "command": {
 "use": "פקודה: give a command.\nפועל: לפקד על.",
@@ -225,7 +225,7 @@
 },
 "volume#2": {
 "use": "נפח: the volume of the box.",
-"tip": "volume = כמה מקום משהו תופס, 'וולום'."
+"tip": "volume = נפח: כמה מקום משהו תופס, כמו 'וולום' של בקבוק."
 },
 "forest": {
 "use": "יער: in the forest.\nrain forest = יער גשם.",
@@ -233,15 +233,15 @@
 },
 "plane#1": {
 "use": "מישור (גאומטריה).",
-"tip": "plain = שטוח, plane = מישור."
+"tip": "plane = מישור.\nplain = שטוח: מישור הוא משטח שטוח."
 },
 "appearance": {
-"use": "מראה חיצוני; גם הופעה (first appearance).",
-"tip": "appear = להופיע."
+"use": "מראה חיצוני: change your appearance.\nגם הופעה (first appearance).",
+"tip": "appear = להופיע.\nappearance = איך שאת מופיעה."
 },
 "grade#3": {
 "use": "שיפוע של כביש.",
-"tip": "grade = דרגה, כמה הדרך עולה."
+"tip": "grade = דרגה: כמה הכביש 'עולה דרגה' 📈."
 },
 "jump": {
 "use": "לקפוץ: jump over / jump into.\nשם עצם: קפיצה.",
@@ -257,11 +257,11 @@
 },
 "launch": {
 "use": "לשגר טיל; להשיק מוצר: launch a new app.",
-"tip": "לאנץ' = השקה 🚀."
+"tip": "launch – 'לאנץ''.\nלהשיק כמו לשגר טיל: product launch 🚀."
 },
 "survey#0": {
-"use": "לסקור, לבחון שטח.",
-"tip": "survey – 'סרווי', מבט על."
+"use": "לסקור, לבחון שטח או מצב: survey the land.",
+"tip": "survey – 'סרווי', sur (מעל) + vey (לראות) = להביט מלמעלה."
 },
 "update": {
 "use": "עדכון; לעדכן: update you, software update.",
@@ -332,8 +332,8 @@
 "tip": "device – 'דיווייס', מכשיר חכם 📱."
 },
 "factor": {
-"use": "גורם: an important factor.",
-"tip": "factor – 'פקטור', כמו 'פקטור' בעברית."
+"use": "גורם: an important factor.\nפועל: factor in = להביא בחשבון.",
+"tip": "factor – 'פקטור', כמו 'גורם' בעברית."
 },
 "grant": {
 "use": "להעניק: grant permission.\nמענק: research grant.",
@@ -369,10 +369,10 @@
 },
 "native#1": {
 "use": "מולד, טבעי: native talent.\nnative speaker = דובר שפת אם.",
-"tip": "native = נולד עם זה."
+"tip": "native = מלידה.\nכישרון מולד = נולדת איתו."
 },
 "perform": {
-"use": "להופיע; לבצע: perform a song, perform a task.",
+"use": "להופיע: perform on stage.\nלבצע: perform a task.",
 "tip": "performance = הופעה 🎭."
 },
 "strike#0": {
@@ -384,8 +384,8 @@
 "tip": "liberty = חירות.\nליברלי = בעד חירות."
 },
 "survey#1": {
-"use": "סקר: do / carry out a survey.",
-"tip": "survey – 'סרווי', סקר דעת קהל 📋."
+"use": "סקר: carry out a survey.",
+"tip": "survey – 'סרווי', שאלון סקר 📋."
 },
 "storm": {
 "use": "סערה: a big storm.\nbrainstorm = סיעור מוחות.",
@@ -396,12 +396,12 @@
 "tip": "lunch – 'לאנץ'', כמו 'לאנץ' בוקס' = קופסת אוכל."
 },
 "snow": {
-"use": "שלג: It's snowing.",
-"tip": "snow – 'סנואו', snowman = איש שלג ⛄."
+"use": "שלג: It's snowing = יורד שלג.\nsnowman = איש שלג.",
+"tip": "snow – 'סנואו', Snow White = שלגיה ❄."
 },
 "kitchen": {
 "use": "מטבח: in the kitchen.",
-"tip": "kitchen – 'קיצ'ן'.\nכמו 'קיץ'' חם במטבח 🍳."
+"tip": "kitchen – 'קיצ'ן', כמו cook = לבשל 🍳."
 },
 "task": {
 "use": "משימה: a difficult task.",
@@ -409,7 +409,7 @@
 },
 "exercise#1": {
 "use": "להתאמן: exercise every day.",
-"tip": "exercise = אימון גופני 🏋."
+"tip": "exercise = אימון.\nלעשות תרגילים לגוף 🏋."
 },
 "treat#3": {
 "use": "ממתק, פינוק: Trick or treat!",
@@ -421,7 +421,7 @@
 },
 "maintain": {
 "use": "לשמור, לתחזק: maintain a house.\nmaintenance = תחזוקה.",
-"tip": "main + tain = להחזיק ביד."
+"tip": "main (יד) + tain (להחזיק) = להחזיק ביד, לשמור.\nmaintenance = תחזוקה 🔧."
 },
 "measure#0": {
 "use": "למדוד: measure the room.\nmeasurement = מדידה.",
@@ -429,11 +429,11 @@
 },
 "urban": {
 "use": "עירוני: urban areas.\nההפך: rural.",
-"tip": "urban – אורבני."
+"tip": "urban – 'אורבן', כמו 'אורבני'.\nurban legend = אגדה אורבנית 🏙."
 },
 "chapter": {
-"use": "פרק בספר: chapter 2.",
-"tip": "chapter – 'צ'פטר', פרק בספר 📖."
+"use": "פרק בספר: chapter one.\nגם פרק בחיים.",
+"tip": "chapter – 'צ'פטר', כמו 'קאפיטל' = ראש פרק 📖."
 },
 "journey": {
 "use": "מסע ארוך: a long journey.",
@@ -448,24 +448,24 @@
 "tip": "Esc במקלדת = escape = יציאה, בריחה."
 },
 "friendly": {
-"use": "ידידותי: friendly people.\nזה תואר!",
-"tip": "friend + ly = כמו חבר."
+"use": "ידידותי: friendly people.\nuser-friendly = ידידותי למשתמש.",
+"tip": "friend (חבר) + ly = כמו חבר 😊."
 },
 "approximately": {
-"use": "בערך: approximately two hours.",
+"use": "בערך: approximately two hours.\nבדיבור: about.",
 "tip": "approximately – 'אפרוקסימטלי', כמו 'אפרוקסימציה' = קירוב."
 },
 "properly": {
-"use": "כמו שצריך: Close it properly.",
-"tip": "proper = נכון, ראוי."
+"use": "כמו שצריך: close the door properly.",
+"tip": "proper = ראוי, נכון."
 },
 "conflict": {
 "use": "סכסוך, עימות: conflict between.",
 "tip": "conflict – 'קונפליקט', כמו בעברית."
 },
 "phase": {
-"use": "שלב: the first phase.",
-"tip": "phase – 'פייז', כמו 'פאזה' = שלב."
+"use": "שלב: the first phase.\nphase out = להוציא בהדרגה.",
+"tip": "phase = 'פאזה', כמו שלבי הירח (moon phases) 🌓."
 },
 "teach, taught|taught": {
 "use": "עבר של teach: teach – taught – taught.",

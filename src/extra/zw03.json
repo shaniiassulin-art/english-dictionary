@@ -52,16 +52,16 @@
 "tip": "de + term (גבול) = לקבוע גבול."
 },
 "mode#0": {
-"use": "אופנה (מיושן). היום אומרים fashion.",
-"tip": "mode = 'מודה' בעברית."
+"use": "אופנה, סגנון (שימוש ישן).\nהיום אומרים בדרך כלל fashion.",
+"tip": "mode = 'מודה' בעברית, וגם à la mode = לפי האופנה 👗."
 },
 "novel#0": {
 "use": "רומן: read a novel.\nnovelist = סופר.\nnovel כתואר = חדשני.",
 "tip": "novel – 'נובל', נובלה = סיפור."
 },
 "stadium": {
-"use": "אצטדיון: a football stadium.",
-"tip": "סטדיון = stadium 🏟."
+"use": "אצטדיון: a football stadium.\nבריבוי: stadiums.",
+"tip": "stadium – 'סטדיום', מהמילה היוונית ל'מסלול ריצה' 🏟."
 },
 "concern#1": {
 "use": "עניין: It's none of your concern = זה לא עניינך.",
@@ -97,11 +97,11 @@
 },
 "editor": {
 "use": "עורך: newspaper editor.\nedit = לערוך.",
-"tip": "edit + or = מי שעורך ✏."
+"tip": "edit (לערוך) + or = עורך.\nכמו 'אדיטור' בעיתון ✏."
 },
 "signal": {
 "use": "אות: give a signal.\nפועל: לאותת.",
-"tip": "סיגנל = אות 📶."
+"tip": "signal = 'סיגנל', כמו פסי הקליטה בטלפון 📶."
 },
 "fall apart": {
 "use": "להתפרק: falling apart.\nגם נפשית: He fell apart.",
@@ -128,12 +128,12 @@
 "tip": "custom = מנהג: מי שקונה בקביעות."
 },
 "relevant": {
-"use": "רלוונטי: relevant to.",
-"tip": "רלוונטי = relevant."
+"use": "רלוונטי, קשור לעניין: relevant to.\nההפך: irrelevant.",
+"tip": "relevant = 'רלוונטי', אותה מילה בעברית."
 },
 "guilty": {
 "use": "אשם: guilty of.\nfeel guilty = להרגיש אשמה.",
-"tip": "guilt – 'גילט' = אשמה."
+"tip": "guilt – 'גילט' = אשמה.\nguilty pleasure = הנאה שמרגישים אשמה עליה 🍫."
 },
 "conservative": {
 "use": "שמרני: conservative ideas.\nבבריטניה גם שם מפלגה.",
@@ -160,8 +160,8 @@
 "tip": "news (חדשות) + paper (נייר) = נייר של חדשות 📰."
 },
 "goods": {
-"use": "סחורות (תמיד ברבים).",
-"tip": "goods = 'הדברים הטובים' שמוכרים."
+"use": "סחורות, מוצרים (תמיד ברבים): sell goods.",
+"tip": "goods = 'הדברים הטובים' שהחנות מוכרת 🛒."
 },
 "switch#0": {
 "use": "מתג: light switch = מתג אור.",
@@ -181,30 +181,30 @@
 },
 "empty": {
 "use": "ריק; פועל: לרוקן (empty the bin).\nההפך: full.",
-"tip": "empty – 'אמפטי', ריק."
+"tip": "empty – 'אמפטי'.\nempty-handed = בידיים ריקות."
 },
 "register": {
 "use": "register for = להירשם ל-.\nregistration = הרשמה.",
-"tip": "רגיסטר = רשמת."
+"tip": "register = 'רגיסטר', כמו פנקס רישום (cash register = קופה רושמת)."
 },
 "universe": {
 "use": "היקום: the universe.\nuniversal = אוניברסלי.",
 "tip": "uni (אחד) + verse = הכול כאחד: כל היקום 🌌."
 },
 "aside#0": {
-"use": "aside from = חוץ מ-.",
-"tip": "aside = בצד.\nלשים בצד ולדבר על השאר."
+"use": "aside from = חוץ מ-, מלבד: Aside from the cost, it's great.",
+"tip": "aside = בצד: לשים את זה בצד ולדבר על השאר."
 },
 "rural": {
 "use": "כפרי: rural area.\nההפך: urban.",
 "tip": "rural – 'רורל', R של Rustic, כפרי."
 },
 "prize": {
-"use": "פרס: win a prize, first prize.",
+"use": "פרס: win a prize.\nNobel Prize = פרס נובל.",
 "tip": "prize – 'פרייז', נשמע כמו 'פרס' 🏆."
 },
 "bell": {
-"use": "פעמון: The bell rang = הפעמון צלצל.",
+"use": "פעמון: ring the bell.\ndoorbell = פעמון דלת.",
 "tip": "bell – 'בל', Jingle Bells 🔔."
 },
 "attitude": {
@@ -216,8 +216,8 @@
 "tip": "admit – 'אדמיט', להודות בטעות."
 },
 "dedicated#0": {
-"use": "מוקדש ל-: dedicated to.",
-"tip": "dedication = הקדשה בספר."
+"use": "מוקדש ל-: dedicated to his mother.",
+"tip": "dedication = הקדשה בתחילת ספר: 'לאמי' 📖."
 },
 "replace": {
 "use": "להחליף: replace A with B.",
@@ -228,8 +228,8 @@
 "tip": "favor – 'פייבר', ממנו בא favorite = המועדף."
 },
 "plot#0": {
-"use": "לשרטט גרף, נקודות.",
-"tip": "plot = לשרטט נקודות."
+"use": "לשרטט נקודות או גרף: plot the data.",
+"tip": "plot = לסמן נקודות על מפה או גרף 📈."
 },
 "independence": {
 "use": "עצמאות: Independence Day.",
@@ -260,20 +260,20 @@
 "tip": "accurate – 'אקיורט', כמו 'אקורטי' = מדויק 🎯."
 },
 "gross#3": {
-"use": "גולמי, לא מעובד.",
-"tip": "gross = גס, לא מעודן."
+"use": "גולמי, לא מעובד (שימוש נדיר).",
+"tip": "gross = גס, לא מעודן: חומר גס, לא מעובד."
 },
 "opposition": {
-"use": "התנגדות; גם אופוזיציה בפוליטיקה.",
-"tip": "oppose = להתנגד."
+"use": "התנגדות: opposition to the plan.\nבפוליטיקה: האופוזיציה.",
+"tip": "oppose = להתנגד.\nאופוזיציה = הצד שמתנגד לממשלה."
 },
 "draft#1": {
 "use": "טיוטה: the first draft.",
 "tip": "Drafts = תיקיית הטיוטות במייל."
 },
 "harder": {
-"use": "קשה יותר: harder than.",
-"tip": "hard + er = יותר קשה."
+"use": "קשה יותר: harder than.\nhard – harder – hardest.",
+"tip": "hard + er = יותר קשה.\nwork harder = לעבוד קשה יותר 💪."
 },
 "shift#0": {
 "use": "משמרת: night shift = משמרת לילה.",
@@ -284,12 +284,12 @@
 "tip": "tight – 'טייט', טייטס צמודים."
 },
 "switch#1": {
-"use": "להחליף: switch seats.",
-"tip": "switch = להחליף מצב."
+"use": "להחליף: switch seats / switch off the light = לכבות.",
+"tip": "switch = מתג שמחליף בין מצבים."
 },
 "transportation": {
-"use": "תחבורה: public transportation.",
-"tip": "transport = להוביל."
+"use": "תחבורה: public transportation = תחבורה ציבורית.",
+"tip": "trans (מעבר) + port (לשאת) = להעביר ממקום למקום 🚌."
 },
 "diet": {
 "use": "דיאטה: on a diet = בדיאטה.\nגם תזונה כללית: a healthy diet.",
@@ -304,16 +304,16 @@
 "tip": "please = לרצות, לשמח.\npleasure = מה שמשמח."
 },
 "academic": {
-"use": "אקדמי: academic year = שנה אקדמית.",
+"use": "אקדמי, לימודי: academic year = שנת לימודים.",
 "tip": "academy = אקדמיה 🎓."
 },
 "blow, blew|blow#1": {
-"use": "blow up = לפוצץ.",
+"use": "blow up = לפוצץ.\nגם לנפח בלון.",
 "tip": "blow = לנשוף.\nblow up = לנשוף חזק עד פיצוץ 💥."
 },
 "index": {
-"use": "מפתח בסוף ספר; גם מדד.",
-"tip": "index – 'אינדקס'."
+"use": "מפתח בסוף ספר: look in the index.\nגם מדד (price index).",
+"tip": "index finger = האצבע המצביעה: האינדקס 'מצביע' לך איפה לחפש ☝."
 },
 "blow, blew|blew": {
 "use": "עבר של blow: blow – blew – blown.",
@@ -332,20 +332,20 @@
 "tip": "a + side (צד) = לצד, הצידה."
 },
 "laid": {
-"use": "עבר של lay (להניח): lay – laid – laid.",
-"tip": "lay = להשכיב, להניח."
+"use": "עבר של lay (להניח): lay – laid – laid.\nלא לבלבל עם lie (לשכב).",
+"tip": "lay = להניח משהו.\nlaid = הניח."
 },
 "object#0": {
-"use": "להתנגד: object to.",
-"tip": "objection = התנגדות!"
+"use": "object to = להתנגד ל-.\nobjection = התנגדות.",
+"tip": "Objection! = 'התנגדות!' של עורכי דין בסרטים ⚖."
 },
 "severe": {
 "use": "חמור, קשה: severe pain, severe storm.",
 "tip": "severe – 'סוויר', 'סבר' קשה."
 },
 "depression": {
-"use": "דיכאון; גם שפל כלכלי.",
-"tip": "depress = ללחוץ למטה."
+"use": "דיכאון: suffer from depression.\nגם שפל כלכלי (the Great Depression).",
+"tip": "depress = ללחוץ למטה: מצב רוח שנלחץ למטה."
 },
 "crown": {
 "use": "כתר: wear a crown.\nפועל: להכתיר.",
@@ -353,11 +353,11 @@
 },
 "grace#0": {
 "use": "חסד: by the grace of God = בחסדי האל.",
-"tip": "grace – 'גרייס', חסד."
+"tip": "grace – 'גרייס', Amazing Grace = חסד מופלא."
 },
 "dedicated#1": {
 "use": "מסור: a dedicated teacher.",
-"tip": "dedicate = להקדיש.\nמסור = מקדיש את עצמו."
+"tip": "dedicate = להקדיש.\nמסור = מקדיש את עצמו כולו."
 },
 "revolution": {
 "use": "מהפכה: the French Revolution.",
@@ -368,8 +368,8 @@
 "tip": "victim – 'ויקטים', כמו 'ויקטימיזציה'."
 },
 "pregnant": {
-"use": "בהריון: pregnant with.",
-"tip": "pregnant – 'פרגננט' 🤰."
+"use": "בהריון: pregnant with twins.\npregnancy = הריון.",
+"tip": "pre (לפני) + gnant (לידה) = לפני הלידה 🤰."
 },
 "surely": {
 "use": "בטוח ש-, ללא ספק: Surely you know.",
@@ -377,15 +377,15 @@
 },
 "favor#1": {
 "use": "להעדיף: favor A over B.",
-"tip": "favorite = המועדף."
+"tip": "favorite = המועדף ❤."
 },
 "nearby": {
 "use": "קרוב, בסביבה: Is there a bank nearby?",
 "tip": "near (קרוב) + by = בקרבת מקום."
 },
 "circle#0": {
-"use": "לסמן בעיגול: Circle the answer.",
-"tip": "circle = עיגול ⭕."
+"use": "לסמן בעיגול: Circle the correct answer.",
+"tip": "circle = עיגול ⭕, להקיף בעיגול."
 },
 "dirty": {
 "use": "מלוכלך: dirty clothes.\ndirt = לכלוך.",
@@ -417,11 +417,11 @@
 },
 "existence": {
 "use": "קיום: the existence of ghosts.",
-"tip": "exist = להתקיים, אקזיסטנציאלי."
+"tip": "exist = להתקיים.\nאקזיסטנציאלי = קיומי."
 },
 "factory": {
 "use": "מפעל: a car factory.",
-"tip": "factory – 'פקטורי', כמו 'פקטור' שמייצר 🏭."
+"tip": "factory – 'פקטורי', fact = לעשות: מקום שעושים בו 🏭."
 },
 "noise": {
 "use": "רעש: make noise.\nnoisy = רועש.",
@@ -432,7 +432,7 @@
 "tip": "pre (לפני) + pare = להכין מראש."
 },
 "self-confidence": {
-"use": "ביטחון עצמי.",
+"use": "ביטחון עצמי: build self-confidence.",
 "tip": "self (עצמי) + confidence (ביטחון)."
 },
 "plate#0": {
@@ -440,43 +440,43 @@
 "tip": "plate – 'פלייט', צלחת שטוחה 🍽."
 },
 "rice": {
-"use": "אורז: a bowl of rice.",
-"tip": "rice – 'רייס', כמו 'אורז' 🍚."
+"use": "אורז (לא ספיר): a bowl of rice.",
+"tip": "rice – 'רייס', אורז 🍚."
 },
 "roof": {
-"use": "גג: on the roof.",
-"tip": "roof – 'רוּף', מעל הראש."
+"use": "גג: on the roof.\nunder one roof = תחת קורת גג אחת.",
+"tip": "roof – 'רוּף', כמו 'רוף' = מעל הראש 🏠."
 },
 "e.g.": {
 "use": "בא לפני דוגמאות, בדרך כלל בכתב: fruit, e.g. apples.\nבדיבור אומרים for example.",
 "tip": "e.g. = example given, 'דוגמה שניתנה'. כותבים לפני רשימת דוגמאות."
 },
 "significantly": {
-"use": "באופן משמעותי.",
-"tip": "significant = משמעותי."
+"use": "באופן משמעותי: prices rose significantly.",
+"tip": "significant = משמעותי, sign = סימן חשוב."
 },
 "empire": {
-"use": "אימפריה.",
-"tip": "empire = אימפריה."
+"use": "אימפריה: the Roman Empire.",
+"tip": "empire – 'אמפייר', כמו Empire State Building."
 },
 "heavily": {
-"use": "בכבדות, מאוד: rain heavily = לרדת גשם חזק.",
-"tip": "heavy = כבד."
+"use": "בכבדות, מאוד: rain heavily = גשם חזק.\nheavily armed = חמוש בכבדות.",
+"tip": "heavy = כבד.\nheavily = במידה כבדה."
 },
 "cable": {
-"use": "כבל: plug in the cable.",
-"tip": "cable – 'קייבל', כמו 'כבל'."
+"use": "כבל: plug in the cable.\ncable TV = טלוויזיה בכבלים.",
+"tip": "cable – 'קייבל', כמו 'כבל' 🔌."
 },
 "widely": {
 "use": "במידה רחבה: widely known = ידוע מאוד.",
-"tip": "wide = רחב."
+"tip": "wide = רחב.\nwidely = בהרבה מקומות."
 },
 "constant": {
-"use": "קבוע, תמידי.",
-"tip": "constant = קונסטנטה."
+"use": "קבוע, תמידי: constant noise.\nconstantly = כל הזמן.",
+"tip": "constant = 'קונסטנטה', מספר קבוע במתמטיקה."
 },
 "worldwide": {
-"use": "בכל העולם.",
+"use": "בכל העולם: famous worldwide.",
 "tip": "world (עולם) + wide (רחב) = ברחבי העולם, כמו www 🌍."
 }
 }

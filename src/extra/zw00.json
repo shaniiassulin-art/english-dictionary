@@ -41,7 +41,7 @@
 },
 "outside": {
 "use": "בחוץ / מחוץ ל-: outside the house.\nההפך: inside.\nלבד בסוף משפט: Let's play outside.",
-"tip": "out + side: הצד שבחוץ."
+"tip": "out (בחוץ) + side (צד) = הצד שבחוץ 🌳.\nההפך: inside = הצד שבפנים."
 },
 "force#0": {
 "use": "force someone to + פועל: They forced him to leave.\nבהקשר של לחץ, כפייה, חוסר ברירה.",
@@ -145,7 +145,7 @@
 },
 "sign#1": {
 "use": "סימן: a sign of rain.\nפועל: לחתום (sign here).\nsignature = חתימה.",
-"tip": "סיגנל, סימן."
+"tip": "sign = סימן, כמו 'סיגנל' = אות.\nגם 'סימן' על נייר = חתימה ✍."
 },
 "river": {
 "use": "נהר: the Jordan River = נהר הירדן.\nבדרך כלל עם the לפני שם הנהר.",
@@ -213,7 +213,7 @@
 },
 "link": {
 "use": "click on a link = ללחוץ על קישור.\nlink A to B = לקשר.\nגם חוליה בשרשרת.",
-"tip": "לינק = קישור 🔗."
+"tip": "link = 'לינק' 🔗, כמו חוליה בשרשרת שמקשרת בין שני דברים."
 },
 "immediately": {
 "use": "מיד, בלי לחכות: Call me immediately.\nדומה ל-right away.",
@@ -241,7 +241,7 @@
 },
 "episode": {
 "use": "פרק בסדרה: the first episode.\nגם אירוע בודד.",
-"tip": "אפיזודה = פרק."
+"tip": "episode = 'אפיזודה', פרק אחד מתוך סדרה 📺."
 },
 "sold": {
 "use": "עבר של sell: sell – sold – sold.\nsold out = אזל מהמלאי.",
@@ -293,7 +293,7 @@
 },
 "image": {
 "use": "תמונה, דימוי: a clear image.\nimagine = לדמיין.",
-"tip": "אימג' = תמונה 🖼."
+"tip": "image = 'אימג'', כמו imagine = לדמיין: תמונה בראש 🖼."
 },
 "rule#0": {
 "use": "follow/break the rules = לציית/להפר כללים.",
@@ -301,7 +301,7 @@
 },
 "weekend": {
 "use": "on/at the weekend = בסוף השבוע (אמריקאית on, בריטית at).\nthis weekend = בסוף השבוע הזה.",
-"tip": "week + end = סוף השבוע."
+"tip": "week (שבוע) + end (סוף) = סוף השבוע 🎉."
 },
 "beach": {
 "use": "on the beach / at the beach.\nשימו לב להגייה: ee ארוכה, 'בּיץ''.",
@@ -309,7 +309,7 @@
 },
 "operation#0": {
 "use": "מבצע: a rescue operation.\nגם ניתוח רפואי.",
-"tip": "אופרציה = מבצע."
+"tip": "operation = 'אופרציה', כמו 'מבצע צבאי' בסרטים 🪖."
 },
 "spring#0": {
 "use": "מעיין: a hot spring = מעיין חם.\nגם אביב וקפיץ, ולקפוץ.",
@@ -317,7 +317,7 @@
 },
 "spring, sprang|spring#0": {
 "use": "קפיץ במיטה או במכונה.\nעבר של spring (לקפוץ): sprang.",
-"tip": "spring = קפיץ שקופץ חזרה."
+"tip": "spring = לקפוץ.\nקפיץ הוא מה שקופץ חזרה אחרי שלוחצים עליו 🌀."
 },
 "commercial#0": {
 "use": "מסחרי: commercial area.\nכשם עצם: פרסומת בטלוויזיה.",
@@ -333,7 +333,7 @@
 },
 "judge#1": {
 "use": "שופט בבית משפט או בתחרות.",
-"tip": "judge – ג'אדג', השופט ⚖."
+"tip": "judge – 'ג'אדג''.\nהשופטת ג'ודי בטלוויזיה ⚖."
 },
 "bought": {
 "use": "עבר של buy: buy – bought – bought.",
@@ -364,8 +364,8 @@
 "tip": "contract – 'קונטרקט'.\ncon (יחד) + tract (למשוך): שני צדדים שנמשכים להסכם."
 },
 "skin": {
-"use": "עור של אדם או של פרי.\nskin care = טיפוח עור.",
-"tip": "skin – 'סקין', סקין־קר."
+"use": "עור של אדם או של פרי: dry skin = עור יבש.\nskin care = טיפוח עור.",
+"tip": "skin – 'סקין', כמו 'סקין' במשחק מחשב = המראה החיצוני."
 },
 "largest": {
 "use": "הגדול ביותר: the largest city.\nlarge – larger – largest.",
@@ -381,7 +381,7 @@
 },
 "stock#1": {
 "use": "לאחסן במלאי: The shop stocks shoes.\nin stock = במלאי.",
-"tip": "stock = מלאי, מחסן."
+"tip": "stock = מלאי.\nin stock = יש במלאי, out of stock = אזל 📦."
 },
 "machine": {
 "use": "washing machine = מכונת כביסה, coffee machine = מכונת קפה.\nבריבוי: machines.",
@@ -429,7 +429,7 @@
 },
 "address#1": {
 "use": "home address = כתובת מגורים, email address = כתובת מייל.\naddress הוא גם פועל: לפנות אל, לטפל ב-.",
-"tip": "address = כתובת, 'אדרס'."
+"tip": "address = 'אדרס', כתובת על מעטפה ✉."
 },
 "therefore": {
 "use": "לכן (רשמי, בכתיבה): I was tired; therefore, I went home.",
@@ -449,7 +449,7 @@
 },
 "drug#0": {
 "use": "סם; גם תרופה.\ndrug store = בית מרקחת.",
-"tip": "drug – 'דראג'', סמים 💊."
+"tip": "drug – 'דראג'.\ndrugstore = בית מרקחת: מוכרים שם תרופות 💊."
 },
 "catch, caught|caught": {
 "use": "עבר של catch: catch – caught – caught.\ncaught a cold = הצטנן.",

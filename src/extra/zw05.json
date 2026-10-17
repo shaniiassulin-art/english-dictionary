@@ -1,0 +1,482 @@
+{
+"relative#1": {
+"use": "קרוב משפחה: a close relative.\nבריבוי: relatives = קרובי משפחה.",
+"tip": "relate = להיות קשור.\nrelative = מי שקשור אליך במשפחה 👨‍👩‍👧."
+},
+"select": {
+"use": "לבחור (רשמי מ-choose): select a color.\nselection = מבחר.",
+"tip": "select – 'סלקט', כמו 'סלקציה' = בחירה.\nSelect all = לבחור הכול."
+},
+"unusual": {
+"use": "יוצא דופן, לא רגיל: It's unusual to...\nההפך: usual.",
+"tip": "un (לא) + usual (רגיל) = לא רגיל."
+},
+"compare": {
+"use": "compare A with/to B = להשוות בין.\ncomparison = השוואה.",
+"tip": "compare – 'קומפר'.\nאתרי השוואת מחירים = price compare."
+},
+"gross#0": {
+"use": "גדול ושמן (תיאור לא מחמיא).",
+"tip": "gross = 'גרוס' = גס ושמן, גדול מדי."
+},
+"protest": {
+"use": "protest against = למחות נגד.\nשם עצם: מחאה, הפגנה.",
+"tip": "protest – 'פרוטסט', כמו 'פרוטסט' = מחאה ✊."
+},
+"castle": {
+"use": "טירה: a sand castle = טירת חול.\nה-t לא נשמעת: 'קאסל'.",
+"tip": "castle – 'קאסל', כמו 'קסטל' 🏰."
+},
+"shortly#1": {
+"use": "בקרוב, עוד מעט: I'll be there shortly.",
+"tip": "short = קצר.\nshortly = בעוד זמן קצר."
+},
+"encourage": {
+"use": "encourage someone to + פועל = לעודד מישהו ל-.\nencouragement = עידוד.",
+"tip": "en + courage (אומץ) = לתת אומץ 💪."
+},
+"respectively": {
+"use": "בהתאמה, בסדר שהוזכר: A and B are 10 and 12, respectively.",
+"tip": "respective = כל אחד לחוד.\nלכל אחד את שלו, לפי הסדר."
+},
+"charity": {
+"use": "צדקה, ארגון צדקה: give to charity.",
+"tip": "charity – 'צ'ריטי'.\nCharity begins at home = הצדקה מתחילה בבית."
+},
+"suffer": {
+"use": "suffer from = לסבול מ- (מחלה, כאב).",
+"tip": "suffer – 'סאפר', נשמע כמו 'סבל' 😣."
+},
+"curious": {
+"use": "curious about = סקרן לגבי.\ncuriosity = סקרנות.",
+"tip": "curious – 'קיוריוס'.\nCuriosity killed the cat = הסקרנות הרגה את החתול 🐈."
+},
+"fort": {
+"use": "מבצר: an old fort.\nfortress = מבצר גדול.",
+"tip": "fort – 'פורט', כמו Fortnite: לבנות מבצר."
+},
+"circuit#1": {
+"use": "מעגל חשמלי: electric circuit.\nshort circuit = קצר חשמלי.",
+"tip": "circuit – 'סרקיט', circle = מעגל ⚡."
+},
+"woods": {
+"use": "יער (ברבים): walk in the woods.",
+"tip": "wood = עץ (חומר).\nwoods = הרבה עצים, יער 🌲."
+},
+"actress": {
+"use": "שחקנית: a famous actress.\nactor = שחקן.",
+"tip": "actor + ess (סיומת נקבה) = שחקנית."
+},
+"speak, spoke|spoke": {
+"use": "עבר של speak: speak – spoke – spoken.",
+"tip": "spoke – 'ספוֹק', דיבר.\nspokesman = דובר."
+},
+"formula": {
+"use": "נוסחה: a math formula.\nגם תמ\"ל לתינוקות.",
+"tip": "formula – 'פורמולה', כמו פורמולה 1."
+},
+"pet": {
+"use": "חיית מחמד: Do you have a pet?\npet shop = חנות חיות.",
+"tip": "pet – 'פט', כמו 'פטפוט' עם החתול 🐶."
+},
+"uncle": {
+"use": "דוד: my uncle.\naunt = דודה.",
+"tip": "uncle – 'אנקל', דוד סם = Uncle Sam."
+},
+"badly": {
+"use": "בצורה רעה; מאוד (badly hurt, need badly).",
+"tip": "bad (רע) + ly = באופן רע, או 'נורא'."
+},
+"deeply": {
+"use": "מאוד, עמוקות: deeply sorry / deeply moved.",
+"tip": "deep = עמוק.\ndeeply = מעומק הלב."
+},
+"explanation": {
+"use": "הסבר: an explanation for = הסבר ל-.\ngive an explanation = לתת הסבר.",
+"tip": "explain (להסביר) → explanation.\nשימו לב לכתיב: explanation בלי i אחרי ה-a."
+},
+"awareness": {
+"use": "מודעות: raise awareness = להעלות מודעות.",
+"tip": "aware (מודע) + ness = מודעות."
+},
+"replacement": {
+"use": "מחליף, תחליף: a replacement for the teacher.",
+"tip": "replace (להחליף) + ment = המחליף עצמו 🔄."
+},
+"exposure": {
+"use": "חשיפה: exposure to the sun.",
+"tip": "expose = לחשוף.\nexposure = חשיפה (גם בצילום)."
+},
+"ideal": {
+"use": "אידיאלי, מושלם: the ideal place.\nשם עצם: אידיאל.",
+"tip": "ideal = אידיאל, כמו בעברית."
+},
+"chase": {
+"use": "לרדוף אחרי: chase the cat.\nשם עצם: מרדף (car chase).",
+"tip": "chase – 'צ'ייס', כמו 'צ'ייס' בסרטי אקשן 🚓."
+},
+"concrete#0": {
+"use": "בטון: a concrete floor.\nconcrete jungle = ג'ונגל הבטון (עיר).",
+"tip": "concrete – 'קונקריט', בטון מוצק וקשה 🧱."
+},
+"contrast#1": {
+"use": "ניגוד: in contrast to = בניגוד ל-.",
+"tip": "contrast – 'קונטרסט', כמו בתמונה."
+},
+"muscle": {
+"use": "שריר: build muscle = לבנות שריר.\nה-c לא נשמעת: 'מאסל'.",
+"tip": "muscle – 'מאסל', כמו 'מוסקל' 💪."
+},
+"passion": {
+"use": "תשוקה: a passion for music.\npassionate = נלהב.",
+"tip": "passion – 'פשן', כמו 'פסיון פרוט' = פרי התשוקה."
+},
+"mood": {
+"use": "מצב רוח: in a good/bad mood.",
+"tip": "mood – 'מוּד', כמו 'מוּד' = מצב."
+},
+"shadow": {
+"use": "צל של דמות: cast a shadow.\nshade = צל (מקום מוצל).",
+"tip": "shadow – 'שדואו', כמו 'שד' שהולך אחריך."
+},
+"clock": {
+"use": "שעון קיר: look at the clock.\nwatch = שעון יד.",
+"tip": "clock – 'קלוק', כמו o'clock ⏰."
+},
+"copies": {
+"use": "עותקים: make copies.\nהספר נמכר במיליון עותקים = a million copies.",
+"tip": "copy → copies (ה-y הופכת ל-ies) 📠."
+},
+"reveal": {
+"use": "לחשוף, לגלות: reveal a secret.",
+"tip": "re + veil (רעלה) = להסיר את הרעלה."
+},
+"confident": {
+"use": "בטוח בעצמו: confident that / about.\nconfidence = ביטחון.",
+"tip": "confident – 'קונפידנט', כמו 'קונפידנציאלי' = שבטוחים בו."
+},
+"electricity": {
+"use": "חשמל: The electricity went off = החשמל נפל.",
+"tip": "electric = חשמלי ⚡, 'אלקטרי'."
+},
+"rear#0": {
+"use": "אחורי: rear seat, rear-view mirror.",
+"tip": "rear – 'ריר', מאחור.\nrear-view mirror = מראה אחורית."
+},
+"label#0": {
+"use": "תווית: read the label.",
+"tip": "label – 'לייבל', כמו התווית על הבגד."
+},
+"gross#1": {
+"use": "סלנג: מגעיל: That's gross!",
+"tip": "gross – 'גרוֹס', 'איכס' 🤢."
+},
+"lie, lay|lie": {
+"use": "לשכב: lie – lay – lain.\nlie down = לשכב.",
+"tip": "lie = לשכב (גם לשקר, ובעבר lied)."
+},
+"welfare": {
+"use": "רווחה: public welfare, welfare state = מדינת רווחה.",
+"tip": "well (טוב) + fare (מצב) = רווחה."
+},
+"horror": {
+"use": "אימה: horror movie = סרט אימה.",
+"tip": "horror – 'הורור', כמו 'הורור' 😱."
+},
+"gym": {
+"use": "חדר כושר: go to the gym.",
+"tip": "gym – 'ג'ים', כמו 'ג'ימבורי'."
+},
+"innocent#1": {
+"use": "חף מפשע: He was found innocent.\nההפך: guilty.",
+"tip": "in (לא) + nocent (מזיק) = לא אשם."
+},
+"essentially": {
+"use": "בעיקרו של דבר: Essentially, they're the same.",
+"tip": "essence = מהות.\nessentially = במהות."
+},
+"afterwards": {
+"use": "אחר כך: We ate, and afterwards we walked.",
+"tip": "after (אחרי) + wards (כיוון)."
+},
+"rarely": {
+"use": "לעתים רחוקות, לפני הפועל: I rarely watch TV.",
+"tip": "rare = נדיר.\nrarely = רק לעתים נדירות."
+},
+"anger": {
+"use": "כעס: anger management = ניהול כעסים.",
+"tip": "anger – 'אנגר', כמו 'אנגרי בירדס' 😠."
+},
+"flower": {
+"use": "פרח: pick a flower.\na bunch of flowers = זר פרחים.",
+"tip": "flower – 'פלאואר', flour (קמח) נשמע אותו דבר 🌸."
+},
+"participate": {
+"use": "participate in = להשתתף ב-.",
+"tip": "part (חלק) + icipate = לקחת חלק."
+},
+"odd#0": {
+"use": "מוזר: an odd thing to say.\noddly = באופן מוזר.",
+"tip": "odd – 'אוֹד', מספר אי-זוגי שנשאר 'מוזר' בלי זוג."
+},
+"skill": {
+"use": "מיומנות: language skills.\nskilled = מיומן.",
+"tip": "skill – 'סקיל', כמו 'סקילז' במשחקים."
+},
+"stomach": {
+"use": "קיבה, בטן: stomachache = כאב בטן.",
+"tip": "stomach – 'סטאמק'. כאב בטן = stomachache 🤢."
+},
+"nervous": {
+"use": "לחוץ, מתוח: nervous about.",
+"tip": "nerve = עצב.\nnervous = עצבני, לחוץ."
+},
+"ceremony": {
+"use": "טקס: a wedding ceremony.",
+"tip": "ceremony – 'סרמוני', כמו 'סרמוניה' = טקס חגיגי 🎊."
+},
+"solve": {
+"use": "לפתור: solve a problem.\nsolution = פתרון.",
+"tip": "solve – 'סולב', כמו 'סולבר' = פותר."
+},
+"comic": {
+"use": "קומי, מצחיק; comic book = חוברת קומיקס.",
+"tip": "comic = 'קומיקס', comedy = קומדיה."
+},
+"ugly": {
+"use": "מכוער.\nugly duckling = הברווזון המכוער.",
+"tip": "ugly – 'אגלי', הברווזון המכוער 🦢."
+},
+"whereas": {
+"use": "בעוד ש- (ניגוד): I like tea, whereas she likes coffee.",
+"tip": "where + as.\nמשמש להשוות בין שני דברים שונים."
+},
+"lie, lay|lay": {
+"use": "עבר של lie (לשכב): lie – lay – lain.\nשימו לב: lay זה גם להניח.",
+"tip": "lay = שכב (עבר של lie).\nתרגיל: I lay on the bed yesterday."
+},
+"priority": {
+"use": "עדיפות: top priority = עדיפות עליונה.",
+"tip": "prior = קודם.\npriority = מה שבא קודם."
+},
+"wound#1": {
+"use": "עבר של wind (ללפף): wind – wound – wound.\nנשמע 'וואונד'.",
+"tip": "wind (לסובב) → wound (ליפף)."
+},
+"minority": {
+"use": "מיעוט: a minority group.\nההפך: majority.",
+"tip": "minor = קטן.\nminority = הקבוצה הקטנה."
+},
+"boost": {
+"use": "דחיפה, חיזוק: a boost to/for.\nפועל: לחזק.",
+"tip": "boost – 'בוסט', כמו 'בוסטר' = מגביר 🚀."
+},
+"crack": {
+"use": "סדק: a crack in the glass.\nפועל: להיסדק.",
+"tip": "crack – 'קראק', קול של סדק."
+},
+"illness": {
+"use": "מחלה: a serious illness.\nill = חולה.",
+"tip": "ill (חולה) + ness = מחלה 🤒."
+},
+"cousin": {
+"use": "בן/בת דוד: my cousin.",
+"tip": "cousin – 'קאזן'. כמו 'קוזין' בצרפתית: בן הדוד 👫."
+},
+"casual#1": {
+"use": "יומיומי, לא רשמי: casual clothes.",
+"tip": "casual – 'קז'ואל', כמו 'לבוש קז'ואל'."
+},
+"memorial#0": {
+"use": "אנדרטה: a war memorial.\nMemorial Day = יום הזיכרון.",
+"tip": "memory = זיכרון.\nmemorial = מקום לזכור 🕯."
+},
+"root": {
+"use": "שורש: the roots of a tree.\nגם מקור (the root of the problem).",
+"tip": "root – 'רוּט', כמו שורש עמוק."
+},
+"discipline#1": {
+"use": "משמעת: strict discipline.\nפועל: להעניש.",
+"tip": "discipline – 'דיסיפלין', כמו 'דיסציפלינה' = משמעת."
+},
+"dust": {
+"use": "אבק: covered with dust.\nפועל: לנקות אבק.",
+"tip": "dust – 'דאסט', כמו 'דאסטר' = מנקה אבק."
+},
+"pole#1": {
+"use": "קוטב: the North Pole = הקוטב הצפוני, the South Pole = הקוטב הדרומי.",
+"tip": "polar = קוטבי.\npolar bear = דוב קוטב 🐻‍❄️."
+},
+"steal": {
+"use": "לגנוב: steal – stole – stolen.\nsteal something from someone.",
+"tip": "steal – 'סטיל', נשמע כמו steel (פלדה). גנב גונב פלדה."
+},
+"palm#1": {
+"use": "דקל: a palm tree.",
+"tip": "palm – 'פאלם', כמו כף יד פתוחה = עלי הדקל 🌴."
+},
+"substance#1": {
+"use": "תוכן, מהות: no real substance.",
+"tip": "substance = חומר.\nבלי 'חומר' אמיתי = בלי תוכן."
+},
+"forth": {
+"use": "הלאה, קדימה: back and forth = הלוך ושוב.\nand so forth = וכן הלאה.",
+"tip": "forth – 'פורת'', כמו forward = קדימה."
+},
+"obtain": {
+"use": "להשיג (רשמי): obtain a form.",
+"tip": "obtain – 'אובטיין', ob + tain = להחזיק ביד."
+},
+"organic": {
+"use": "אורגני: organic food = מזון אורגני.",
+"tip": "organic = 'אורגני', בלי חומרי ריסוס 🥦."
+},
+"sake": {
+"use": "for the sake of = למען.\nfor your own sake = לטובתך.",
+"tip": "sake – 'סייק'.\nfor God's sake = למען השם."
+},
+"spiritual": {
+"use": "רוחני: a spiritual person.",
+"tip": "spirit = רוח.\nspiritual = רוחני."
+},
+"layer": {
+"use": "שכבה: a thin layer of snow.\nlayers = שכבות (בבגדים, בעוגה).",
+"tip": "lay = להניח: שכבה שמניחים מעל שכבה 🍰."
+},
+"sheet#0": {
+"use": "דף: a sheet of paper.\nworksheet = דף עבודה.",
+"tip": "sheet = משהו שטוח ודק: דף או סדין 📄."
+},
+"nurse": {
+"use": "אחות בבית חולים: the nurse took my temperature.\nגם פועל: לטפל בחולה.",
+"tip": "nurse – 'נרס', כמו 'נרסרי' = חדר תינוקות."
+},
+"pot": {
+"use": "סיר: a big pot.\nגם עציץ (flower pot).",
+"tip": "pot – 'פוט', כמו 'פוט' של מרק."
+},
+"recall#0": {
+"use": "להיזכר: I can't recall his name.",
+"tip": "re (שוב) + call (לקרוא) = לקרוא חזרה לזיכרון."
+},
+"vacation": {
+"use": "חופשה: on vacation = בחופשה.",
+"tip": "vacation – 'ווקיישן', vacant = ריק: יום ריק מעבודה 🏖."
+},
+"permit#1": {
+"use": "להרשות: permit someone to.",
+"tip": "permit – 'פרמיט'.\npermission = רשות."
+},
+"equally": {
+"use": "באופן שווה: divide equally.",
+"tip": "equal = שווה (=).\nequally = באופן שווה, לכל אחד אותו חלק."
+},
+"occasionally": {
+"use": "מדי פעם: I occasionally eat meat.",
+"tip": "occasion = הזדמנות.\noccasionally = כשיש הזדמנות."
+},
+"associate": {
+"use": "associate A with B = לקשר בין.",
+"tip": "association = אסוציאציה.\nלקשר דבר אחד לדבר אחר בראש 💭."
+},
+"friendship": {
+"use": "חברות: a strong friendship.",
+"tip": "friend (חבר) + ship = חברות 🤝."
+},
+"disaster": {
+"use": "אסון: a natural disaster = אסון טבע.\ndisastrous = הרסני.",
+"tip": "dis (רע) + aster (כוכב) = כוכב רע ☄."
+},
+"resource": {
+"use": "משאב: natural resources = משאבי טבע.\nhuman resources = משאבי אנוש.",
+"tip": "re + source (מקור) = מקור שאפשר להשתמש בו שוב."
+},
+"lifetime": {
+"use": "תקופת החיים: once in a lifetime = פעם בחיים.",
+"tip": "life (חיים) + time (זמן) = כל זמן החיים.\nonce in a lifetime = פעם בחיים 🌟."
+},
+"compete": {
+"use": "להתחרות: compete with/against/for.",
+"tip": "competition = תחרות 🏁.\ncompetitor = מתחרה."
+},
+"narrow": {
+"use": "צר: a narrow street.\nההפך: wide.",
+"tip": "narrow – 'נרואו'.\nנרואו = 'נרו', נר צר 🕯."
+},
+"entrance": {
+"use": "כניסה: the main entrance.",
+"tip": "enter (להיכנס) → entrance (כניסה)."
+},
+"rail#1": {
+"use": "מסילה: by rail = ברכבת.\nrailway = מסילת רכבת.",
+"tip": "rail – 'ריל', כמו רכבת שנוסעת על פסים 🛤."
+},
+"makeup": {
+"use": "איפור: wear makeup.\nmake-up artist = מאפרת.",
+"tip": "make up = להשלים: איפור 'משלים' את הפנים 💄."
+},
+"pan": {
+"use": "מחבת: frying pan.\nsaucepan = סיר קטן עם ידית.",
+"tip": "pan – 'פאן', כמו 'פאנקייק' שעושים במחבת 🥞."
+},
+"hence": {
+"use": "לכן (רשמי): It's late; hence we must go.",
+"tip": "hence – 'הנס'.\nכמו therefore, אבל קצר יותר."
+},
+"6th - sixth": {
+"use": "השישי: the sixth day.",
+"tip": "six (שש) + th = שישי."
+},
+"belong": {
+"use": "belong to = שייך ל-.\nbelongings = חפצים אישיים.",
+"tip": "be + long: הדבר 'אורך' עד אליך, הוא שלך."
+},
+"findings": {
+"use": "ממצאים: the findings of the study.",
+"tip": "find (למצוא) → findings (ממצאים)."
+},
+"occasion#0": {
+"use": "אירוע: a special occasion.",
+"tip": "occasion – 'אוקיישן', אירוע מיוחד 🎉."
+},
+"possession": {
+"use": "בעלות, חזקה: in his possession = ברשותו.",
+"tip": "possess = להחזיק, להיות בעלים.\npossession = מה שבידיים שלך."
+},
+"regulation": {
+"use": "תקנה, כלל רשמי: safety regulations.",
+"tip": "regulate = להסדיר.\nregular = לפי הכללים."
+},
+"memorial#1": {
+"use": "תזכיר, מסמך (שימוש נדיר).",
+"tip": "memo = תזכיר.\nmemorial = משהו לזכור."
+},
+"connect": {
+"use": "לחבר: connect A to B.\nconnection = חיבור.",
+"tip": "connect – 'קונקט', כמו 'קונקשן' 🔌."
+},
+"pace": {
+"use": "קצב: at a fast/slow pace.\nkeep pace with = לעמוד בקצב.",
+"tip": "pace – 'פייס', כמו 'פייסמייקר' = קוצב לב 💓."
+},
+"valid": {
+"use": "תקף: a valid passport.\nההפך: invalid.",
+"tip": "valid – 'ואליד', כמו 'ולידציה' = אימות."
+},
+"experiment": {
+"use": "ניסוי: do an experiment.",
+"tip": "experiment – 'אקספרימנט', כמו 'אקספרימנטלי' 🧪."
+},
+"resident": {
+"use": "תושב: a resident of Tel Aviv.",
+"tip": "reside = לגור.\nרזידנס = מקום מגורים 🏠."
+},
+"desert#1": {
+"use": "לנטוש: desert your family.\n(de-SERT, הדגש בסוף).",
+"tip": "desert = מדבר.\nלנטוש מישהו במדבר 🏜."
+},
+"suitable": {
+"use": "מתאים: suitable for children.",
+"tip": "suit = להתאים (It suits you = זה מתאים לך)."
+}
+}
