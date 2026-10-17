@@ -1,0 +1,482 @@
+{
+"dictate": {
+"use": "להכתיב: dictate a letter; dictate what to wear.",
+"tip": "dictator = דיקטטור, מי שמכתיב לכולם.\ndictation = הכתבה ✍."
+},
+"emblem": {
+"use": "סמל, סמלון: the emblem of the country.",
+"tip": "emblem – 'אמבלם', כמו סמל על מדים 🦅."
+},
+"contagious": {
+"use": "מדבק: a contagious disease / laugh.",
+"tip": "contact = מגע.\ncontagious = עובר במגע 🤧."
+},
+"silently": {
+"use": "בשקט, בלי קול: cry silently.",
+"tip": "silent = שקט 🤫."
+},
+"drip": {
+"use": "לטפטף: Water drips from the tap.\nשם עצם: טפטוף; אינפוזיה.",
+"tip": "drip – 'דריפ', הקול של טיפה 💧."
+},
+"eccentric": {
+"use": "תמהוני, מוזר: a bit eccentric.",
+"tip": "ec (מחוץ) + centric (מרכז) = מחוץ למרכז, לא שגרתי."
+},
+"citrus": {
+"use": "פרי הדר: citrus fruit (תפוזים, לימונים).",
+"tip": "citrus – 'סיטרוס', citron = אתרוג 🍋."
+},
+"glacier": {
+"use": "קרחון (נהר קרח ביבשה): The glacier is melting.",
+"tip": "glacier – 'גלישר', glace = קרח בצרפתית 🧊."
+},
+"staircase": {
+"use": "גרם מדרגות: climb the staircase.",
+"tip": "stairs (מדרגות) + case 🪜."
+},
+"flee, fled|fled": {
+"use": "עבר של flee: flee – fled – fled.\nfled from = ברח מ-.",
+"tip": "fled – 'פלד', ברח."
+},
+"ambiguous": {
+"use": "דו משמעי: an ambiguous answer.\nambiguity = עמימות.",
+"tip": "ambi = שניים (ambidextrous).\nשתי משמעויות."
+},
+"comprehension": {
+"use": "הבנה: reading comprehension = הבנת הנקרא.",
+"tip": "comprehend = להבין 📖."
+},
+"disposable": {
+"use": "חד פעמי: disposable plates.",
+"tip": "dispose = להיפטר.\ndisposable = שנזרק אחרי שימוש."
+},
+"invent": {
+"use": "להמציא: invent the telephone.\ninvention = המצאה.",
+"tip": "invent – 'אינוונט', inventor = ממציא 💡."
+},
+"discourage": {
+"use": "לייאש, להניא: discourage someone from + ing.",
+"tip": "dis (לקחת) + courage (אומץ) = לקחת את האומץ."
+},
+"mastery": {
+"use": "שליטה מלאה: mastery of five languages.",
+"tip": "master = מומחה, אדון."
+},
+"offend": {
+"use": "להעליב, לפגוע: I didn't mean to offend you.",
+"tip": "offense = עבירה, עלבון."
+},
+"adhere": {
+"use": "adhere to = לדבוק ב-, לציית ל-.",
+"tip": "adhesive = דבק.\nadhere = להידבק לכללים."
+},
+"cloak": {
+"use": "גלימה: a black cloak.\nגם מסווה.",
+"tip": "cloak – 'קלוק', invisibility cloak = גלימת ההיעלמות של הארי פוטר."
+},
+"dwell": {
+"use": "dwell on = להתעכב, להרהר ב-.\nגם לגור (רשמי).",
+"tip": "dwell = 'לגור' במחשבה."
+},
+"poisonous": {
+"use": "ארסי, רעיל: poisonous mushrooms.",
+"tip": "poison = רעל ☠."
+},
+"cashier": {
+"use": "קופאי: pay the cashier.",
+"tip": "cash = מזומן.\ncashier = מי שמקבל את הכסף 💵."
+},
+"cologne": {
+"use": "מי קולון, בושם לגבר.",
+"tip": "Cologne = העיר קלן בגרמניה, שם המציאו את הבושם."
+},
+"inexpensive": {
+"use": "לא יקר, זול: an inexpensive hotel.",
+"tip": "in (לא) + expensive (יקר)."
+},
+"pathology": {
+"use": "פתולוגיה: the pathology lab.",
+"tip": "path = מחלה + logy = תורה."
+},
+"shelf (shelves)|shelf": {
+"use": "מדף: on the shelf.\nבריבוי: shelves.",
+"tip": "shelf – 'שלף', משם 'שולפים' ספר 📚."
+},
+"calculator": {
+"use": "מחשבון: use a calculator.",
+"tip": "calculate = לחשב 🧮."
+},
+"eminent": {
+"use": "דגול, בולט: an eminent scientist.",
+"tip": "eminent – 'אמיננט', מתבלט מעל אחרים."
+},
+"superficial": {
+"use": "שטחי: superficial knowledge.",
+"tip": "super (מעל) + ficial (פנים) = רק על פני השטח."
+},
+"contend#0": {
+"use": "contend with = להתמודד עם.",
+"tip": "contender = מתמודד 🥊."
+},
+"dissent": {
+"use": "התנגדות, אי הסכמה: dissent within the party.",
+"tip": "dis (נגד) + sent (רגש) = להרגיש אחרת."
+},
+"perch#1": {
+"use": "לנחות, לשבת על מוט: A bird perched on the fence.",
+"tip": "perch = מוט שציפור יושבת עליו."
+},
+"disturb": {
+"use": "להפריע: Do not disturb.",
+"tip": "disturb – 'דיסטרב', כמו שלט על דלת המלון 🚪."
+},
+"commute#0": {
+"use": "לנסוע לעבודה וממנה: commute by train.\ncommuter = יוממן.",
+"tip": "commute – 'קומיוט', נסיעה יומית קבועה 🚆."
+},
+"convict#0": {
+"use": "להרשיע: convict someone of theft.\nconviction = הרשעה.",
+"tip": "con + vict (ניצחון) = התביעה ניצחה ⚖."
+},
+"induce": {
+"use": "לגרום ל-: induce sleep.",
+"tip": "induce – 'אינדיוס', להוביל (duce) פנימה."
+},
+"lucrative": {
+"use": "רווחי מאוד: a lucrative business.",
+"tip": "lucre = רווח כספי."
+},
+"tame": {
+"use": "מבויית, מאולף: a tame lion.\nפועל: לאלף.",
+"tip": "tame – 'טיים', ההפך מ-wild."
+},
+"eyesight#1": {
+"use": "כוונת של רובה.",
+"tip": "eye + sight = מה שהעין מכוונת דרכו."
+},
+"rhyme": {
+"use": "חרוז; להתחרז: cat and hat rhyme.",
+"tip": "rhyme – 'ריים', nursery rhymes = שירי ילדים מחורזים."
+},
+"amend": {
+"use": "לתקן (חוק): amend the law.\namendment = תיקון לחוק.",
+"tip": "mend = לתקן.\namend = לתקן רשמית."
+},
+"impatient": {
+"use": "חסר סבלנות: Don't be impatient.",
+"tip": "im (לא) + patient (סבלני)."
+},
+"cater": {
+"use": "לספק אוכל: cater for weddings.\ncater to = לספק את צרכי.",
+"tip": "catering = קייטרינג 🍽."
+},
+"desperation": {
+"use": "ייאוש: in desperation.",
+"tip": "desperate = נואש."
+},
+"blur": {
+"use": "טשטוש: everything is a blur.\nפועל: לטשטש.",
+"tip": "blur – 'בלר', blurry = מטושטש 📷."
+},
+"detrimental": {
+"use": "מזיק: detrimental to health.",
+"tip": "detriment = נזק."
+},
+"kite": {
+"use": "עפיפון: fly a kite.",
+"tip": "kite – 'קייט', kitesurfing 🪁."
+},
+"sentiments": {
+"use": "רגשות, דעות: I share your sentiments.",
+"tip": "sentimental = רגשני."
+},
+"sideways": {
+"use": "הצידה: walk sideways.",
+"tip": "side (צד) + ways 🦀."
+},
+"articulate#0": {
+"use": "רהוט, מתבטא היטב: very articulate.",
+"tip": "article = חלק: מדבר בחלקים ברורים."
+},
+"flatter#1": {
+"use": "להחמיא (יותר מדי): You flatter me!\nflattery = חנופה.",
+"tip": "flatter – 'פלאטר', 'ליישר' (flat) את האגו."
+},
+"administer#0": {
+"use": "לנהל: administer a hospital.",
+"tip": "admin = מנהל 🗂."
+},
+"alterations": {
+"use": "שינויים, תיקוני תפירה: make alterations.",
+"tip": "alter = לשנות."
+},
+"dialect": {
+"use": "ניב, דיאלקט: a local dialect.",
+"tip": "dialect = 'דיאלקט'."
+},
+"radically": {
+"use": "באופן קיצוני: change radically.",
+"tip": "radical = קיצוני."
+},
+"seismic": {
+"use": "סייסמי: seismic activity.",
+"tip": "seismic = של רעידות אדמה."
+},
+"skinned": {
+"use": "בעל עור (בצירופים): dark-skinned.\nגם פשט עור.",
+"tip": "skin = עור."
+},
+"dagger": {
+"use": "פגיון.",
+"tip": "dagger – 'דאגר', פגיון קצר 🗡."
+},
+"unrealistic": {
+"use": "לא מציאותי: an unrealistic plan.",
+"tip": "un + realistic (מציאותי)."
+},
+"algae": {
+"use": "אצות (רבים).",
+"tip": "algae – 'אלג'י', כמו 'אצות' ירוקות 🌿."
+},
+"intuition": {
+"use": "אינטואיציה, תחושת בטן: trust your intuition.",
+"tip": "intuition = 'אינטואיציה', in + tuition (לימוד) = לדעת מבפנים."
+},
+"kettle": {
+"use": "קומקום: put the kettle on = להרתיח מים.",
+"tip": "kettle – 'קטל', קומקום ☕."
+},
+"nausea": {
+"use": "בחילה: feel nausea.\nnauseous = מרגיש בחילה.",
+"tip": "naus = ספינה (navy): מחלת ים 🤢."
+},
+"poultry": {
+"use": "עופות (תרנגולות, הודים): raise poultry.",
+"tip": "poultry – 'פולטרי', poule = תרנגולת בצרפתית 🐔."
+},
+"waterfall": {
+"use": "מפל: swim under the waterfall.",
+"tip": "water (מים) + fall (נפילה) = מים שנופלים."
+},
+"conversely": {
+"use": "לעומת זאת, להפך: conversely, ...",
+"tip": "converse = הפוך."
+},
+"devote": {
+"use": "devote to = להקדיש ל-.\ndevoted = מסור.",
+"tip": "devote – 'דיווט', להקדיש בנדר (vow)."
+},
+"flourish": {
+"use": "לשגשג, לפרוח: The business is flourishing.",
+"tip": "flour = פרח (flower): לפרוח 🌸."
+},
+"persist": {
+"use": "להימשך; להתעקש: If the pain persists...\npersistent = עיקש.",
+"tip": "persist – 'פרסיסט', לא מוותר."
+},
+"dispose": {
+"use": "dispose of = להיפטר מ-.\ndisposal = סילוק.",
+"tip": "disposable = חד פעמי."
+},
+"conform": {
+"use": "conform to = להתאים את עצמו ל-.",
+"tip": "con + form (צורה) = לקבל את אותה צורה."
+},
+"fragrance": {
+"use": "ניחוח: the fragrance of roses.",
+"tip": "fragrance – 'פרגרנס', כמו 'פרפיום' 🌹."
+},
+"lurking": {
+"use": "אורב: lurking in the bushes.",
+"tip": "lurk – 'לרק', להסתתר ולחכות 👀."
+},
+"suspense": {
+"use": "מתח (בסרט/סיפור): full of suspense.",
+"tip": "suspense = 'סספנס', תלוי באוויר."
+},
+"fungus": {
+"use": "פטרייה; פטרת: a fungus grew.\nבריבוי: fungi.",
+"tip": "fungus – 'פאנגוס', fun-gi = פטריות 🍄."
+},
+"numb": {
+"use": "רדום, חסר תחושה: numb fingers.\nה-b לא נשמעת.",
+"tip": "numb – 'נאם', כמו 'נמנום' של היד."
+},
+"reap": {
+"use": "לקצור: You reap what you sow = מה שזורעים קוצרים.",
+"tip": "Grim Reaper = מלאך המוות עם החרמש."
+},
+"heroine": {
+"use": "גיבורה: the heroine of the story.",
+"tip": "hero + ine = גיבורה."
+},
+"plaster": {
+"use": "טיח; גבס (on a broken arm).\nבבריטית גם פלסטר.",
+"tip": "plaster – 'פלסטר', כמו פלסטר לפצע 🩹."
+},
+"shelf (shelves)|shelves": {
+"use": "מדפים (רבים של shelf).",
+"tip": "shelf → shelves 📚."
+},
+"weave": {
+"use": "לארוג: weave baskets.\nweave – wove – woven.",
+"tip": "weave – 'וויב', web = רשת ארוגה 🕸."
+},
+"uphold": {
+"use": "לשמור על, לקיים: uphold the law.",
+"tip": "up + hold = להחזיק למעלה."
+},
+"recreate": {
+"use": "ליצור מחדש, לשחזר.",
+"tip": "re + create = ליצור שוב."
+},
+"contend#1": {
+"use": "לטעון: contend that he is innocent.",
+"tip": "contend = לטעון בתוקף."
+},
+"conceal": {
+"use": "להסתיר: conceal anger.",
+"tip": "conceal – 'קונסיל', concealer = קונסילר שמסתיר פגמים 💄."
+},
+"mediocre": {
+"use": "בינוני (לא טוב): mediocre food.",
+"tip": "medi = אמצע.\nבאמצע, לא מרשים 😐."
+},
+"stricken": {
+"use": "מוכה: stricken with fear / grief.",
+"tip": "strike = להכות."
+},
+"commute#1": {
+"use": "להמתיק עונש: commute a sentence.",
+"tip": "commute = להחליף: עונש קל במקום כבד."
+},
+"fluent": {
+"use": "שוטף: fluent in English.\nfluently = בשטף.",
+"tip": "flu = לזרום (fluid): דיבור זורם 🗣."
+},
+"convict#1": {
+"use": "אסיר: the convict escaped.",
+"tip": "convict = מי שהורשע ⛓."
+},
+"inherit": {
+"use": "לרשת: inherit a house.\ninheritance = ירושה.",
+"tip": "heir = יורש."
+},
+"starve": {
+"use": "לרעוב: starve to death.\nI'm starving = אני גוועת ברעב.",
+"tip": "starve – 'סטארב', starving = מורעב."
+},
+"aura": {
+"use": "הילה, אווירה: an aura of calm.",
+"tip": "aura = 'הילה' או 'אורה'."
+},
+"dart": {
+"use": "חץ קטן: throw a dart.\nפועל: לזנק.",
+"tip": "darts = משחק החצים 🎯."
+},
+"robe": {
+"use": "חלוק: bath robe.\nגם גלימה.",
+"tip": "robe – 'רוֹב', כמו חלוק בספא."
+},
+"comparatively": {
+"use": "באופן יחסי: comparatively easy.",
+"tip": "compare = להשוות."
+},
+"incidentally": {
+"use": "דרך אגב: Incidentally, ...",
+"tip": "incident = מקרה.\nincidentally = במקרה, אגב."
+},
+"derive": {
+"use": "derive from = לנבוע מ-, להפיק מ-.",
+"tip": "derive – 'דירייב', כמו נהר שזורם (river) ממקור."
+},
+"descend": {
+"use": "לרדת: The plane began to descend.\ndescent = ירידה.",
+"tip": "de (למטה) + scend (לטפס) 🛬."
+},
+"discriminate": {
+"use": "להפלות: discriminate against.\ndiscrimination = אפליה.",
+"tip": "discriminate – 'דיסקרימינייט', אפליה."
+},
+"profoundly": {
+"use": "עמוקות: profoundly changed.",
+"tip": "profound = עמוק."
+},
+"coastline": {
+"use": "קו החוף: along the coastline.",
+"tip": "coast (חוף) + line (קו) 🏖."
+},
+"collaborate": {
+"use": "collaborate with/on = לשתף פעולה.",
+"tip": "co (יחד) + labor (עבודה)."
+},
+"dedicate": {
+"use": "dedicate to = להקדיש ל-.",
+"tip": "dedication = הקדשה."
+},
+"articulate#1": {
+"use": "לבטא בבהירות: articulate feelings.",
+"tip": "articulate = לבטא כל חלק בבירור."
+},
+"postage": {
+"use": "דמי משלוח בדואר.",
+"tip": "post = דואר + age = התשלום 📮."
+},
+"administer#1": {
+"use": "לתת תרופה: administer medicine.",
+"tip": "administer = לנהל, לתת."
+},
+"spectator": {
+"use": "צופה (במשחק): the spectators cheered.",
+"tip": "spect = לראות (inspect, spectacle)."
+},
+"prohibit": {
+"use": "לאסור: Smoking is prohibited.",
+"tip": "prohibition = איסור (תקופת היובש בארה\"ב)."
+},
+"disciplined#0": {
+"use": "העניש, חינך: disciplined his son.",
+"tip": "discipline = משמעת."
+},
+"oversee": {
+"use": "לפקח: oversee a project.",
+"tip": "over (מעל) + see (לראות) = לראות מלמעלה."
+},
+"symmetry": {
+"use": "סימטריה: perfect symmetry.",
+"tip": "symmetry = 'סימטריה'."
+},
+"usher": {
+"use": "סדרן: The usher showed us to our seats.",
+"tip": "usher – 'אשר', כמו הזמר Usher שמוביל את הקהל."
+},
+"overdue": {
+"use": "באיחור: The book is overdue.",
+"tip": "over (מעבר) + due (מועד) = עבר המועד."
+},
+"ancestry": {
+"use": "מוצא, שושלת: Russian ancestry.",
+"tip": "ancestor = אב קדמון."
+},
+"monumental": {
+"use": "עצום, היסטורי: a monumental task.",
+"tip": "monument = אנדרטה גדולה."
+},
+"correspond#0": {
+"use": "correspond with = להתכתב עם.",
+"tip": "correspondence = התכתבות ✉."
+},
+"obedience": {
+"use": "צייתנות: obedience training.",
+"tip": "obey = לציית 🐕."
+},
+"reconcile": {
+"use": "להתפייס; ליישב: reconcile with.",
+"tip": "re + concile (council) = לשבת שוב יחד."
+},
+"equip": {
+"use": "לצייד: equip with.\nequipment = ציוד.",
+"tip": "equipment = ציוד 🎒."
+}
+}

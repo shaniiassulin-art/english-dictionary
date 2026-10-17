@@ -1,0 +1,482 @@
+{
+"provoke": {
+"use": "להתגרות, לעורר: Don't provoke the dog.\nprovocation = התגרות.",
+"tip": "provoke – 'פרובוק', כמו 'פרובוקציה' 😠."
+},
+"despise": {
+"use": "לבוז, לתעב: despise liars.",
+"tip": "despise – 'דיספייז', Despicable Me = 'גנוב על הירח' (בזוי)."
+},
+"hive": {
+"use": "כוורת: Bees live in a hive.",
+"tip": "hive – 'הייב', beehive = כוורת 🐝."
+},
+"nuisance": {
+"use": "מטרד, נודניק: The noise is a nuisance.",
+"tip": "nuisance – 'ניוסנס', משהו שמנדנד."
+},
+"bland": {
+"use": "תפל, חסר טעם: bland soup.\nגם משעמם.",
+"tip": "bland – 'בלנד', כמו blend = מעורבב עד שאין טעם."
+},
+"pivot": {
+"use": "ציר: turn on a pivot.\nפועל: להסתובב, לשנות כיוון.",
+"tip": "pivot – 'פיבוט', כמו פיבוט בכדורסל 🏀."
+},
+"doorstep": {
+"use": "מפתן הדלת: on the doorstep.",
+"tip": "door (דלת) + step (מדרגה) 🚪."
+},
+"moth": {
+"use": "עש, פרפר לילה: a moth flew to the light.",
+"tip": "moth – 'מות'', עש שאוכל בגדים."
+},
+"coincide": {
+"use": "coincide with = לחול בו-זמנית עם, להתאים.\ncoincidence = צירוף מקרים.",
+"tip": "coincidence = 'קואינסידנס', צירוף מקרים."
+},
+"ancestor": {
+"use": "אב קדמון: my ancestors.",
+"tip": "ancestor – 'אנססטור', ante = לפני: מי שחי לפנינו."
+},
+"lapse#0": {
+"use": "מעידה, כשל: a lapse of memory.",
+"tip": "lapse – 'לאפס', נפילה קטנה (collapse)."
+},
+"dissolve": {
+"use": "להתמוסס, להמס: Sugar dissolves in water.",
+"tip": "dis + solve = לפרק, להמס 🧂💧."
+},
+"unforgettable": {
+"use": "בלתי נשכח: an unforgettable trip.",
+"tip": "un + forget + able = שאי אפשר לשכוח."
+},
+"autograph": {
+"use": "חתימה של מפורסם: get an autograph.",
+"tip": "auto (עצמי) + graph (כתיבה) = כתב ידו ✍."
+},
+"fingerprint": {
+"use": "טביעת אצבע: find a fingerprint.",
+"tip": "finger + print (הדפס) 🔍."
+},
+"myriad": {
+"use": "אינספור: a myriad of fish.",
+"tip": "myriad – 'מיריאד', ביוונית = 10,000."
+},
+"attire": {
+"use": "לבוש (רשמי): formal attire.",
+"tip": "attire – 'אטייר', כמו tire = ללבוש."
+},
+"mimic": {
+"use": "לחקות: Parrots mimic speech.",
+"tip": "mimic – 'מימיק', מימיקה = חיקוי 🦜."
+},
+"weaken": {
+"use": "להחליש: The illness weakened him.",
+"tip": "weak (חלש) + en."
+},
+"odor": {
+"use": "ריח (לרוב לא נעים): a strange odor.",
+"tip": "odor – 'אודור', deodorant = מסיר ריח."
+},
+"plunge": {
+"use": "לצלול, לקפוץ: plunge into water.\nגם ירידה חדה.",
+"tip": "plunge – 'פלאנג'', קפיצת ראש 🏊."
+},
+"commute#2": {
+"use": "להמיר (שימוש נדיר).",
+"tip": "commute = להחליף."
+},
+"fisherman": {
+"use": "דייג.",
+"tip": "fish + er + man 🎣."
+},
+"folklore": {
+"use": "פולקלור: local folklore.",
+"tip": "folk (עם) + lore (ידע) = ידע עממי."
+},
+"paddle#0": {
+"use": "מחבט (פינג פונג).",
+"tip": "paddle = מחבט שטוח."
+},
+"contradictory": {
+"use": "סותר: contradictory stories.",
+"tip": "contra (נגד) + dict (לומר) = אומרים הפוך."
+},
+"repetition": {
+"use": "חזרה: Repetition helps you learn.",
+"tip": "repeat = לחזור 🔁."
+},
+"accumulate": {
+"use": "להצטבר, לצבור: Dust accumulates.",
+"tip": "accumulate – 'אקיומולייט', כמו 'מצבר' (accumulator) 🔋."
+},
+"uncover": {
+"use": "לחשוף: uncover the truth.",
+"tip": "un + cover (לכסות) = להסיר כיסוי."
+},
+"admirable": {
+"use": "ראוי להערצה: admirable courage.",
+"tip": "admire = להעריץ."
+},
+"postpone": {
+"use": "לדחות למועד מאוחר יותר: postpone a meeting.",
+"tip": "post (אחרי) + pone (לשים) = לשים אחר כך."
+},
+"innate": {
+"use": "מולד, טבעי: an innate need.",
+"tip": "in + nate (נולד) = נולד איתו."
+},
+"patiently": {
+"use": "בסבלנות: wait patiently.",
+"tip": "patient = סבלני."
+},
+"revise": {
+"use": "לתקן, לערוך מחדש: revise an essay.\nבבריטית: לחזור על חומר.",
+"tip": "re + vise (לראות) = לראות שוב."
+},
+"spinach": {
+"use": "תרד: Spinach is healthy.",
+"tip": "spinach – 'ספיניץ'', פופאי אוכל תרד 💪."
+},
+"poverty-stricken": {
+"use": "מוכה עוני: a poverty-stricken area.",
+"tip": "poverty (עוני) + stricken (מוכה)."
+},
+"crave": {
+"use": "להשתוקק ל-: crave chocolate.\ncraving = חשק עז.",
+"tip": "crave – 'קרייב', כמו craving להריון 🍫."
+},
+"unbearable": {
+"use": "בלתי נסבל: unbearable heat.",
+"tip": "bear = לסבול.\nun + bear + able."
+},
+"immersion": {
+"use": "טבילה, שקיעה מלאה: language immersion.",
+"tip": "immerse = לטבול.\nlike מקווה."
+},
+"irresistible": {
+"use": "מפתה מאוד: irresistible cake.",
+"tip": "ir + resist + ible = שאי אפשר לעמוד בפניו."
+},
+"nobility": {
+"use": "אצולה.",
+"tip": "noble = אציל 👑."
+},
+"disciplined#1": {
+"use": "ממושמע: a disciplined student.",
+"tip": "discipline = משמעת."
+},
+"consolidate": {
+"use": "לאחד, לגבש: consolidate offices.",
+"tip": "solid = מוצק: לחבר למשהו מוצק אחד."
+},
+"respectfully": {
+"use": "בכבוד: speak respectfully.",
+"tip": "respect = כבוד 🙏."
+},
+"relegated": {
+"use": "הורד (לליגה/דרגה נמוכה).",
+"tip": "relegate – 'רלגייט', הירידה בליגה ⬇."
+},
+"simplify": {
+"use": "לפשט: simplify the sentence.",
+"tip": "simple = פשוט."
+},
+"diminish": {
+"use": "לפחות, להצטמצם: The pain will diminish.",
+"tip": "diminish – 'דימיניש', mini = קטן."
+},
+"confinement": {
+"use": "ריתוק, כליאה: solitary confinement = בידוד.",
+"tip": "confine = להגביל למקום."
+},
+"stabilize": {
+"use": "לייצב: stabilize the patient.",
+"tip": "stable = יציב."
+},
+"correspond#1": {
+"use": "correspond with/to = להתאים ל-.",
+"tip": "correspond = להיות תואם."
+},
+"concise": {
+"use": "תמציתי: a concise answer.",
+"tip": "concise – 'קונסייס', cut = חתוך ומקוצר ✂."
+},
+"illustrator": {
+"use": "מאייר.",
+"tip": "illustrate = לאייר 🖍."
+},
+"immoral": {
+"use": "לא מוסרי: Stealing is immoral.",
+"tip": "im (לא) + moral (מוסרי)."
+},
+"annoy": {
+"use": "להציק, לעצבן: Don't annoy your sister.\nannoying = מעצבן.",
+"tip": "annoy – 'אנוי', annoying = מציק 😒."
+},
+"applaud": {
+"use": "למחוא כפיים: The audience applauded.\napplause = מחיאות כפיים.",
+"tip": "applaud – 'אפלוד', applause = מחיאות כפיים 👏."
+},
+"lineage": {
+"use": "ייחוס, שושלת: royal lineage.",
+"tip": "line = קו: קו משפחתי."
+},
+"plight": {
+"use": "מצוקה: the plight of refugees.",
+"tip": "plight – 'פלייט', מצב קשה."
+},
+"octopus": {
+"use": "תמנון: eight arms.",
+"tip": "octo = 8 (October במקור החודש השמיני) 🐙."
+},
+"stalk": {
+"use": "לעקוב בסתר: stalk a bird / a person.\nstalker = עוקב טורדני.",
+"tip": "stalker = 'סטוקר'."
+},
+"candid": {
+"use": "כן, גלוי: a candid answer.",
+"tip": "candid camera = מצלמה נסתרת שמראה את האמת."
+},
+"unfold": {
+"use": "לפרוש קיפול: unfold a map.\nלהתפתח, להתגלות: see how the story unfolds.",
+"tip": "un (ביטול) + fold (קיפול) = לפתוח את הקיפול 🗺."
+},
+"contradiction": {
+"use": "סתירה: a contradiction in his story.",
+"tip": "contra (נגד) + diction (אמירה) = אמירה נגדית."
+},
+"divinity": {
+"use": "אלוהות: the divinity of the king.",
+"tip": "divine = אלוהי ✨."
+},
+"oppressive": {
+"use": "מדכא, מעיק: oppressive heat / regime.",
+"tip": "oppress = לדכא, ללחוץ למטה."
+},
+"lapse#1": {
+"use": "פרק זמן שעבר: after a lapse of two years.",
+"tip": "time-lapse = צילום שמראה זמן שעובר מהר ⏩."
+},
+"prosper": {
+"use": "לשגשג: The town began to prosper.",
+"tip": "prosperity = שגשוג 💰."
+},
+"heed": {
+"use": "לשים לב ל-, להקשיב: heed my warning.",
+"tip": "heed – 'היד', head = הראש: לשים בראש."
+},
+"imaginative": {
+"use": "בעל דמיון: an imaginative child.",
+"tip": "imagine = לדמיין 🌈."
+},
+"keystone": {
+"use": "אבן ראשה, יסוד: Trust is the keystone.",
+"tip": "key (מפתח) + stone (אבן) = האבן שמחזיקה את הקשת."
+},
+"discord#0": {
+"use": "מחלוקת, ריב: discord in the family.",
+"tip": "dis (נגד) + cord (לב) = לבבות לא מתאימים."
+},
+"enroll": {
+"use": "להירשם: enroll in a class.\nenrollment = הרשמה.",
+"tip": "en + roll (רשימה) = להיכנס לרשימה 📋."
+},
+"glitch": {
+"use": "תקלה קטנה: a glitch in the program.",
+"tip": "glitch – 'גליץ'', כמו מסך שמקרטע 💻."
+},
+"quake": {
+"use": "רעידה, רעידת אדמה: The quake shook the city.",
+"tip": "earthquake = רעידת אדמה."
+},
+"tentative": {
+"use": "זמני, לא סופי: tentative plans.",
+"tip": "tentative – 'טנטטיב', כמו 'טנטטיבי' = לא סופי."
+},
+"orderly": {
+"use": "מסודר: an orderly line.",
+"tip": "order = סדר."
+},
+"purposely": {
+"use": "בכוונה: He purposely ignored me.",
+"tip": "purpose = מטרה.\non purpose = בכוונה."
+},
+"relocate": {
+"use": "לעבור, להעביר למקום חדש: relocate to Haifa.",
+"tip": "re + locate = למקם מחדש 🚚."
+},
+"simulate": {
+"use": "לדמות: simulate flying.\nsimulation = סימולציה.",
+"tip": "simulator = סימולטור."
+},
+"paddle#1": {
+"use": "משוט קצר: row with a paddle.",
+"tip": "paddle – 'פאדל', SUP = stand-up paddle 🏄."
+},
+"preferable": {
+"use": "preferable to = עדיף על.",
+"tip": "prefer = להעדיף."
+},
+"orient": {
+"use": "orient yourself = להתמצא.",
+"tip": "orientation = התמצאות 🧭."
+},
+"acquitted": {
+"use": "זוכה: acquitted of murder.",
+"tip": "acquit – 'אקוויט', quit = להשתחרר מהאשמה."
+},
+"inadvertently": {
+"use": "בלי כוונה: I inadvertently deleted it.",
+"tip": "in (לא) + advert (לשים לב) = בלי לשים לב."
+},
+"inject": {
+"use": "להזריק: inject medicine.\ninjection = זריקה.",
+"tip": "in (פנימה) + ject (לזרוק) = לזרוק פנימה 💉."
+},
+"invariably": {
+"use": "תמיד, ללא יוצא מן הכלל: He invariably arrives late.",
+"tip": "in (לא) + vary (להשתנות) = אף פעם לא משתנה."
+},
+"wrought": {
+"use": "גרם, חולל (ספרותי): wrought damage.\nwrought iron = ברזל מחושל.",
+"tip": "wrought = צורה ישנה של worked."
+},
+"bead": {
+"use": "חרוז: a necklace of beads.",
+"tip": "bead – 'ביד', חרוזים בשרשרת 📿."
+},
+"enact": {
+"use": "לחוקק: enact a law.",
+"tip": "en + act (חוק) = להפוך לחוק."
+},
+"stride": {
+"use": "צעד ארוך: a long stride.\nפועל: לצעוד.",
+"tip": "stride – 'סטרייד', make strides = להתקדם 🚶."
+},
+"incompetence": {
+"use": "חוסר יכולת: fired for incompetence.",
+"tip": "in (לא) + competence (יכולת)."
+},
+"invaders": {
+"use": "פולשים: The invaders burned the city.",
+"tip": "invade = לפלוש 👾."
+},
+"unjust": {
+"use": "לא צודק: an unjust law.",
+"tip": "un + just (צודק)."
+},
+"migrate": {
+"use": "לנדוד, להגר: Birds migrate south.\nmigration = נדידה.",
+"tip": "migrant = מהגר 🐦."
+},
+"sanction#0": {
+"use": "סנקציות (בדרך כלל ברבים): impose sanctions.",
+"tip": "sanction = 'סנקציה'."
+},
+"bleak": {
+"use": "קודר, עגום: The future looks bleak.",
+"tip": "bleak – 'בליק', כמו black = שחור."
+},
+"grit": {
+"use": "נחישות, אומץ: have the grit to succeed.\nגם חצץ.",
+"tip": "grit – 'גריט', לחרוק (grit) שיניים ולהמשיך 💪."
+},
+"stereotype": {
+"use": "סטריאוטיפ: don't believe every stereotype.",
+"tip": "stereotype = 'סטריאוטיפ'."
+},
+"upbringing": {
+"use": "חינוך, גידול: a strict upbringing.",
+"tip": "bring up = לגדל ילדים."
+},
+"chiefly": {
+"use": "בעיקר: chiefly about love.",
+"tip": "chief = ראשי."
+},
+"stronghold": {
+"use": "מעוז: a rebel stronghold.",
+"tip": "strong (חזק) + hold (אחיזה) = מקום חזק 🏰."
+},
+"solitude": {
+"use": "בדידות (נעימה), התבודדות: enjoy the solitude.",
+"tip": "solo = לבד."
+},
+"betray": {
+"use": "לבגוד: betray a friend.\nbetrayal = בגידה.",
+"tip": "betray – 'ביטריי', בוגד 🗡."
+},
+"stumble": {
+"use": "למעוד: stumble on the stairs.\nstumble upon = להיתקל במקרה.",
+"tip": "stumble – 'סטאמבל', נשמע כמו מעידה."
+},
+"cultivate": {
+"use": "לעבד אדמה; לטפח: cultivate the land / a friendship.",
+"tip": "culture = תרבות, גידול 🌱."
+},
+"devoid": {
+"use": "devoid of = חסר, נטול.",
+"tip": "void = ריק."
+},
+"unconventional": {
+"use": "לא שגרתי: unconventional ideas.",
+"tip": "un + conventional (שגרתי)."
+},
+"densely": {
+"use": "בצפיפות: densely populated.",
+"tip": "dense = צפוף."
+},
+"physicist": {
+"use": "פיזיקאי.",
+"tip": "physics = פיזיקה ⚛."
+},
+"prehistoric": {
+"use": "פרה-היסטורי: prehistoric tools.",
+"tip": "pre (לפני) + historic = לפני ההיסטוריה 🦖."
+},
+"spacious": {
+"use": "מרווח: a spacious apartment.",
+"tip": "space = מקום."
+},
+"diagnose": {
+"use": "לאבחן: diagnose the flu.\ndiagnosis = אבחנה.",
+"tip": "diagnose = 'דיאגנוזה' 🩺."
+},
+"populous": {
+"use": "מאוכלס בצפיפות: a populous country.",
+"tip": "population = אוכלוסייה."
+},
+"carve": {
+"use": "לחרוט, לגלף: carve a name.\ncarve a turkey = לפרוס הודו.",
+"tip": "carve – 'קארב', לחרוט בסכין 🔪."
+},
+"artifact": {
+"use": "חפץ (עתיק): ancient artifacts.",
+"tip": "art (אמנות) + fact (עשוי) = דבר שנעשה בידי אדם."
+},
+"depict": {
+"use": "לתאר, לצייר: The painting depicts a battle.",
+"tip": "de + pict (תמונה) = להציג בתמונה."
+},
+"embarrass": {
+"use": "להביך: Don't embarrass me.\nembarrassed = נבוך.",
+"tip": "embarrass – 'אמבראס', כתיב: rr ו-ss כפולים 😳."
+},
+"lapse#2": {
+"use": "פקיעה, סיום תוקף.",
+"tip": "lapse = מעבר זמן עד הסוף."
+},
+"coop#0": {
+"use": "coop up = לכלוא במקום צר.",
+"tip": "coop = לול: לסגור כמו בלול."
+},
+"cucumber": {
+"use": "מלפפון: add cucumber to the salad.",
+"tip": "cucumber – 'קיוקמבר'.\ncool as a cucumber = רגוע מאוד 🥒."
+},
+"validate": {
+"use": "לאמת, לתקף: validate a theory.",
+"tip": "valid = תקף ✔."
+}
+}
