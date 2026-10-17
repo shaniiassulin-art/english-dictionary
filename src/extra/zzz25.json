@@ -1,0 +1,382 @@
+{
+"unstable": {
+"use": "שם תואר: unstable ladder / situation / person.\nעל מצב רגשי: emotionally unstable.\ninstability = חוסר יציבות."
+},
+"consult": {
+"use": "consult + רופא / עורך דין / ספר = להתייעץ עם, לעיין ב-.\nconsult with + אדם = להתייעץ.\nconsultant = יועץ."
+},
+"Jew": {
+"use": "שם עצם ספיר באות גדולה: a Jew.\nכשם תואר אומרים Jewish (לא Jew).\nJudaism = יהדות."
+},
+"maturity": {
+"use": "שם עצם לא ספיר: show maturity = להראות בגרות.\nreach maturity = להגיע לבגרות.\nmature = בוגר."
+},
+"distinguish": {
+"use": "distinguish between + A + and + B / distinguish + A + from + B.\ndistinguished = מכובד (רשמי)."
+},
+"dominate": {
+"use": "dominate + משחק / שוק / שיחה = לשלוט.\ndominant = דומיננטי.\ndomination = שליטה."
+},
+"dynasty": {
+"use": "שם עצם ספיר: a royal dynasty = שושלת.\nבהשאלה: משפחה חזקה לאורך דורות.\nבהיסטוריה."
+},
+"prospective": {
+"use": "שם תואר לפני שם עצם: prospective buyer / student = פוטנציאלי (רשמי).\nprospect = סיכוי."
+},
+"appetite": {
+"use": "שם עצם: have no appetite.\nappetite for + דבר = תאווה ל- (גם בהשאלה).\nappetizer = מנה ראשונה."
+},
+"regulate": {
+"use": "regulate + שוק / טמפרטורה = לווסת, להסדיר בחוק.\nregulation = תקנה.\nregulator = רגולטור."
+},
+"swallow": {
+"use": "swallow + אוכל / תרופה = לבלוע.\nבהשאלה: hard to swallow = קשה לקבל.\nswallow = גם סנונית."
+},
+"bully": {
+"use": "כשם עצם: a bully = בריון.\nכפועל: bully + אדם = להציק.\nbullying = בריונות."
+},
+"pharmacy": {
+"use": "שם עצם ספיר: at the pharmacy.\nבבריטית: chemist's.\npharmacist = רוקח."
+},
+"roast": {
+"use": "roast + בשר / קפה = לצלות בתנור / לקלות.\nכשם עצם: a roast = צלי.\nroasted = צלוי."
+},
+"rubbish#0": {
+"use": "שם עצם לא ספיר (בריטית): rubbish = זבל.\nrubbish bin = פח.\nבאמריקאית: garbage / trash."
+},
+"saga": {
+"use": "שם עצם ספיר: a family saga.\nבהשאלה: סיפור ארוך ומסובך (בספרות)."
+},
+"lethal": {
+"use": "שם תואר: lethal dose / weapon = קטלני.\nlethal to + אדם.\nחזק מ-dangerous.",
+"tip": "lethal – 'ליתל', נשמע כמו 'לטאל' – לטאה ארסית וקטלנית 🦎 = קטלני."
+},
+"mortal#0": {
+"use": "שם תואר: all humans are mortal = בני תמותה.\nכשם עצם: a mere mortal = סתם אדם.\nimmortal = בן אלמוות.",
+"tip": "mortal – 'מורטל', נשמע כמו 'מוות' – mort = מוות, מי שימות בסוף 💀 = בן תמותה."
+},
+"abundance": {
+"use": "שם עצם: an abundance of + דבר / in abundance = בשפע.\nabundant = שופע (רשמי)."
+},
+"antique": {
+"use": "כשם תואר: antique furniture.\nכשם עצם: an antique = עתיקה.\nantique shop."
+},
+"endangered": {
+"use": "שם תואר: endangered species / animal.\nendanger = לסכן.\nבהקשר של שמירת טבע."
+},
+"fragile": {
+"use": "שם תואר: fragile glass / box = שביר.\nfragile health / peace = רעוע.\nFRAGILE על חבילות."
+},
+"sunlight": {
+"use": "שם עצם לא ספיר: in the sunlight.\nsunshine = אור שמש נעים.\nsun = שמש."
+},
+"fulfill": {
+"use": "fulfill + dream / promise / need = להגשים, לקיים.\nבבריטית: fulfil.\nfulfilling = מספק."
+},
+"prestigious": {
+"use": "שם תואר: על מוסד, ארגון או פרס – prestigious university / award.\nכמעט לא על אדם עצמו.\nprestige = יוקרה."
+},
+"curtain": {
+"use": "שם עצם ספיר: close / draw the curtains.\nבתיאטרון: the curtain = המסך.\ncurtains = וילונות."
+},
+"fatigue#0": {
+"use": "פועל רשמי: fatigue + אדם = לעייף.\nבשיחה: tire.\nfatigued = עייף.",
+"tip": "fatigue – 'פטיג', נשמע כמו 'פטיגה' – אחרי טיול ארוך הרגליים 'מפוטגות' 😩 = לעייף."
+},
+"coupon": {
+"use": "שם עצם ספיר: a coupon for + מוצר.\ndiscount coupon.\nvoucher = שובר."
+},
+"dentist": {
+"use": "שם עצם ספיר: go to the dentist.\nat the dentist's.\ndental = של שיניים."
+},
+"envelope": {
+"use": "שם עצם ספיר: put + מכתב + in an envelope.\nseal the envelope.\npush the envelope = למתוח גבולות."
+},
+"stunt": {
+"use": "שם עצם ספיר: do / perform a stunt.\nstuntman = פעלולן.\npublicity stunt = תרגיל יחסי ציבור."
+},
+"mouse (mice)|mice": {
+"use": "רבים לא סדיר של mouse: one mouse, two mice.\nלא אומרים mouses (בעכברים חיים).\nrats = עכברושים.",
+"tip": "mice – 'מייס', נשמע כמו 'מייס' – הרבה עכברים קטנים שרצים 🐭🐭 = עכברים."
+},
+"farther": {
+"use": "צורת השוואה של far: farther = רחוק יותר (מרחק פיזי).\nfurther = גם 'נוסף'.\nfarthest = הכי רחוק."
+},
+"recession": {
+"use": "שם עצם ספיר: in a recession.\neconomic recession (בכלכלה)."
+},
+"dismiss#0": {
+"use": "dismiss + case / idea = לדחות, לבטל.\ndismiss as + שם תואר = לפטור כ-.\ndismissal = דחייה.",
+"tip": "dismiss – dis (הרחק) + miss (לשלוח, כמו 'מיסייל' = טיל) = 'לשלוח הרחק' 🗑 = לבטל."
+},
+"clarify": {
+"use": "clarify + שאלה / עמדה = להבהיר.\nclarification = הבהרה.\nclear = ברור."
+},
+"constitute#0": {
+"use": "constitute + גוף = להקים (רשמי מאוד).\nבשפה רגילה: establish / set up.\nconstitution = חוקה."
+},
+"diagram": {
+"use": "שם עצם ספיר: a diagram of + דבר.\ndraw a diagram.\nבמדע ובלימודים."
+},
+"correspondence": {
+"use": "שם עצם לא ספיר: correspondence with + אדם (רשמי).\ncorrespond = להתכתב."
+},
+"desirable": {
+"use": "שם תואר: desirable = רצוי, נחשק.\nhighly desirable.\nundesirable = לא רצוי."
+},
+"grandson": {
+"use": "שם עצם ספיר: my grandson.\ngranddaughter = נכדה.\ngrandchildren = נכדים."
+},
+"incorporate": {
+"use": "incorporate + A + into + B = לשלב.\nincorporated (Inc.) = חברה בע\"מ (רשמי)."
+},
+"allowance": {
+"use": "שם עצם ספיר: a weekly allowance = דמי כיס.\nmake allowances for = להתחשב ב-.\nבבריטית: pocket money."
+},
+"gasoline": {
+"use": "שם עצם לא ספיר (אמריקאית): gasoline = בנזין.\nבקיצור: gas.\nבבריטית: petrol."
+},
+"proposition": {
+"use": "שם עצם ספיר: an interesting proposition = הצעה (בעסקים).\nבלוגיקה: טענה."
+},
+"rim": {
+"use": "שם עצם ספיר: the rim of + כוס / גלגל = שפה, חישוק.\nglasses rims = מסגרת משקפיים.\nedge = קצה."
+},
+"genesis#0": {
+"use": "Genesis = ספר בראשית (באות גדולה).\nthe Book of Genesis (בתנ\"ך).",
+"tip": "Genesis – 'ג'נסיס', כמו 'ג'ין' (gene) – מתחילת הדור הראשון, הבריאה 🌍 = בראשית."
+},
+"utter": {
+"use": "utter + מילה / צליל = להוציא מהפה.\nnot utter a word = לא להוציא הגה.\nutter (שם תואר) = מוחלט."
+},
+"ivory": {
+"use": "שם עצם לא ספיר: ivory = שנהב.\nכשם תואר: ivory color = שנהב.\nivory tower = מגדל שן.",
+"tip": "ivory – 'איבורי', נשמע כמו 'אי-ברי' – שן לבנה ובריאה של פיל 🐘 = שנהב."
+},
+"mock": {
+"use": "mock + אדם = ללעוג.\nכשם תואר: mock exam = מבחן דמה.\nmockery = לעג."
+},
+"wolf (wolves)|wolf": {
+"use": "שם עצם ספיר: a wolf; רבים: wolves.\ncry wolf = להזעיק לשווא.\nwolf down = לזלול.",
+"tip": "wolf – 'וולף', נשמע כמו 'אוּוף' – יללת זאב בלילה 🐺 = זאב."
+},
+"disclose": {
+"use": "disclose + מידע + to + אדם = לחשוף (רשמי).\ndisclosure = חשיפה."
+},
+"analyze": {
+"use": "analyze + נתונים = לנתח.\nבבריטית: analyse.\nanalysis = ניתוח."
+},
+"ruler#0": {
+"use": "שם עצם ספיר: a ruler = סרגל.\nruler = גם שליט.\nbr מדידה בס\"מ."
+},
+"tolerate": {
+"use": "tolerate + דבר / ing = לסבול, לקבל.\ncan't tolerate = לא סובל.\ntolerance = סובלנות."
+},
+"advertisement": {
+"use": "שם עצם ספיר: an advertisement for + מוצר.\nבקיצור: ad / advert.\nadvertise = לפרסם."
+},
+"spill": {
+"use": "spill – spilled / spilt.\nspill + נוזל + on + דבר.\nכשם עצם: oil spill = דליפת נפט.",
+"tip": "spill – 'ספיל', נשמע כמו 'שפל' – הכוס נפלה והנוזל נשפך למטה 💧 = לשפוך."
+},
+"slaughter": {
+"use": "slaughter + חיות = לשחוט / אנשים = לטבוח.\nכשם עצם: slaughter = טבח.\nslaughterhouse = בית מטבחיים."
+},
+"testify": {
+"use": "testify in court = להעיד.\ntestify against / for + אדם.\ntestimony = עדות."
+},
+"envy": {
+"use": "שם עצם: envy of + אדם.\nכפועל: envy + אדם + דבר = לקנא.\nenvious = מקנא.",
+"tip": "envy – 'אנבי', נשמע כמו 'ענבי' – השועל שמקנא בענבים שלא הגיע אליהם 🍇 = קנאה."
+},
+"exile": {
+"use": "כשם עצם: in exile = בגלות.\nכפועל: be exiled = להיות מוגלה.\nבהקשר היסטורי ופוליטי."
+},
+"sperm": {
+"use": "שם עצם: sperm = זרע (יחיד ורבים זהים).\nבהקשר ביולוגי ורפואי.\nsperm whale = לוויתן זרע.",
+"tip": "sperm – 'ספרם', נשמע כמו 'ספרה' – תא קטנטן, ספרה ראשונה בחיים 🧬 = זרע."
+},
+"urine": {
+"use": "שם עצם לא ספיר: urine test = בדיקת שתן.\nurinate = להטיל שתן (רפואי)."
+},
+"isle": {
+"use": "שם עצם ספיר (ספרותי): a small isle.\nבשמות: the British Isles.\nה-s לא נשמעת: 'אייל'.",
+"tip": "isle – 'אייל', נשמע כמו 'אי' + l – פשוט 'אי' באנגלית ספרותית 🏝 = אי."
+},
+"convey": {
+"use": "convey + מסר / רגש = להעביר.\nconvey + סחורה = להוביל (רשמי)."
+},
+"rubbish#1": {
+"use": "שם עצם לא ספיר (בריטית): talk rubbish = לדבר שטויות.\nRubbish! = שטויות!\nnonsense = מילה נרדפת."
+},
+"exploit#0": {
+"use": "שם עצם ספיר (EX-ploit): exploits = מעשים נועזים (ספרותי).\nכפועל (ex-PLOIT) = לנצל.",
+"tip": "exploits – 'אקספלויטס', נשמע כמו 'אקספלורר' (חוקר) – הרפתקאות ומעשי גבורה של חוקר אמיץ 🗺 = מעשים."
+},
+"obey": {
+"use": "obey + אדם / חוק – בלי מילת יחס.\nobedient = צייתן.\nההפך: disobey."
+},
+"straightforward": {
+"use": "שם תואר: straightforward question / answer = פשוט וברור.\nעל אדם: straightforward = ישר וכן.\nמילה אחת."
+},
+"mortal#1": {
+"use": "שם תואר: mortal wound / danger = קטלני.\nmortal enemy = אויב בנפש (ספרותי)."
+},
+"critique": {
+"use": "שם עצם ספיר: a critique of + יצירה.\nמבטאים 'קריטיק'.\ncriticism = ביקורת כללית."
+},
+"decay": {
+"use": "שם עצם לא ספיר: tooth decay = עששת.\nכפועל: decay = להירקב.\ndecayed = רקוב."
+},
+"refined": {
+"use": "שם תואר: refined sugar = מזוקק.\nעל אדם: refined = מעודן.\nrefine = לזקק."
+},
+"boil": {
+"use": "boil + water / eggs = להרתיח / לבשל במים.\nboiling = רותח.\nboil over = לגלוש."
+},
+"dessert": {
+"use": "שם עצם: for dessert = לקינוח.\nשתי s (dessert) – לא כמו desert (מדבר).\nsweet = מתוק."
+},
+"entertain": {
+"use": "entertain + אדם = לבדר.\nentertain guests = לארח.\nentertainment = בידור."
+},
+"imply": {
+"use": "imply that + משפט = לרמוז.\nimplied (y הופך ל-i).\nimplication = משמעות משתמעת."
+},
+"manners": {
+"use": "שם עצם ברבים: good / bad manners = נימוסים.\ntable manners = נימוסי שולחן.\nmanner (יחיד) = אופן.",
+"tip": "manners – 'מנרס', נשמע כמו 'מנירות' בעברית – 'יש לו מנירות טובות' = נימוסים 🎩."
+},
+"overly": {
+"use": "תואר הפועל לפני שם תואר: overly worried / sensitive = יותר מדי (שלילי).\nover- = יותר מדי."
+},
+"fatigue#1": {
+"use": "שם עצם לא ספיר: fatigue = עייפות קשה, תשישות.\nבהקשר רפואי.\nבשיחה: tiredness.",
+"tip": "fatigue – 'פטיג', נשמע כמו 'פטיג' – אחרי מרתון אתה 'פתיג', מותש לגמרי 😩 = תשישות."
+},
+"bald": {
+"use": "שם תואר: go bald = להקריח.\nbald head.\nbaldness = קרחת.",
+"tip": "bald – 'בולד', נשמע כמו 'בולט' – הראש הקירח בולט ומבריק 👨‍🦲 = קרח."
+},
+"shave": {
+"use": "shave + פנים / רגליים / זקן = לגלח.\nshave off = לגלח לגמרי.\nshaver = מכונת גילוח.",
+"tip": "shave – 'שייב', נשמע כמו 'שייף' – לשייף את הזקן עד שהעור חלק 🪒 = לגלח."
+},
+"certainty": {
+"use": "שם עצם: with certainty = בוודאות.\nספיר: a certainty = דבר ודאי.\ncertain = בטוח."
+},
+"inadequate": {
+"use": "שם תואר: inadequate for + מטרה.\nfeel inadequate = להרגיש לא מספיק טוב.\nההפך: adequate."
+},
+"confess": {
+"use": "confess to + פשע / ing = להודות.\nconfess that + משפט.\nconfession = וידוי."
+},
+"deliberate#0": {
+"use": "שם תואר (di-LIB-er-it): deliberate act = מכוון.\ndeliberately = בכוונה.\nההפך: accidental."
+},
+"enzyme": {
+"use": "שם עצם ספיר: enzymes = אנזימים.\nבביולוגיה.\ndigestive enzymes."
+},
+"evolutionary": {
+"use": "שם תואר: evolutionary theory / process.\nevolution = אבולוציה (מדעי)."
+},
+"dismiss#1": {
+"use": "dismiss + עובד = לפטר (רשמי).\nבשיחה: fire.\ndismissal = פיטורים."
+},
+"overlooked": {
+"use": "overlook + טעות = להעלים עין / לא לשים לב.\noverlook + נוף = להשקיף על.\nבסביל: was overlooked."
+},
+"persuade": {
+"use": "persuade + אדם + to + פועל.\npersuade + אדם + that + משפט.\npersuasive = משכנע."
+},
+"constitute#1": {
+"use": "constitute + חלק = להוות (רשמי).\nבשיחה: make up."
+},
+"despair": {
+"use": "כשם עצם: in despair = בייאוש.\nכפועל: despair of + דבר.\ndesperate = נואש."
+},
+"endure": {
+"use": "endure + כאב / קושי = לסבול לאורך זמן.\nendure = גם להחזיק מעמד.\nendurance = סבולת."
+},
+"drift": {
+"use": "drift + away / along = להיסחף.\ndrift apart = להתרחק בהדרגה.\nכשם עצם: snow drift = ערימת שלג."
+},
+"hatch#0": {
+"use": "hatch = לבקוע מביצה.\nhatch a plan = לרקום תוכנית.\nhatchling = אפרוח שבקע."
+},
+"remedy": {
+"use": "שם עצם ספיר: a remedy for + בעיה / מחלה.\nhome remedy = תרופת סבתא.\nכפועל: remedy = לתקן.",
+"tip": "remedy – 're' + 'medy' כמו 'מדיקל' (medical) – משהו שמרפא שוב 💊 = תרופה."
+},
+"revision": {
+"use": "שם עצם: revision of + טקסט.\nבבריטית: revision = חזרה למבחן.\nrevise = לתקן."
+},
+"slate#0": {
+"use": "be slated to + פועל / for + תאריך = מתוכנן.\nבאמריקאית בעיתונות.\nslate = גם לוח."
+},
+"dye": {
+"use": "dye + שיער / בד + צבע.\ndyed (עבר).\nאל תבלבלי: die – died = למות.",
+"tip": "dye – 'דאיי', נשמע כמו 'די' – 'די עם השיער האפור, בואי נצבע!' 💇 = לצבוע."
+},
+"pardon": {
+"use": "Pardon? / I beg your pardon? = סליחה, מה אמרת?\nכפועל: pardon + אסיר = לחון.\nכשם עצם: a pardon = חנינה."
+},
+"vocabulary": {
+"use": "שם עצם: your vocabulary = אוצר המילים שלך.\nבדרך כלל לא ספיר.\nבקיצור: vocab."
+},
+"genesis#1": {
+"use": "שם עצם: the genesis of + רעיון = היווצרות (רשמי).\norigin = מקור."
+},
+"rainfall": {
+"use": "שם עצם לא ספיר: annual rainfall = כמות משקעים.\nheavy rainfall.\nבמטאורולוגיה."
+},
+"advancement#0": {
+"use": "שם עצם לא ספיר: advancement in + תחום.\ncareer advancement = קידום.\nadvance = להתקדם."
+},
+"absorb": {
+"use": "absorb + נוזל / מידע = לספוג.\nabsorbed in + דבר = שקוע ב-.\nabsorption = ספיגה."
+},
+"reluctant": {
+"use": "שם תואר: reluctant to + פועל = לא רוצה.\nreluctantly = בחוסר רצון.\nreluctance = הסתייגות."
+},
+"wolf (wolves)|wolves": {
+"use": "רבים של wolf: wolves (f הופך ל-ves).\na pack of wolves = להקת זאבים.\nכמו leaf – leaves."
+},
+"reliance": {
+"use": "שם עצם לא ספיר: reliance on + דבר.\nself-reliance = עצמאות.\nrely on = לסמוך."
+},
+"spoil#0": {
+"use": "spoil = לבזוז (שימוש ישן).\nspoils of war = שלל מלחמה.\nהיום: plunder / loot."
+},
+"ruler#1": {
+"use": "שם עצם ספיר: the ruler of + ארץ.\nrule = לשלוט.\nruler = גם סרגל."
+},
+"accompany": {
+"use": "accompany + אדם + to + מקום = ללוות.\naccompanied by = בליווי.\nבמוזיקה: ללוות בנגינה."
+},
+"cuisine": {
+"use": "שם עצם: Italian / French cuisine = מטבח (רשמי).\ncooking = בישול."
+},
+"sympathetic": {
+"use": "שם תואר: sympathetic to / toward + אדם = מבין, אוהד.\nלא 'סימפטי' (נחמד) – זה nice / likable!\nsympathy = הזדהות."
+},
+"undergo": {
+"use": "undergo – underwent – undergone.\nundergo + surgery / treatment / change (רשמי)."
+},
+"infectious": {
+"use": "שם תואר: infectious disease = מדבק.\nבהשאלה: infectious laugh = צחוק מדבק.\ninfection = זיהום."
+},
+"inferior": {
+"use": "שם תואר: inferior to + דבר (לא than!).\ninferior quality.\nההפך: superior.",
+"tip": "inferior – 'אינפיריור', נשמע כמו 'אינפרא' (מתחת, כמו אינפרא-אדום) – מתחת לרמה ⬇ = נחות."
+},
+"masterpiece": {
+"use": "שם עצם ספיר: a masterpiece = יצירת מופת.\nמילה אחת.\nmaster = אמן."
+},
+"exhaust": {
+"use": "כפועל: exhaust + אדם = להתיש.\nכשם עצם: exhaust (pipe) = אגזוז.\nexhausted = מותש."
+},
+"pupil": {
+"use": "שם עצם ספיר: a pupil = תלמיד (בריטי, לרוב צעיר).\nבאמריקאית: student.\npupil = גם אישון."
+}
+}
