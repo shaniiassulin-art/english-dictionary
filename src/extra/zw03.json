@@ -1,0 +1,482 @@
+{
+"thousand": {
+"use": "a thousand / one thousand = אלף.\nthousands of = אלפים.\nאחרי מספר בלי s: two thousand.",
+"tip": "thousand – 'ת'אוזנד', דומה ל'אלפיים' רק עם ת'."
+},
+"debate": {
+"use": "ויכוח מסודר, דיון: a debate about/on.\nפועל: debate = לדון.",
+"tip": "debate – 'דיבייט', כמו 'דיבייט' בבחירות: עימות בין מועמדים."
+},
+"pure": {
+"use": "טהור, נקי: pure gold, pure water.\npurify = לטהר.",
+"tip": "pure – 'פְּיוּר', כמו 'פיורה' (רסק טהור)."
+},
+"fault#0": {
+"use": "It's my fault = זו אשמתי.\nnot your fault = לא באשמתך.",
+"tip": "fault – 'פולט', כמו 'פול' בכדורגל: מי אשם בעבירה."
+},
+"talent": {
+"use": "talent for = כישרון ל-.\ntalented = מוכשר.",
+"tip": "טלנט = כישרון (כמו 'טאלנטים')."
+},
+"truck": {
+"use": "משאית: a big truck.\nבבריטית: lorry.",
+"tip": "truck – 'טראק' 🚚, נשמע כמו טרקטור."
+},
+"besides#0": {
+"use": "besides + שם עצם = חוץ מ-, בנוסף ל-.\nבתחילת משפט: Besides, ... = וחוץ מזה.\n≠ beside (ליד).",
+"tip": "besides עם s = 'ועוד', beside בלי s = 'לצד'."
+},
+"whenever": {
+"use": "מתי ש-, בכל פעם ש-: Call me whenever you want.",
+"tip": "when (מתי) + ever (אי פעם) = מתי שלא יהיה."
+},
+"false": {
+"use": "שקרי, לא נכון: true or false.\nfalse teeth = שיניים תותבות.",
+"tip": "false – 'פולס', כמו 'פולס' = מזויף."
+},
+"incredible": {
+"use": "מדהים, לא ייאמן: an incredible view.",
+"tip": "in (לא) + credible (אמין) = לא ייאמן."
+},
+"context": {
+"use": "הקשר: in context = בהקשר, out of context = מחוץ להקשר.",
+"tip": "con (עם) + text (טקסט) = מה שמסביב לטקסט ועוזר להבין אותו."
+},
+"relatively#1": {
+"use": "יחסית: relatively easy = קל יחסית.",
+"tip": "relative = יחסי.\nבהשוואה לדברים אחרים."
+},
+"determine": {
+"use": "לקבוע: determine the level.\ndetermined = נחוש.",
+"tip": "de + term (גבול) = לקבוע גבול."
+},
+"mode#0": {
+"use": "אופנה (מיושן). היום אומרים fashion.",
+"tip": "mode = 'מודה' בעברית."
+},
+"novel#0": {
+"use": "רומן: read a novel.\nnovelist = סופר.\nnovel כתואר = חדשני.",
+"tip": "novel – 'נובל', נובלה = סיפור."
+},
+"stadium": {
+"use": "אצטדיון: a football stadium.",
+"tip": "סטדיון = stadium 🏟."
+},
+"concern#1": {
+"use": "עניין: It's none of your concern = זה לא עניינך.",
+"tip": "concern = נוגע ל-.\nמה שנוגע לך הוא העניין שלך."
+},
+"neck": {
+"use": "צוואר: a long neck.\na pain in the neck = נודניק.",
+"tip": "neck – 'נק', כמו necklace = שרשרת לצוואר."
+},
+"surgery": {
+"use": "ניתוח: have surgery.\nsurgeon = מנתח.",
+"tip": "surgery – 'סרג'רי', כירורגיה."
+},
+"blame": {
+"use": "blame someone for = להאשים מישהו ב-.\nbe to blame = להיות אשם.",
+"tip": "blame – 'בליים', 'בלי מה' להאשים אותי!"
+},
+"opposite#0": {
+"use": "the opposite of = ההפך של.",
+"tip": "opposite – 'אופוזיט', כמו אופוזיציה = הצד השני."
+},
+"kingdom": {
+"use": "ממלכה: the United Kingdom = הממלכה המאוחדת.",
+"tip": "king (מלך) + dom (תחום) = השטח שהמלך שולט בו 👑."
+},
+"usual": {
+"use": "רגיל: as usual = כרגיל.\nusually = בדרך כלל.",
+"tip": "use = שימוש: מה שמשתמשים בו תמיד."
+},
+"crisis": {
+"use": "משבר: in a crisis.\nבריבוי: crises.",
+"tip": "crisis – 'קרייסיס', כמו 'קריזה'."
+},
+"editor": {
+"use": "עורך: newspaper editor.\nedit = לערוך.",
+"tip": "edit + or = מי שעורך ✏."
+},
+"signal": {
+"use": "אות: give a signal.\nפועל: לאותת.",
+"tip": "סיגנל = אות 📶."
+},
+"fall apart": {
+"use": "להתפרק: falling apart.\nגם נפשית: He fell apart.",
+"tip": "fall (ליפול) + apart (לחלקים)."
+},
+"suicide": {
+"use": "התאבדות: commit suicide.",
+"tip": "sui (עצמו) + cide (הריגה)."
+},
+"tiny": {
+"use": "קטנטן, זעיר: a tiny room.\nקטן יותר מ-small.",
+"tip": "tiny – 'טייני'. טינקרבל הקטנטנה 🧚."
+},
+"concrete#1": {
+"use": "מוחשי, ממשי: a concrete example/plan.",
+"tip": "concrete = גם בטון: מוחשי ומוצק כמו בטון."
+},
+"essential": {
+"use": "חיוני: essential for/to = חיוני ל-.",
+"tip": "essence = מהות.\nחיוני = שייך למהות, אי אפשר בלעדיו."
+},
+"customer": {
+"use": "לקוח בחנות: customer service = שירות לקוחות.",
+"tip": "custom = מנהג: מי שקונה בקביעות."
+},
+"relevant": {
+"use": "רלוונטי: relevant to.",
+"tip": "רלוונטי = relevant."
+},
+"guilty": {
+"use": "אשם: guilty of.\nfeel guilty = להרגיש אשמה.",
+"tip": "guilt – 'גילט' = אשמה."
+},
+"conservative": {
+"use": "שמרני: conservative ideas.\nבבריטניה גם שם מפלגה.",
+"tip": "conserve = לשמר.\nשמרן רוצה לשמר את מה שיש."
+},
+"rear#1": {
+"use": "לגדל ילדים או בעלי חיים.",
+"tip": "rear – 'ריר', ללוות מאחור."
+},
+"hid from": {
+"use": "עבר של hide from = התחבא מ-.\nhide – hid – hidden.",
+"tip": "hide = להתחבא.\nhide and seek = משחק המחבואים 🙈."
+},
+"ticket": {
+"use": "כרטיס: a ticket to/for.\nגם דוח (parking ticket).",
+"tip": "ticket – 'טיקט' 🎫, כמו 'טיקט' בכרטיסייה."
+},
+"mainly": {
+"use": "בעיקר: The class is mainly girls.",
+"tip": "main = עיקרי (main road = הדרך הראשית)."
+},
+"newspaper": {
+"use": "עיתון: read the newspaper.",
+"tip": "news (חדשות) + paper (נייר) = נייר של חדשות 📰."
+},
+"goods": {
+"use": "סחורות (תמיד ברבים).",
+"tip": "goods = 'הדברים הטובים' שמוכרים."
+},
+"switch#0": {
+"use": "מתג: light switch = מתג אור.",
+"tip": "switch – 'סוויץ'', מתג שמחליף מצב."
+},
+"painting": {
+"use": "ציור בצבעים: a famous painting.\ndrawing = ציור בעיפרון.",
+"tip": "paint = צבע.\npainting = ציור בצבע 🖼."
+},
+"soil#1": {
+"use": "אדמה לגידול: good soil.",
+"tip": "soil – 'סויל', נשמע כמו 'סויה' שגדלה באדמה."
+},
+"salt": {
+"use": "מלח: a pinch of salt.\nsalty = מלוח.",
+"tip": "salt – 'סולט', כמו מלח = salt 🧂."
+},
+"empty": {
+"use": "ריק; פועל: לרוקן (empty the bin).\nההפך: full.",
+"tip": "empty – 'אמפטי', ריק."
+},
+"register": {
+"use": "register for = להירשם ל-.\nregistration = הרשמה.",
+"tip": "רגיסטר = רשמת."
+},
+"universe": {
+"use": "היקום: the universe.\nuniversal = אוניברסלי.",
+"tip": "uni (אחד) + verse = הכול כאחד: כל היקום 🌌."
+},
+"aside#0": {
+"use": "aside from = חוץ מ-.",
+"tip": "aside = בצד.\nלשים בצד ולדבר על השאר."
+},
+"rural": {
+"use": "כפרי: rural area.\nההפך: urban.",
+"tip": "rural – 'רורל', R של Rustic, כפרי."
+},
+"prize": {
+"use": "פרס: win a prize, first prize.",
+"tip": "prize – 'פרייז', נשמע כמו 'פרס' 🏆."
+},
+"bell": {
+"use": "פעמון: The bell rang = הפעמון צלצל.",
+"tip": "bell – 'בל', Jingle Bells 🔔."
+},
+"attitude": {
+"use": "גישה, יחס: a positive attitude to/towards.",
+"tip": "attitude – 'אטיטיוד', כמו 'גישה' של אדם."
+},
+"admit#0": {
+"use": "להודות: admit that / admit + ing.",
+"tip": "admit – 'אדמיט', להודות בטעות."
+},
+"dedicated#0": {
+"use": "מוקדש ל-: dedicated to.",
+"tip": "dedication = הקדשה בספר."
+},
+"replace": {
+"use": "להחליף: replace A with B.",
+"tip": "re + place = לשים משהו אחר במקום."
+},
+"favor#0": {
+"use": "טובה: do someone a favor = לעשות למישהו טובה.",
+"tip": "favor – 'פייבר', ממנו בא favorite = המועדף."
+},
+"plot#0": {
+"use": "לשרטט גרף, נקודות.",
+"tip": "plot = לשרטט נקודות."
+},
+"independence": {
+"use": "עצמאות: Independence Day.",
+"tip": "in (לא) + dependence (תלות) = עצמאות."
+},
+"represent": {
+"use": "לייצג: represent a country.\nrepresentative = נציג.",
+"tip": "re + present (להציג) = להציג במקום מישהו."
+},
+"achieve": {
+"use": "להשיג: achieve a goal.\nachievement = הישג.",
+"tip": "achieve – 'אצ'יב', אצ'יבמנט."
+},
+"assume": {
+"use": "להניח: I assume that you're hungry.\nassumption = הנחה.",
+"tip": "assume – 'אסיוּם', להניח בלי לבדוק."
+},
+"seek, sought|sought": {
+"use": "עבר של seek (לחפש): seek – sought – sought.",
+"tip": "sought – 'סוֹט', מתחרז עם bought ו-thought."
+},
+"bottle": {
+"use": "בקבוק: a bottle of water.",
+"tip": "bottle – 'בוטל' 🍾, כמו 'בקבוק'."
+},
+"accurate": {
+"use": "מדויק: accurate information.\naccuracy = דיוק.",
+"tip": "accurate – 'אקיורט', כמו 'אקורטי' = מדויק 🎯."
+},
+"gross#3": {
+"use": "גולמי, לא מעובד.",
+"tip": "gross = גס, לא מעודן."
+},
+"opposition": {
+"use": "התנגדות; גם אופוזיציה בפוליטיקה.",
+"tip": "oppose = להתנגד."
+},
+"draft#1": {
+"use": "טיוטה: the first draft.",
+"tip": "Drafts = תיקיית הטיוטות במייל."
+},
+"harder": {
+"use": "קשה יותר: harder than.",
+"tip": "hard + er = יותר קשה."
+},
+"shift#0": {
+"use": "משמרת: night shift = משמרת לילה.",
+"tip": "shift – 'שיפט', המשמרת מחליפה את הקודמת."
+},
+"tight": {
+"use": "צמוד, הדוק: tight jeans.\nהפך: loose.",
+"tip": "tight – 'טייט', טייטס צמודים."
+},
+"switch#1": {
+"use": "להחליף: switch seats.",
+"tip": "switch = להחליף מצב."
+},
+"transportation": {
+"use": "תחבורה: public transportation.",
+"tip": "transport = להוביל."
+},
+"diet": {
+"use": "דיאטה: on a diet = בדיאטה.\nגם תזונה כללית: a healthy diet.",
+"tip": "diet – 'דאייט', כמו 'דיאטה' 🥗."
+},
+"reserve#1": {
+"use": "שמורה: nature reserve = שמורת טבע.",
+"tip": "reserve = לשמור.\nשמורה = מקום שנשמר לטבע."
+},
+"pleasure": {
+"use": "תענוג: It's a pleasure.\nwith pleasure = בשמחה.",
+"tip": "please = לרצות, לשמח.\npleasure = מה שמשמח."
+},
+"academic": {
+"use": "אקדמי: academic year = שנה אקדמית.",
+"tip": "academy = אקדמיה 🎓."
+},
+"blow, blew|blow#1": {
+"use": "blow up = לפוצץ.",
+"tip": "blow = לנשוף.\nblow up = לנשוף חזק עד פיצוץ 💥."
+},
+"index": {
+"use": "מפתח בסוף ספר; גם מדד.",
+"tip": "index – 'אינדקס'."
+},
+"blow, blew|blew": {
+"use": "עבר של blow: blow – blew – blown.",
+"tip": "blew – 'בלו', מתחרז עם flew ו-grew."
+},
+"frequently": {
+"use": "לעיתים קרובות: He frequently travels.",
+"tip": "frequent = תדיר.\nfrequency = תדירות."
+},
+"expert": {
+"use": "מומחה: an expert in/on.",
+"tip": "expert – 'אקספרט', כמו 'מומחה' בעברית."
+},
+"aside#1": {
+"use": "הצידה: step aside = לזוז הצידה.",
+"tip": "a + side (צד) = לצד, הצידה."
+},
+"laid": {
+"use": "עבר של lay (להניח): lay – laid – laid.",
+"tip": "lay = להשכיב, להניח."
+},
+"object#0": {
+"use": "להתנגד: object to.",
+"tip": "objection = התנגדות!"
+},
+"severe": {
+"use": "חמור, קשה: severe pain, severe storm.",
+"tip": "severe – 'סוויר', 'סבר' קשה."
+},
+"depression": {
+"use": "דיכאון; גם שפל כלכלי.",
+"tip": "depress = ללחוץ למטה."
+},
+"crown": {
+"use": "כתר: wear a crown.\nפועל: להכתיר.",
+"tip": "crown – 'קראון' 👑, כמו 'כתר'."
+},
+"grace#0": {
+"use": "חסד: by the grace of God = בחסדי האל.",
+"tip": "grace – 'גרייס', חסד."
+},
+"dedicated#1": {
+"use": "מסור: a dedicated teacher.",
+"tip": "dedicate = להקדיש.\nמסור = מקדיש את עצמו."
+},
+"revolution": {
+"use": "מהפכה: the French Revolution.",
+"tip": "revolution – 'רבולושן', כמו 'רבולוציה'."
+},
+"victim": {
+"use": "קורבן: the victim of a crime.",
+"tip": "victim – 'ויקטים', כמו 'ויקטימיזציה'."
+},
+"pregnant": {
+"use": "בהריון: pregnant with.",
+"tip": "pregnant – 'פרגננט' 🤰."
+},
+"surely": {
+"use": "בטוח ש-, ללא ספק: Surely you know.",
+"tip": "sure = בטוח.\nsurely = בוודאות."
+},
+"favor#1": {
+"use": "להעדיף: favor A over B.",
+"tip": "favorite = המועדף."
+},
+"nearby": {
+"use": "קרוב, בסביבה: Is there a bank nearby?",
+"tip": "near (קרוב) + by = בקרבת מקום."
+},
+"circle#0": {
+"use": "לסמן בעיגול: Circle the answer.",
+"tip": "circle = עיגול ⭕."
+},
+"dirty": {
+"use": "מלוכלך: dirty clothes.\ndirt = לכלוך.",
+"tip": "dirty – 'דרטי', כמו 'דרטי דנסינג'."
+},
+"error": {
+"use": "שגיאה: an error in the program.",
+"tip": "Error = הודעת שגיאה במחשב ⚠."
+},
+"deliver": {
+"use": "למסור, לשלוח: deliver pizza.",
+"tip": "delivery = משלוח, 'דליברי' 🛵."
+},
+"personality": {
+"use": "אישיות: a strong personality.",
+"tip": "person = אדם.\npersonality = מה שמיוחד באדם."
+},
+"legislation": {
+"use": "חקיקה: new legislation.",
+"tip": "legal = חוקי.\nlegislation = יצירת חוקים."
+},
+"crash": {
+"use": "להתנגש; התנגשות: car crash.\nגם קריסת מחשב.",
+"tip": "crash – 'קראש' 💥, כמו קריסה."
+},
+"shift#1": {
+"use": "להזיז: shift the table.",
+"tip": "Shift במקלדת: מזיז את האות לגדולה."
+},
+"existence": {
+"use": "קיום: the existence of ghosts.",
+"tip": "exist = להתקיים, אקזיסטנציאלי."
+},
+"factory": {
+"use": "מפעל: a car factory.",
+"tip": "factory – 'פקטורי', כמו 'פקטור' שמייצר 🏭."
+},
+"noise": {
+"use": "רעש: make noise.\nnoisy = רועש.",
+"tip": "noise – 'נויז', כמו 'נויז' ברדיו."
+},
+"prepare": {
+"use": "להכין; prepare for = להתכונן ל-.",
+"tip": "pre (לפני) + pare = להכין מראש."
+},
+"self-confidence": {
+"use": "ביטחון עצמי.",
+"tip": "self (עצמי) + confidence (ביטחון)."
+},
+"plate#0": {
+"use": "צלחת: a plate of food.",
+"tip": "plate – 'פלייט', צלחת שטוחה 🍽."
+},
+"rice": {
+"use": "אורז: a bowl of rice.",
+"tip": "rice – 'רייס', כמו 'אורז' 🍚."
+},
+"roof": {
+"use": "גג: on the roof.",
+"tip": "roof – 'רוּף', מעל הראש."
+},
+"e.g.": {
+"use": "בא לפני דוגמאות, בדרך כלל בכתב: fruit, e.g. apples.\nבדיבור אומרים for example.",
+"tip": "e.g. = example given, 'דוגמה שניתנה'. כותבים לפני רשימת דוגמאות."
+},
+"significantly": {
+"use": "באופן משמעותי.",
+"tip": "significant = משמעותי."
+},
+"empire": {
+"use": "אימפריה.",
+"tip": "empire = אימפריה."
+},
+"heavily": {
+"use": "בכבדות, מאוד: rain heavily = לרדת גשם חזק.",
+"tip": "heavy = כבד."
+},
+"cable": {
+"use": "כבל: plug in the cable.",
+"tip": "cable – 'קייבל', כמו 'כבל'."
+},
+"widely": {
+"use": "במידה רחבה: widely known = ידוע מאוד.",
+"tip": "wide = רחב."
+},
+"constant": {
+"use": "קבוע, תמידי.",
+"tip": "constant = קונסטנטה."
+},
+"worldwide": {
+"use": "בכל העולם.",
+"tip": "world (עולם) + wide (רחב) = ברחבי העולם, כמו www 🌍."
+}
+}

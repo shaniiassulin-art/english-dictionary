@@ -1,0 +1,482 @@
+{
+"in a moment": {
+"use": "מתאר משהו שיקרה בקרוב מאוד.\nמשפטים נפוצים: I'll be back in a moment.\nקרוב ל-in a minute ו-soon.",
+"tip": "moment = רגע, כמו 'מומנט' בעברית.\nin a moment = בתוך רגע."
+},
+"both... and…": {
+"use": "מחבר שני דברים, ושניהם נכונים.\nאחרי both... and הפועל ברבים: Both Dan and Ruth are here.",
+"tip": "both = שניהם.\nכמו 'גם... וגם...' בעברית."
+},
+"found#0": {
+"use": "עבר של find (למצוא): find – found – found.\nfind out = לגלות מידע.\nשימו לב: found הוא גם פועל נפרד שפירושו לייסד.",
+"tip": "I found it! = מצאתי!\nתחשבי על Lost and Found, אבדות ומציאות."
+},
+"based on": {
+"use": "תמיד עם on: based on a true story.\nנפוץ בסרטים, ספרים ומחקרים.",
+"tip": "base = בסיס.\nמבוסס על = יושב על בסיס."
+},
+"important": {
+"use": "important to/for someone.\nIt's important to + פועל: It's important to sleep.\nשם עצם: importance = חשיבות.",
+"tip": "im + port = מה שמביאים פנימה, כי זה חשוב.\nנשמע כמו 'אימפורטנט', משהו רציני."
+},
+"early": {
+"use": "תואר: an early bus. תואר פועל: I came early.\nההפך: late.\nearlier = מוקדם יותר.",
+"tip": "The early bird catches the worm: הציפור המשכימה תופסת את התולעת."
+},
+"international": {
+"use": "בין מדינות: international airport, international law.\nlocal = מקומי, national = לאומי.",
+"tip": "inter = בין, nation = אומה.\nבינ-לאומי, ממש אותו מבנה כמו בעברית."
+},
+"although": {
+"use": "בא לפני משפט שלם: Although it rained, we went out.\nלא משתמשים באותו משפט גם ב-but.\nדומה ל-though ול-even though.",
+"tip": "all + though: למרות הכול.\nבעברית 'אף על פי ש...'."
+},
+"question#1": {
+"use": "ask a question (לא make).\nanswer a question = לענות על שאלה.\nNo question = אין ספק.",
+"tip": "question = 'קוֶשְׁצ'ן' עם סימן ?\nquest = מסע חיפוש: שאלה היא חיפוש אחרי תשובה."
+},
+"saw, see|saw": {
+"use": "עבר של see: see – saw – seen.\nI saw him yesterday.\nשימו לב: saw הוא גם מסור.",
+"tip": "saw – 'סוֹ': ראיתי.\nתזכרי: I saw a saw, ראיתי מסור."
+},
+"outside": {
+"use": "בחוץ / מחוץ ל-: outside the house.\nההפך: inside.\nלבד בסוף משפט: Let's play outside.",
+"tip": "out + side: הצד שבחוץ."
+},
+"force#0": {
+"use": "force someone to + פועל: They forced him to leave.\nבהקשר של לחץ, כפייה, חוסר ברירה.",
+"tip": "force – 'פורס', כוח.\nלכפות = להשתמש בכוח. May the force be with you!"
+},
+"summer": {
+"use": "עונה: in (the) summer = בקיץ.\nsummer vacation = החופש הגדול.\nבלי the כשמדברים באופן כללי: I love summer.",
+"tip": "summer – 'סאמר'.\nsun (שמש) ו-summer מתחילות באותן אותיות: הקיץ הוא עונת השמש ☀."
+},
+"fight, fought|fought": {
+"use": "עבר של fight (לריב, להילחם): fight – fought – fought.\nfight with someone = לריב עם מישהו.\nfight for = להיאבק למען.",
+"tip": "fought נשמע 'פוֹט' ומתחרז עם bought ו-thought.\nכל המילים שנגמרות ב-ought הן צורות עבר."
+},
+"challenge#1": {
+"use": "a big challenge, face a challenge (להתמודד עם אתגר).\nchallenging = מאתגר.",
+"tip": "challenge – 'צ'לנג''. 'צ'לנג' ברשתות = אתגר."
+},
+"model#0": {
+"use": "דגם של מוצר: the latest model.\nגם דוגמן/דוגמנית, ומודל לחיקוי (role model).",
+"tip": "מודל בעברית = model.\nדגם של מכונית = car model."
+},
+"trust": {
+"use": "trust someone = לסמוך על (בלי on!).\nשם עצם: trust = אמון.\ntrustworthy = אמין.",
+"tip": "trust נשמע כמו 'טראסט', קרן נאמנות.\nIn God we trust, על הדולר."
+},
+"league#0": {
+"use": "ליגה בספורט: the Premier League.\nout of my league = מעל לרמה שלי.",
+"tip": "league = ליגה, כמעט אותה מילה.\nChampions League."
+},
+"upon": {
+"use": "רשמי יותר מ-on.\nOnce upon a time = היה היה פעם.\nupon arrival = עם ההגעה.",
+"tip": "up + on = על.\nOnce upon a time, פתיחה של כל אגדה."
+},
+"bank#1": {
+"use": "in the bank, at the bank.\nbank account = חשבון בנק.\nשימו לב: bank הוא גם גדת נהר.",
+"tip": "bank = בנק, אותה מילה בדיוק."
+},
+"performance#1": {
+"use": "הופעה של שחקן או זמר: a great performance.\nגם ביצועים של מכשיר או עובד.\nperform = להופיע, לבצע.",
+"tip": "פרפורמנס = הופעה על במה 🎭."
+},
+"code": {
+"use": "קוד סודי, קוד תוכנה, קוד לבוש (dress code).\nenter a code = להקיש קוד.",
+"tip": "code = קוד, אותה מילה.\nזיפ קוד, ברקוד."
+},
+"simply": {
+"use": "בפשטות: explain simply.\nגם 'פשוט' להדגשה: It's simply wrong.",
+"tip": "simple = פשוט.\nsimple + ly = באופן פשוט."
+},
+"built": {
+"use": "עבר וצורה שלישית של build: build – built – built.\nbuilt in 1950 = נבנה בשנת 1950.",
+"tip": "build → built: ה-d הופכת ל-t, בדיוק כמו send → sent, spend → spent."
+},
+"daughter": {
+"use": "בת (של הורים).\nson = בן, daughter-in-law = כלה.\nה-gh לא נשמעת: 'דוֹטֶר'.",
+"tip": "daughter – 'דוטר'. תחשבי: 'דוּדה' + 'טר', הבת של הדודה."
+},
+"hospital": {
+"use": "in (the) hospital = מאושפז בבית חולים.\ngo to the hospital = ללכת לבית החולים.",
+"tip": "hospital דומה ל-hospitality, הכנסת אורחים.\nבית החולים 'מארח' חולים 🏥."
+},
+"character#1": {
+"use": "אופי של אדם: a strong character.\nגם דמות בסיפור, ותו במחשב.",
+"tip": "קרקטר = אופי, כמו 'קריקטורה' שמגזימה באופי."
+},
+"property#1": {
+"use": "תכונה של חומר (מדעי): Metal has the property of...\nגם רכוש, נכס.",
+"tip": "property = מה ששייך (proper) לדבר: התכונה השייכת לו."
+},
+"earth#0": {
+"use": "אדמה, קרקע (לא ספיר).\nEarth באות גדולה = כדור הארץ.",
+"tip": "earth – 'ארת'': ארץ! כמעט אותו צליל."
+},
+"huge": {
+"use": "גדול מאוד: a huge house.\nחזק יותר מ-big ו-large.",
+"tip": "huge – 'הְיוּג''. דמייני ענק שצועק 'היוּג!'."
+},
+"terms#1": {
+"use": "מונחים מקצועיים: medical terms.\nin terms of = מבחינת.\nגם תנאים: terms and conditions.",
+"tip": "term = מונח, טרמינולוגיה = אוסף מונחים."
+},
+"article#1": {
+"use": "מאמר בעיתון: read an article.\nגם תווית יידוע (a, the).",
+"tip": "article – 'ארטיקל' בעיתון."
+},
+"sleep#0": {
+"use": "שם עצם: get some sleep, lack of sleep.\nפועל: sleep – slept – slept.\nasleep = ישן (תואר).",
+"tip": "sleep – 'סליפ'. Sleeping Beauty = היפהפייה הנרדמת."
+},
+"build#0": {
+"use": "build – built – built.\nbuilding = בניין.\nbuild up = לבנות בהדרגה.",
+"tip": "build – 'בילד', ומשם building."
+},
+"district": {
+"use": "אזור, מחוז: the northern district.\nבנוסף school district, business district.",
+"tip": "district – 'דיסטריקט', אזור מחולק (distribute)."
+},
+"wall": {
+"use": "קיר בתוך בית: on the wall.\nגם חומה: the Western Wall = הכותל המערבי.",
+"tip": "wall – 'וול'. Wall Street קיבלה את שמה מחומה שעמדה שם פעם."
+},
+"sign#1": {
+"use": "סימן: a sign of rain.\nפועל: לחתום (sign here).\nsignature = חתימה.",
+"tip": "סיגנל, סימן."
+},
+"river": {
+"use": "נהר: the Jordan River = נהר הירדן.\nבדרך כלל עם the לפני שם הנהר.",
+"tip": "river – 'ריבר'.\nתחשבי על 'רביבים': מים שזורמים ומשקים."
+},
+"cold#0": {
+"use": "קר: a cold day.\nשם עצם: הצטננות, I have a cold = אני מצוננת.\nההפך: hot.",
+"tip": "cold נשמע כמו 'קול' = חזק ❄.\ncold drink = משקה קר."
+},
+"addition": {
+"use": "תוספת: a new addition.\nin addition = בנוסף.\nגם חיבור (חשבון).",
+"tip": "add = להוסיף.\naddition = הוספה ➕."
+},
+"population": {
+"use": "אוכלוסייה: the population of Israel.\nלא ספיר ביחיד: a large population.",
+"tip": "popular = עממי. פופולציה = כל העם."
+},
+"conference": {
+"use": "כנס, ועידה: at a conference.\npress conference = מסיבת עיתונאים.",
+"tip": "קונפרנס – כנס.\nZoom conference = שיחת ועידה."
+},
+"difference": {
+"use": "difference between A and B = ההבדל בין.\nmake a difference = להשפיע, לשנות.",
+"tip": "different = שונה.\ndifference = מה ששונה, ההבדל."
+},
+"station#0": {
+"use": "train station = תחנת רכבת, bus station = תחנה מרכזית, gas station = תחנת דלק.\nעם at: at the station.",
+"tip": "station – 'סטיישן', מקום עמידה (stand)."
+},
+"treatment": {
+"use": "טיפול רפואי: treatment for cancer.\nגם יחס: special treatment.\ntreat = לטפל.",
+"tip": "treat = לטפל.\ntreat + ment = טיפול."
+},
+"pass#1": {
+"use": "pass me the salt = תעביר לי את המלח.\nגם לעבור (מבחן, ליד מקום).",
+"tip": "pass – 'פאס', מסירה בכדורגל ⚽."
+},
+"join": {
+"use": "join + שם עצם (בלי with): join a club.\njoin me = הצטרף אליי.",
+"tip": "join – 'ג'וין', כמו 'ג'וינט' = חיבור."
+},
+"section": {
+"use": "חלק במסמך, בחנות, בתזמורת.\nsection 3 = סעיף 3.",
+"tip": "section – 'סקשן', דומה ל'סקטור' = חלק."
+},
+"message": {
+"use": "send / leave a message = לשלוח / להשאיר הודעה.\ntext message = הודעת SMS.",
+"tip": "message – 'מסג''. מסנג'ר = אפליקציית הודעות 💬."
+},
+"previous": {
+"use": "רק לפני שם עצם: the previous page.\nההפך: next.",
+"tip": "pre = לפני.\nprevious = מה שהיה לפני."
+},
+"cross#0": {
+"use": "cross the street = לחצות את הכביש.\ncross out = למחוק בקו.",
+"tip": "cross = צלב ✝, קווים שחוצים זה את זה."
+},
+"sign#2": {
+"use": "שלט: a road sign = תמרור.\nThe sign says... = כתוב בשלט...",
+"tip": "sign = סימן.\nשלט הוא סימן שתלוי ברחוב 🪧."
+},
+"husband": {
+"use": "בעל: my husband.\nwife = אישה, ex-husband = גרוש.",
+"tip": "hus = house (בית): הבעל הוא 'איש הבית'.\nhusbandry = ניהול משק בית."
+},
+"link": {
+"use": "click on a link = ללחוץ על קישור.\nlink A to B = לקשר.\nגם חוליה בשרשרת.",
+"tip": "לינק = קישור 🔗."
+},
+"immediately": {
+"use": "מיד, בלי לחכות: Call me immediately.\nדומה ל-right away.",
+"tip": "im + mediate = בלי תיווך, בלי שום דבר באמצע."
+},
+"owing to": {
+"use": "בגלל (רשמי): owing to the rain.\nדומה ל-because of ול-due to.",
+"tip": "owe = להיות חייב.\nowing to = 'אנחנו חייבים את זה ל...', כלומר בגלל."
+},
+"agree": {
+"use": "agree with someone = להסכים עם מישהו.\nagree to/on something = להסכים ל-/על משהו.\nagreement = הסכם.",
+"tip": "agree – 'אגרי'.\nכמו לחיצת יד בסוף ויכוח: אנחנו מסכימים 🤝."
+},
+"income": {
+"use": "הכנסה כספית: monthly income.\nincome tax = מס הכנסה.",
+"tip": "in + come: הכסף שנכנס פנימה."
+},
+"association#1": {
+"use": "איגוד, אגודה: a teachers' association.\nגם אסוציאציה, חיבור בין רעיונות.",
+"tip": "associate = שותף.\nאיגוד הוא מקום שבו השותפים מתאגדים."
+},
+"scene#0": {
+"use": "סצנה בסרט או בהצגה.\ncrime scene = זירת פשע.\nmake a scene = לעשות סצנה.",
+"tip": "scene – 'סין', מאותו מקור כמו 'סצנה'."
+},
+"episode": {
+"use": "פרק בסדרה: the first episode.\nגם אירוע בודד.",
+"tip": "אפיזודה = פרק."
+},
+"sold": {
+"use": "עבר של sell: sell – sold – sold.\nsold out = אזל מהמלאי.",
+"tip": "sell → sold, בדיוק כמו tell → told.\nSOLD = שלט 'נמכר' על בית 🏠."
+},
+"particularly": {
+"use": "במיוחד: I like it, particularly the end.\nnot particularly = לא במיוחד.",
+"tip": "particular = מסוים.\nפרטיקולרי = פרטני."
+},
+"ability": {
+"use": "ability to + פועל = היכולת ל-.\nable = מסוגל, inability = חוסר יכולת.",
+"tip": "able (מסוגל) → ability (יכולת)."
+},
+"heavy": {
+"use": "כבד במשקל; גם heavy rain = גשם חזק.\nההפך: light.",
+"tip": "heavy – 'הבי', heavy metal = מוזיקה 'כבדה'."
+},
+"beat#1": {
+"use": "קצב במוזיקה: the beat of the song.\nheartbeat = דופק.",
+"tip": "beat – 'ביט', כמו 'ביט' של מוזיקה 🥁, ה-Beatles."
+},
+"generally": {
+"use": "בדרך כלל: Generally, I...\ngenerally speaking = באופן כללי.",
+"tip": "general = כללי (גנרל = מפקד על כולם)."
+},
+"judge#0": {
+"use": "judge someone by = לשפוט לפי.\nDon't judge = אל תשפטי.",
+"tip": "judge – 'ג'אדג''. השופטת ג'ודי ⚖."
+},
+"unit": {
+"use": "יחידה: a unit in the book, a unit of measurement.\nגם יחידה צבאית.",
+"tip": "uni = אחד (uniform, universe).\nunit = יחידה אחת."
+},
+"author": {
+"use": "מחבר של ספר: the author of the book.\nכמו writer, אבל על ספר מסוים.",
+"tip": "author דומה ל-authority (סמכות).\nלמחבר יש סמכות על הספר שכתב."
+},
+"material#0": {
+"use": "חומר: What material is it made of?\nraw materials = חומרי גלם.",
+"tip": "material – 'מטריאל', כמו 'חומר' שממנו עושים דברים.\nmaterialistic = חומרני."
+},
+"opportunity": {
+"use": "opportunity to + פועל.\na great opportunity.\nחזקה יותר מ-chance.",
+"tip": "opportunity – 'אופורטוניטי', 'פורט' = נמל: ספינה שמגיעה לנמל, ההזדמנות הגיעה!"
+},
+"brain": {
+"use": "המוח: the brain.\nbrainstorm = סיעור מוחות.",
+"tip": "brain – 'ברֵיין', כמו 'בראנץ'' עם מוח 🧠."
+},
+"image": {
+"use": "תמונה, דימוי: a clear image.\nimagine = לדמיין.",
+"tip": "אימג' = תמונה 🖼."
+},
+"rule#0": {
+"use": "follow/break the rules = לציית/להפר כללים.",
+"tip": "ruler = סרגל: הכלל ישר כמו סרגל 📏."
+},
+"weekend": {
+"use": "on/at the weekend = בסוף השבוע (אמריקאית on, בריטית at).\nthis weekend = בסוף השבוע הזה.",
+"tip": "week + end = סוף השבוע."
+},
+"beach": {
+"use": "on the beach / at the beach.\nשימו לב להגייה: ee ארוכה, 'בּיץ''.",
+"tip": "beach – 'ביץ'' 🏖.\nכל החוף מלא ב'ביצים' של צבים."
+},
+"operation#0": {
+"use": "מבצע: a rescue operation.\nגם ניתוח רפואי.",
+"tip": "אופרציה = מבצע."
+},
+"spring#0": {
+"use": "מעיין: a hot spring = מעיין חם.\nגם אביב וקפיץ, ולקפוץ.",
+"tip": "spring = לקפוץ: מים שקופצים מתוך האדמה ⛲."
+},
+"spring, sprang|spring#0": {
+"use": "קפיץ במיטה או במכונה.\nעבר של spring (לקפוץ): sprang.",
+"tip": "spring = קפיץ שקופץ חזרה."
+},
+"commercial#0": {
+"use": "מסחרי: commercial area.\nכשם עצם: פרסומת בטלוויזיה.",
+"tip": "commerce = מסחר.\nקומרציאלי = מסחרי."
+},
+"train#1": {
+"use": "by train = ברכבת, take the train = לנסוע ברכבת.\non the train = בתוך הרכבת.\ntrain הוא גם פועל: להתאמן.",
+"tip": "train – 'טריין' 🚆, וגם 'להתאמן'."
+},
+"fan#0": {
+"use": "מאוורר: turn on the fan.\nגם מעריץ (a fan of).",
+"tip": "fan – 'פאן', מאוורר שעושה רוח 🌀."
+},
+"judge#1": {
+"use": "שופט בבית משפט או בתחרות.",
+"tip": "judge – ג'אדג', השופט ⚖."
+},
+"bought": {
+"use": "עבר של buy: buy – bought – bought.",
+"tip": "buy → bought.\nזוג מתחרז: bought (קנה) ו-brought (הביא)."
+},
+"color#0": {
+"use": "לצבוע: color the picture.\ncoloring book = חוברת צביעה.",
+"tip": "color = צבע 🎨.\nכפועל: לתת צבע."
+},
+"rich": {
+"use": "עשיר; גם עשיר ב- (rich in vitamins).\nההפך: poor.",
+"tip": "rich – 'ריץ''. Richie Rich, הילד העשיר."
+},
+"material#1": {
+"use": "material things = דברים חומריים.\nmaterialistic = חומרני.",
+"tip": "material = חומר.\nחומרני = רוצה חומר."
+},
+"easily": {
+"use": "בקלות: She won easily.\neasy = קל (תואר), easily = בקלות (תואר הפועל).",
+"tip": "easy + ly = easily, ה-y הופכת ל-i."
+},
+"rule#1": {
+"use": "שלטון: under British rule = תחת שלטון בריטי.",
+"tip": "rule = כלל.\nמי שקובע את הכללים הוא השלטון."
+},
+"contract#1": {
+"use": "חוזה: sign a contract = לחתום על חוזה.\nbreak a contract = להפר חוזה.",
+"tip": "contract – 'קונטרקט'.\ncon (יחד) + tract (למשוך): שני צדדים שנמשכים להסכם."
+},
+"skin": {
+"use": "עור של אדם או של פרי.\nskin care = טיפוח עור.",
+"tip": "skin – 'סקין', סקין־קר."
+},
+"largest": {
+"use": "הגדול ביותר: the largest city.\nlarge – larger – largest.",
+"tip": "large + est = הכי.\nכמו biggest, tallest."
+},
+"civil#1": {
+"use": "מנומס (רשמי).\nגם אזרחי: civil rights.",
+"tip": "civil – citizen: אזרח טוב מתנהג בנימוס."
+},
+"side effect": {
+"use": "תופעת לוואי של תרופה.\nhave side effects.",
+"tip": "side = צד, effect = השפעה.\nהשפעה מהצד."
+},
+"stock#1": {
+"use": "לאחסן במלאי: The shop stocks shoes.\nin stock = במלאי.",
+"tip": "stock = מלאי, מחסן."
+},
+"machine": {
+"use": "washing machine = מכונת כביסה, coffee machine = מכונת קפה.\nבריבוי: machines.",
+"tip": "מכונה = machine, מאותו מקור."
+},
+"carry": {
+"use": "carry a bag = לסחוב תיק.\ncarry on = להמשיך.",
+"tip": "carry – 'קרי', כמו car: עגלה שסוחבת."
+},
+"explain": {
+"use": "explain something to someone.\nלא אומרים explain me!\nexplanation = הסבר.",
+"tip": "ex + plain (ברור, פשוט) = להפוך משהו לברור."
+},
+"winter": {
+"use": "in (the) winter = בחורף.\nlast winter = בחורף שעבר.",
+"tip": "winter – 'וינטר' ❄. wind = רוח של חורף."
+},
+"worse": {
+"use": "גרוע יותר: worse than.\nbad – worse – worst.",
+"tip": "worse = גרוע יותר, worst = הגרוע מכולם.\nהכי גרוע מסתיים ב-st, כמו best."
+},
+"spring#1": {
+"use": "in (the) spring = באביב.\nspring break = חופשת אביב.",
+"tip": "spring = קפיצה: באביב הכול קופץ ופורח 🌸."
+},
+"otherwise": {
+"use": "אחרת: Hurry, otherwise you'll miss it.\nגם 'בדרך אחרת'.",
+"tip": "other + wise = בדרך האחרת."
+},
+"spring, sprang|sprang": {
+"use": "עבר של spring (לזנק): spring – sprang – sprung.",
+"tip": "sprang – 'ספרנג', זינק כמו קפיץ."
+},
+"agreement": {
+"use": "הסכם: reach an agreement = להגיע להסכם.\nin agreement = מסכימים.",
+"tip": "agree (להסכים) + ment = הסכם 🤝."
+},
+"block#0": {
+"use": "גוש, לבנה: a block of stone.\nגם בלוק רחוב: two blocks away.",
+"tip": "block = בלוק, כמו קוביות בנייה 🧱."
+},
+"challenge#0": {
+"use": "challenge someone to = לאתגר מישהו ל-.\nגם לערער על (challenge a decision).",
+"tip": "challenge – 'צ'לנג'', כמו אתגר ברשתות."
+},
+"address#1": {
+"use": "home address = כתובת מגורים, email address = כתובת מייל.\naddress הוא גם פועל: לפנות אל, לטפל ב-.",
+"tip": "address = כתובת, 'אדרס'."
+},
+"therefore": {
+"use": "לכן (רשמי, בכתיבה): I was tired; therefore, I went home.",
+"tip": "there + fore: 'משם והלאה', ולכן."
+},
+"avoid": {
+"use": "אחרי avoid בא פועל עם ing: avoid eating sugar.\nלהימנע ממשהו, להתרחק ממנו בכוונה.",
+"tip": "a + void (ריק): להשאיר ריק, להתרחק."
+},
+"camera": {
+"use": "מצלמה: digital camera.\non camera = מצולם.",
+"tip": "camera = 'קמרה', חדר (camera באיטלקית), בתוכו נכנס האור 📷."
+},
+"rule#2": {
+"use": "לשלוט: rule a country.\nruler = שליט.",
+"tip": "rule = כלל: מי שקובע כללים, שולט 👑."
+},
+"drug#0": {
+"use": "סם; גם תרופה.\ndrug store = בית מרקחת.",
+"tip": "drug – 'דראג'', סמים 💊."
+},
+"catch, caught|caught": {
+"use": "עבר של catch: catch – caught – caught.\ncaught a cold = הצטנן.",
+"tip": "caught נשמע 'קוֹט', כמו taught ו-bought."
+},
+"hall#0": {
+"use": "מסדרון, מבואה: in the hall.\ngym hall = אולם התעמלות.",
+"tip": "hall – 'הול', כמו ה'הול' בכניסה לבית."
+},
+"evening": {
+"use": "in the evening = בערב, this evening = הערב.\nGood evening = ערב טוב.",
+"tip": "eve = ערב (Christmas Eve = ערב חג המולד)."
+},
+"heat": {
+"use": "חום; פועל: heat the soup.\nheater = תנור חימום.",
+"tip": "heat – 'היט' 🔥, heat wave = גל חום."
+},
+"queen": {
+"use": "מלכה: the Queen of England.\nking = מלך.",
+"tip": "queen – 'קווין', כמו הלהקה Queen 👑."
+},
+"complex": {
+"use": "מסובך: a complex problem.\nגם קומפלקס (מבנים).",
+"tip": "קומפלקס = הרבה חלקים ביחד, ולכן מסובך."
+},
+"interview": {
+"use": "job interview = ראיון עבודה.\ninterview someone = לראיין.",
+"tip": "inter + view = לראות זה את זה, אינטרוויו."
+}
+}

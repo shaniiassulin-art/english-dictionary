@@ -1,0 +1,482 @@
+{
+"core": {
+"use": "ליבה, החלק המרכזי: at the core of.\ncore values = ערכי יסוד.",
+"tip": "core – 'קור', כמו הליבה של תפוח 🍎 (apple core)."
+},
+"medicine#0": {
+"use": "רפואה כתחום לימוד: study medicine.\nmedical = רפואי.",
+"tip": "medicine – 'מדיסין', מדיקל = רפואי."
+},
+"honest": {
+"use": "ישר, הגון: an honest man.\nה-h לא נשמעת: 'אוֹנֶסְט'.\nhonesty = יושר.",
+"tip": "honest – 'אונסט', ישר כמו 'אונסט אייב' (לינקולן)."
+},
+"reaction": {
+"use": "reaction to = תגובה ל-.\nreact = להגיב.",
+"tip": "re + action = פעולה חוזרת, תגובה."
+},
+"excellent": {
+"use": "מצוין: excellent work.\nחזק מ-very good.",
+"tip": "excel = להצטיין. אקסלנט = מצוין ⭐."
+},
+"nuclear": {
+"use": "גרעיני: nuclear power = כוח גרעיני, nuclear weapons = נשק גרעיני.",
+"tip": "nucleus = גרעין.\nnuclear = של הגרעין ☢, נשמע 'ניוּקליר'."
+},
+"guard": {
+"use": "שומר: security guard.\nפועל: guard the gate = לשמור על.",
+"tip": "גארד = שומר, כמו bodyguard = שומר ראש."
+},
+"exist": {
+"use": "להתקיים: Do ghosts exist?\nexistence = קיום.",
+"tip": "exist – 'אגזיסט', אקזיסטנציאליזם = על הקיום."
+},
+"mountain": {
+"use": "הר: climb a mountain.\nmountains = רכס הרים.",
+"tip": "mountain – 'מאונטן' ⛰, mount = לעלות."
+},
+"taste": {
+"use": "טעם: a sweet taste.\nפועל: taste the soup = לטעום.\nגם טעם אישי (good taste).",
+"tip": "taste – 'טייסט', טייסטר = טועם."
+},
+"victory": {
+"use": "ניצחון: win a victory, a big victory.\nvictorious = מנצח.",
+"tip": "V for Victory: סימן ה-V באצבעות = ניצחון ✌."
+},
+"volume#1": {
+"use": "עוצמת קול: turn up/down the volume.",
+"tip": "volume = ווליום 🔊."
+},
+"plane#0": {
+"use": "מטוס: by plane = במטוס, get on the plane = לעלות למטוס.",
+"tip": "plane – 'פליין', קיצור של airplane ✈."
+},
+"useful": {
+"use": "שימושי: useful for.\nההפך: useless.",
+"tip": "use + ful = מלא שימוש."
+},
+"grade#2": {
+"use": "דרגה, רמה בסולם: a high grade, top grade.",
+"tip": "grade = דרגה, כמו 'אפגרייד' = עלייה בדרגה."
+},
+"pair": {
+"use": "a pair of = זוג של: a pair of shoes / jeans / glasses.\nגם לבגדים בעלי שני חלקים.",
+"tip": "pair – 'פֵּר', כמו 'פר' = זוג. pair ו-pear (אגס) נשמעות אותו דבר 🍐."
+},
+"transfer#0": {
+"use": "transfer money = להעביר כסף.\ntransfer to = לעבור (לבית ספר אחר).",
+"tip": "trans = מעבר.\nטרנספר = העברה."
+},
+"session": {
+"use": "מושב, פגישה: training session, morning session.",
+"tip": "session – 'סשן', כמו 'סשן צילום'."
+},
+"willing": {
+"use": "willing to + פועל = מוכן ל-.\nunwilling = לא מוכן.",
+"tip": "will = רצון.\nwilling = מוכן מרצון."
+},
+"zone": {
+"use": "אזור: no-parking zone, time zone (אזור זמן).",
+"tip": "zone – 'זון', כמו 'אזור'."
+},
+"entirely": {
+"use": "לגמרי, לחלוטין: I entirely agree = אני מסכימה לגמרי.",
+"tip": "entire = שלם, כולו.\nentirely = לגמרי."
+},
+"mail": {
+"use": "דואר: get mail, by mail = בדואר.\nemail = דואר אלקטרוני.",
+"tip": "mail – 'מייל', כמו email 📬."
+},
+"fly#1": {
+"use": "זבוב: a fly in my soup.\nבריבוי: flies.",
+"tip": "fly = לעוף. זבוב הוא 'זה שעף' 🪰."
+},
+"spirit#2": {
+"use": "נפש, אופי: a free spirit = נפש חופשייה.\nteam spirit = רוח צוות.",
+"tip": "spirit = רוח, החלק הפנימי שבאדם."
+},
+"firm#2": {
+"use": "חברה, משרד: a law firm = משרד עורכי דין.",
+"tip": "firm = 'פירמה' 🏢, כמו בעברית."
+},
+"ill": {
+"use": "חולה (אחרי פועל): She is ill.\nillness = מחלה.",
+"tip": "ill – 'איל', כמו 'אילנס'.\n'אוי לי, אני ill'."
+},
+"double standard": {
+"use": "מוסר כפול: It's a double standard.",
+"tip": "double = כפול, standard = סטנדרט."
+},
+"fuel": {
+"use": "דלק: run out of fuel = להיגמר הדלק.\nפועל: לתדלק, להזין.",
+"tip": "fuel – 'פיוּאל'.\nכמו 'פיול' שממלא את המיכל ⛽."
+},
+"kick": {
+"use": "לבעוט; גם בעיטה.\nkick off = להתחיל.",
+"tip": "kick – 'קיק', קיקבוקס."
+},
+"valley": {
+"use": "עמק: in the valley.\nSilicon Valley = עמק הסיליקון.",
+"tip": "valley – 'וואלי'.\nSilicon Valley = עמק ההייטק."
+},
+"sky": {
+"use": "שמיים: in the sky, the sky is blue.",
+"tip": "sky – 'סקיי', כמו skyscraper = גורד שחקים."
+},
+"bear#0": {
+"use": "דוב: a brown bear.\nגם פועל: לסבול (can't bear).",
+"tip": "bear – 'בֵּר', טדי בר 🧸."
+},
+"boat": {
+"use": "סירה: by boat = בסירה, on a boat.\nship = ספינה גדולה.",
+"tip": "boat – 'בוט' ⛵, כמו 'בוטה' שצפה."
+},
+"capacity#0": {
+"use": "יכולת: the capacity to learn.",
+"tip": "capable = מסוגל.\ncapacity = כמה אתה מסוגל להכיל."
+},
+"joint#0": {
+"use": "משותף: joint account = חשבון משותף, joint effort = מאמץ משותף.",
+"tip": "join = להצטרף.\njoint = מה שחיברו יחד."
+},
+"duty": {
+"use": "חובה, תפקיד: on duty = במשמרת.\nduty-free = פטור ממכס.",
+"tip": "duty – 'דיוטי', דיוטי פרי ✈."
+},
+"climate": {
+"use": "אקלים: climate change = שינוי אקלים.",
+"tip": "קלימה = אקלים."
+},
+"arm#1": {
+"use": "זרוע: break an arm.\narms = גם נשק.",
+"tip": "arm – 'ארם', זרוע 💪."
+},
+"hundred": {
+"use": "a hundred / one hundred = מאה.\nhundreds of = מאות.\nאחרי מספר בלי s: two hundred.",
+"tip": "hundred – 'האנדרד', 💯 = מאה."
+},
+"remove": {
+"use": "להסיר, להוציא: remove your shoes.\nremoval = הסרה.",
+"tip": "re + move (להזיז) = להזיז משם."
+},
+"begin/an/un|began": {
+"use": "עבר של begin: begin – began – begun.\nThe lesson began at eight.",
+"tip": "began = התחיל.\nאותה תבנית כמו swim – swam – swum."
+},
+"steel": {
+"use": "פלדה: made of steel.\nשימו לב: steel (פלדה) נשמע בדיוק כמו steal (לגנוב).",
+"tip": "Superman = Man of Steel, איש הפלדה 🦸."
+},
+"medicine#1": {
+"use": "תרופה: take medicine = לקחת תרופה.\nלא ספיר: some medicine.",
+"tip": "medicine – 'מדיסין', מאותו מקור כמו medical (רפואי) 💊."
+},
+"path": {
+"use": "שביל, דרך: follow the path, a path to success.",
+"tip": "path – 'פאת''.\nכמו 'פאתי' העיר: שביל ששם מוביל."
+},
+"mix": {
+"use": "לערבב: mix A with B.\nmixture = תערובת.",
+"tip": "mix – 'מיקס', מיקסר."
+},
+"purchase": {
+"use": "לרכוש (רשמי מ-buy): purchase tickets.\nשם עצם: רכישה.",
+"tip": "purchase – 'פרצ'ס', לקנות."
+},
+"rain": {
+"use": "גשם: in the rain.\nפועל: It's raining = יורד גשם.",
+"tip": "rain – 'רֵיין' 🌧, rainbow = קשת בענן."
+},
+"border": {
+"use": "גבול בין מדינות: cross the border.",
+"tip": "border – 'בורדר', כמו 'בורדר' של טבלה = מסגרת."
+},
+"enemy": {
+"use": "אויב: make enemies.\nבריבוי: enemies.",
+"tip": "enemy – 'אנמי', ההפך מ-friend."
+},
+"ensure": {
+"use": "להבטיח, לוודא: ensure that...",
+"tip": "en + sure = להפוך לבטוח."
+},
+"limit": {
+"use": "speed limit = מהירות מותרת.\nלהגביל: limit to.",
+"tip": "לימיט = גבול."
+},
+"profit": {
+"use": "רווח: make a profit.\nprofitable = רווחי.",
+"tip": "profit – 'פרופיט', ההפך מ-loss."
+},
+"stress#1": {
+"use": "לחץ, מתח: under stress.\nstressful = מלחיץ.",
+"tip": "סטרס = לחץ 😰."
+},
+"command": {
+"use": "פקודה: give a command.\nפועל: לפקד על.",
+"tip": "commander = מפקד.\ncommand – 'קומנד', 'קומנדו'."
+},
+"intelligence#0": {
+"use": "מודיעין: military intelligence.\nגם אינטליגנציה, תבונה.",
+"tip": "CIA = Central Intelligence Agency, סוכנות המודיעין."
+},
+"ocean": {
+"use": "אוקיינוס: the Atlantic Ocean.\nעם the לפני השם.",
+"tip": "ocean – 'אושן' 🌊, כמו 'אוקיינוס'."
+},
+"volume#2": {
+"use": "נפח: the volume of the box.",
+"tip": "volume = כמה מקום משהו תופס, 'וולום'."
+},
+"forest": {
+"use": "יער: in the forest.\nrain forest = יער גשם.",
+"tip": "forest – 'פורסט'. Forrest Gump רץ ביער 🌲."
+},
+"plane#1": {
+"use": "מישור (גאומטריה).",
+"tip": "plain = שטוח, plane = מישור."
+},
+"appearance": {
+"use": "מראה חיצוני; גם הופעה (first appearance).",
+"tip": "appear = להופיע."
+},
+"grade#3": {
+"use": "שיפוע של כביש.",
+"tip": "grade = דרגה, כמה הדרך עולה."
+},
+"jump": {
+"use": "לקפוץ: jump over / jump into.\nשם עצם: קפיצה.",
+"tip": "jump – 'ג'אמפ', כמו 'ג'אמפ' בטרמפולינה 🦘."
+},
+"noted": {
+"use": "ידוע, בולט: a noted writer.",
+"tip": "note = לשים לב.\nnoted = שמו לב אליו."
+},
+"honor": {
+"use": "כבוד: in honor of = לכבוד.\nלכבד: honor someone.",
+"tip": "honor – 'אונר', כמו 'הונור'.\nYour Honor = כבוד השופט."
+},
+"launch": {
+"use": "לשגר טיל; להשיק מוצר: launch a new app.",
+"tip": "לאנץ' = השקה 🚀."
+},
+"survey#0": {
+"use": "לסקור, לבחון שטח.",
+"tip": "survey – 'סרווי', מבט על."
+},
+"update": {
+"use": "עדכון; לעדכן: update you, software update.",
+"tip": "up + date = להביא לתאריך העדכני."
+},
+"debt": {
+"use": "חוב: in debt = בחובות.\nה-b לא נשמעת: 'דֶט'.",
+"tip": "debt – 'דט', דומה ל'debit' (חיוב)."
+},
+"expensive": {
+"use": "יקר: too expensive.\nההפך: cheap.",
+"tip": "expense = הוצאה.\nexpensive = מוציא הרבה כסף 💸."
+},
+"supreme": {
+"use": "עליון: Supreme Court = בית המשפט העליון.",
+"tip": "supreme – 'סופרים', סופר = מעל."
+},
+"exercise#0": {
+"use": "תרגיל בספר או בשיעור: do exercise 3.",
+"tip": "exercise = תרגיל, גם לגוף וגם לשכל."
+},
+"illegal": {
+"use": "לא חוקי: It's illegal to...\nההפך: legal.",
+"tip": "il (לא) + legal (חוקי) = לא חוקי."
+},
+"planet": {
+"use": "כוכב לכת: the planet Mars.",
+"tip": "planet – 'פלנט', כמו 'פלנטה' = כוכב לכת 🪐."
+},
+"joint#1": {
+"use": "מפרק בגוף: knee joint = מפרק הברך.",
+"tip": "joint = חיבור: המקום שבו העצמות מתחברות."
+},
+"joke": {
+"use": "בדיחה: tell a joke.\njust joking = סתם צוחקת.",
+"tip": "joke – 'ג'וק', כמו 'ג'וקר' 🃏."
+},
+"loan": {
+"use": "take out a loan = לקחת הלוואה.",
+"tip": "loan – 'לון', דומה ל'לווה'."
+},
+"restaurant": {
+"use": "מסעדה: eat at a restaurant.",
+"tip": "restaurant – 'רסטורנט', כמו 'רסטורן'."
+},
+"sugar": {
+"use": "סוכר: Do you take sugar?\nsugar-free = בלי סוכר.",
+"tip": "sugar – 'שוגר', כמו 'סוכר' עם ש 🍬."
+},
+"begin/an/un|begun": {
+"use": "הצורה השלישית של begin, אחרי has/have: has begun = כבר התחיל.",
+"tip": "begin – began – begun: ההתחלה כבר קרתה (צורה שלישית)."
+},
+"era": {
+"use": "עידן, תקופה: the digital era.",
+"tip": "era – 'ארה', כמו 'עירה' = תקופה."
+},
+"lawyer": {
+"use": "עורך דין: hire a lawyer = לשכור עורך דין.",
+"tip": "law (חוק) + yer = האיש של החוק ⚖."
+},
+"route": {
+"use": "מסלול, דרך: the fastest route.",
+"tip": "route – 'רוּט', כמו Route 66."
+},
+"device": {
+"use": "מכשיר: an electronic device.",
+"tip": "device – 'דיווייס', מכשיר חכם 📱."
+},
+"factor": {
+"use": "גורם: an important factor.",
+"tip": "factor – 'פקטור', כמו 'פקטור' בעברית."
+},
+"grant": {
+"use": "להעניק: grant permission.\nמענק: research grant.",
+"tip": "take for granted = לקחת כמובן מאליו."
+},
+"relations": {
+"use": "יחסים: good relations between countries.",
+"tip": "relate = לקשר.\nrelations = הקשרים ביניהם."
+},
+"golden": {
+"use": "זהוב, מוזהב: golden hair.\ngolden age = תור הזהב.",
+"tip": "gold = זהב 🥇.\ngolden = עשוי מזהב או בצבע זהב."
+},
+"pool": {
+"use": "בריכה: swimming pool = בריכת שחייה.",
+"tip": "pool – 'פול', כמו 'פול' של מים 🏊."
+},
+"angry": {
+"use": "angry with someone = כועס על מישהו.\nangry about something = כועס בגלל משהו.",
+"tip": "anger = כעס 😠, 'אנגרי בירדס'."
+},
+"milk": {
+"use": "חלב: a glass of milk.\nפועל: לחלוב.",
+"tip": "milk – 'מילק', כמו 'מילקי' 🥛."
+},
+"crowd#1": {
+"use": "קהל, המון: a big crowd.\ncrowded = צפוף.",
+"tip": "crowd – 'קראוד', crowdfunding = מימון המונים."
+},
+"candidate": {
+"use": "מועמד: candidate for mayor.",
+"tip": "candidate – 'קנדידט', כמו 'קנדידט' בבחירות."
+},
+"native#1": {
+"use": "מולד, טבעי: native talent.\nnative speaker = דובר שפת אם.",
+"tip": "native = נולד עם זה."
+},
+"perform": {
+"use": "להופיע; לבצע: perform a song, perform a task.",
+"tip": "performance = הופעה 🎭."
+},
+"strike#0": {
+"use": "להכות: Lightning struck the tree.\nstrike – struck – struck.",
+"tip": "strike – 'סטרייק', כמו 'סטרייק' בבאולינג: מכה אחת והכול נופל 🎳."
+},
+"liberal": {
+"use": "ליברלי, פתוח: liberal ideas.",
+"tip": "liberty = חירות.\nליברלי = בעד חירות."
+},
+"survey#1": {
+"use": "סקר: do / carry out a survey.",
+"tip": "survey – 'סרווי', סקר דעת קהל 📋."
+},
+"storm": {
+"use": "סערה: a big storm.\nbrainstorm = סיעור מוחות.",
+"tip": "storm – 'סטורם', סערה ⛈ (וגם brainstorm = סערת מוחות)."
+},
+"lunch": {
+"use": "ארוחת צהריים: have lunch.",
+"tip": "lunch – 'לאנץ'', כמו 'לאנץ' בוקס' = קופסת אוכל."
+},
+"snow": {
+"use": "שלג: It's snowing.",
+"tip": "snow – 'סנואו', snowman = איש שלג ⛄."
+},
+"kitchen": {
+"use": "מטבח: in the kitchen.",
+"tip": "kitchen – 'קיצ'ן'.\nכמו 'קיץ'' חם במטבח 🍳."
+},
+"task": {
+"use": "משימה: a difficult task.",
+"tip": "task – 'טאסק', כמו task list = רשימת משימות."
+},
+"exercise#1": {
+"use": "להתאמן: exercise every day.",
+"tip": "exercise = אימון גופני 🏋."
+},
+"treat#3": {
+"use": "ממתק, פינוק: Trick or treat!",
+"tip": "treat = פינוק. Trick or treat = 'תעלול או ממתק' בליל כל הקדושים 🍬."
+},
+"numerous": {
+"use": "רבים מאוד: numerous times.",
+"tip": "number = מספר.\nnumerous = מספר גדול של."
+},
+"maintain": {
+"use": "לשמור, לתחזק: maintain a house.\nmaintenance = תחזוקה.",
+"tip": "main + tain = להחזיק ביד."
+},
+"measure#0": {
+"use": "למדוד: measure the room.\nmeasurement = מדידה.",
+"tip": "measure – 'מז'ר', כמו 'מטר' 📏."
+},
+"urban": {
+"use": "עירוני: urban areas.\nההפך: rural.",
+"tip": "urban – אורבני."
+},
+"chapter": {
+"use": "פרק בספר: chapter 2.",
+"tip": "chapter – 'צ'פטר', פרק בספר 📖."
+},
+"journey": {
+"use": "מסע ארוך: a long journey.",
+"tip": "jour = יום (בצרפתית).\njourney = מסע של יום שלם."
+},
+"capacity#2": {
+"use": "קיבולת: a capacity of 500 people.",
+"tip": "capacity = כמה זה יכול להכיל."
+},
+"escape": {
+"use": "לברוח: escape from prison.\nשם עצם: בריחה.",
+"tip": "Esc במקלדת = escape = יציאה, בריחה."
+},
+"friendly": {
+"use": "ידידותי: friendly people.\nזה תואר!",
+"tip": "friend + ly = כמו חבר."
+},
+"approximately": {
+"use": "בערך: approximately two hours.",
+"tip": "approximately – 'אפרוקסימטלי', כמו 'אפרוקסימציה' = קירוב."
+},
+"properly": {
+"use": "כמו שצריך: Close it properly.",
+"tip": "proper = נכון, ראוי."
+},
+"conflict": {
+"use": "סכסוך, עימות: conflict between.",
+"tip": "conflict – 'קונפליקט', כמו בעברית."
+},
+"phase": {
+"use": "שלב: the first phase.",
+"tip": "phase – 'פייז', כמו 'פאזה' = שלב."
+},
+"teach, taught|taught": {
+"use": "עבר של teach: teach – taught – taught.",
+"tip": "taught – 'טוֹט', מתחרז עם caught ו-bought."
+},
+"considering": {
+"use": "בהתחשב ב-: considering his age.",
+"tip": "consider = לשקול.\nconsidering = כששוקלים את..."
+},
+"revenue": {
+"use": "הכנסות של חברה או מדינה.",
+"tip": "revenue – 'רבניו', הכסף שחוזר (return) לחברה."
+}
+}
