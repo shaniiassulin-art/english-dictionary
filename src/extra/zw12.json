@@ -1,0 +1,482 @@
+{
+"Mediterranean": {
+"use": "הים התיכון: the Mediterranean (Sea).\nכתואר: ים תיכוני (Mediterranean food).",
+"tip": "medi (אמצע) + terra (ארץ) = הים שבאמצע היבשות 🌊."
+},
+"probe": {
+"use": "לחקור לעומק: probe the case.\nprobe into = לחטט ב-.\nשם עצם: חקירה; גם גשושית.",
+"tip": "probe – 'פרוֹב', כמו prove: לחטט כדי להוכיח 🔍."
+},
+"rehabilitation": {
+"use": "שיקום: in rehabilitation after an accident.\nבקיצור: rehab.",
+"tip": "re + habilitation (יכולת) = להחזיר את היכולת, 'ריהאב'."
+},
+"triggered": {
+"use": "גרם, עורר: The noise triggered the alarm.\ntrigger = הדק; גם גורם מעורר.",
+"tip": "trigger = הדק: לוחצים ומשהו מתחיל 🔫."
+},
+"bicycle": {
+"use": "אופניים: ride a bicycle.\nבקיצור: bike.",
+"tip": "bi (שניים) + cycle (גלגל) = שני גלגלים 🚲."
+},
+"mistaken": {
+"use": "טועה: You are mistaken = את טועה.\nmistaken identity = זיהוי שגוי.",
+"tip": "mistake = טעות.\nmistaken = מי שטועה."
+},
+"adapt#0": {
+"use": "adapt to = להסתגל ל-.\nadaptation = הסתגלות.\n≠ adopt (לאמץ).",
+"tip": "adapter = מתאם: מתאים את עצמו למצב חדש 🔌."
+},
+"habitat": {
+"use": "בית גידול טבעי: natural habitat.",
+"tip": "habit = לגור (inhabit).\nhabitat = המקום שהחיה גרה בו 🐻."
+},
+"absent": {
+"use": "נעדר: absent from school.\nabsence = היעדרות.",
+"tip": "ab (הרחק) + sent (להיות) = לא נמצא."
+},
+"organize": {
+"use": "לארגן: organize a party.\norganized = מאורגן.",
+"tip": "organize – 'אורגנייז', organization = ארגון."
+},
+"construct": {
+"use": "לבנות: construct a road.\nconstruction = בנייה.",
+"tip": "con + struct (מבנה) = להקים מבנה 🏗."
+},
+"colleague": {
+"use": "עמית לעבודה: my colleague.",
+"tip": "colleague – 'קוליג', כמו 'קולגה' בעברית."
+},
+"manufacture": {
+"use": "לייצר במפעל: manufacture toys.\nmanufacturer = יצרן.",
+"tip": "manu (יד) + facture (עשייה) = עשייה ביד, ייצור 🏭."
+},
+"sheer#1": {
+"use": "שקוף, דק: a sheer dress / sheer curtains.",
+"tip": "sheer – 'שיר', בד דק שרואים דרכו."
+},
+"refugee": {
+"use": "פליט: refugees need help.\nrefugee camp = מחנה פליטים.",
+"tip": "refuge = מקלט.\nrefugee = מי שמחפש מקלט ⛺."
+},
+"stark#1": {
+"use": "בולט, חד: a stark difference / contrast.",
+"tip": "stark = חד וברור, בלי שום ריכוך."
+},
+"satisfy": {
+"use": "לספק, לרצות: Nothing can satisfy him.\nsatisfied = מרוצה.",
+"tip": "satisfy – 'סטיספיי', satisfaction = סיפוק 😊."
+},
+"cord": {
+"use": "חוט, כבל: phone cord.\nvocal cords = מיתרי הקול.",
+"tip": "cord – 'קורד', כמו כבל קטן.\nchord = אקורד במוזיקה."
+},
+"sequel": {
+"use": "סרט/ספר המשך: the sequel was better.",
+"tip": "sequel – 'סיקוול', sequence = רצף: מה שבא אחרי 🎬."
+},
+"intact": {
+"use": "שלם, בלי פגע: The vase was intact.",
+"tip": "in (לא) + tact (נגיעה) = שלא נגעו בו."
+},
+"prey": {
+"use": "טרף: The lion caught its prey.\nbird of prey = עוף דורס.\n≠ pray (להתפלל).",
+"tip": "prey – 'פריי', נשמע כמו pray: הטרף 'מתפלל' שלא יתפסו אותו 🦁."
+},
+"scales": {
+"use": "קשקשים של דג: Fish have scales.\nגם מאזניים.",
+"tip": "scale = לוחית קטנה: הקשקשים הם לוחיות קטנות 🐟."
+},
+"whale": {
+"use": "לווייתן: a blue whale.",
+"tip": "whale – 'וויל', Free Willy היה לווייתן 🐋."
+},
+"characteristic": {
+"use": "מאפיין, תכונה: a typical characteristic.\nכתואר: אופייני.",
+"tip": "character = אופי.\ncharacteristic = מה שמאפיין."
+},
+"grasp#0": {
+"use": "לאחוז בחוזקה: grasp my hand.",
+"tip": "grasp – 'גראספ', לתפוס חזק ביד ✊."
+},
+"randomly": {
+"use": "באקראי: chosen randomly.",
+"tip": "random = אקראי, 'רנדומלי' 🎲."
+},
+"admire": {
+"use": "להעריץ, להעריך: admire your courage.\nadmiration = הערצה.",
+"tip": "admire – 'אדמייר', admirer = מעריץ."
+},
+"delight": {
+"use": "עונג, שמחה: scream with delight.\ndelighted = מאושר.",
+"tip": "de + light (אור) = שמחה שמאירה את הפנים 😃."
+},
+"fortunate": {
+"use": "בר מזל: fortunate to have friends.\nfortunately = למרבה המזל.",
+"tip": "fortune = מזל 🍀."
+},
+"crude#1": {
+"use": "גולמי: crude oil = נפט גולמי.",
+"tip": "crude = לא מעובד, כמו נפט שיצא מהאדמה 🛢."
+},
+"inclusive": {
+"use": "כולל: inclusive of tax = כולל מס.\nגם מכיל, משלב את כולם.",
+"tip": "include = לכלול.\nall-inclusive = הכול כלול 🏝."
+},
+"merger": {
+"use": "מיזוג (חברות): the merger of two banks.",
+"tip": "merge = למזג.\nmerger = המיזוג 🤝."
+},
+"compatible": {
+"use": "תואם: compatible with.\nincompatible = לא תואם.",
+"tip": "compatible – 'קומפטיבל', שמתאים ויכול לחיות יחד."
+},
+"condemned#0": {
+"use": "גינה: The world condemned the attack.\ncondemn = לגנות.",
+"tip": "condemn – 'קונדם', להצביע על משהו כרע 👎."
+},
+"harmful": {
+"use": "מזיק: harmful to your teeth.",
+"tip": "harm (נזק) + ful = מלא נזק ☠."
+},
+"incentive": {
+"use": "תמריץ: an incentive to work hard.",
+"tip": "incentive – 'אינסנטיב', משהו שמניע אותך קדימה 🥕."
+},
+"slate#2": {
+"use": "לוח כתיבה (מצפחה).\nclean slate = דף חדש.",
+"tip": "slate = לוח שכתבו עליו בגיר בעבר."
+},
+"curiosity": {
+"use": "סקרנות: out of curiosity = מתוך סקרנות.",
+"tip": "curious = סקרן.\nCuriosity killed the cat 🐈."
+},
+"rub": {
+"use": "לשפשף: rub your hands.\nrub it in = 'לשפשף את המלח בפצע'.",
+"tip": "rub – 'ראב', rubber = גומי שמשפשף."
+},
+"clash": {
+"use": "התנגשות, עימות: a clash between police and fans.\nגם התנגשות צבעים או מועדים.",
+"tip": "clash – 'קלאש', הקול של מתכת פוגשת מתכת ⚔."
+},
+"frustration": {
+"use": "תסכול: shout in frustration.\nfrustrated = מתוסכל.",
+"tip": "frustration = 'פרוסטרציה', תסכול 😤."
+},
+"sweep": {
+"use": "לטאטא: sweep the floor.\nעבר: swept.",
+"tip": "sweep – 'סוויפ', מטאטא = broom 🧹."
+},
+"berry": {
+"use": "פרי יער קטן: strawberry, blueberry.",
+"tip": "berry – 'ברי', כמו בלובריז 🫐."
+},
+"explosive": {
+"use": "חומר נפץ; נפיץ: explosive material.",
+"tip": "explode = להתפוצץ 💥."
+},
+"robbery": {
+"use": "שוד: a bank robbery.\nrob = לשדוד.",
+"tip": "rob – 'רוב', Robin Hood שדד מהעשירים."
+},
+"wholesale": {
+"use": "סיטונאי: at wholesale prices.\nההפך: retail = קמעונאי.",
+"tip": "whole (שלם) + sale = מוכרים בכמויות שלמות 📦."
+},
+"prediction": {
+"use": "תחזית: His prediction came true.",
+"tip": "predict = לחזות 🔮."
+},
+"spoil#2": {
+"use": "לפנק: spoil the grandchildren.\nspoiled = מפונק.",
+"tip": "spoil = לקלקל: פינוק יתר 'מקלקל' את הילד."
+},
+"investor": {
+"use": "משקיע: an investor gave money.",
+"tip": "invest = להשקיע 📈."
+},
+"maritime": {
+"use": "ימי: a maritime city, maritime law.",
+"tip": "mare = ים (כמו marine)."
+},
+"superb": {
+"use": "מעולה: The food was superb.",
+"tip": "superb – 'סופרב', super = מעולה ⭐."
+},
+"insult#1": {
+"use": "להעליב: Don't insult your friends.\n(in-SULT, דגש בסוף).",
+"tip": "insult – 'אינסאלט', כמו לשפוך מלח (salt) על פצע 🧂."
+},
+"deceased": {
+"use": "נפטר, המנוח: the deceased.",
+"tip": "decease = מוות (רשמי).\ndeceased = מי שנפטר."
+},
+"explicit#0": {
+"use": "מפורש, ברור: explicit instructions.\nההפך: implicit = משתמע.",
+"tip": "ex (החוצה) + plicit (מקופל) = 'לא מקופל', גלוי."
+},
+"tendency": {
+"use": "נטייה: a tendency to forget.",
+"tip": "tend = לנטות."
+},
+"employ": {
+"use": "להעסיק: employ 200 workers.\nemployee = עובד, employer = מעסיק.",
+"tip": "employ – 'אמפלוי', employment = תעסוקה 👷."
+},
+"enforce": {
+"use": "לאכוף: enforce the law.\nlaw enforcement = רשויות אכיפה.",
+"tip": "en + force (כוח) = להפעיל כוח כדי לשמור על החוק 👮."
+},
+"melt": {
+"use": "להימס, להמיס: The ice is melting.",
+"tip": "melt – 'מלט', כמו גלידה שנמסה 🍦."
+},
+"scholar#0": {
+"use": "מלומד, חוקר: a history scholar.",
+"tip": "school = בית ספר.\nscholar = איש של לימוד 📚."
+},
+"triumph": {
+"use": "ניצחון גדול: a great triumph.\ntriumphant = מנצח.",
+"tip": "triumph – 'טראיאמף', שער הניצחון = Arc de Triomphe 🏆."
+},
+"polar#0": {
+"use": "קוטבי: polar bear = דוב קוטב.\npolar ice = קרח קוטבי.",
+"tip": "pole = קוטב.\npolar = של הקוטב 🐻‍❄️."
+},
+"spike": {
+"use": "קוץ, יתד חד.\na spike in prices = זינוק פתאומי במחירים.",
+"tip": "spike – 'ספייק', כמו גרף שקופץ פתאום למעלה 📈."
+},
+"adapt#1": {
+"use": "לעבד יצירה: adapt a book into a movie.\nadaptation = עיבוד.",
+"tip": "adapt = להתאים: להתאים ספר למסך 🎬."
+},
+"fraction": {
+"use": "חלק קטן: a fraction of the students.\nבמתמטיקה: שבר (½).",
+"tip": "fraction – 'פרקשן', fracture = שבר בעצם: חלק שנשבר ממשהו."
+},
+"puzzle": {
+"use": "פאזל; חידה: a 1,000-piece puzzle.\npuzzled = מבולבל.",
+"tip": "puzzle = 'פאזל' 🧩, ומי שמנסה לפתור אותו מבולבל."
+},
+"marble#0": {
+"use": "גולה: play marbles = לשחק בגולות.\nגם שיש.",
+"tip": "marble – 'מרבל', גולות זכוכית שנראות כמו שיש קטן."
+},
+"teeth, tooth|teeth": {
+"use": "שיניים (רבים של tooth).\nbrush your teeth = לצחצח שיניים.",
+"tip": "tooth → teeth, כמו foot → feet: ה-oo הופכת ל-ee 🦷."
+},
+"toes": {
+"use": "בהונות: hurt my toes.\nbig toe = הבוהן הגדולה.",
+"tip": "toe – 'טוֹ', tiptoe = על קצות האצבעות 🦶."
+},
+"amid": {
+"use": "בתוך, בקרב (רשמי): amid the noise.\nגם amidst.",
+"tip": "a + mid (אמצע) = באמצע של."
+},
+"distress": {
+"use": "מצוקה: in distress.\ndistress signal = אות מצוקה (SOS).",
+"tip": "dis + stress = לחץ קשה מאוד 🆘."
+},
+"sheer#2": {
+"use": "תלול, אנכי: a sheer drop / cliff.",
+"tip": "sheer = 'ישר' למטה, בלי שיפוע."
+},
+"wilderness": {
+"use": "שממה, טבע פראי: lost in the wilderness.\nבתנ\"ך: המדבר.",
+"tip": "wild (פראי) + ness = מקום פראי 🏜."
+},
+"execute#0": {
+"use": "לבצע: execute a plan.\nexecution = ביצוע.",
+"tip": "execute – 'אקזקיוט', כמו .exe = קובץ שמבצעים 💻."
+},
+"homeland": {
+"use": "מולדת: return to his homeland.",
+"tip": "home (בית) + land (ארץ) = ארץ הבית 🏡."
+},
+"critic": {
+"use": "מבקר: a film critic.\ncriticism = ביקורת.",
+"tip": "critic – 'קריטיק', כמו 'ביקורת' = קריטיקה."
+},
+"hollow": {
+"use": "חלול: a hollow tree.\nגם ריק מתוכן (hollow promises).",
+"tip": "hollow – 'הולו', כמו 'חלול' (נשמע דומה!)."
+},
+"sensitivity": {
+"use": "רגישות: sensitivity to milk / to others.",
+"tip": "sensitive = רגיש."
+},
+"absurd": {
+"use": "אבסורדי, מגוחך: an absurd idea.",
+"tip": "absurd = 'אבסורד', אותה מילה בעברית."
+},
+"collision": {
+"use": "התנגשות: a collision between two cars.\ncollide = להתנגש.",
+"tip": "collide – 'קולייד', כמו המאיץ Hadron Collider שמנגיש חלקיקים 💥."
+},
+"secular": {
+"use": "חילוני: a secular school.\nההפך: religious.",
+"tip": "secular – 'סקיולר', כמו 'סקולרי' = חילוני."
+},
+"blend": {
+"use": "לערבב, למזג: blend fruit with milk.\nblender = בלנדר.",
+"tip": "blender = מכשיר שמערבב 🥤."
+},
+"grasp#1": {
+"use": "אחיזה: slip from my grasp.\nגם הבנה: a good grasp of English.",
+"tip": "grasp = האחיזה של היד ✊."
+},
+"punish": {
+"use": "להעניש: punish someone for.\npunishment = עונש.",
+"tip": "punish – 'פאניש', כמו 'פוניש' = עונש."
+},
+"reservation#0": {
+"use": "הזמנה מראש: a reservation for two.\nmake a reservation = להזמין מקום.",
+"tip": "reserve = לשמור.\nreservation = מקום ששמור לך 🍽."
+},
+"bargain#0": {
+"use": "מציאה: a real bargain.\nגם עסקה.",
+"tip": "bargain – 'ברגן', מחיר כל כך טוב שמתמקחים עליו 🏷."
+},
+"cough": {
+"use": "שיעול; להשתעל: a bad cough.",
+"tip": "cough – 'קוֹף', הצליל של שיעול 🤧."
+},
+"hike": {
+"use": "טיול רגלי בטבע: go on a hike.\nhiking boots = נעלי הליכה.",
+"tip": "hike – 'הייק', היי, יוצאים לטיול 🥾."
+},
+"salvation": {
+"use": "ישועה, גאולה: pray for salvation.",
+"tip": "save = להציל.\nsalvation = ההצלה, הישועה 🙏."
+},
+"lame": {
+"use": "צולע.\nבסלנג: עלוב (a lame excuse = תירוץ עלוב).",
+"tip": "lame – 'ליים', 'צולע' כמו תירוץ שלא עומד על רגליו."
+},
+"purse": {
+"use": "ארנק (של אישה); אמריקאית: תיק יד.",
+"tip": "purse – 'פרס', שם שמים את הכסף לפרס 👛."
+},
+"condemned#1": {
+"use": "נידון: condemned to death = נידון למוות.",
+"tip": "condemn = לגזור דין קשה."
+},
+"consequently": {
+"use": "כתוצאה מכך: He didn't study; consequently, he failed.",
+"tip": "consequence = תוצאה."
+},
+"consist": {
+"use": "consist of = מורכב מ-: Water consists of hydrogen and oxygen.",
+"tip": "consist – 'קונסיסט', con (יחד) + sist (לעמוד) = עומד יחד מכמה חלקים."
+},
+"locate": {
+"use": "לאתר: locate the city on the map.\nlocated in = ממוקם ב-.",
+"tip": "location = מיקום 📍."
+},
+"profound#0": {
+"use": "מעמיק, עמוק: profound knowledge.",
+"tip": "pro + found (יסוד) = שמגיע עד היסוד, עמוק."
+},
+"terrain": {
+"use": "שטח, פני קרקע: rocky terrain.",
+"tip": "terra = אדמה (טריטוריה)."
+},
+"threaten": {
+"use": "לאיים: threaten to + פועל.\nthreat = איום.",
+"tip": "threat (איום) + en = לאיים ⚠."
+},
+"unconscious": {
+"use": "מחוסר הכרה: He was unconscious.\nגם לא מודע.",
+"tip": "un (לא) + conscious (בהכרה)."
+},
+"vegetable": {
+"use": "ירק: eat more vegetables.\nבקיצור: veggies.",
+"tip": "vegetable – 'וג'טבל', vegetarian = צמחוני 🥕."
+},
+"illusion": {
+"use": "אשליה: an optical illusion = אשליה אופטית.",
+"tip": "illusion – 'אילוזיה', כמו קוסם (illusionist)."
+},
+"virtue": {
+"use": "מידה טובה: Patience is a virtue.",
+"tip": "virtue – 'ורצ'ו', virtuous = בעל מידות טובות."
+},
+"dull#0": {
+"use": "קהה, עמום: a dull knife, dull light.",
+"tip": "dull – 'דאל', לא חד ולא בהיר."
+},
+"hobby": {
+"use": "תחביב: My hobby is painting.",
+"tip": "hobby = 'הובי', תחביב 🎨."
+},
+"rebellion": {
+"use": "מרד: crush a rebellion.",
+"tip": "rebel = מורד.\nrebellion = המרד."
+},
+"recipient": {
+"use": "מקבל, נמען: the recipient of a prize / a letter.",
+"tip": "receive = לקבל.\nrecipient = מי שמקבל."
+},
+"refund": {
+"use": "החזר כספי: ask for a refund.\nפועל: להחזיר כסף.",
+"tip": "re (בחזרה) + fund (כסף) = כסף שחוזר 💸."
+},
+"sober": {
+"use": "פיכח: sober for a year.\nגם רציני, מפוכח.",
+"tip": "sober – 'סובר', ההפך משיכור."
+},
+"spice": {
+"use": "תבלין: my favorite spice.\nspicy = חריף.",
+"tip": "spice – 'ספייס', Spice Girls 🌶."
+},
+"explicit#1": {
+"use": "בוטה, גלוי: explicit violence / content.",
+"tip": "explicit = הכול גלוי, בלי הסתרה."
+},
+"automobile": {
+"use": "מכונית (רשמי): a new automobile.",
+"tip": "auto (עצמי) + mobile (נע) = נע מעצמו 🚗."
+},
+"costly": {
+"use": "יקר, שעולה הרבה: a costly mistake.",
+"tip": "cost (עלות) + ly = שעולה הרבה."
+},
+"merchandise": {
+"use": "סחורה: new merchandise.\nבקיצור: merch.",
+"tip": "merchant = סוחר.\nmerch של להקה = מוצרים למכירה."
+},
+"arise": {
+"use": "להתעורר, לצוץ: Problems may arise.",
+"tip": "a + rise (לעלות) = לעלות, לצוץ."
+},
+"arise, arose|arise": {
+"use": "לצוץ: arise – arose – arisen.",
+"tip": "arise = לעלות, כמו rise."
+},
+"scholar#1": {
+"use": "בעל מלגה: a scholar at the university.\nscholarship = מלגה.",
+"tip": "scholarship = מלגה 🎓."
+},
+"unclear": {
+"use": "לא ברור: The instructions are unclear.",
+"tip": "un (לא) + clear (ברור)."
+},
+"impress": {
+"use": "להרשים: impress your boss.\nimpressed = מתרשם.",
+"tip": "impression = רושם.\nim + press = להטביע רושם."
+},
+"polar#1": {
+"use": "הפוך לגמרי: polar opinions.\npolar opposites = הפכים גמורים.",
+"tip": "polar = כמו שני קטבים: צפון ודרום."
+},
+"occupy#0": {
+"use": "לתפוס, לגור ב-: occupy the top floor.\noccupied = תפוס.",
+"tip": "occupied = 'תפוס' על דלת השירותים 🚻."
+},
+"halt": {
+"use": "עצירה: come to a halt.\nפועל: לעצור.",
+"tip": "halt – 'הולט', Halt! = עצור! 🛑."
+}
+}
