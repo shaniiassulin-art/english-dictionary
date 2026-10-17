@@ -401,12 +401,15 @@ const WORDS_N=RAW.length;
 const EXTRA=__EXTRA__;
 const XO={};
 /* buttons under a word: tip and usage notes, each opening a box with one point per line */
-function xlines(t){return String(t).replace(/([.!?])\s+(?=\S)/g,'$1\n').replace(/;\s*/g,'\n').split('\n').map(x=>x.trim().replace(/^[•\-–]\s*/,'')).filter(x=>x&&x!=='.')}
-function xfmt(t){return '<ul>'+xlines(t).map(x=>'<li>'+esc(x).replace(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/g,'<bdi>$1</bdi>')+'</li>').join('')+'</ul>'}
+function xlines(t,tip){const s=String(t);const raw=(tip?s.replace(/(\.)\s+(?=\S)/g,'$1\n'):s.replace(/([.!?])\s+(?=\S)/g,'$1\n').replace(/;\s*/g,'\n')).split('\n'),out=[];
+  for(let x of raw){x=x.trim().replace(/^[•\-–]\s*/,'');if(!x||x==='.')continue;const p=out.length?out[out.length-1]:'';
+    if(p&&(x.length<14||/^[=(←-⯿\uD83C-\uDBFF]/.test(x)||/(\.\.\.|…|\b(e\.g|i\.e|Vol|Dr|Mr|Mrs|St|vs|[A-Za-z])\.)$/i.test(p)))out[out.length-1]=p+' '+x;else out.push(x)}
+  return out}
+function xfmt(t,tip){return '<ul>'+xlines(t,tip).map(x=>'<li>'+esc(x).replace(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/g,'<bdi>$1</bdi>')+'</li>').join('')+'</ul>'}
 function xtras(w){const x=EXTRA[w.id]||{},o=XO[w.id];
   const b=(k,l)=>`<button class="xbtn" data-xt="${k}" data-xid="${esc(w.id)}" aria-expanded="${o===k}">${l}</button>`;
   let h=`<div class="xwrap" data-xw="${esc(w.id)}"><div class="xtras">${x.tip?b('tip','💡 טיפ לזכירה'):''}${x.use?b('use','📌 דגשים'):''}</div>`;
-  if(o==='tip'&&x.tip)h+=`<div class="xbox"><h4>💡 טיפ לזכירה</h4>${xfmt(x.tip)}</div>`;
+  if(o==='tip'&&x.tip)h+=`<div class="xbox"><h4>💡 טיפ לזכירה</h4>${xfmt(x.tip,1)}</div>`;
   if(o==='use'&&x.use)h+=`<div class="xbox"><h4>📌 דגשים</h4>${xfmt(x.use)}</div>`;
   return h+'</div>'}
 /* Hebrew translation of the example sentence, behind a small button */
