@@ -1,0 +1,362 @@
+{
+"taint": {
+"tip": "taint – 'טיינט', נשמע כמו 'טינופת' / 'טינט' (גוון) שמכתים את השם 🖤 = להכתים."
+},
+"deduce": {
+"tip": "de + duce (להוביל) = 'להוביל למסקנה' – 'דדוקציה' של שרלוק הולמס 🕵 = להסיק."
+},
+"erupt": {
+"tip": "e (החוצה) + rupt (לשבור) = 'לפרוץ החוצה' – 'ארופציה' של הר געש 🌋 = התפרץ."
+},
+"posterity": {
+"tip": "post (אחרי) + erity = 'מי שיבואו אחרינו' 👶 = הדורות הבאים."
+},
+"demented": {
+"tip": "de (בלי) + ment (שכל, 'מנטלי') = 'בלי שכל' – 'דמנציה' 🤪 = מטורף."
+},
+"vertebrate": {
+"tip": "vertebra – 'ורטברה' = חוליה בעמוד השדרה 🦴 → vertebrate = בעל חוליות."
+},
+"flattery": {
+"tip": "flatter (להחמיא) + y = חנופה 🍯."
+},
+"sundown": {
+"tip": "sun (שמש) + down (למטה) = 'השמש למטה' 🌇 = שקיעה."
+},
+"expendable": {
+"tip": "expend (לבזבז) + able = 'שאפשר לבזבז' – 'The Expendables' 🪖 = מיותר."
+},
+"arable": {
+"tip": "arable – 'ארבל', נשמע כמו 'ערבה' שאפשר לחרוש 🌾 = ראוי לעיבוד."
+},
+"overlaps": {
+"tip": "over (מעל) + lap (שכבה) = 'שכבה על שכבה' 🔀 = חופף."
+},
+"loudspeaker": {
+"tip": "loud (חזק) + speaker (רמקול, 'ספיקר') = רמקול 📢."
+},
+"eraser": {
+"tip": "erase (למחוק) + er = 'מה שמוחק' ✏ = מחק."
+},
+"veracity": {
+"tip": "ver (אמת, כמו 'Verify') + acity = 'אמיתות' ✔ = יושר."
+},
+"allusion": {
+"tip": "allusion – 'אלוז'ן', כמו 'אלוזיה' – רמז דק (לא אשליה = illusion!) 💭 = רמיזה."
+},
+"slaughterhouse": {
+"tip": "slaughter (שחיטה) + house (בית) = 'בית שחיטה' 🐄 = בית מטבחיים."
+},
+"rehearse": {
+"tip": "re (שוב) + hearse = 'לחזור על הטקסט שוב' 🎭 = לעשות חזרות."
+},
+"upholstery": {
+"tip": "upholstery – 'אפהולסטרי', כמו 'אפהולסטר' = רפד – מחזיק את הכרית למעלה 🛋 = ריפוד."
+},
+"disprove": {
+"tip": "dis (הפך) + prove (להוכיח) = 'להוכיח שלא' ❌ = להפריך."
+},
+"impair": {
+"tip": "im + pair (להחמיר) = 'לגרוע' – 'Impaired' = לקוי 🦻 = להחליש."
+},
+"confiscate": {
+"tip": "confiscate – 'קונפיסקייט', כמו 'קונפיסקציה' = החרמה 📱🚫 = להחרים."
+},
+"docile": {
+"tip": "docile – 'דוסייל', כמו 'דוקטור' = מורה – 'קל ללמד' 🐑 = צייתן."
+},
+"hasten": {
+"tip": "haste (חיפזון) + n = 'לזרז' – 'Haste makes waste' ⏩ = למהר."
+},
+"expatriate": {
+"tip": "ex (מחוץ) + patria (מולדת, 'פטריוט') = 'מחוץ למולדת' – 'אקספאט' ✈ = גולה."
+},
+"categorize": {
+"tip": "category (קטגוריה) + ize = לקטלג 🗂."
+},
+"congregate": {
+"tip": "con (יחד) + greg (עדר) = 'להתאסף כעדר' – 'קונגרגציה' 👥 = להתקהל."
+},
+"retroactive": {
+"tip": "retro (אחורה, 'רטרו') + active = 'פעיל אחורה' ⏪ = רטרואקטיבי."
+},
+"forsake": {
+"tip": "for + sake (טובה) = 'לוותר על טובתו' – 'For God's sake, don't forsake me' 💔 = לזנוח."
+},
+"ensue": {
+"tip": "ensue – 'אנסיו', כמו 'Sequel' / 'Sue' = לעקוב אחרי ➡ = לנבוע."
+},
+"subtraction": {
+"tip": "sub (מתחת) + tract (למשוך) = 'למשוך החוצה' ➖ = חיסור."
+},
+"confide": {
+"tip": "confide – 'קונפייד', כמו 'קונפידנציאלי' = סודי 🤫 = לשתף בסוד."
+},
+"coexistence": {
+"tip": "co (יחד) + existence (קיום) = 'דו-קיום' ☮."
+},
+"expend": {
+"tip": "expend – 'אקספנד', כמו 'Expenses' = הוצאות 💸 = לבזבז."
+},
+"fortify": {
+"tip": "fort (מבצר, 'פורט') + ify = 'להפוך למבצר' 🏰 = לבצר."
+},
+"dissect": {
+"tip": "dis + sect (לחתוך, 'סקטור') = 'לחתוך לחלקים' 🔬 = לנתח."
+},
+"infraction": {
+"tip": "in + fraction (שבר) = 'לשבור את החוק' 🚨 = עבירה."
+},
+"rationalize": {
+"tip": "rational (הגיוני) + ize = 'רציונליזציה' – לחפש הצדקה הגיונית 🧠 = להצדיק."
+},
+"emigrate": {
+"tip": "e (החוצה) + migrate (להגר) = 'להגר החוצה' ✈ = להגר מ-."
+},
+"botanist": {
+"tip": "botany – 'בוטניקה' + ist = 'בוטנאי' 🌿."
+},
+"fabricate": {
+"tip": "fabricate – 'פבריקייט', כמו 'פבריקציה' = המצאה / 'פברוק' 🤥 = לבדות."
+},
+"laborer": {
+"tip": "labor (עבודה, 'לייבור') + er = פועל 👷."
+},
+"finalize": {
+"tip": "final (סופי, 'פיינל') + ize = 'לסגור סופית' ✅ = לגבש."
+},
+"fluctuation": {
+"tip": "fluctuate – 'פלקצ'ואייט', כמו flow = זרם – 'פלוקטואציה' 📈📉 = תנודתיות."
+},
+"quench": {
+"tip": "quench – 'קוונץ'', נשמע כמו 'קוונץ'!' של מים קרים על אש 💧🔥 = להרוות."
+},
+"unexplored": {
+"tip": "un (לא) + explored (נחקר, 'Explorer') = לא נחקר 🗺."
+},
+"mailman": {
+"tip": "mail (דואר) + man = 'איש הדואר' 📬 = דוור."
+},
+"annihilate": {
+"tip": "an + nihil (כלום, כמו 'ניהיליזם') = 'להפוך לכלום' 💥 = להשמיד."
+},
+"goblet": {
+"tip": "goblet – 'גובלט', כמו 'Goblet of Fire' = גביע האש בהארי פוטר 🏆 = גביע."
+},
+"forgettable": {
+"tip": "forget (לשכוח) + able = 'נשכח בקלות' 😐."
+},
+"revitalize": {
+"tip": "re (שוב) + vital (חיוני, 'ויטמין') + ize = 'להחיות מחדש' 🌱."
+},
+"repelled#1": {
+"tip": "re + pel (לדחוף) = 'נדחף אחורה' מהריח 🤢 = הגעיל."
+},
+"astonishment": {
+"tip": "astonish – 'אסטוניש', נשמע כמו 'Stone' – 'קפוא כמו אבן' מתדהמה 😲 = תדהמה."
+},
+"implicate": {
+"tip": "implicate – 'אימפליקייט', כמו 'אימפליקציה' – לסבך מישהו 🕸 = לערב."
+},
+"overdo": {
+"tip": "over (יותר מדי) + do (לעשות) = 'לעשות יותר מדי' 🏋 = להגזים."
+},
+"enclosing": {
+"tip": "en + close (לסגור) + ing = סוגר מסביב 🔒 = מקיף."
+},
+"disloyal": {
+"tip": "dis (לא) + loyal (נאמן, 'לויאלי') = לא נאמן 🐍."
+},
+"implore": {
+"tip": "implore – 'אימפלור', נשמע כמו 'Please' + 'Plore' = 'בבקשה! בבקשה!' 🙏 = להתחנן."
+},
+"apathetic": {
+"tip": "apathy (אפאתיה) → apathetic = 'אפאתי' 😑 = אדיש."
+},
+"diverge": {
+"tip": "di + verge (לנטות) = 'לנטות לכיוונים שונים' 🔀 = לסטות."
+},
+"disobey": {
+"tip": "dis (לא) + obey (לציית) = לא לציית 🙅."
+},
+"arousing": {
+"tip": "arouse – 'אראוז' = לעורר, a + rouse (להעיר) ⏰ = מעורר."
+},
+"contaminate": {
+"tip": "contaminate – 'קונטמינייט', כמו 'קונטמינציה' = זיהום ☣ = לזהם."
+},
+"deformity": {
+"tip": "de + form (צורה) = 'בלי צורה נכונה' – 'דפורמציה' 🦴 = מום."
+},
+"ingest": {
+"tip": "in + gest (לשאת, 'Digest') = 'להכניס לבטן' 🍽 = לבלוע."
+},
+"insulate": {
+"tip": "insulate – 'אינסולייט', כמו 'אינסולציה' / insula = אי, לבודד 🧱 = לבודד."
+},
+"savanna": {
+"tip": "savanna – 'סוואנה' בעברית, כמו מלך האריות שחי בסוואנה האפריקאית עם הג'ירפות 🦁🦒 = ערבה."
+},
+"unorganized": {
+"tip": "un (לא) + organized (מאורגן) = לא מאורגן 🗃💥."
+},
+"leniency": {
+"tip": "lenient – 'ליניינט' = מקל, נשמע כמו 'לנין' רך 😌 → leniency = מתינות."
+},
+"dampen": {
+"tip": "damp (לח) + en = 'להרטיב את המצב רוח' 🌧 = לדכא."
+},
+"canvass": {
+"tip": "canvass – 'קנבס', כמו 'קנבס' = לסרוק את השכונה דלת אחר דלת 🚪 = לסקור."
+},
+"legible": {
+"tip": "leg (לקרוא, כמו 'Legend') + ible = 'שאפשר לקרוא' 📝 = קריא."
+},
+"terrify": {
+"tip": "terror (טרור, אימה) + ify = להבעית 😱."
+},
+"reorganize": {
+"tip": "re (מחדש) + organize (לארגן) = לארגן מחדש 🗂."
+},
+"derision": {
+"tip": "deride – 'דירייד' = ללעוג, כמו 'רידיקולי' 🤡 → derision = לעג."
+},
+"benefactors": {
+"tip": "bene (טוב, כמו 'Benefit') + factor (עושה) = 'עושי טוב' 🤲 = נדבנים."
+},
+"industrious": {
+"tip": "industry (תעשייה) + ous = 'עובד כמו מפעל' 🐜 = חרוץ."
+},
+"skyrocket": {
+"tip": "sky (שמיים) + rocket (טיל) = 'לטוס כמו טיל לשמיים' 🚀📈 = לזנק."
+},
+"familiarize": {
+"tip": "familiar (מוכר) + ize = 'לעשות מוכר' 🗺 = להכיר."
+},
+"sarcophagus": {
+"tip": "sarco (בשר) + phagus (אוכל) = 'אוכל בשר' – ארון אבן מצרי ⚱ = ארון קבורה."
+},
+"elude": {
+"tip": "e + lude (לשחק, כמו 'אלוזיה') = 'להשתעשע ולחמוק' 🏃 = להתחמק."
+},
+"reciprocate": {
+"tip": "reciprocal (הדדי) → reciprocate = להחזיר באותה מטבע 🔄."
+},
+"enclose": {
+"tip": "en + close (לסגור) = 'לסגור בתוך המעטפה' ✉ = לצרף."
+},
+"amass": {
+"tip": "a + mass (מסה) = 'לצבור מסה' 💰💰 = לצבור."
+},
+"wart": {
+"tip": "wart – 'וורט', נשמע כמו 'ורט' – יבלת של מכשפה 🧙 = יבלת."
+},
+"correspondingly": {
+"tip": "corresponding (מתאים) + ly = 'בהתאמה' ⚖."
+},
+"identically": {
+"tip": "identical (זהה) + ly = באופן זהה 👯."
+},
+"accentuate": {
+"tip": "accent (הטעמה, 'אקסנט') + uate = 'לשים אקסנט' ‼ = להדגיש."
+},
+"mountainside": {
+"tip": "mountain (הר) + side (צד) = 'צלע ההר' ⛰ = מדרון."
+},
+"scrutinize": {
+"tip": "scrutinize – 'סקרוטינייז', נשמע כמו 'סקר' + 'Scrutiny' – בדיקה קפדנית 🔍 = לבחון."
+},
+"junkyard": {
+"tip": "junk (זבל, 'ג'אנק פוד') + yard (חצר) = 'חצר זבל' 🚙 = מגרש גרוטאות."
+},
+"abduct": {
+"tip": "ab (הרחק) + duct (להוביל) = 'להוביל הרחק' – 'Abducted by aliens' 👽 = לחטוף."
+},
+"affluence": {
+"tip": "affluent (עשיר) → affluence = שפע, עושר 💰."
+},
+"culminate": {
+"tip": "culminate – 'קלמינייט', כמו 'קולמינציה' = נקודת שיא 🎆 = הגיע לשיא."
+},
+"invertebrate": {
+"tip": "in (בלי) + vertebrate (בעל חוליות) = 'בלי עמוד שדרה' 🪱 = חסר חוליות."
+},
+"launder": {
+"tip": "launder – 'לונדר', כמו 'Laundry' = כביסה – 'Money Laundering' 🧺 = לכבס."
+},
+"unconcerned": {
+"tip": "un (לא) + concerned (מודאג) = לא מודאג 😎."
+},
+"disapproving": {
+"tip": "dis (לא) + approve (לאשר) = 'לא מאשר' 👎."
+},
+"obstinate": {
+"tip": "obstinate – 'אובסטיננט', נשמע כמו 'אובסטקל' = מכשול שלא זז 🐐 = עקשן."
+},
+"mountaintop": {
+"tip": "mountain (הר) + top (פסגה) = פסגת ההר 🏔."
+},
+"standardize": {
+"tip": "standard ('סטנדרט') + ize = 'סטנדרטיזציה' 📏 = לתקנן."
+},
+"genial": {
+"tip": "genial – 'ג'יניאל', נשמע כמו 'ג'יני' החביב מאלאדין 🧞 = ידידותי."
+},
+"condense": {
+"tip": "con + dense (דחוס) = 'לדחוס' – 'Condensed Milk' = חלב מרוכז 🥛 = לדחוס."
+},
+"pothole": {
+"tip": "pot (סיר) + hole (חור) = 'חור בצורת סיר' בכביש 🕳 = מהמורה."
+},
+"hibernate": {
+"tip": "hibernate – 'הייברנייט', כמו מצב 'Hibernate' במחשב = שינה עמוקה 🐻💤 = שנת חורף."
+},
+"midair": {
+"tip": "mid (אמצע) + air (אוויר) = 'באמצע האוויר' 🪂."
+},
+"cadaver": {
+"tip": "cadaver – 'קדאבר', נשמע כמו 'קדאבר' = גופה בשיעור אנטומיה 💀 = גופה."
+},
+"proliferate": {
+"tip": "pro + liferate (לייצר, 'Life') = 'לייצר המון חיים' 🌱🌱 = להתרבות."
+},
+"diurnal": {
+"tip": "diurnal – 'דאיירנל', כמו 'די' = יום (ספרדית 'Día') ☀ = יומי."
+},
+"unearth": {
+"tip": "un + earth (אדמה) = 'להוציא מהאדמה' ⛏ = לחשוף."
+},
+"underlies": {
+"tip": "under (מתחת) + lies (שוכב) = 'שוכב מתחת' 🧱 = נמצא ביסוד."
+},
+"disinfection": {
+"tip": "dis (בטל) + infection (זיהום) = 'ביטול זיהום' 🧴 = חיטוי."
+},
+"extrapolate": {
+"tip": "extra (מעבר) + polate = 'להמשיך את הקו מעבר לנתונים' 📈 = לאמוד."
+},
+"brainwash": {
+"tip": "brain (מוח) + wash (לשטוף) = 'לשטוף את המוח' 🧠🧽."
+},
+"orchestrate": {
+"tip": "orchestra (תזמורת) + ate = 'לתזמר כמו מנצח' 🎼 = לתאם."
+},
+"recur": {
+"tip": "re (שוב) + cur (לרוץ) = 'לרוץ שוב' – 'Recurring' 🔁 = לחזור."
+},
+"abacus": {
+"tip": "abacus – 'אבקוס', כמו 'אבק' – לוח שמחשבים עליו עם חרוזים 🧮 = חשבונייה."
+},
+"officiate": {
+"tip": "official (רשמי) → officiate = 'לנהל רשמית' את הטקס 💒 = לערוך."
+},
+"agitate": {
+"tip": "agitate – 'אג'יטייט', כמו 'אגיטציה' / 'אג'יטטור' = מסית 😤 = להסעיר."
+},
+"growled": {
+"tip": "growl – 'גראול', נשמע כמו 'גררר' של כלב 🐕 = נהם."
+},
+"abhor": {
+"tip": "ab (הרחק) + hor (אימה, 'Horror') = 'להירתע באימה' 😖 = לתעב."
+}
+}
