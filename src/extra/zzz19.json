@@ -1,0 +1,384 @@
+{
+"fever": {
+"use": "שם עצם ספיר: have a (high) fever.\nבבריטית גם have a temperature.\nfeverish = קודח.",
+"tip": "fever – 'פיבר', נשמע כמו 'פיבר' (סיב) – כשיש חום כל הסיבים בגוף רועדים 🤒 = חום."
+},
+"folk": {
+"use": "כשם תואר: folk music / tale = עממי.\nכשם עצם ברבים: folks = אנשים / ההורים (בשיחה).\nfolklore = פולקלור."
+},
+"magical": {
+"use": "שם תואר: magical night / powers = קסום.\nmagic = קסם.\nmagically = כמו בקסם."
+},
+"blood vessel": {
+"use": "שם עצם ספיר: blood vessels = כלי דם.\nבהקשר רפואי.\nvessel = כלי."
+},
+"clever": {
+"use": "שם תואר: clever girl / idea = פיקח, חכם.\nבריטי יותר; באמריקאית: smart.\nclever at + דבר.",
+"tip": "clever – 'קלבר', נשמע כמו 'קליבר' – אדם בקליבר גבוה, פיקח 🧠 = פיקח."
+},
+"stroke#2": {
+"use": "שם עצם ספיר: have / suffer a stroke = לקבל שבץ.\nבהקשר רפואי.\nheart attack = התקף לב."
+},
+"continuous": {
+"use": "שם תואר: continuous noise / line = רציף, בלי הפסקה.\ncontinual = חוזר שוב ושוב (עם הפסקות).\ncontinuously = ברציפות."
+},
+"evaluation": {
+"use": "שם עצם: an evaluation of + עבודה / תוכנית.\nבהקשר של בית ספר, עבודה, מחקר.\nevaluate = להעריך."
+},
+"identical": {
+"use": "שם תואר: identical to / with + דבר.\nidentical twins = תאומים זהים.\nidentically = באופן זהה.",
+"tip": "identical – 'איידנטיקל', כמו 'ID' = תעודת זהות – זהה בדיוק 👯 = זהה."
+},
+"scientist": {
+"use": "שם עצם ספיר: a scientist = מדען.\nscience = מדע; scientific = מדעי.\nresearcher = חוקר."
+},
+"creator": {
+"use": "שם עצם ספיר: the creator of + יצירה.\nthe Creator = הבורא.\ncreate = ליצור.",
+"tip": "creator – create (ליצור, כמו 'קריאייטיב') + or = מי שיצר 🎨 = יוצר."
+},
+"criteria": {
+"use": "שם עצם ברבים: criteria for + דבר.\nהיחיד: criterion.\nmeet the criteria = לעמוד בקריטריונים."
+},
+"wealthy": {
+"use": "שם תואר: wealthy family / country = עשיר.\nרשמי יותר מ-rich.\nthe wealthy = העשירים."
+},
+"gradually": {
+"use": "תואר הפועל: לפני הפועל או בסוף.\n= לאט ובהדרגה.\ngradual = הדרגתי."
+},
+"relating": {
+"use": "relating to + נושא = הקשור ל- (רשמי).\nrelated to = קשור ל-."
+},
+"sink#0": {
+"use": "שם עצם ספיר: in the sink.\nkitchen / bathroom sink.\nsink = גם לשקוע.",
+"tip": "sink – 'סינק', נשמע כמו 'סינק' של מים שיורדים – הכיור שבו המים יורדים לביוב 🚰 = כיור."
+},
+"advocate#0": {
+"use": "פועל (AD-vo-kate): advocate + שם עצם / ing.\nלא advocate for בשימוש בריטי (באמריקאית מקובל) (רשמי)."
+},
+"poet": {
+"use": "שם עצם ספיר: a poet = משורר.\npoem = שיר; poetry = שירה.\npoetic = פואטי."
+},
+"slavery": {
+"use": "שם עצם לא ספיר: slavery = עבדות.\nabolish slavery = לבטל עבדות.\nslave = עבד."
+},
+"transaction": {
+"use": "שם עצם ספיר: a bank transaction = עסקה.\nבהקשר כספי.\nbusiness transaction."
+},
+"veteran#0": {
+"use": "שם עצם ספיר: a war veteran = יוצא צבא.\nבאמריקאית בקיצור: vet.\nVeterans Day."
+},
+"vulnerable": {
+"use": "שם תואר: vulnerable to + דבר = פגיע ל-.\nvulnerable groups = אוכלוסיות פגיעות.\nvulnerability = פגיעות."
+},
+"snap#0": {
+"use": "make it snappy = מהר! (סלנג).\nsnappy = מהיר / שנון.\nבשיחה בלבד."
+},
+"additionally": {
+"use": "תואר הפועל בתחילת משפט עם פסיק.\n= בנוסף (רשמי).\nin addition = מילה נרדפת."
+},
+"8th - eighth": {
+"use": "מספר סודר: the eighth + שם עצם.\nכתיב: eighth (gh + th).\nan eighth = שמינית."
+},
+"attract": {
+"use": "attract + אדם / חיה = למשוך.\nbe attracted to + אדם = נמשך ל-.\nattraction = משיכה / אטרקציה."
+},
+"communicate": {
+"use": "communicate with + אדם = לתקשר.\ncommunicate + מסר = להעביר.\ncommunication = תקשורת."
+},
+"pollution": {
+"use": "שם עצם לא ספיר: air / water pollution.\npollute = לזהם.\npolluted = מזוהם.",
+"tip": "pollution – 'פולושן', נשמע כמו 'פלוּשן' – אוויר 'פלוש' ומלוכלך מהמפעלים 🏭 = זיהום."
+},
+"resist": {
+"use": "resist + דבר / ing = להתנגד / לעמוד בפיתוי.\ncan't resist + ing = לא יכול להתאפק.\nresistance = התנגדות.",
+"tip": "resist – 'רזיסט', כמו 'רזיסטור' – רכיב שמתנגד לזרם ⚡ = להתנגד."
+},
+"demonstrate#0": {
+"use": "demonstrate against / for + דבר = להפגין.\ndemonstration = הפגנה.\nבהקשר פוליטי."
+},
+"opponent": {
+"use": "שם עצם ספיר: an opponent = יריב (במשחק, בבחירות).\nopponent of + רעיון = מתנגד.\noppose = להתנגד."
+},
+"privilege": {
+"use": "שם עצם: It's a privilege to + פועל = זכות.\nprivileged = מיוחס.\nבהקשר חברתי: privilege = זכויות יתר."
+},
+"flavor#1": {
+"use": "שם עצם ספיר: What flavor? = איזה טעם?\nבבריטית: flavour.\ntaste = טעם (חוש); flavor = טעם מסוים.",
+"tip": "flavor – 'פלייבור', נשמע כמו 'פלייבוי' – הגלידה עם הטעם הכי שובב 🍦 = טעם."
+},
+"tourist": {
+"use": "שם עצם ספיר: a tourist = תייר.\ntourist attraction = אטרקציה.\ntourism = תיירות."
+},
+"dealt": {
+"use": "deal – dealt – dealt.\ndealt with + בעיה = טיפל ב-.\ndealt the cards = חילק קלפים.",
+"tip": "dealt – 'דלט', deal (עסקה, 'דיל') בעבר – סגר את הדיל, טיפל בעניין 🤝 = טיפל, חילק."
+},
+"generous": {
+"use": "שם תואר: generous with + דבר / generous to + אדם.\ngenerous portion = מנה נדיבה.\ngenerosity = נדיבות.",
+"tip": "generous – 'ג'נרוס', נשמע כמו 'ג'נרל' – הגנרל הנדיב שמחלק לכולם 🎁 = נדיב."
+},
+"implement": {
+"use": "פועל (IM-ple-ment): implement + plan / law = ליישם.\nכשם עצם: an implement = כלי (חקלאי).\nimplementation = יישום."
+},
+"patience": {
+"use": "שם עצם לא ספיר: lose patience = לאבד סבלנות.\nhave patience with + אדם.\nאל תבלבלי: patients = מטופלים."
+},
+"dose": {
+"use": "שם עצם ספיר: a dose of + תרופה.\ndaily dose.\noverdose = מנת יתר."
+},
+"cloth#1": {
+"use": "שם עצם לא ספיר: cloth = בד (חומר).\nספיר: a cloth = מטלית.\nclothes = בגדים (משהו אחר!)."
+},
+"flip#0": {
+"use": "flip + דבר = להפוך (flip a pancake / coin).\nflip through + ספר = לדפדף.\nflip side = הצד השני.",
+"tip": "flip – 'פליפ', כמו 'פליפ-פלופ' (כפכפים) שמתהפכים בכל צעד 🩴 = להפוך."
+},
+"solely": {
+"use": "תואר הפועל: solely responsible = האחראי הבלעדי.\nרשמי; בשיחה: only.\nsole = יחיד."
+},
+"wrap": {
+"use": "wrap + דבר + in + חומר.\nwrap up = לעטוף / לסיים.\nכשם עצם: wrap = עטיפה / טורטייה.",
+"tip": "wrap – 'ראפ', כמו 'ראפ' בפלאפל – הטורטייה שעוטפת את המילוי 🌯 = לעטוף."
+},
+"cave": {
+"use": "שם עצם ספיר: a cave = מערה.\ncaveman = איש מערות.\ncave in = לקרוס."
+},
+"beside": {
+"use": "מילת יחס: beside + אדם / דבר = ליד.\nאל תבלבלי: besides = חוץ מ-.\nbeside the point = לא שייך לעניין."
+},
+"lobby#1": {
+"use": "lobby + גוף פוליטי + for + דבר = לשדל.\nlobbyist = לוביסט.\nבהקשר פוליטי."
+},
+"distant": {
+"use": "שם תואר: distant place / past = רחוק.\nעל אדם: distant = מרוחק, קר.\ndistance = מרחק."
+},
+"bacteria": {
+"use": "שם עצם ברבים: bacteria are.\nהיחיד: bacterium (נדיר).\nbacterial infection."
+},
+"coin": {
+"use": "שם עצם ספיר: a coin = מטבע מתכת.\nflip a coin = להטיל מטבע.\ncurrency = מטבע (של מדינה)."
+},
+"destiny": {
+"use": "שם עצם: destiny = גורל.\nfate = גורל (לרוב שלילי); destiny = גורל גדול.\ndestined to = נועד ל-.",
+"tip": "destiny – 'דסטיני', כמו destination (יעד) – היעד שהחיים מובילים אליו 🔮 = גורל."
+},
+"widespread": {
+"use": "שם תואר: widespread fear / use = נפוץ מאוד.\nבא לפני שם עצם (רשמי)."
+},
+"adopt": {
+"use": "adopt + ילד = לאמץ.\nadopt + רעיון / שיטה = לאמץ.\nadoption = אימוץ."
+},
+"emotion": {
+"use": "שם עצם: show / hide emotion.\nemotional = רגשי / נרגש.\nfeeling = רגש (שיחתי)."
+},
+"qualify": {
+"use": "qualify for + תחרות / הטבה = להעפיל, להיות זכאי.\nqualified = מוסמך.\nqualification = הסמכה."
+},
+"cargo": {
+"use": "שם עצם לא ספיר: cargo = מטען של ספינה / מטוס.\ncargo ship (בלי a)."
+},
+"commentary": {
+"use": "שם עצם: commentary on + אירוע.\nsports commentary = שידור עם פרשנות.\ncommentator = פרשן."
+},
+"confusion": {
+"use": "שם עצם לא ספיר: confusion about / over + דבר.\nin confusion = בבלבול.\nconfused = מבולבל."
+},
+"preserve": {
+"use": "preserve + בניין / טבע / אוכל = לשמר.\npreserved = משומר.\npreservation = שימור."
+},
+"respective": {
+"use": "שם תואר לפני שם עצם ברבים: their respective homes = כל אחד לבית שלו (רשמי).\nrespectively = בהתאמה."
+},
+"insight": {
+"use": "שם עצם: insight into + נושא.\nספיר או לא ספיר.\ninsightful = בעל תובנה."
+},
+"namely#1": {
+"use": "namely + פירוט, אחרי פסיק.\n= כלומר, ובמיוחד.\nבא אחרי ציון קבוצה, ואז שמות."
+},
+"trace#0": {
+"use": "trace + שיחה / מקור = לאתר.\ntrace back to = לייחס למקור.\ntrace = גם להעתיק ציור.",
+"tip": "trace – 'טרייס', כמו 'טרק' – לעקוב אחרי המסלול 👣 = לאתר."
+},
+"boot": {
+"use": "שם עצם ספיר: a pair of boots = זוג מגפיים.\nבבריטית: boot = תא מטען.\nboot up = להפעיל מחשב."
+},
+"excitement": {
+"use": "שם עצם לא ספיר: with excitement.\nexcitement about + דבר.\nexciting = מרגש; excited = נרגש."
+},
+"raid": {
+"use": "כשם עצם: a police raid / air raid.\nכפועל: raid + מקום = לפשוט על.\nraid the fridge = לפשוט על המקרר."
+},
+"blade": {
+"use": "שם עצם ספיר: the blade of a knife.\nrazor blade = סכין גילוח.\nblade of grass = עלה דשא.",
+"tip": "blade – 'בלייד', נשמע כמו 'בלייד' בסרטי ערפדים – לוחם עם להבים 🗡 = להב."
+},
+"accessible": {
+"use": "שם תואר: accessible to / for + אדם.\nwheelchair accessible.\naccess = גישה."
+},
+"assignment": {
+"use": "שם עצם ספיר: a homework assignment.\non assignment = במשימה (עיתונאי).\nassign = להטיל."
+},
+"bare#0": {
+"use": "שם תואר: bare feet / hands = חשוף.\nthe bare minimum = המינימום הנדרש.\nbarefoot = יחף."
+},
+"restore": {
+"use": "restore + בניין / סדר = לשקם, להשיב.\nrestore to + מצב.\nrestoration = שיקום."
+},
+"sink#1": {
+"use": "sink – sank – sunk.\nThe ship sank = הספינה טבעה.\nsink in = לחלחל (להבין)."
+},
+"significance": {
+"use": "שם עצם לא ספיר: the significance of + דבר.\nof great significance.\nsignificant = משמעותי."
+},
+"advocate#1": {
+"use": "שם עצם ספיר (AD-vo-kit): an advocate for + עניין = תומך, פעיל.\nבסקוטלנד: advocate = עורך דין.\ndevil's advocate = פרקליט השטן."
+},
+"collapse": {
+"use": "פועל בלי מושא: The bridge collapsed.\ncollapse = גם להתעלף.\nכשם עצם: the collapse of + דבר."
+},
+"nominated": {
+"use": "be nominated for + פרס / תפקיד.\nnomination = מועמדות.\nnominee = מועמד."
+},
+"unnecessary": {
+"use": "שם תואר: unnecessary things / risk.\nIt's unnecessary to + פועל.\nהפך: necessary."
+},
+"conscious": {
+"use": "שם תואר: conscious = בהכרה.\nconscious of + דבר = מודע ל-.\nconsciousness = הכרה."
+},
+"veteran#1": {
+"use": "שם תואר לפני שם עצם: veteran teacher / player = ותיק ומנוסה.\nכשם עצם: a veteran of + תחום.\nבהשאלה מחייל משוחרר."
+},
+"acknowledge": {
+"use": "acknowledge + דבר / that + משפט = להודות, להכיר ב-.\nacknowledge + מכתב = לאשר קבלה.\nacknowledgment = הכרה."
+},
+"rival": {
+"use": "שם עצם ספיר: a rival = יריב.\nכשם תואר: rival teams.\nrivalry = יריבות."
+},
+"snap#1": {
+"use": "snap = להישבר בבת אחת עם קול.\nsnap at + אדם = להתפרץ על.\nsnap your fingers = להקיש באצבעות."
+},
+"tropical": {
+"use": "שם תואר: tropical fruit / climate / island.\nthe tropics = האזורים הטרופיים.\nבהקשר גאוגרפי."
+},
+"examine": {
+"use": "examine + אדם / דבר = לבדוק בקפידה.\nרשמי יותר מ-check.\nexamination = בדיקה."
+},
+"grain#0": {
+"use": "שם עצם: לא ספיר – grain = תבואה (wheat, rice).\nספיר: a grain of sand / rice = גרגר.\nwhole grain = דגן מלא.",
+"tip": "grain – 'גריין', נשמע כמו 'גרעין' – גרעיני חיטה ותבואה 🌾 = תבואה."
+},
+"knees": {
+"use": "שם עצם ברבים: on my knees = על הברכיים.\nה-k לא נשמעת: 'ניז'.\nkneel = לכרוע."
+},
+"spray": {
+"use": "כפועל: spray + נוזל + on + דבר.\nכשם עצם: a spray = תרסיס.\nhairspray = ספריי לשיער."
+},
+"cancel": {
+"use": "cancel + פגישה / טיסה / הזמנה.\ncanceled (אמריקאית) / cancelled (בריטית).\ncancellation = ביטול."
+},
+"carpet": {
+"use": "שם עצם ספיר: a carpet = שטיח מקיר לקיר.\nrug = שטיח קטן.\nred carpet.",
+"tip": "carpet – 'קרפט', נשמע כמו 'קרפדה' שיושבת על השטיח 🐸 = שטיח."
+},
+"demonstrate#1": {
+"use": "demonstrate + דבר / how + משפט = להדגים.\ndemonstration = הדגמה.\nבהקשר של לימוד ומדע."
+},
+"garbage": {
+"use": "שם עצם לא ספיר (אמריקאית): garbage = זבל.\ntake out the garbage.\nבבריטית: rubbish."
+},
+"liver": {
+"use": "שם עצם ספיר: the liver = הכבד.\nגם כאוכל: chicken liver.\nאיבר בגוף."
+},
+"swept away": {
+"use": "sweep – swept – swept.\nbe swept away by + מים / רגש.\nבהשאלה: swept away = נסחף ברגש."
+},
+"simultaneously": {
+"use": "תואר הפועל: happen simultaneously = בו זמנית.\nרשמי; בשיחה: at the same time.\nsimultaneous = בו זמני."
+},
+"contrary": {
+"use": "contrary to + דבר = בניגוד ל-.\non the contrary = להפך (רשמי)."
+},
+"artistic": {
+"use": "שם תואר: artistic talent / family.\nartist = אמן; art = אמנות.\nartistically = באופן אמנותי."
+},
+"colonial": {
+"use": "שם תואר: colonial buildings / rule.\ncolony = מושבה.\nבהקשר היסטורי."
+},
+"decrease#0": {
+"use": "שם עצם (DEE-crease): a decrease in + דבר.\nכפועל (dee-CREASE) = לרדת / להפחית.\nההפך: increase."
+},
+"partial": {
+"use": "שם תואר: partial answer / success = חלקי.\npartial to + דבר = מחבב.\npartially = חלקית."
+},
+"flip#1": {
+"use": "שם עצם ספיר: do a flip = לעשות סלטה.\nbackflip = סלטה לאחור.\nבספורט ובהתעמלות."
+},
+"resolve#0": {
+"use": "be resolved to + פועל = נחוש.\nכשם עצם: resolve = נחישות (רשמי).",
+"tip": "resolve – 're' + 'solve' (לפתור) – פתר בנחישות להשיג את המטרה 💪 = נחוש."
+},
+"defeated": {
+"use": "שם תואר / בינוני: the defeated team.\nfeel defeated = להרגיש מובס.\ndefeat = להביס."
+},
+"gentle": {
+"use": "שם תואר: gentle with + אדם.\ngentle breeze = משב קל.\ngently = בעדינות."
+},
+"lens": {
+"use": "שם עצם ספיר: a lens / lenses.\ncontact lenses.\nבמצלמה: camera lens.",
+"tip": "lens – 'לנס', כמו 'עדשה' של מצלמה – Google Lens שמזהה דרך העדשה 🔍 = עדשה."
+},
+"substitute": {
+"use": "substitute + A + for + B = להשתמש ב-A במקום B (שימו לב לסדר!).\nכשם עצם: a substitute for + דבר.\nsubstitute teacher = מורה מחליף."
+},
+"notion#0": {
+"use": "שם עצם ספיר: the notion of / that + משפט.\nhave no notion of = אין לי מושג (רשמי)."
+},
+"reflection": {
+"use": "שם עצם ספיר: reflection in + מראה / מים.\nגם הרהור: on reflection = במחשבה שנייה.\nreflect = לשקף."
+},
+"genre": {
+"use": "שם עצם ספיר: a genre of + מוזיקה / ספרות.\nמבטאים 'ז'אנרה'.\nfavorite genre."
+},
+"surveillance": {
+"use": "שם עצם לא ספיר: under surveillance = תחת מעקב.\nsurveillance camera (רשמי)."
+},
+"loyalty": {
+"use": "שם עצם לא ספיר: loyalty to + אדם / קבוצה.\nloyalty card = כרטיס מועדון.\nloyal = נאמן."
+},
+"propaganda": {
+"use": "שם עצם לא ספיר: war / political propaganda (בלי a).\nבדרך כלל שלילי."
+},
+"rat": {
+"use": "שם עצם ספיר: a rat = עכברוש (גדול מ-mouse).\nבהשאלה: rat = בוגד, מלשין.\nsmell a rat = לחשוד."
+},
+"treasure": {
+"use": "שם עצם: buried treasure = אוצר.\nכפועל: treasure + דבר = להוקיר.\ntreasure hunt = ציד מטמון.",
+"tip": "treasure – 'טרז'ר', נשמע כמו 'טרזן' שמצא אוצר בג'ונגל 💰 = אוצר."
+},
+"unfair": {
+"use": "שם תואר: unfair to / on + אדם.\nIt's unfair that + משפט.\nההפך: fair."
+},
+"moreover": {
+"use": "תואר הפועל בתחילת משפט עם פסיק.\n= יתר על כן (רשמי).\nבשיחה: besides / also."
+},
+"acceptance": {
+"use": "שם עצם לא ספיר: acceptance of + דבר.\nacceptance letter = מכתב קבלה.\naccept = לקבל.",
+"tip": "acceptance – accept (לקבל, כמו כפתור Accept) + ance = קבלה ✅."
+},
+"react": {
+"use": "react to + דבר = להגיב ל-.\nreact against = להגיב נגד.\nreaction = תגובה."
+},
+"annually": {
+"use": "תואר הפועל: annually = פעם בשנה.\nannual = שנתי.\nרשמי; בשיחה: every year."
+},
+"warrior": {
+"use": "שם עצם ספיר: a warrior = לוחם (ספרותי, היסטורי).\nבשפה צבאית רגילה: soldier.\nwar = מלחמה."
+},
+"trace#1": {
+"use": "שם עצם ספיר: leave no trace = לא להשאיר עקבות.\ntraces of + חומר = שאריות.\nwithout a trace = בלי עקבות.",
+"tip": "trace – 'טרייס', נשמע כמו 'טרייס' (עקבה) – סימני צמיגים שנשארו על הכביש 👣 = עקבה."
+},
+"creature": {
+"use": "שם עצם ספיר: a creature = יצור.\nsea creatures = יצורים ימיים.\ncreate = ליצור."
+}
+}
