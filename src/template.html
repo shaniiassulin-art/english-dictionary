@@ -444,15 +444,19 @@ const SET=50;
    showing the others. Sibling cards are spread ~one group (50) apart so they never come one after another. */
 /* optional 5th field {id, src}: an English form split out of a dictionary line ("know, knew" -> know / knew); src = old card ids its marks come from */
 const RAW=D.map(r=>({e:r[0],h:r[1],l:r[2],s:r[3],uid:(r[4]&&r[4].id)||r[0],src:r[4]&&r[4].src}));
-/* private-lesson lists (src/private.json): their own section, "level" 11, one group per list; card id "p<list>|<english>" */
-const PRIV=__PRIVATE__,PL=11;
-PRIV.lists.forEach(L=>L.w.forEach(([e,h,s])=>RAW.push({e,h:[h],l:PL,s,uid:'p'+L.n+'|'+e,list:L.n})));
+/* private-lesson lists (src/private.json): their own section, "level" 11, one group per list.
+   They are this week's own copies: card id "pw<week>|<list>|<english>", so their ✓/✗ marks are separate from the
+   dictionary words and start fresh every week. Extras stay keyed "p<list>|<english>" (xid). */
+const PRIV=__PRIVATE__,PL=11,PWK=PRIV.week||'';
+PRIV.lists.forEach(L=>L.w.forEach(([e,h,s])=>RAW.push({e,h:[h],l:PL,s,uid:'pw'+PWK+'|'+L.n+'|'+e,xid:'p'+L.n+'|'+e,list:L.n})));
 const words=[];
 for(let l=1;l<=10;l++){const prim=RAW.filter(r=>r.l===l),Np=prim.length||1,items=[];
   prim.forEach((r,p)=>{const n=r.h.length;r.h.forEach((m,k)=>items.push({key:k?((p+k*SET)%Np)+k*.01+.001:p,
     w:{id:n>1?r.uid+'#'+k:r.uid,src:r.src&&r.src[k],e:r.e,h:[m],others:r.h.filter((_,j)=>j!==k),l:r.l,s:Array.isArray(r.s)?(r.s[k]||r.s[0]):r.s}}))});
   items.sort((a,b)=>a.key-b.key);items.forEach(it=>words.push(it.w))}
-RAW.filter(r=>r.l===PL).forEach(r=>words.push({id:r.uid,e:r.e,h:r.h,others:[],l:PL,s:r.s,list:r.list}));
+RAW.filter(r=>r.l===PL).forEach(r=>words.push({id:r.uid,xid:r.xid,e:r.e,h:r.h,others:[],l:PL,s:r.s,list:r.list}));
+/* the dictionary without the private lesson: main-screen counts, search and quizzes */
+const DW=words.filter(w=>w.l!==PL);
 /* the same English word can come from separate dictionary lines (spring: מעיין, אביב / קפיץ, לקפוץ):
    every card shows all the other meanings of that English word */
 {const all={};RAW.forEach(r=>{if(r.l===PL)return;const k=r.e.toLowerCase();(all[k]=all[k]||[]).push(...r.h)});
@@ -470,19 +474,19 @@ function xlines(t,tip){const s=String(t);const raw=(tip?s.replace(/(\.)\s+(?=\S)
 function xuse(t){const L=String(t).split('\n').map(x=>x.trim().replace(/^\d+[.)]\s*/,'')).filter(Boolean);
   return '<ol class="num">'+L.map(x=>'<li>'+esc(x).replace(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/g,'<bdi>$1</bdi>')+'</li>').join('')+'</ol>'}
 function xfmt(t,tip){return '<ul>'+xlines(t,tip).map(x=>'<li>'+esc(x).replace(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/g,'<bdi>$1</bdi>')+'</li>').join('')+'</ul>'}
-function xtras(w){const x=EXTRA[w.id]||{},o=XO[w.id];
+function xtras(w){const x=EXTRA[w.xid||w.id]||{},o=XO[w.id];
   const b=(k,l)=>`<button class="xbtn" data-xt="${k}" data-xid="${esc(w.id)}" aria-expanded="${o===k}">${l}</button>`;
   let h=`<div class="xwrap" data-xw="${esc(w.id)}"><div class="xtras">${x.tip?b('tip','💡 טיפ לזכירה'):''}${x.use?b('use','📌 דגשים'):''}</div>`;
   if(o==='tip'&&x.tip)h+=`<div class="xbox"><h4>💡 טיפ לזכירה</h4>${xfmt(x.tip,1)}</div>`;
   if(o==='use'&&x.use)h+=`<div class="xbox"><h4>📌 דגשים</h4>${xuse(x.use)}</div>`;
   return h+'</div>'}
 /* quiz, after בדיקה: tip and usage notes shown in full, no buttons */
-function xfull(w){const x=EXTRA[w.id]||{};let h='';
+function xfull(w){const x=EXTRA[w.xid||w.id]||{};let h='';
   if(x.tip)h+=`<div class="xbox"><h4>💡 טיפ לזכירה</h4>${xfmt(x.tip,1)}</div>`;
   if(x.use)h+=`<div class="xbox"><h4>📌 דגשים</h4>${xuse(x.use)}</div>`;
   return h?`<div class="xfull">${h}</div>`:''}
 /* Hebrew translation of the example sentence, behind a small button */
-function trPart(w){const tr=(EXTRA[w.id]||{}).tr;return tr?`<button class="trbtn" data-tr="1">תרגום לעברית</button><span class="trans" hidden>${esc(tr)}</span>`:''}
+function trPart(w){const tr=(EXTRA[w.xid||w.id]||{}).tr;return tr?`<button class="trbtn" data-tr="1">תרגום לעברית</button><span class="trans" hidden>${esc(tr)}</span>`:''}
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-xt]');
   if(b){const id=b.dataset.xid,k=b.dataset.xt,wrap=b.closest('[data-xw]');XO[id]=XO[id]===k?null:k;
@@ -511,8 +515,10 @@ function migrateMist(m){const o={};(m||[]).forEach(id=>o[id]=['n',1]);return o}
 let KNOW=null;try{KNOW=JSON.parse(localStorage.getItem('dictKnow')||'null')}catch(e){}
 if(!KNOW){let m=[];try{m=JSON.parse(localStorage.getItem('dictMist')||'[]')}catch(e){}KNOW=migrateMist(m)}
 const saveKnow=()=>{try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){};dirty()};
-/* a mark saved for a whole word before it was split into cards carries over to each of its cards */
-words.forEach(w=>{if(w.id!==w.e&&KNOW[w.e]&&!KNOW[w.id])KNOW[w.id]=KNOW[w.e].slice()});
+/* once: marks made on the private-lesson cards before they got weekly ids (p<list>|<word>) move to this week's copies */
+if(!LS.get('dictPmig1')){let ch=false;words.filter(w=>w.l===PL).forEach(w=>{const o=KNOW[w.xid];if(o&&!KNOW[w.id]){KNOW[w.id]=o;ch=true}});LS.set('dictPmig1','1');if(ch)saveKnow()}
+/* a mark saved for a whole word before it was split into cards carries over to each of its cards (dictionary only: private-lesson cards never take dictionary marks) */
+words.forEach(w=>{if(w.l!==PL&&w.id!==w.e&&KNOW[w.e]&&!KNOW[w.id])KNOW[w.id]=KNOW[w.e].slice()});
 /* project was split from 2 meanings into 3 (לתכנן / פרוייקט became two): move the old marks once */
 try{if(!LS.get('migProject3')){if(KNOW['project#1']&&!KNOW['project#2']){KNOW['project#2']=KNOW['project#1'];if(KNOW['project#0'])KNOW['project#1']=KNOW['project#0'].slice();else delete KNOW['project#1'];try{saveKnow()}catch(e){}}LS.set('migProject3','1')}}catch(e){}
 /* meanings split later (Oct 2026): old card k -> new cards, moved once */
@@ -525,10 +531,10 @@ migSplit('migSplit2',{mind:{0:[0],1:[1,2]},position:{0:[0,1],1:[2]}});
 migSplit('migSplit3',{post:{0:[0,1],1:[2,3],2:[4,5],3:[6]}});
 migSplit('migSplit4',{"record":{"0":[0],"1":[1],"2":[2,3]},"range":{"0":[0,1],"1":[2]},"rule":{"0":[0],"1":[1,2],"2":[3]},"stock":{"0":[0,1],"1":[2]},"master":{"0":[0],"1":[1,2],"2":[3]},"score":{"0":[0],"1":[1,2]},"treat":{"0":[0],"1":[1,2],"2":[3]},"exercise":{"0":[0,1],"1":[2]},"abuse":{"0":[0,1],"1":[2,3]},"decline":{"0":[0,1],"1":[2]},"flip":{"0":[0,1],"1":[2]},"grasp":{"0":[0,1],"1":[2]}});
 /* a form split out of a dictionary line keeps the mark of the card it came from */
-words.forEach(w=>{if(!w.src||KNOW[w.id])return;const b=w.src.replace(/#\d+$/,'');
+words.forEach(w=>{if(w.l===PL||!w.src||KNOW[w.id])return;const b=w.src.replace(/#\d+$/,'');
   const o=KNOW[w.src]||KNOW[b]||Object.keys(KNOW).filter(k=>k.startsWith(b+'#')).map(k=>KNOW[k]).sort((a,c)=>c[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()});
 /* a word that went back to one meaning keeps the newest mark of its former meaning cards */
-words.forEach(w=>{if(w.id===w.e&&!KNOW[w.id]){const o=Object.keys(KNOW).filter(k=>k.startsWith(w.e+'#')).map(k=>KNOW[k]).sort((a,b)=>b[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()}});
+words.forEach(w=>{if(w.l!==PL&&w.id===w.e&&!KNOW[w.id]){const o=Object.keys(KNOW).filter(k=>k.startsWith(w.e+'#')).map(k=>KNOW[k]).sort((a,b)=>b[1]-a[1])[0];if(o)KNOW[w.id]=o.slice()}});
 try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
 const kst=w=>{const v=(KNOW[w.id]||[])[0];return v==='y'||v==='n'?v:undefined};
 const isY=w=>kst(w)==='y', isN=w=>kst(w)==='n';
@@ -696,9 +702,9 @@ function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(
   </div>`;
   $('bk').onclick=()=>go({screen:'home'})}
 function home(){
-  const k=words.filter(known).length;
+  const k=DW.filter(known).length;
   app.innerHTML=`<div class="screen">
-    <div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${words.length.toLocaleString()} פירושים לתרגול · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
+    <div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים לתרגול · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
@@ -708,13 +714,13 @@ function home(){
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
       return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}${(()=>{const mk=ws.filter(x=>kst(x)).length;return mk&&mk<ws.length?` · לא סומנו ${ws.length-mk}`:''})()}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
-    ${quizPanel('ALL',words,'בוחן על כל המילים','כל המילים','home')}
-    ${catPanel('ALL',words)}
+    ${quizPanel('ALL',DW,'בוחן על כל המילים','כל המילים','home')}
+    ${catPanel('ALL',DW)}
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
   $('today').onclick=()=>go({screen:'days'});
-  bindSearch(words);bindSettings();bindQuizPanel('ALL',words,'כל המילים','home');bindCatPanel('ALL',words,'כל המילים','home');
+  bindSearch(DW);bindSettings();bindQuizPanel('ALL',DW,'כל המילים','home');bindCatPanel('ALL',DW,'כל המילים','home');
 }
 
 function countLine(ws){const y=ws.filter(isY).length,n=ws.filter(isN).length;
@@ -727,20 +733,21 @@ function level(){
     <div><h2>${lvFull(S.l)}</h2><p class="sub">${countLine(ws)}</p></div>
     ${S.l===PL?sentBtn():''}
     ${searchBox()}
-    ${quizPanel('L'+S.l,ws,S.l===PL?'בוחן על כל המילים':'בוחן על כל הרמה',lvName(S.l),'level')}
-    ${catPanel('L'+S.l,ws)}
+    ${quizPanel(lkey(S.l),ws,S.l===PL?'בוחן על כל המילים':'בוחן על כל הרמה',lvName(S.l),'level')}
+    ${catPanel(lkey(S.l),ws)}
     <button class="btn secondary" id="list">${S.l===PL?'כל המילים':'רשימת המילים ברמה'} · סימון ✓ / ✗</button>
     <p class="lbl">${S.l===PL?'או תרגול לפי רשימה':'או תרגול לפי קבוצות של 50 מילים'}</p>
     <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
       return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">${gName(S.l,g)}</span><br><span class="d">${S.l===PL?gw.length+' מילים · ':''}${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
-  bindSettings();bindQuizPanel('L'+S.l,ws,lvName(S.l),'level');bindCatPanel('L'+S.l,ws,lvName(S.l),'level');const sb=$('sentGo');if(sb)sb.onclick=()=>go({screen:'sent'});
+  bindSettings();bindQuizPanel(lkey(S.l),ws,lvName(S.l),'level');bindCatPanel(lkey(S.l),ws,lvName(S.l),'level');const sb=$('sentGo');if(sb)sb.onclick=()=>go({screen:'sent'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'level'});bindSearch(ws);
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
 
-const gkey=()=>S.l===PL?'GP'+(PRIV.lists[S.g]||{}).n:'G'+S.l+'-'+S.g;
+const gkey=()=>S.l===PL?'GP'+PWK+'-'+(PRIV.lists[S.g]||{}).n:'G'+S.l+'-'+S.g;
+const lkey=l=>l===PL?'LP'+PWK:'L'+l;
 const HOME='<button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
 /* search by English word or Hebrew meaning */
 const snorm=s=>String(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').replace(/[-־'"״׳.,;:()\/]/g,' ').replace(/\s+/g,' ').trim();
