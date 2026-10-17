@@ -89,7 +89,7 @@
 },
 "fisherman": {
 "use": "דייג.",
-"tip": "fish + er + man 🎣."
+"tip": "fish (דג) + er + man = האיש שדג 🎣."
 },
 "folklore": {
 "use": "פולקלור: local folklore.",
@@ -401,7 +401,7 @@
 },
 "solitude": {
 "use": "בדידות (נעימה), התבודדות: enjoy the solitude.",
-"tip": "solo = לבד."
+"tip": "solo = לבד.\nsolitude = שקט של לבד 🧘."
 },
 "betray": {
 "use": "לבגוד: betray a friend.\nbetrayal = בגידה.",
@@ -417,7 +417,7 @@
 },
 "devoid": {
 "use": "devoid of = חסר, נטול.",
-"tip": "void = ריק."
+"tip": "void = ריק.\ndevoid of = ריק מ-."
 },
 "unconventional": {
 "use": "לא שגרתי: unconventional ideas.",

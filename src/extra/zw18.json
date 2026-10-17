@@ -225,7 +225,7 @@
 },
 "skinned": {
 "use": "בעל עור (בצירופים): dark-skinned.\nגם פשט עור.",
-"tip": "skin = עור."
+"tip": "skin = עור.\ndark-skinned = כהה עור."
 },
 "dagger": {
 "use": "פגיון.",
@@ -317,7 +317,7 @@
 },
 "shelf (shelves)|shelves": {
 "use": "מדפים (רבים של shelf).",
-"tip": "shelf → shelves 📚."
+"tip": "shelf → shelves: ה-f הופכת ל-ves 📚."
 },
 "weave": {
 "use": "לארוג: weave baskets.\nweave – wove – woven.",

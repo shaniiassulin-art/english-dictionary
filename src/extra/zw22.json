@@ -1,0 +1,482 @@
+{
+"uproar": {
+"use": "מהומה, סערה ציבורית: caused an uproar.",
+"tip": "up + roar (שאגה) = שאגה שעולה מהקהל 📢."
+},
+"cockroach": {
+"use": "ג'וק, מקק.\nבקיצור: roach.",
+"tip": "cockroach – 'קוקרוץ'', הג'וק שרץ במטבח 🪳."
+},
+"reigned": {
+"use": "מלך, שלט: reigned for forty years.",
+"tip": "reign – 'ריין', שלטון של מלך 👑."
+},
+"deteriorate": {
+"use": "להידרדר: His health deteriorated.",
+"tip": "deteriorate – 'דיטיריורייט', כמו 'דטריורציה' = הידרדרות."
+},
+"unimaginable": {
+"use": "בלתי נתפס: unimaginable pain.",
+"tip": "un + imagine + able = שאי אפשר לדמיין."
+},
+"proponent": {
+"use": "תומך, מצדד: a proponent of free education.",
+"tip": "pro (בעד) + ponent = מי שבעד."
+},
+"grievance": {
+"use": "תלונה, טענה: the workers have a grievance.",
+"tip": "grieve = להתאבל, לכאוב: מה שכואב לך."
+},
+"incline#0": {
+"use": "שיפוע, מעלה: a steep incline.",
+"tip": "in + cline (נטייה) = נטייה למעלה."
+},
+"overwhelm": {
+"use": "להציף, להכריע: The work overwhelmed her.\noverwhelming = מכריע, מציף.",
+"tip": "over + whelm (גל) = גל שמכסה אותך 🌊."
+},
+"caviar": {
+"use": "קוויאר.",
+"tip": "caviar = 'קוויאר' 🐟."
+},
+"reincarnation": {
+"use": "גלגול נשמות.",
+"tip": "re (שוב) + in + carn (בשר) = לחזור לבשר."
+},
+"refute": {
+"use": "להפריך: refute a claim.",
+"tip": "refute – 'ריפיוט', להוכיח שזה לא נכון."
+},
+"avert#0": {
+"use": "להסיט (מבט): avert your eyes.",
+"tip": "a + vert (לסובב) = לסובב הצידה."
+},
+"decipher": {
+"use": "לפענח: decipher handwriting.",
+"tip": "de + cipher (צופן) = לפתוח צופן 🔐."
+},
+"proverb": {
+"use": "פתגם: an old proverb.",
+"tip": "pro + verb (מילה) = מילים שחוזרות על עצמן."
+},
+"furnish": {
+"use": "לרהט: furnish a room.\nfurnished = מרוהט.",
+"tip": "furniture = רהיטים 🛋."
+},
+"innovate": {
+"use": "לחדש: Companies must innovate.\ninnovation = חדשנות.",
+"tip": "nova = חדש.\ninnovation = 'אינובציה'."
+},
+"mediate": {
+"use": "לגשר, לתווך: mediate between two sides.",
+"tip": "media = אמצע.\nmediator = מגשר."
+},
+"hegemony": {
+"use": "הגמוניה, שליטה.",
+"tip": "hegemony = 'הגמוניה'."
+},
+"scorn#0": {
+"use": "בוז; לבוז.",
+"tip": "scorn – 'סקורן', להסתכל מלמעלה."
+},
+"staunch#1": {
+"use": "נאמן ואיתן: a staunch supporter.",
+"tip": "staunch – 'סטונץ'', כמו stand = עומד איתן."
+},
+"upheaval": {
+"use": "טלטלה, מהפך: a great upheaval.",
+"tip": "up + heave (להרים) = להרים הכול באוויר."
+},
+"confer#1": {
+"use": "להעניק (תואר, כבוד): confer a degree on.",
+"tip": "confer = לתת."
+},
+"denominator": {
+"use": "מכנה: common denominator.",
+"tip": "denominator – 'דנומינייטור', החלק שמתחת לקו בשבר."
+},
+"inferred": {
+"use": "הסיק: We inferred that he was angry.",
+"tip": "infer = להסיק."
+},
+"delinquent#0": {
+"use": "מוזנח, בפיגור (תשלום).",
+"tip": "delinquent – 'דלינקוונט', שלא עשה מה שצריך."
+},
+"sprang": {
+"use": "עבר של spring (לזנק): spring – sprang – sprung.",
+"tip": "sprang – 'ספרנג', זינק כמו קפיץ."
+},
+"figurative": {
+"use": "מושאל, ציורי: a figurative phrase.\nההפך: literal.",
+"tip": "figure = דמות, ציור: שפה ציורית."
+},
+"jagged": {
+"use": "משונן, חד: jagged edges.",
+"tip": "jagged – 'ג'אגד', כמו קצה של סכין משוננת."
+},
+"renown": {
+"use": "מוניטין, פרסום: of great renown.\nrenowned = מפורסם.",
+"tip": "re + nown (שם, noun) = שם גדול."
+},
+"exhale": {
+"use": "לנשוף: inhale, then exhale.",
+"tip": "ex (החוצה) + hale (לנשום)."
+},
+"frugal": {
+"use": "חסכן: frugal with money.",
+"tip": "frugal – 'פרוגל', מסתפק במועט."
+},
+"loathe": {
+"use": "לתעב: loathe cold weather.",
+"tip": "loathe – 'לוד'', שנאה עזה."
+},
+"rebuttal": {
+"use": "הפרכה: a strong rebuttal.",
+"tip": "rebut = להדוף טענה."
+},
+"slant#1": {
+"use": "הטיה, נטייה: a political slant.",
+"tip": "slant = שיפוע: כשחדשות 'נוטות' לצד אחד."
+},
+"oblige": {
+"use": "לחייב: feel obliged to.",
+"tip": "obligation = חובה."
+},
+"rearing": {
+"use": "גידול (ילדים, חיות).",
+"tip": "rear = לגדל."
+},
+"transcend": {
+"use": "להתעלות מעל: Music transcends language.",
+"tip": "trans (מעבר) + scend (לטפס) = לטפס מעבר."
+},
+"phobia": {
+"use": "פוביה: a phobia of spiders.",
+"tip": "phobia = 'פוביה' 😱."
+},
+"flimsy": {
+"use": "רעוע, דק: a flimsy table / excuse.",
+"tip": "flimsy – 'פלימזי', משהו שמתנדנד ונשבר."
+},
+"impart": {
+"use": "להקנות, להעביר: impart knowledge.",
+"tip": "im + part (חלק) = לתת חלק ממה שיש לך."
+},
+"resumption": {
+"use": "חידוש: resumption of talks.",
+"tip": "resume = להמשיך."
+},
+"consonant": {
+"use": "עיצור (b, c, d...).\nvowel = תנועה.",
+"tip": "con (עם) + sonant (צליל): נשמע רק עם תנועה."
+},
+"circulate#1": {
+"use": "להפיץ: circulate news.",
+"tip": "circulation = תפוצה של עיתון."
+},
+"resourceful": {
+"use": "בעל תושייה.",
+"tip": "resource = משאב: יודע למצוא משאבים."
+},
+"certify": {
+"use": "לאשר רשמית: certify that.",
+"tip": "certificate = תעודה 📜."
+},
+"repressive": {
+"use": "מדכא: a repressive regime.",
+"tip": "repress = לדכא."
+},
+"tact": {
+"use": "טקט: handle with tact.\ntactful = טקטי.",
+"tip": "tact = 'טקט', רגישות במגע (contact)."
+},
+"humiliate": {
+"use": "להשפיל: humiliate in public.\nhumiliation = השפלה.",
+"tip": "humble = ענו: להפוך מישהו לקטן."
+},
+"shingles": {
+"use": "רעפים; גם שלבקת חוגרת.",
+"tip": "shingle – 'שינגל', רעף על הגג."
+},
+"unify": {
+"use": "לאחד: unify the country.",
+"tip": "uni = אחד.\nunify = להפוך לאחד."
+},
+"compress": {
+"use": "לדחוס: compress a file.",
+"tip": "com + press (ללחוץ) = ללחוץ יחד 🗜."
+},
+"omit": {
+"use": "להשמיט: omit the last sentence.",
+"tip": "omit – 'אומיט', להשאיר בחוץ."
+},
+"steamship": {
+"use": "ספינת קיטור.",
+"tip": "steam (קיטור) + ship (ספינה) 🚢."
+},
+"abstain": {
+"use": "abstain from = להימנע מ-.",
+"tip": "abs (הרחק) + tain (להחזיק) = להחזיק את עצמך הרחק."
+},
+"fraternal": {
+"use": "אחוותי: a fraternal bond.\nfraternal twins = תאומים לא זהים.",
+"tip": "frater = אח (fraternity)."
+},
+"unholy": {
+"use": "לא קדוש; מושחת: an unholy alliance.",
+"tip": "un + holy (קדוש)."
+},
+"yawn": {
+"use": "לפהק; פיהוק.",
+"tip": "yawn – 'יון', הקול של פיהוק 🥱."
+},
+"solicit#0": {
+"use": "לבקש (תרומות, מידע): solicit donations.",
+"tip": "solicit – 'סוליסיט', לבקש בתחינה."
+},
+"subdue": {
+"use": "להכניע, להשתלט: subdue the man.\nsubdued = שקט, מאופק.",
+"tip": "sub (מתחת) + due = להביא מתחת לשליטה."
+},
+"deliberation": {
+"use": "דיון, שקילה: after long deliberation.",
+"tip": "deliberate = לשקול ⚖."
+},
+"equates": {
+"use": "equate to/with = שווה ל-, להשוות.",
+"tip": "equal = שווה (=)."
+},
+"incline#1": {
+"use": "be inclined to = לנטות ל-: I'm inclined to agree.",
+"tip": "incline = נטייה."
+},
+"inactivity": {
+"use": "חוסר פעילות: inactivity is bad for you.",
+"tip": "in (לא) + activity (פעילות) 🛋."
+},
+"renovate": {
+"use": "לשפץ: renovate the kitchen.\nrenovation = שיפוץ.",
+"tip": "re + nova (חדש) = לעשות חדש שוב 🔨."
+},
+"expedite": {
+"use": "לזרז: expedite an order.",
+"tip": "expedite – 'אקספדייט', express = מהיר."
+},
+"leisurely": {
+"use": "נינוח, בלי למהר: a leisurely walk.",
+"tip": "leisure = פנאי."
+},
+"splendor": {
+"use": "פאר, הדר: the splendor of the palace.",
+"tip": "splendid = נהדר ✨."
+},
+"avert#1": {
+"use": "למנוע: avert a disaster.",
+"tip": "avert = להסיט: להסיט את האסון."
+},
+"glorify": {
+"use": "להאדיר, לפאר: glorify war.",
+"tip": "glory = תהילה."
+},
+"smog": {
+"use": "ערפיח.",
+"tip": "smoke (עשן) + fog (ערפל) = smog 🌫."
+},
+"coexist": {
+"use": "לחיות יחד בשלום: coexist peacefully.",
+"tip": "co (יחד) + exist (להתקיים) ☮."
+},
+"hearsay": {
+"use": "שמועה, עדות שמיעה: just hearsay.",
+"tip": "hear (לשמוע) + say (לומר) = 'שמעתי שאמרו'."
+},
+"symbolize": {
+"use": "לסמל: The dove symbolizes peace.",
+"tip": "symbol = סמל 🕊."
+},
+"convene": {
+"use": "להתכנס, לכנס: The committee will convene.",
+"tip": "convention = כנס."
+},
+"spewing": {
+"use": "פולט בכוח: spewing lava.",
+"tip": "spew – 'ספיו', לפלוט החוצה 🌋."
+},
+"scorn#1": {
+"use": "מושא לבוז (שימוש נדיר).",
+"tip": "scorn = בוז."
+},
+"summits": {
+"use": "פסגות; גם פסגות מדיניות (summit meeting).",
+"tip": "sum = סכום: הנקודה הכי גבוהה ⛰."
+},
+"confer#2": {
+"use": "להסביר, להעביר (שימוש נדיר).",
+"tip": "confer = לתת, להעביר."
+},
+"modernize": {
+"use": "לחדש, להפוך למודרני: modernize a factory.",
+"tip": "modern = מודרני."
+},
+"deviant": {
+"use": "חריג, סוטה מהנורמה: deviant behavior.",
+"tip": "deviate = לסטות מהדרך."
+},
+"insurmountable": {
+"use": "בלתי עביר, שאי אפשר להתגבר עליו.",
+"tip": "in + surmount (לעלות מעל) + able."
+},
+"delinquent#1": {
+"use": "עבריין (צעיר): juvenile delinquent.",
+"tip": "delinquency = עבריינות."
+},
+"accomplices": {
+"use": "שותפים לפשע: the thief and his accomplices.",
+"tip": "accomplice – 'אקומפליס', complice = שותף."
+},
+"atrocity": {
+"use": "זוועה, מעשה אכזרי: condemn the atrocity.",
+"tip": "atrocious = נורא."
+},
+"disseminate": {
+"use": "להפיץ (מידע): disseminate information.",
+"tip": "dis + semen (זרע) = לפזר זרעים."
+},
+"evocative": {
+"use": "מעורר רגש/זיכרון: evocative music.",
+"tip": "evoke = לעורר."
+},
+"twig": {
+"use": "זרד, ענף קטן: carry a twig.",
+"tip": "twig – 'טוויג', ענף קטן 🌿."
+},
+"improvise": {
+"use": "לאלתר: had to improvise.\nimprovisation = אלתור.",
+"tip": "improv = אימפרוביזציה 🎭."
+},
+"amputation": {
+"use": "קטיעה (של איבר).",
+"tip": "amputate = לקטוע."
+},
+"fluency": {
+"use": "שטף (בשפה): fluency takes practice.",
+"tip": "fluent = שוטף."
+},
+"speck": {
+"use": "גרגר, כתם זעיר: a speck of dust.",
+"tip": "speck – 'ספק', נקודה קטנטנה."
+},
+"legislate": {
+"use": "לחוקק.",
+"tip": "legislation = חקיקה."
+},
+"detract": {
+"use": "detract from = לגרוע מ-.",
+"tip": "de + tract (למשוך) = למשוך מטה."
+},
+"flagrant": {
+"use": "בוטה, בולט (עבירה): a flagrant violation.",
+"tip": "flagrant – 'פלגרנט', כמו flag (דגל): בולט מאוד."
+},
+"dissection": {
+"use": "ניתוח, ביתור: a frog dissection.",
+"tip": "dissect = לנתח."
+},
+"inflate": {
+"use": "לנפח: inflate a balloon.\ninflation = אינפלציה.",
+"tip": "in + flate (לנשוף) 🎈."
+},
+"adorn": {
+"use": "לקשט: Flowers adorned the table.",
+"tip": "adorn – 'אדורן', כמו adore = לאהוב ולקשט."
+},
+"numeric": {
+"use": "מספרי: a numeric code.",
+"tip": "number = מספר 🔢."
+},
+"superfluous": {
+"use": "מיותר: superfluous words.",
+"tip": "super (מעל) + fluous (זורם) = עודף שגולש."
+},
+"narcotic": {
+"use": "סם (נרקוטי).",
+"tip": "narcotic = 'נרקוטי'."
+},
+"instill": {
+"use": "להחדיר, להנחיל: instill values.",
+"tip": "in + still (טיפה) = להכניס טיפה אחרי טיפה."
+},
+"czar": {
+"use": "צאר, שליט רוסיה.",
+"tip": "czar = 'צאר', מ-Caesar (קיסר)."
+},
+"guillotine": {
+"use": "גיליוטינה.",
+"tip": "guillotine = 'גיליוטינה'."
+},
+"aristocrat": {
+"use": "אריסטוקרט, אציל.",
+"tip": "aristo (הטוב ביותר) + crat (שלטון)."
+},
+"detach": {
+"use": "לנתק, להפריד: detach the form.\ndetached = מנותק.",
+"tip": "de + tach (להצמיד) = לנתק."
+},
+"forerunner": {
+"use": "מבשר, קודם: a forerunner of TV.",
+"tip": "fore (לפני) + runner (רץ) = מי שרץ לפני."
+},
+"lackluster": {
+"use": "חסר ברק, חלש: a lackluster performance.",
+"tip": "lack (חוסר) + luster (ברק)."
+},
+"preside": {
+"use": "preside over = לנהל, לעמוד בראש.",
+"tip": "president = נשיא."
+},
+"sedative": {
+"use": "תרופת הרגעה.",
+"tip": "sedate = להרגיע 💊."
+},
+"conclusively": {
+"use": "באופן חד משמעי: conclusively proved.",
+"tip": "conclude = להסיק, לסיים."
+},
+"negate": {
+"use": "לבטל, לשלול: negate all your work.",
+"tip": "negative = שלילי."
+},
+"fasten": {
+"use": "להדק, לחגור: fasten your seat belt.\nה-t לא נשמעת.",
+"tip": "fast = צמוד, מהודק."
+},
+"daydream": {
+"use": "לחלום בהקיץ.",
+"tip": "day (יום) + dream (חלום) ☁."
+},
+"solicit#1": {
+"use": "לשדל, להדיח (עד).",
+"tip": "solicit = לבקש באופן לא חוקי."
+},
+"repelled#0": {
+"use": "הדף: repelled the attack.",
+"tip": "repel = להדוף, insect repellent."
+},
+"taint": {
+"use": "להכתים, לזהם: taint his name.",
+"tip": "taint – 'טיינט', כתם."
+},
+"deduce": {
+"use": "להסיק: deduce the answer.\ndeduction = הסקה.",
+"tip": "Sherlock Holmes deduces = מסיק מרמזים 🕵."
+},
+"erupt": {
+"use": "להתפרץ: The volcano erupted.\neruption = התפרצות.",
+"tip": "e + rupt (לשבור) = לפרוץ החוצה 🌋."
+},
+"posterity": {
+"use": "הדורות הבאים: save for posterity.",
+"tip": "post (אחרי) = מי שיבוא אחרינו."
+}
+}

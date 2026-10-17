@@ -1,0 +1,482 @@
+{
+"collide": {
+"use": "collide with = להתנגש ב-: The two cars collided.",
+"tip": "collide – 'קולייד', collision = התנגשות 💥."
+},
+"chariot": {
+"use": "מרכבה: ride in a chariot.",
+"tip": "chariot – 'צ'ריוט', car = רכב: מרכבה עתיקה 🐎."
+},
+"discrepancy": {
+"use": "פער, אי התאמה: a discrepancy in the numbers.",
+"tip": "discrepancy – 'דיסקרפנסי', משהו לא מסתדר."
+},
+"punctuation": {
+"use": "פיסוק: check your punctuation.",
+"tip": "punct = נקודה.\nפיסוק = נקודות ופסיקים ."
+},
+"purification": {
+"use": "טיהור: water purification.",
+"tip": "pure = טהור 💧."
+},
+"freeze, froze|froze": {
+"use": "עבר של freeze: freeze – froze – frozen.",
+"tip": "froze – 'פרוֹז', קפא ❄."
+},
+"sensations": {
+"use": "תחושות: strange sensations.\nגם סנסציות.",
+"tip": "sense = חוש."
+},
+"congenital": {
+"use": "מולד: a congenital heart problem.",
+"tip": "con + genital (לידה) = עם הלידה."
+},
+"footprints": {
+"use": "עקבות: footprints in the sand.",
+"tip": "foot (רגל) + print (טביעה) 👣."
+},
+"hasty": {
+"use": "נמהר, חפוז: a hasty decision.",
+"tip": "haste = חיפזון.\nHaste makes waste = חיפזון מהשטן."
+},
+"imitate": {
+"use": "לחקות: imitate parents.\nimitation = חיקוי.",
+"tip": "imitation = 'אימיטציה', זיוף."
+},
+"extortion": {
+"use": "סחיטה: arrested for extortion.",
+"tip": "ex + tort (לסובב) = לסחוט 💸."
+},
+"perch#0": {
+"use": "מוט שציפור יושבת עליו.",
+"tip": "perch – 'פרץ'', המקום של הציפור בכלוב 🦜."
+},
+"specialize": {
+"use": "specialize in = להתמחות ב-.",
+"tip": "special = מיוחד.\nspecialist = מומחה."
+},
+"withhold": {
+"use": "למנוע, לעכב: withhold information.",
+"tip": "with + hold (להחזיק) = להחזיק אצלך ולא לתת."
+},
+"compel": {
+"use": "לאלץ: compel us to stay.",
+"tip": "compel – 'קומפל', compulsory = חובה."
+},
+"recollection": {
+"use": "זיכרון: no recollection of that day.",
+"tip": "re + collect (לאסוף) = לאסוף שוב מהזיכרון."
+},
+"esteemed": {
+"use": "מוערך, מכובד: an esteemed professor.",
+"tip": "self-esteem = הערכה עצמית."
+},
+"eyesight#0": {
+"use": "ראייה: poor eyesight.",
+"tip": "eye (עין) + sight (ראייה) 👁."
+},
+"harass": {
+"use": "להטריד: harass classmates.\nharassment = הטרדה.",
+"tip": "harass – 'הראס', להציק שוב ושוב."
+},
+"puzzled": {
+"use": "מבולבל: She looked puzzled.",
+"tip": "puzzle = חידה 🧩."
+},
+"glaze": {
+"use": "זיגוג; לזגג: glaze a cake.",
+"tip": "glaze – 'גלייז', כמו זיגוג של דונאט 🍩."
+},
+"customize": {
+"use": "להתאים אישית: customize your phone.",
+"tip": "custom = מותאם אישית."
+},
+"restrain": {
+"use": "לרסן: restrain anger.\nrestraint = איפוק.",
+"tip": "re + strain (למתוח) = למשוך אחורה."
+},
+"concerted": {
+"use": "מתואם, משותף: a concerted effort.",
+"tip": "concert = קונצרט: כולם מנגנים יחד 🎻."
+},
+"evoke": {
+"use": "לעורר (רגש, זיכרון): evoke memories.",
+"tip": "e + voke (קול) = לקרוא החוצה."
+},
+"literate": {
+"use": "יודע קרוא וכתוב.\nliteracy = אוריינות.",
+"tip": "letter = אות 🔤."
+},
+"pretext": {
+"use": "תירוץ, אמתלה: as a pretext.",
+"tip": "pre (לפני) + text = הסיפור שמספרים לפני האמת."
+},
+"visualize": {
+"use": "לדמיין, לראות בעיני רוחך: visualize your goal.",
+"tip": "visual = חזותי 👀."
+},
+"flatter#0": {
+"use": "שטוח יותר: flat – flatter – flattest.",
+"tip": "flat = שטוח."
+},
+"reassurance": {
+"use": "הרגעה, ביטחון: needed reassurance.",
+"tip": "re + assure (להבטיח) = להבטיח שוב."
+},
+"injure": {
+"use": "לפצוע: injure yourself.\ninjury = פציעה.",
+"tip": "injury = פציעה 🤕."
+},
+"outweigh": {
+"use": "לעלות על (בחשיבות): benefits outweigh risks.",
+"tip": "out + weigh (לשקול) = לשקול יותר ⚖."
+},
+"poignant": {
+"use": "נוגע ללב: a poignant movie.",
+"tip": "poignant – 'פוינינט', כמו point: חד ונוקב בלב."
+},
+"straighten": {
+"use": "ליישר: straighten your back.",
+"tip": "straight (ישר) + en."
+},
+"ordinarily": {
+"use": "בדרך כלל: Ordinarily, I...",
+"tip": "ordinary = רגיל."
+},
+"legalize": {
+"use": "להכשיר בחוק: legalize a drug.",
+"tip": "legal (חוקי) + ize."
+},
+"revoke": {
+"use": "לשלול, לבטל: revoke a license.",
+"tip": "re (בחזרה) + voke (לקרוא) = לקרוא בחזרה."
+},
+"Equator": {
+"use": "קו המשווה: near the Equator.",
+"tip": "equal = שווה: מחלק את העולם לשני חלקים שווים 🌍."
+},
+"gunpowder": {
+"use": "אבק שריפה.",
+"tip": "gun (רובה) + powder (אבקה) 💥."
+},
+"apathy": {
+"use": "אדישות: voter apathy.",
+"tip": "a (בלי) + pathy (רגש) = בלי רגש."
+},
+"expel": {
+"use": "לגרש, לסלק: expelled from school.",
+"tip": "ex (החוצה) + pel (לדחוף) = לדחוף החוצה."
+},
+"widen": {
+"use": "להרחיב: widen the road.",
+"tip": "wide (רחב) + en."
+},
+"infiltrate": {
+"use": "להסתנן: infiltrate the army.",
+"tip": "in + filter (מסנן) = לעבור דרך המסנן פנימה."
+},
+"timid": {
+"use": "ביישן, הססן: a timid boy.",
+"tip": "timid – 'טימיד', כמו 'טמיר' = מסתתר."
+},
+"dandy": {
+"use": "גנדרן: dressed like a dandy.\nבסלנג: מצוין (fine and dandy).",
+"tip": "dandy – 'דנדי', טיפוס מגונדר 🎩."
+},
+"emit": {
+"use": "לפלוט: emit light and heat.",
+"tip": "e (החוצה) + mit (לשלוח)."
+},
+"forceful": {
+"use": "חזק, תקיף: a forceful personality.",
+"tip": "force (כוח) + ful."
+},
+"delusions": {
+"use": "אשליות, הזיות: suffer from delusions.",
+"tip": "delude = להשלות."
+},
+"malnutrition": {
+"use": "תת-תזונה.",
+"tip": "mal (רע) + nutrition (תזונה)."
+},
+"nocturnal": {
+"use": "לילי: Owls are nocturnal.",
+"tip": "nocturne = לילה 🦉."
+},
+"quantify": {
+"use": "לכמת: quantify happiness.",
+"tip": "quantity = כמות."
+},
+"bandage": {
+"use": "תחבושת: put on a bandage.",
+"tip": "band = רצועה: רצועה סביב הפצע 🩹."
+},
+"luminous": {
+"use": "זוהר: luminous numbers.",
+"tip": "lumen = אור."
+},
+"meticulous": {
+"use": "קפדני, דקדקני: meticulous in her work.",
+"tip": "meticulous – 'מטיקולוס', כמו 'מטיקולוזי' = פרטני מאוד."
+},
+"mathematician": {
+"use": "מתמטיקאי.",
+"tip": "math (מתמטיקה) + ician = מומחה 🧮."
+},
+"summarize": {
+"use": "לסכם: summarize the article.",
+"tip": "summary = סיכום."
+},
+"endanger": {
+"use": "לסכן: endanger wildlife.",
+"tip": "en + danger (סכנה)."
+},
+"eel": {
+"use": "צלופח.",
+"tip": "eel – 'איל', דג שנראה כמו נחש."
+},
+"formulate": {
+"use": "לנסח: formulate a plan.",
+"tip": "formula = נוסחה."
+},
+"redhead": {
+"use": "ג'ינג'י/ת: a redhead girl.",
+"tip": "red (אדום) + head (ראש) = ראש אדום 👩‍🦰."
+},
+"alternately": {
+"use": "לסירוגין, בזה אחר זה: flash red and green alternately.",
+"tip": "alternate = לעבור בין שני דברים."
+},
+"reconstruct": {
+"use": "לשחזר, לבנות מחדש: reconstruct a bridge.",
+"tip": "re + construct (לבנות)."
+},
+"misconception": {
+"use": "תפיסה שגויה: a common misconception.",
+"tip": "mis (שגוי) + conception (תפיסה)."
+},
+"tempt": {
+"use": "לפתות: The cake tempted me.\ntemptation = פיתוי.",
+"tip": "tempt – 'טמפט', כמו 'טמפטציה' 🍰."
+},
+"shatter": {
+"use": "לנפץ, להתנפץ: The glass shattered.\nגם לנפץ חלום.",
+"tip": "shatter – 'שאטר', הקול של זכוכית שנשברת."
+},
+"cripple": {
+"use": "לשתק, להטיל מום: crippled by disease.",
+"tip": "cripple – 'קריפל', נכה."
+},
+"envious": {
+"use": "envious of = מקנא ב-.",
+"tip": "envy = קנאה 💚."
+},
+"erroneous": {
+"use": "שגוי: erroneous facts.",
+"tip": "error = טעות ❌."
+},
+"memorize": {
+"use": "לשנן, ללמוד בעל פה: memorize words.",
+"tip": "memory = זיכרון 🧠."
+},
+"reciprocal": {
+"use": "הדדי: a reciprocal agreement.\nבמתמטיקה: מספר הופכי.",
+"tip": "reciprocal – 'רסיפרוקל', הלוך וחזור."
+},
+"publicized": {
+"use": "פורסם: widely publicized.",
+"tip": "public = ציבור."
+},
+"eloquent": {
+"use": "רהוט: an eloquent speech.",
+"tip": "e + loquent (מדבר) = מדבר יפה 🗣."
+},
+"drawback": {
+"use": "חיסרון: the only drawback.",
+"tip": "draw (למשוך) + back (אחורה) = מה שמושך אחורה."
+},
+"indebted": {
+"use": "אסיר תודה; חייב: indebted to you.",
+"tip": "in + debt (חוב) = בחוב."
+},
+"prolong": {
+"use": "להאריך: prolong a meeting.",
+"tip": "pro + long (ארוך) = להאריך."
+},
+"compost": {
+"use": "קומפוסט, דשן אורגני.",
+"tip": "compost = 'קומפוסט' 🌱."
+},
+"fairytale": {
+"use": "אגדה; אגדי: a fairytale wedding.",
+"tip": "fairy (פיה) + tale (סיפור) 🧚."
+},
+"enlarge": {
+"use": "להגדיל: enlarge a photo.",
+"tip": "en + large (גדול)."
+},
+"skyscraper": {
+"use": "גורד שחקים.",
+"tip": "sky (שמיים) + scraper (מגרד) 🏙."
+},
+"correlate": {
+"use": "להיות במתאם: correlate with.",
+"tip": "co + relate = קשורים זה לזה."
+},
+"courteous": {
+"use": "אדיב: courteous staff.",
+"tip": "courtesy = נימוס."
+},
+"craftsmen": {
+"use": "בעלי מלאכה: skilled craftsmen.",
+"tip": "craft (מלאכה) + men."
+},
+"rodent": {
+"use": "מכרסם: a mouse is a rodent.",
+"tip": "rodent – 'רודנט', כרסום 🐀."
+},
+"defer": {
+"use": "לדחות: defer a decision.",
+"tip": "defer – 'דיפר', להעביר הלאה."
+},
+"appease": {
+"use": "לפייס: appease the crowd.",
+"tip": "ap + peace (שלום) = להביא שלום."
+},
+"vocation": {
+"use": "ייעוד, מקצוע: Teaching is her vocation.",
+"tip": "vocal = קריאה: הקריאה הפנימית."
+},
+"janitor": {
+"use": "שרת, אב בית.",
+"tip": "janitor – 'ג'ניטור', Janus = אל הדלתות 🚪."
+},
+"staunch#0": {
+"use": "לעצור (דימום).",
+"tip": "staunch – 'סטונץ'', stop = לעצור."
+},
+"confer#0": {
+"use": "להתייעץ: confer about the case.",
+"tip": "conference = ועידה."
+},
+"amaze": {
+"use": "להדהים: Her talent will amaze you.\namazing = מדהים.",
+"tip": "amazing = 'אמייזינג' 🤩."
+},
+"devise": {
+"use": "להמציא, לתכנן: devise a plan.",
+"tip": "device = מכשיר, המצאה."
+},
+"augment": {
+"use": "להגדיל, להוסיף: augment income.",
+"tip": "augmented reality = מציאות רבודה."
+},
+"exaggerate": {
+"use": "להגזים: Don't exaggerate!\nexaggeration = הגזמה.",
+"tip": "exaggerate – 'אגזג'רייט', כתיב עם gg כפול, מוגזם 🙄."
+},
+"perpetuate": {
+"use": "להנציח, לשמר: perpetuate stereotypes.",
+"tip": "perpetual = נצחי."
+},
+"intoxicate#1": {
+"use": "להלהיב, לשכר (רגשית).",
+"tip": "toxic = רעל: 'רעל' של התלהבות."
+},
+"gymnasium": {
+"use": "אולם ספורט.\nבקיצור: gym.",
+"tip": "gym = 'ג'ים'."
+},
+"sneeze": {
+"use": "להתעטש.\nBless you! = לבריאות!",
+"tip": "sneeze – 'סניז', אפצ'י 🤧."
+},
+"concur": {
+"use": "להסכים: concur with.",
+"tip": "con (יחד) + cur (לרוץ) = לרוץ באותו כיוון."
+},
+"mobilize": {
+"use": "לגייס: mobilize soldiers.",
+"tip": "mobile = נייד.\nmobilize = להניע."
+},
+"foresee": {
+"use": "לצפות מראש: foresee a crisis.",
+"tip": "fore (לפני) + see (לראות)."
+},
+"slant#0": {
+"use": "שיפוע, אלכסון.",
+"tip": "slant – 'סלנט', קו נטוי /."
+},
+"fringes": {
+"use": "שוליים: on the fringes of the city.",
+"tip": "fringe – 'פרינג'', פרנזים בשולי הבד."
+},
+"intermediary": {
+"use": "מתווך: act as an intermediary.",
+"tip": "inter (בין) + media (אמצע)."
+},
+"howl": {
+"use": "ליילל: wolves howl.",
+"tip": "howl – 'האול', 'אוּוּ' של זאב 🐺."
+},
+"incomprehensible": {
+"use": "לא מובן.",
+"tip": "in + comprehensible (מובן)."
+},
+"uncharted": {
+"use": "לא ממופה: uncharted waters.",
+"tip": "chart = מפה."
+},
+"particulars": {
+"use": "פרטים: write down your particulars.",
+"tip": "particular = פרטי, מסוים."
+},
+"tormented": {
+"use": "מעונה, מיוסר: tormented by guilt.",
+"tip": "torment = ייסורים."
+},
+"circulate#0": {
+"use": "לנוע במחזוריות: Blood circulates.",
+"tip": "circle = מעגל 🔄."
+},
+"desolate": {
+"use": "שומם, נטוש: a desolate village.",
+"tip": "de + sol (לבד) = עזוב לבד."
+},
+"rudimentary": {
+"use": "בסיסי, ראשוני: rudimentary knowledge.",
+"tip": "rudiment = יסוד."
+},
+"condone": {
+"use": "להשלים עם, להצדיק (רע): condone violence.",
+"tip": "con + done = 'לתת לזה לעבור'."
+},
+"envision": {
+"use": "לדמיין עתיד: envision a better future.",
+"tip": "en + vision (חזון)."
+},
+"disarmament": {
+"use": "פירוק נשק.",
+"tip": "dis + arm (נשק) + ment."
+},
+"insurrection": {
+"use": "התקוממות.",
+"tip": "insurrection – 'אינסרקשן', להתקומם."
+},
+"shroud": {
+"use": "עטוף: shrouded in fog.\nשם עצם: תכריכים.",
+"tip": "shroud – 'שראוד', כיסוי שעוטף הכול."
+},
+"perpetually": {
+"use": "תמיד, לנצח: perpetually late.",
+"tip": "perpetual = נצחי."
+},
+"alienation": {
+"use": "ניכור: feel alienation.",
+"tip": "alien = זר.\nalienation = תחושת זרות."
+},
+"propel": {
+"use": "להניע קדימה: Engines propel the ship.",
+"tip": "propeller = מדחף."
+}
+}

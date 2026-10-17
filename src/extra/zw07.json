@@ -349,7 +349,7 @@
 },
 "outer": {
 "use": "חיצוני: outer space = החלל החיצון.\nההפך: inner.",
-"tip": "out = בחוץ."
+"tip": "out = בחוץ.\nouter space = החלל החיצון 🚀."
 },
 "submit#1": {
 "use": "submit to = להיכנע ל-.",
@@ -389,7 +389,7 @@
 },
 "spider": {
 "use": "עכביש: spider web = קורי עכביש.",
-"tip": "Spider-Man 🕷."
+"tip": "spider – 'ספיידר', Spider-Man = איש העכביש 🕷."
 },
 "beneath": {
 "use": "מתחת (רשמי ממ-under): beneath the table.",
