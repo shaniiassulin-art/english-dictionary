@@ -1,0 +1,365 @@
+{
+"and": {
+"use": "מילת חיבור: מחברת שתי מילים או שני משפטים מאותו סוג (bread and milk).\nברשימה של שלושה ומעלה באה רק לפני הפריט האחרון: tea, coffee and milk."
+},
+"of#0": {
+"use": "מילת יחס: באה בין שני שמות עצם – הבעלים אחרי of (a friend of my sister).\nבשמות של אנשים נוח יותר להשתמש ב-'s: my sister's friend."
+},
+"type#1": {
+"use": "שם עצם: כמעט תמיד בא אחריו of + שם עצם (a type of car).\nבשאלה: What type of...? = איזה סוג של...?"
+},
+"in": {
+"use": "מילת יחס למקום סגור: in the bag, in the room, in Israel.\nלזמן: לחודשים, שנים ועונות (in May, in 2020, in winter) – אבל לימים משתמשים ב-on."
+},
+"that": {
+"use": "מילת חיבור: באה אחרי פעלים של אמירה וחשיבה (know, think, say) ומתחילה משפט חדש.\nבדיבור משמיטים אותה לעיתים קרובות: I know you are tired."
+},
+"for#0": {
+"use": "מילת חיבור במשמעות 'כי': באה באמצע משפט, אחרי פסיק, ולפניה הסיבה.\nשימוש ספרותי ורשמי; בדיבור אומרים because."
+},
+"rather than#1": {
+"use": "מחבר שני דברים מאותו סוג (שני שמות עצם, שני פעלים): cats rather than dogs.\nאחריו לא בא to: I walk rather than drive."
+},
+"on": {
+"use": "מילת יחס: על משטח, כשיש מגע (on the table, on the wall).\nלזמן: לימים ותאריכים (on Monday, on May 5)."
+},
+"with#0": {
+"use": "מילת יחס במשמעות 'בעזרת': אחריה הכלי או החפץ (with scissors, with a pen).\nלאמצעי תחבורה לא משתמשים ב-with אלא ב-by: by bus."
+},
+"post#3": {
+"tip": "post – 'פוסט', כמו בדואר הישן ששולחים מכתב 'פוסט' – Post Office = סניף הדואר 📮.",
+"use": "שם עצם לא ספיר (בלי a ובלי רבים) בבריטית: The post comes at nine.\nבאמריקאית אומרים mail.\nby post = בדואר."
+},
+"as#0": {
+"use": "השוואה של שוויון: as + שם תואר/תואר הפועל + as (as tall as, as beautifully as).\nבשלילה: not as ... as = פחות מ-."
+},
+"process#1": {
+"use": "שם עצם ספיר: a process, processes.\nבא הרבה עם of: the process of learning.\nin the process of + פועל עם ing = באמצע לעשות משהו."
+},
+"at": {
+"use": "מילת יחס למקום מסוים כנקודה: at the station, at home, at school.\nלשעה מדויקת: at 5 o'clock, at night."
+},
+"by#0": {
+"use": "מילת יחס של זמן: עד מועד מסוים ולא אחריו (by Friday).\nלעומת until = כל הזמן עד אז: I'll wait until Friday."
+},
+"study#1": {
+"use": "שם עצם ספיר: a study = חדר בבית שבו קוראים ועובדים.\nבא בדרך כלל עם his/her/my: in his study."
+},
+"but#0": {
+"use": "מילת יחס במשמעות 'חוץ מ-': באה אחרי everyone, nobody, all, nothing.\nאחריה שם עצם או כינוי גוף: everyone but me."
+},
+"from": {
+"use": "מילת יחס: מקור או נקודת התחלה (from my mother, from Paris).\nמופיעה בזוג from ... to ...: from 9 to 5."
+},
+"or": {
+"use": "מילת חיבור בין שתי אפשרויות, בדרך כלל בשאלות: tea or coffee?\nבשלילה משתמשים ב-or ולא ב-and: I don't like tea or coffee."
+},
+"so#0": {
+"use": "מילת חיבור של תוצאה: לפניה הסיבה ואחריה התוצאה (It rained, so we stayed in).\nבדרך כלל בא לפניה פסיק."
+},
+"so that": {
+"use": "מבטא מטרה: אחריו משפט שלם, לרוב עם can / could / will.\nSpeak slowly so that everyone can understand."
+},
+"If": {
+"use": "מילת תנאי: בתנאי של העתיד אחרי if בא הווה, לא will: If it rains, we will stay home.\nאפשר לשים את משפט ה-if בהתחלה (עם פסיק) או בסוף."
+},
+"just#0": {
+"use": "שם תואר רשמי: צודק, הוגן – מתאר אדם, חוק או החלטה.\nבמשמעות הזאת קשור ל-justice; לא מבלבלים עם just = רק / הרגע."
+},
+"field#1": {
+"use": "שם עצם ספיר: a field, fields.\nמילות יחס: in the field (לא on).\nשדה חקלאי או מגרש: a football field."
+},
+"like#0": {
+"use": "מילת יחס: אחריה שם עצם או כינוי גוף (like a bird, like me).\nבדיבור באה גם לפני משפט שלם, אבל בכתיבה רשמית עדיף as."
+},
+"about#0": {
+"use": "מילת יחס: באה אחרי פעלים ושמות עצם של דיבור וחשיבה (talk about, think about, a book about).\nאחריה שם עצם או פועל עם ing: about learning."
+},
+"up": {
+"use": "תואר הפועל / מילת יחס של כיוון: אחרי פעלי תנועה (climb up, go up, look up).\nחלק מהרבה פעלים מורכבים: get up, give up, wake up."
+},
+"what": {
+"use": "מילת שאלה: בראש השאלה, ואחריה פועל עזר (What is...? What do you...?).\nלפני שם עצם = איזה: What color? (בבחירה מתוך מעט אפשרויות עדיף which)."
+},
+"when": {
+"use": "מילת זמן: מחברת שני משפטים (Call me when you get home).\nבזמן עתיד אחרי when בא הווה, לא will: when you get home."
+},
+"not... but…": {
+"use": "מבנה של תיקון: not X but Y – X הוא הלא נכון, Y הנכון.\nשני החלקים מאותו סוג: not cold but warm, not today but tomorrow."
+},
+"who#0": {
+"use": "מילת שאלה על אדם: בראש השאלה.\nכשwho הוא הנושא אין פועל עזר: Who called? (ולא Who did call?)."
+},
+"rest#1": {
+"use": "שם עצם, תמיד עם the: the rest = השאר.\nבא הרבה עם of: the rest of the cake, the rest of the day."
+},
+"there": {
+"use": "תואר הפועל של מקום: בא אחרי הפועל (go there, put it there).\nבמבנה there is / there are = יש: There is a book on the table."
+},
+"space#1": {
+"use": "שם עצם: רווח בין דברים – ספיר (a space between the words).\nבמשמעות 'מקום פנוי' הוא לא ספיר: There isn't enough space."
+},
+"which#0": {
+"use": "כינוי זיקה לדברים (לא לאנשים – לאנשים who): the house which I bought.\nאפשר להחליף ב-that, ובדיבור גם להשמיט: the house I bought."
+},
+"issue#1": {
+"use": "פועל רשמי: מוסד מוציא משהו רשמי – כסף, דרכון, אזהרה, הוראות.\nהנושא הוא ארגון: The bank / The government issued..."
+},
+"as if": {
+"tip": "as if – 'אז איף', ותחשבי על 'אז איך' – 'הוא נראה אז איך... כאילו ראה רוח' 👻 = כאילו.",
+"use": "מחבר משפט שלם: He looked as if he had seen a ghost.\nבא הרבה אחרי look, seem, feel, act.\nבדיבור משמשת לבד בלגלוג: As if! = ממש לא."
+},
+"force#1": {
+"tip": "force – 'פורס', דמייני מישהו 'פורץ' את הדלת בכוח 💪 – פורס/פורץ = כוח.",
+"use": "שם עצם לא ספיר בדרך כלל: the force of the wind.\nכשמדובר בכוח פיזי של דבר – בא אחריו of.\nכפועל (force sb to) = להכריח."
+},
+"time": {
+"use": "במשמעות 'זמן' – לא ספיר: I don't have time (בלי a).\nבמשמעות 'פעם' – ספיר: three times, the first time."
+},
+"just as": {
+"use": "השוואה: just as + שם תואר + as (just as tall as).\nאו מחבר שני משפטים: Just as I said, it rained."
+},
+"fine#1": {
+"use": "שם תואר: מתאר משהו דק מאוד – שיער, חוט, חול, אבקה.\nבמשמעות הזאת לא מתאר אדם."
+},
+"new": {
+"use": "שם תואר: בא לפני שם עצם (a new phone) או אחרי be.\nההפך שלו הוא old.\nnew to = חדש במקום או בתחום: I'm new to this city."
+},
+"fire#2": {
+"use": "פועל: לירות – fire a gun / fire at someone (at = לעבר).\nבמשמעות אחרת fire = לפטר: He was fired."
+},
+"people": {
+"use": "שם עצם ברבים (בלי s): people are, many people.\nהיחיד הוא person.\npeoples עם s = עמים."
+},
+"major#2": {
+"use": "מונח במוזיקה: בא אחרי שם הצליל (C major).\nההפך: minor (סולם מינורי, עצוב)."
+},
+"how": {
+"use": "מילת שאלה: על דרך או אופן (How do you...?).\nלפני שם תואר = כמה: how old, how much, how many."
+},
+"also": {
+"use": "תואר הפועל: בא לפני הפועל הראשי (I also like) ואחרי be (She is also tired).\nבסוף משפט משתמשים ב-too או as well, לא ב-also."
+},
+"now": {
+"use": "תואר הפועל: בדרך כלל בסוף המשפט או בתחילתו.\nright now = ממש עכשיו; from now on = מעכשיו והלאה."
+},
+"project#1": {
+"use": "שם עצם ספיר: a project.\nעם פעלים: work on a project, do a project.\nמשמש בבית ספר, בעבודה ובבנייה."
+},
+"all in all": {
+"use": "ביטוי מסכם: בתחילת המשפט, ואחריו פסיק.\nמסכם כמה פרטים לשורה תחתונה כללית."
+},
+"miss#1": {
+"use": "פועל: לפספס דבר שזז או קורה – bus, train, flight, chance, class.\nבא ישר עם מושא, בלי מילת יחס: I missed the bus."
+},
+"than": {
+"use": "בא אחרי שם תואר בדרגת יותר (older than, better than, more beautiful than).\nבדיבור אחריו me / him; בכתיבה רשמית I am / he is."
+},
+"date#1": {
+"use": "שם עצם ספיר: a date, dates – הפרי.\nאותה מילה גם 'תאריך' ו'דייט'; ההקשר של אוכל ועצים מכריע."
+},
+"in order to": {
+"use": "מבטא מטרה: אחריו פועל בצורת הבסיס (in order to pass).\nבשלילה: in order not to.\nרשמי יותר מ-to לבד."
+},
+"because of": {
+"use": "אחריו שם עצם או כינוי גוף (because of the rain, because of him).\nלפני משפט שלם משתמשים ב-because בלי of."
+},
+"account#1": {
+"use": "שם עצם ספיר: a bank account, an email account.\nopen / close an account; on my account = בחשבון שלי."
+},
+"only": {
+"use": "תואר הפועל: מקומו לפני המילה שהוא מגביל (I have only one sister).\nכשם תואר: the only = היחיד: the only child."
+},
+"after": {
+"use": "מילת יחס: אחריה שם עצם או פועל עם ing (after dinner, after eating).\nכמילת חיבור לפני משפט: after we ate.\nבעתיד אחרי after בא הווה, לא will."
+},
+"position#1": {
+"use": "שם עצם ספיר: תנוחת הגוף – a comfortable position, sitting position.\nבא עם in: sit in a ... position."
+},
+"into": {
+"use": "מילת יחס של תנועה פנימה: באה אחרי פעלי תנועה (jump into, go into).\nלמקום שבו כבר נמצאים משתמשים ב-in: He is in the pool."
+},
+"1st - first": {
+"use": "מספר סודר: כמעט תמיד עם the (the first time).\nכתואר הפועל = קודם כל: First, wash your hands."
+},
+"period#1": {
+"use": "שם עצם: מחזור של זמן שחוזר על עצמו.\nבא עם of: a period of a month.\nבמדע ובטבע: ירח, כוכבים, גלים."
+},
+"in the same way": {
+"use": "ביטוי של דמיון: בתחילת המשפט או בסופו.\nלהשוואה מוסיפים as: in the same way as before."
+},
+"record#1": {
+"use": "שם עצם ספיר: שיא.\nעם פעלים: break a record (לשבור), set a record (לקבוע), hold a record.\nworld record = שיא עולם."
+},
+"know, knew|know": {
+"use": "פועל מצב: לא בא בצורת ing (לא I am knowing).\nאחריו שם עצם או that + משפט: I know that...\nknow how to + פועל = לדעת איך."
+},
+"just as… so…": {
+"use": "מבנה רשמי של השוואה בין שני משפטים: Just as X, so Y.\nבחלק השני הפועל לפעמים מתהפך: so do plants."
+},
+"first of all": {
+"use": "ביטוי פתיחה: בתחילת משפט ואחריו פסיק.\nמשמש לפתוח רשימה של נקודות: First of all..., second..."
+},
+"common#1": {
+"use": "שם תואר: משותף לשניים או יותר – a common friend, common interests.\nin common = במשותף: We have a lot in common."
+},
+"over#0": {
+"use": "מילת יחס: מעל, בלי מגע (a plane over the city).\nבמגע ומכסה: a blanket over the bed.\nעם פעלי תנועה: מעבר לצד השני – jump over."
+},
+"think, thought|think": {
+"use": "think that + משפט = לחשוב שקורה משהו.\nthink about / of = לחשוב על.\nבמשמעות 'דעה' לא בא בצורת ing: I think so (לא I am thinking so)."
+},
+"perfect#1": {
+"use": "שם תואר מוחלט: לא אומרים more perfect.\nלהדגשה: absolutely perfect.\nperfect for = מושלם בשביל."
+},
+"then": {
+"use": "תואר הפועל: מציין את מה שבא אחר כך ברצף פעולות.\nבא הרבה עם and: and then.\nבזמן עבר = אז, באותו זמן."
+},
+"in light of": {
+"use": "ביטוי רשמי: אחריו שם עצם (in light of the storm).\nמסביר סיבה להחלטה; נפוץ בחדשות ובמכתבים רשמיים."
+},
+"from time to time": {
+"use": "ביטוי של תדירות: בסוף המשפט או בתחילתו.\nפחות מ-often, יותר מ-rarely."
+},
+"by now": {
+"use": "ביטוי זמן: בא הרבה עם should / must / will have.\nBy now, she should be home = עד עכשיו היא כבר אמורה להיות בבית."
+},
+"of#1": {
+"use": "made of = עשוי מחומר שעדיין רואים (made of wood).\nכשהחומר השתנה לגמרי אומרים made from: Bread is made from wheat."
+},
+"in front of": {
+"use": "מילת יחס של מקום: אחריה שם עצם (in front of the house).\nלא אותו דבר כמו opposite (ממול, מצד שני של הרחוב)."
+},
+"for the sake of": {
+"use": "ביטוי רשמי: אחריו שם עצם או אדם (for the sake of his health).\nגם בצורה for my sake / for your sake = למעני, למענך."
+},
+"want": {
+"use": "want + שם עצם, או want to + פועל: I want to go.\nwant someone to do = רוצה שמישהו יעשה.\nפועל מצב: לא בא בצורת ing."
+},
+"for#1": {
+"use": "מילת יחס: מקבל המתנה או הפעולה בא אחרי for (a gift for my mother).\nאחריה כינוי גוף בצורת מושא: for me, for him, for them."
+},
+"on top of": {
+"use": "מילת יחס: על החלק העליון של משהו (on top of the car).\nבמשמעות מופשטת = בנוסף על: On top of that, it rained."
+},
+"because": {
+"use": "מילת חיבור: אחריה משפט שלם (because I was sick).\nלפני שם עצם בלבד: because of.\nבכתיבה רשמית לא פותחים בה משפט שעומד לבד."
+},
+"with#1": {
+"use": "מילת יחס של חברה וליווי: with my friends.\nאחרי פעלים: talk with, play with, agree with."
+},
+"post#4": {
+"use": "פועל, בעיקר בסביל: be posted = להיות מוצב או ממונה לתפקיד.\nבצבא ובדיפלומטיה: posted abroad, posted at the gate."
+},
+"in a word": {
+"use": "ביטוי מסכם: בתחילת המשפט ואחריו פסיק.\nאחריו באה מילה אחת או תיאור קצר שמסכם הכול."
+},
+"as#1": {
+"use": "מילת זמן: שני דברים קורים באותו רגע (As I opened the door, the phone rang).\nמתאים בעיקר לפעולה קצרה; לפעולה ממושכת אפשר while."
+},
+"for the most part": {
+"use": "ביטוי של הכללה: בתחילת המשפט או אחרי הנושא.\nבאמצע משפט מוקף בפסיקים."
+},
+"well#0": {
+"use": "שם עצם ספיר: a well, wells – באר מים או נפט.\nמילות יחס: from the well, in the well; an oil well = באר נפט."
+},
+"by#1": {
+"use": "מילת יחס של מקום: ממש ליד (by the river, by the window).\nקרוב יותר ופחות רשמי מ-near."
+},
+"not only": {
+"use": "הצמד המלא: not only ... but also.\nבתחילת משפט הפועל מתהפך: Not only does she sing, she also dances."
+},
+"but#1": {
+"use": "מילת חיבור של ניגוד: מחברת שני משפטים, בדרך כלל אחרי פסיק.\nבכתיבה רשמית לא פותחים בה משפט; משתמשים ב-however."
+},
+"in a moment": {
+"use": "ביטוי זמן לעתיד הקרוב: בסוף המשפט.\nבא הרבה עם will / be back / be ready."
+},
+"at first": {
+"use": "מתאר מצב בהתחלה שהשתנה אחר כך: At first I didn't like it, but...\nלא אותו דבר כמו first (קודם כל) ברשימת שלבים."
+},
+"way": {
+"use": "שם עצם ספיר: the way to + מקום (the way to the beach).\nבמשמעות 'אופן': the way to do something / a way of doing."
+},
+"so#1": {
+"use": "תואר הפועל לחיזוק: בא לפני שם תואר בלי שם עצם (so happy).\nלפני שם עצם משתמשים ב-such: such a nice day.\nso ... that = כל כך... ש-."
+},
+"both... and…": {
+"use": "מחבר שני דברים מאותו סוג: both English and French.\nהפועל אחרי צמד כזה בא ברבים: Both Dan and Ben are here."
+},
+"where#0": {
+"use": "מילת שאלה על מקום: בראש השאלה ואחריה פועל עזר (Where do you live?).\nבמשפט עקיף אין היפוך: I know where she lives."
+},
+"most#0": {
+"use": "יוצר דרגה עליונה לשמות תואר ארוכים: the most beautiful.\nלשמות תואר קצרים מוסיפים est: the tallest (לא the most tall).\nתמיד עם the."
+},
+"just#1": {
+"use": "שם תואר רשמי: צודק והוגן – מתאר חוק, החלטה, עונש או אדם.\nההפך: unjust."
+},
+"even#0": {
+"use": "תואר הפועל: בא לפני המילה שמפתיעה (Even my little brother knows).\nלפני פועל: She even cooked dinner.\neven if / even though = אפילו אם / למרות ש-."
+},
+"like#1": {
+"use": "פועל: like + שם עצם, או like + פועל עם ing / to + פועל: I like reading.\nwould like = הייתי רוצה (בנימוס).\nפועל מצב: לא בא בצורת ing."
+},
+"here": {
+"use": "תואר הפועל של מקום: בלי מילת יחס לפניו (come here, לא to here).\nHere is / Here are = הנה."
+},
+"about#1": {
+"use": "לפני מספר או כמות = בערך (about twenty people, about 5 o'clock).\nמילה נרדפת: around, approximately."
+},
+"after all": {
+"use": "מקומו בתחילת המשפט או בסופו.\nבתחילה = הרי, כי (מסביר סיבה); בסוף = בכל זאת, בניגוד לציפייה: He came after all."
+},
+"need": {
+"use": "need + שם עצם, או need to + פועל: I need to go.\nכשם עצם: a need for something.\nבשלילה: don't need to = לא צריך."
+},
+"right#0": {
+"use": "תואר הפועל של כיוון: אחרי פעלי תנועה (turn right, go right).\non the right = מימין; ההפך: left."
+},
+"next to": {
+"use": "מילת יחס של מקום: אחריה שם עצם (next to the bakery).\nצמוד ממש; near = קרוב באופן כללי."
+},
+"work": {
+"use": "שם עצם לא ספיר: work (בלי a): I have a lot of work.\nלמקום עבודה: go to work, at work (בלי the).\nמשרה = a job, לא a work."
+},
+"who#1": {
+"use": "כינוי זיקה לאנשים: בא מיד אחרי האדם שמתואר (the man who lives).\nלדברים משתמשים ב-which או that."
+},
+"too#0": {
+"use": "לפני שם תואר = יותר מדי (too hot).\ntoo + שם תואר + to + פועל = יותר מדי בשביל: too hot to drink.\nבסוף משפט too = גם."
+},
+"being that": {
+"use": "ביטוי פחות נפוץ ולא רשמי: אחריו משפט שלם.\nבכתיבה עדיף since, as או because."
+},
+"which#1": {
+"use": "מילת שאלה לבחירה מתוך מספר מוגבל של אפשרויות: Which color? (מתוך הצבעים שיש).\nwhich of + רבים: which of these?"
+},
+"issue#2": {
+"use": "שם עצם ספיר: an important issue, issues.\nמשמש בדיונים ובחדשות: political / social issues.\nבא עם about / with: an issue with the plan."
+},
+"before": {
+"use": "מילת יחס: אחריה שם עצם או פועל עם ing (before eating).\nכמילת חיבור לפני משפט: before you eat.\nבעתיד: הווה אחרי before, לא will."
+},
+"why": {
+"use": "מילת שאלה על סיבה: בראש השאלה ואחריה פועל עזר (Why are you...?).\nהתשובה בדרך כלל מתחילה ב-because.\nWhy not? = למה לא?"
+},
+"as well as": {
+"use": "מוסיף פריט: X as well as Y = גם Y וגם X.\nהפועל מתאים לנושא הראשון: She, as well as her friends, is coming.\nלפני פועל: פועל עם ing."
+},
+"fine#2": {
+"use": "שם תואר: מתאר מצב טוב – I'm fine, everything is fine.\nבמשמעות 'משובח' לפני שם עצם: fine wine, fine food."
+},
+"still#0": {
+"use": "תואר הפועל: לפני הפועל הראשי (He still works) ואחרי be (He is still here).\nבשלילה בא לפני not: I still don't know."
+},
+"made": {
+"use": "צורת העבר וה-V3 של make.\nmake / made = לייצר משהו: made a cake.\nבסביל: made of / made in: made in China."
+},
+"never": {
+"use": "תואר הפועל: לפני הפועל הראשי (I never eat meat).\nכבר שלילה – לא מוסיפים not.\nבא הרבה עם הווה מושלם: I have never been there."
+},
+"once in a while": {
+"use": "ביטוי של תדירות נמוכה: בסוף המשפט בדרך כלל.\nנרדף ל-from time to time, occasionally."
+}
+}
