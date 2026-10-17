@@ -66,9 +66,9 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display
 .xbox li{position:relative;padding-inline-start:16px}
 .xbox li::before{content:"";position:absolute;inset-inline-start:0;top:.7em;width:6px;height:6px;border-radius:50%;background:var(--accent)}
 .xbox li bdi{font-family:var(--en);font-weight:600}
-.trans{display:block;margin-top:6px;color:var(--ink);font-family:var(--he);font-size:1rem;direction:rtl;text-align:right;background:var(--accent-soft);border-radius:10px;padding:8px 12px}
+.trans{display:block;margin-top:6px;color:var(--ink);font-family:var(--he);font-size:1rem;direction:rtl;text-align:center;background:var(--accent-soft);border-radius:10px;padding:8px 12px}
 .scol{flex:1;min-width:0}.cardx{display:flex;flex-direction:column;gap:8px}.words .xtras{justify-content:flex-start;margin-top:6px}
-.trbtn{border:0;background:none;color:var(--accent);font-size:.95rem;font-weight:700;padding:4px 0 0;cursor:pointer;display:block;margin-inline-start:auto}
+.trbtn{border:0;background:none;color:var(--accent);font-size:.95rem;font-weight:700;padding:4px 0 0;cursor:pointer;display:block;margin:2px auto 0;text-align:center}
 #srchRes .words{margin-bottom:8px}
 .back{border:0;background:none;color:var(--accent);font-weight:700;padding:10px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .back::before{content:"→";font-size:1.2em}
@@ -211,7 +211,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .rm{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--bad-soft);color:var(--bad);cursor:pointer;font-size:.95rem}
 .mist-panel{background:var(--bad-soft)}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}
-.cat-panel .cat-N{background:var(--bad-soft);color:var(--bad)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
+.cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
 .mist-panel h3{color:var(--bad)}
 .mist-panel .btn{background:var(--bad-soft);color:var(--bad)}
 .seg button:disabled{opacity:.4;cursor:default}
@@ -918,7 +918,7 @@ function quizScreen(){
   const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',M=meanings(w),nm=M.length;
   const showWord=!listen||Q.shown||Q.stage==='pick';
   const rv=Q.checked||!!(Q.marks||{})[w.id];
-  const sentence=Q.sent||Q.checked?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span>${trPart(w,rv)}</div></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
+  const sentence=Q.sent?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span>${trPart(w,rv)}</div></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
   const wordBox=showWord?`<div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>`
     :`<div class="word listen"><button class="play" id="say" aria-label="השמעת המילה שוב">${SPK}<span>השמעה חוזרת</span></button><button class="link" id="reveal">הצגת המילה כתובה</button></div>`;
   let body='';
