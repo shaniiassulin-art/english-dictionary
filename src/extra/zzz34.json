@@ -1,0 +1,378 @@
+{
+"taint": {
+"use": "taint + שם / מזון = להכתים, לזהם.\nכשם עצם: the taint of + שחיתות.\ntainted = מוכתם."
+},
+"deduce": {
+"use": "deduce + מסקנה + from + ראיות.\ndeduce that + משפט.\ndeduction = הסקה."
+},
+"erupt": {
+"use": "פועל בלי מושא: volcano / violence erupts.\nerupt into + צחוק / קרב = לפרוץ ב-.\neruption = התפרצות."
+},
+"posterity": {
+"use": "שם עצם לא ספיר: for posterity = לדורות הבאים.\nבלי a / the (רשמי)."
+},
+"demented": {
+"use": "שם תואר: demented = דמנטי (רפואי).\nבשיחה: מטורף.\ndementia = שיטיון."
+},
+"vertebrate": {
+"use": "שם עצם ספיר: vertebrates = בעלי חוליות.\nההפך: invertebrate.\nבביולוגיה."
+},
+"flattery": {
+"use": "שם עצם לא ספיר: Flattery will get you nowhere.\nflatter = להחמיא.\nלרוב שלילי."
+},
+"sundown": {
+"use": "שם עצם: at sundown = בשקיעה.\nבאמריקאית.\nsunset = שקיעה."
+},
+"expendable": {
+"use": "שם תואר: expendable workers / items = שאפשר לוותר עליהם.\nלרוב על אנשים – פוגע.\nexpend = להוציא.",
+"tip": "expendable – 'אקספנדבל', כמו 'אקספנס' (הוצאה) – הוצאה שמוותרים עליה ✂ = שניתן לוותר עליו."
+},
+"arable": {
+"use": "שם תואר: arable land = אדמה חקלאית.\nכמעט רק עם land.\nבחקלאות."
+},
+"overlaps": {
+"use": "overlap with + דבר = לחפוף.\nכשם עצם: an overlap between + A + and + B.\nבזמנים ותחומים."
+},
+"loudspeaker": {
+"use": "שם עצם ספיר: over the loudspeaker.\nspeaker = רמקול (קיצור).\nמערכת כריזה."
+},
+"eraser": {
+"use": "שם עצם ספיר (אמריקאית): an eraser.\nבבריטית: rubber.\nerase = למחוק."
+},
+"veracity": {
+"use": "שם עצם לא ספיר: the veracity of + טענה = אמיתות (רשמי).\ntruth = אמת."
+},
+"allusion": {
+"use": "שם עצם: an allusion to + דבר = רמיזה.\nallude to = לרמוז.\nאל תבלבלי: illusion = אשליה."
+},
+"slaughterhouse": {
+"use": "שם עצם ספיר: slaughterhouse = בית מטבחיים.\nabattoir = מילה נרדפת.\nבחקלאות."
+},
+"rehearse": {
+"use": "rehearse + נאום / מחזה = לעשות חזרה.\nבלי מושא: the band rehearsed.\nrehearsal = חזרה."
+},
+"upholstery": {
+"use": "שם עצם לא ספיר: leather upholstery.\nupholster = לרפד.\nברהיטים ורכב."
+},
+"disprove": {
+"use": "disprove + תיאוריה = להפריך.\nprove = להוכיח (רשמי)."
+},
+"impair": {
+"use": "impair + שיקול דעת / ראייה = לפגום.\nimpaired = לקוי.\nvisually impaired = לקוי ראייה."
+},
+"confiscate": {
+"use": "confiscate + חפץ + from + אדם = להחרים.\nconfiscation = החרמה.\nseize = לתפוס."
+},
+"docile": {
+"use": "שם תואר: docile animal / child = צייתן ושקט.\nלפעמים שלילי (פסיבי).\nobedient = צייתן.",
+"tip": "docile – 'דוסייל', נשמע כמו 'דוֹס' – ילד דוס וצייתן 🐑 = צייתן."
+},
+"hasten": {
+"use": "hasten + דבר = לזרז.\nhasten to + פועל = למהר.\nt שותקת: 'הייסן'.",
+"tip": "hasten – 'הייסן', נשמע כמו 'הֵחִישׁ' – haste = חיפזון ⏩ = למהר."
+},
+"expatriate": {
+"use": "שם עצם: an expatriate = מי שחי מחוץ לארצו.\nבקיצור: expat.\nexpatriate (פועל) = להגלות."
+},
+"categorize": {
+"use": "categorize + דברים + as / by + קטגוריה.\ncategory = קטגוריה.\nclassify = מילה נרדפת."
+},
+"congregate": {
+"use": "פועל בלי מושא: people congregate in + מקום.\ncongregation = קהילה.\ngather = מילה נרדפת."
+},
+"retroactive": {
+"use": "שם תואר: retroactive to + תאריך.\nretroactively = רטרואקטיבית.\nבחוק ושכר."
+},
+"forsake": {
+"use": "forsake – forsook – forsaken.\nforsake + אדם / מקום = לנטוש (ספרותי).",
+"tip": "forsake – 'פורסייק', נשמע כמו 'פורש' + 'סייק' – פורש ועוזב את כולם 💔 = לזנוח."
+},
+"ensue": {
+"use": "פועל בלי מושא: a fight ensued = התפתח.\nensuing = שבא אחרי (רשמי).",
+"tip": "ensue – 'אנסיו', נשמע כמו 'אין-סוף' – אחרי זה בא עוד ועוד ➡ = לנבוע, להתפתח."
+},
+"subtraction": {
+"use": "שם עצם לא ספיר: addition and subtraction.\nsubtract + A + from + B (בחשבון)."
+},
+"confide": {
+"use": "confide in + אדם = לשתף בסוד.\nconfide + סוד + to + אדם.\nconfidant = איש סוד."
+},
+"coexistence": {
+"use": "שם עצם לא ספיר: peaceful coexistence.\ncoexist = לחיות יחד.\nבפוליטיקה."
+},
+"expend": {
+"use": "expend + אנרגיה / זמן + on + דבר (רשמי).\nexpenditure = הוצאה."
+},
+"fortify": {
+"use": "fortify + עיר / חומה = לבצר.\nfortified with + ויטמינים = מועשר.\nfortress = מבצר."
+},
+"dissect": {
+"use": "dissect + חיה / בעיה = לנתח.\ndissection = ניתוח.\nבביולוגיה ובהשאלה."
+},
+"infraction": {
+"use": "שם עצם ספיר: a minor infraction (רשמי).\nviolation = הפרה."
+},
+"rationalize": {
+"use": "rationalize + התנהגות = להצדיק.\nrationalization = רציונליזציה.\nבפסיכולוגיה."
+},
+"emigrate": {
+"use": "emigrate from / to + מדינה = להגר.\nemigrant = מהגר (שעזב).\nimmigrate = להגר אל."
+},
+"botanist": {
+"use": "שם עצם ספיר: a botanist.\nbotany = בוטניקה.\nbotanical garden."
+},
+"fabricate": {
+"use": "fabricate + סיפור / ראיות = לבדות.\nfabricate = גם לייצר.\nfabrication = בדיה."
+},
+"laborer": {
+"use": "שם עצם ספיר: a farm / day laborer.\nבבריטית: labourer.\nworker = עובד."
+},
+"finalize": {
+"use": "finalize + תוכנית / עסקה = לסגור סופית.\nfinal = סופי (בעסקים)."
+},
+"fluctuation": {
+"use": "שם עצם: fluctuations in + מחירים / טמפרטורה.\nfluctuate = להשתנות (בכלכלה)."
+},
+"quench": {
+"use": "quench + thirst = להרוות צמא.\nquench + אש = לכבות.\nכמעט תמיד עם thirst."
+},
+"unexplored": {
+"use": "שם תואר: unexplored area / idea.\nexplore = לחקור.\nuncharted = מילה נרדפת."
+},
+"mailman": {
+"use": "שם עצם ספיר (אמריקאית): the mailman.\nבבריטית: postman.\nמילה נרדפת: mail carrier."
+},
+"annihilate": {
+"use": "annihilate + אויב / קבוצה = להשמיד.\nבספורט: להביס לגמרי.\nannihilation = השמדה."
+},
+"goblet": {
+"use": "שם עצם ספיר: a silver goblet.\nכוס יין עם רגל (ספרותי).",
+"tip": "goblet – 'גובלט', נשמע כמו 'גביע' + 'לט' – גביע יין עם רגל 🍷 = גביע."
+},
+"forgettable": {
+"use": "שם תואר: forgettable movie / meal (שלילי).\nunforgettable = בלתי נשכח."
+},
+"revitalize": {
+"use": "revitalize + עיר / כלכלה = להחיות.\nvital = חיוני.\nrevitalization = החייאה."
+},
+"repelled#1": {
+"use": "be repelled by + דבר = להיגעל.\nrepellent / repulsive = דוחה (רשמי)."
+},
+"astonishment": {
+"use": "שם עצם לא ספיר: to my astonishment = לתדהמתי.\nastonish = להדהים.\namazement = מילה נרדפת."
+},
+"implicate": {
+"use": "implicate + אדם + in + פשע = לערב.\nimplication = השלכה (במשפט)."
+},
+"overdo": {
+"use": "overdo – overdid – overdone.\noverdo it = להגזים.\noverdone = מבושל יותר מדי."
+},
+"enclosing": {
+"use": "enclose + שטח + with + גדר = להקיף.\nenclosed = סגור.\nenclosure = מתחם."
+},
+"disloyal": {
+"use": "שם תואר: disloyal to + אדם / ארגון.\ndisloyalty = חוסר נאמנות.\nloyal = נאמן."
+},
+"implore": {
+"use": "implore + אדם + to + פועל = להתחנן (ספרותי).\nbeg = מילה נרדפת.",
+"tip": "implore – 'אימפלור', נשמע כמו 'אמא, please!' – מתחנן לאמא 🙏 = להתחנן."
+},
+"apathetic": {
+"use": "שם תואר: apathetic about / towards + נושא.\napathy = אדישות.\nמילה נרדפת: indifferent."
+},
+"diverge": {
+"use": "diverge from + דבר = לסטות.\nפועל בלי מושא: paths diverge.\ndivergence = התפצלות."
+},
+"disobey": {
+"use": "disobey + אדם / חוק – בלי מילת יחס.\ndisobedient = לא צייתן.\nobey = לציית."
+},
+"arousing": {
+"use": "arouse + עניין / חשד = לעורר.\narousal = עוררות (רשמי)."
+},
+"contaminate": {
+"use": "contaminate + מים / מזון = לזהם.\ncontaminated with + חומר.\ncontamination = זיהום."
+},
+"deformity": {
+"use": "שם עצם ספיר: a physical deformity.\ndeformed = מעוות (ברפואה)."
+},
+"ingest": {
+"use": "ingest + חומר = לבלוע.\nרשמי, רפואי.\nswallow = בשיחה."
+},
+"insulate": {
+"use": "insulate + בית + against / from + קור.\ninsulation = בידוד.\nבהשאלה: insulate from criticism."
+},
+"savanna": {
+"use": "שם עצם: the African savanna.\nגם: savannah.\nבגאוגרפיה."
+},
+"unorganized": {
+"use": "שם תואר: unorganized office / person.\nגם: disorganized.\norganized = מאורגן."
+},
+"leniency": {
+"use": "שם עצם לא ספיר: show leniency = להקל.\nlenient = מקל.\nבמשפט ובחינוך.",
+"tip": "leniency – 'ליניינסי', נשמע כמו 'לֵנוּ רַך' – השופט היה רך אלינו 😌 = מתינות."
+},
+"dampen": {
+"use": "dampen + spirits / enthusiasm = לדכא.\ndampen + בד = להרטיב.\ndamp = לח."
+},
+"canvass": {
+"use": "canvass + אזור / אנשים = לבקש קולות / לסקור.\ncanvass opinion = לסקור דעות.\nבפוליטיקה.",
+"tip": "canvass – 'קנבס', כמו 'קנבס' של צייר – עוברים על כל השטח, דלת אחר דלת 🚪 = לסקור."
+},
+"legible": {
+"use": "שם תואר: legible handwriting = קריא.\nההפך: illegible.\nעל כתב יד."
+},
+"terrify": {
+"use": "terrify + אדם = להבעית.\nterrified of + דבר.\nterrifying = מבעית."
+},
+"reorganize": {
+"use": "reorganize + משרד / חברה.\nreorganization = ארגון מחדש (בעסקים)."
+},
+"derision": {
+"use": "שם עצם לא ספיר: with derision = בלעג.\nderide = ללעוג (רשמי)."
+},
+"benefactors": {
+"use": "שם עצם ספיר: a generous benefactor.\nbeneficiary = נהנה (רשמי)."
+},
+"industrious": {
+"use": "שם תואר על אדם: industrious = חרוץ.\nאל תבלבלי: industrial = תעשייתי.\nמילה נרדפת: hard-working."
+},
+"skyrocket": {
+"use": "פועל בלי מושא: prices skyrocketed.\nעל מחירים ומספרים.\nsoar = מילה נרדפת."
+},
+"familiarize": {
+"use": "familiarize oneself with + דבר = להכיר.\nfamiliar = מוכר (רשמי)."
+},
+"sarcophagus": {
+"use": "שם עצם ספיר: an Egyptian sarcophagus.\nרבים: sarcophagi.\nבארכאולוגיה."
+},
+"elude": {
+"use": "elude + משטרה / תפיסה = להתחמק.\nelude + אדם = לא לזכור.\nelusive = חמקמק."
+},
+"reciprocate": {
+"use": "reciprocate = להשיב באותה מידה.\nreciprocate + feelings (רשמי)."
+},
+"enclose": {
+"use": "enclose + מסמך + with / in + מכתב = לצרף.\nPlease find enclosed.\nבמכתבים רשמיים."
+},
+"amass": {
+"use": "amass + הון / ראיות = לצבור (רשמי).\naccumulate = מילה נרדפת."
+},
+"wart": {
+"use": "שם עצם ספיר: a wart on + איבר.\nwarts and all = עם כל הפגמים (ברפואה).",
+"tip": "wart – 'וורט', נשמע כמו 'וורד' – גבשושית קטנה כמו ניצן ורד על העור 🌹 = יבלת."
+},
+"correspondingly": {
+"use": "תואר הפועל: rise / fall correspondingly (רשמי).\naccordingly = בהתאם."
+},
+"identically": {
+"use": "תואר הפועל: dressed / behave identically.\nidentical = זהה.\nidentical twins = תאומים זהים."
+},
+"accentuate": {
+"use": "accentuate + תכונה = להבליט.\nבאופנה ואיפור.\nemphasize = להדגיש."
+},
+"mountainside": {
+"use": "שם עצם: on the mountainside.\nhillside = צלע גבעה.\nslope = מדרון."
+},
+"scrutinize": {
+"use": "scrutinize + מסמך / אדם = לבחון בקפידה.\nscrutiny = בדיקה מדוקדקת (רשמי)."
+},
+"junkyard": {
+"use": "שם עצם ספיר: a junkyard.\nבבריטית: scrapyard.\njunk = גרוטאות."
+},
+"abduct": {
+"use": "abduct + אדם = לחטוף.\nabduction = חטיפה.\nkidnap = מילה נרדפת.",
+"tip": "abduct – ab (הרחק) + duct (להוביל, כמו 'דוקט' = צינור) – להוביל מישהו הרחק 🚐 = לחטוף."
+},
+"affluence": {
+"use": "שם עצם לא ספיר: signs of affluence.\naffluent = אמיד.\nwealth = עושר."
+},
+"culminate": {
+"use": "culminate in + אירוע = להגיע לשיא ב-.\nculmination = שיא (רשמי)."
+},
+"invertebrate": {
+"use": "שם עצם ספיר: insects are invertebrates.\nvertebrate = בעל חוליות.\nבביולוגיה."
+},
+"launder": {
+"use": "launder + money = להלבין הון.\nlaunder + בגדים = לכבס (רשמי).\nlaundering = הלבנה.",
+"tip": "launder – 'לונדר', כמו 'Laundry' = כביסה 🧺 – מכבסים כסף מלוכלך = להלבין."
+},
+"unconcerned": {
+"use": "שם תואר: unconcerned about / by + דבר.\nconcerned = מודאג.\nמשמעות: רגוע, לא אכפת לו."
+},
+"disapproving": {
+"use": "שם תואר: disapproving look / tone.\ndisapprove of + דבר.\napprove = לאשר."
+},
+"obstinate": {
+"use": "שם תואר: obstinate child / refusal = עקשן (שלילי).\nstubborn = מילה נרדפת."
+},
+"mountaintop": {
+"use": "שם עצם: on the mountaintop.\nsummit / peak = פסגה (בטבע)."
+},
+"standardize": {
+"use": "standardize + מבחנים / תהליכים.\nstandardized test = מבחן אחיד.\nstandard = תקן."
+},
+"genial": {
+"use": "שם תואר: genial host / smile = חביב (רשמי).\nfriendly = ידידותי.",
+"tip": "genial – 'ג'יניאל', נשמע כמו 'גאוני' + 'חביב' – אדם חביב וחם 😊 = ידידותי."
+},
+"condense": {
+"use": "condense + טקסט = לקצר.\nבלי מושא: steam condenses = מתעבה.\ncondensed milk = חלב מרוכז.",
+"tip": "condense – con + dense (דחוס, כמו 'דנסיטי') = לדחוס יחד 🗜 = לדחוס."
+},
+"pothole": {
+"use": "שם עצם ספיר: a pothole in the road (בכביש).\nhole = חור."
+},
+"hibernate": {
+"use": "פועל: bears hibernate = לישון שנת חורף.\nhibernation = תרדמת חורף.\nבמחשבים: מצב שינה."
+},
+"midair": {
+"use": "שם עצם: in midair = באוויר.\nmidair collision = התנגשות באוויר.\nגם: mid-air."
+},
+"cadaver": {
+"use": "שם עצם ספיר: גופה (ברפואה) (רשמי).\nבשיחה: body; גם: corpse.",
+"tip": "cadaver – 'קדאבר', נשמע כמו 'קדבר' + 'קבר' – גופה לפני הקבר 💀 = גופה."
+},
+"proliferate": {
+"use": "פועל בלי מושא: weeds / weapons proliferate.\nproliferation = התפשטות (רשמי)."
+},
+"diurnal": {
+"use": "שם תואר: diurnal animals = פעילים ביום.\nההפך: nocturnal.\nבביולוגיה."
+},
+"unearth": {
+"use": "unearth + חפץ / סוד = לחשוף.\ndig up = בשיחה.\nבארכאולוגיה."
+},
+"underlies": {
+"use": "underlie + בעיה = להיות ביסוד.\nunderlying cause = סיבה עמוקה (רשמי)."
+},
+"disinfection": {
+"use": "שם עצם לא ספיר: disinfection of + משטח.\ndisinfect = לחטא.\ndisinfectant = חומר חיטוי."
+},
+"extrapolate": {
+"use": "extrapolate from + נתונים = לאמוד.\nבמדע וסטטיסטיקה (רשמי)."
+},
+"brainwash": {
+"use": "brainwash + אדם + into + ing.\nbrainwashing = שטיפת מוח (בהשאלה)."
+},
+"orchestrate": {
+"use": "orchestrate + אירוע / קמפיין = לתזמר.\nלפעמים שלילי (מזימה).\norchestra = תזמורת."
+},
+"recur": {
+"use": "פועל בלי מושא: the problem recurred.\nrecurred (שתי r).\nrecurrence = הישנות."
+},
+"abacus": {
+"use": "שם עצם ספיר: an abacus.\nלימוד חשבון.\ncalculator = מחשבון.",
+"tip": "abacus – 'אבקוס', נשמע כמו 'אבא-קוּס' – אבא מלמד לספור עם החרוזים 🧮 = חשבונייה."
+},
+"officiate": {
+"use": "officiate at + טקס = לערוך.\nבספורט: officiate a game = לשפוט (רשמי)."
+},
+"agitate": {
+"use": "agitate + אדם = להסעיר.\nagitate for + שינוי = להתסיס.\nagitated = נסער."
+},
+"growled": {
+"use": "growl at + אדם = לנהום.\nבהשאלה: לרטון בכעס.\ngrowl = נהמה."
+},
+"abhor": {
+"use": "abhor + דבר = לתעב.\nרשמי מאוד.\nabhorrent = מתועב."
+}
+}
