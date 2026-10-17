@@ -1,0 +1,97 @@
+{
+"p14|prestigious": {
+"tr": "הרווארד היא אוניברסיטה יוקרתית.",
+"use": "מתאר בדרך כלל מוסד, ארגון או פרס – לא אדם: prestigious university / award / job.\nלפני שם עצם או אחרי be.\nprestige = יוקרה.",
+"tip": "prestigious – 'פרסטיג'ס', כמו 'פרסטיז'' בעברית = יוקרה 🎓 = יוקרתי."
+},
+"p14|institutions": {
+"tr": "בנקים ובתי ספר הם מוסדות חשובים.",
+"use": "שם עצם ספיר: financial / academic institutions.\nעל ארגון גדול וקבוע (בנק, אוניברסיטה, בית חולים).\ninstitute = מכון.",
+"tip": "institution – 'אינסטיטושן', כמו 'אינסטנציה' / 'מכון' (Institute) 🏛 = מוסד."
+},
+"p14|dominate": {
+"tr": "חברות גדולות שולטות בשוק.",
+"use": "dominate + שם עצם – בלי on / over.\ndominate the market / the game / the conversation.\ndominant = דומיננטי.",
+"tip": "dominate – 'דומינייט', כמו 'דומיננטי' בעברית 👑 = לשלוט."
+},
+"p14|disorder": {
+"tr": "היא סובלת מהפרעת אכילה.",
+"use": "ברפואה: eating / sleep / mental disorder = הפרעה.\nsuffer from a disorder.\nבמשמעות אחרת: אי-סדר (in disorder).",
+"tip": "disorder – dis (בלי) + order (סדר) = 'בלי סדר' בגוף או בנפש 🧠 = הפרעה, מחלה."
+},
+"p14|greyhounds": {
+"tr": "כלבי גרייהאונד הם הכלבים המהירים בעולם.",
+"use": "שם עצם ספיר; רבים: greyhounds.\nבאמריקאית גם: Greyhound = חברת אוטובוסים.\ngrey (אפור) + hound (כלב ציד).",
+"tip": "greyhound – grey (אפור) + hound (כלב) = 'כלב אפור' מהיר 🐕💨 = גרייהאונד."
+},
+"p14|insanity": {
+"tr": "לנהוג כל כך מהר בגשם זה טירוף מוחלט.",
+"use": "שם עצם לא ספיר: pure / total insanity.\ninsane = משוגע.\nבמשפט: plead insanity = לטעון לאי-שפיות.",
+"tip": "insanity – in (לא) + sane (שפוי, כמו 'סאני' = שפוי) = לא שפוי 🤪 = טירוף."
+},
+"p14|mental illness": {
+"tr": "אין במה להתבייש במחלת נפש.",
+"use": "שם עצם: suffer from a mental illness.\nmental = של הנפש / השכל; illness = מחלה.\nmental health = בריאות הנפש.",
+"tip": "mental illness – 'מנטלי' (נפשי) + ill (חולה) = מחלה נפשית 🧠."
+},
+"p14|rather than": {
+"tr": "הייתי רוצה תה במקום קפה.",
+"use": "מחבר שני דברים מאותו סוג: tea rather than coffee.\nאחרי rather than בא פועל בסיסי או ing: walk rather than drive.\nwould rather = הייתי מעדיף.",
+"tip": "rather than – 'ראד'ר דן', כמו I'd rather = 'הייתי מעדיף' – זה ולא ההוא ⚖ = במקום."
+},
+"p14|synonym": {
+"tr": "המילה big היא מילה נרדפת ל-large.",
+"use": "שם עצם ספיר: a synonym for / of + מילה.\nההפך: antonym = מילה הפוכה.\nsynonymous = נרדף.",
+"tip": "synonym – syn (יחד, כמו 'סינכרון') + onym (שם) = 'שם ביחד' 🟰 = מילה נרדפת."
+},
+"p14|transaction": {
+"tr": "הבנק גבה עמלה על העסקה.",
+"use": "שם עצם ספיר: a business / bank transaction.\nmake / complete a transaction.\nבבנקים ובעסקים.",
+"tip": "transaction – trans (מעבר) + action (פעולה) = 'פעולה שבה כסף עובר' – 'טרנזקציה' 💳 = עסקה."
+},
+"p14|recipient": {
+"tr": "נמען המכתב גר בלונדון.",
+"use": "שם עצם ספיר: the recipient of + מכתב / פרס / תרומה (רשמי).\nreceive = לקבל.",
+"tip": "recipient – 'רסיפיינט', כמו receive ('ריסיב' = לקבל) / 'רספשן' 📬 = מקבל."
+},
+"p14|prerequisite": {
+"tr": "מעבר המבחן הוא תנאי מוקדם לקורס.",
+"use": "שם עצם: a prerequisite for / of + דבר.\nבלימודים: קורס שחייבים לעבור קודם (רשמי).",
+"tip": "prerequisite – pre (לפני) + requisite (דרוש, כמו require) = 'דרוש לפני' ✅ = תנאי מוקדם."
+},
+"p14|riddle": {
+"tr": "את יכולה לפתור את החידה הזאת?",
+"use": "שם עצם ספיר: solve a riddle / tell a riddle.\nבהשאלה: משהו מסתורי.\npuzzle = פאזל, חידה.",
+"tip": "riddle – 'רידל', כמו 'רידלר' (Riddler) – הנבל מבאטמן שתמיד שואל חידות ❓ = חידה."
+},
+"p14|freed": {
+"tr": "האסיר שוחרר אחרי עשר שנים.",
+"use": "עבר ו-V3 של free (לשחרר): free – freed – freed.\nלרוב בסביל: be freed from + כלא.\nfree = גם חופשי / בחינם.",
+"tip": "freed – free (חופשי) + d = 'נעשה חופשי' 🕊 = שוחרר."
+},
+"p14|expelled": {
+"tr": "הוא סולק מבית הספר בגלל העתקה.",
+"use": "be expelled from + בית ספר / מדינה.\nexpel – expelled (שתי l).\nexpulsion = סילוק, גירוש.",
+"tip": "expelled – ex (החוצה) + pel (לדחוף, כמו 'פרופלר') = נדחף החוצה 🚪 = גורש."
+},
+"p14|liberated": {
+"tr": "העיר שוחררה בסוף המלחמה.",
+"use": "על עם, עיר או ארץ: be liberated from + כובש.\nliberation = שחרור.\nעל אדם גם: liberated = משוחרר (בדעותיו).",
+"tip": "liberated – 'ליברייטד', כמו 'ליברלי' / liberty = חירות 🗽 = שוחרר."
+},
+"p14|licensed": {
+"tr": "רק חשמלאי בעל רישיון יכול לעשות את העבודה הזאת.",
+"use": "שם תואר לפני מקצוע: licensed electrician / doctor / driver.\nlicensed to + פועל = מורשה ל-.\nlicense = רישיון.",
+"tip": "licensed – 'לייסנסד', כמו 'ליסנס' = רישיון 🪪 = בעל רישיון."
+},
+"p14|crops": {
+"tr": "החקלאים מגדלים גידולים כמו חיטה ותירס.",
+"use": "שם עצם ספיר, לרוב ברבים: grow / harvest crops.\ncrop = גם יבול של עונה.\ncrop (פועל) = לחתוך תמונה.",
+"tip": "crop – 'קרופ', כמו Crop בטלפון (לחתוך תמונה) – כמו שקוצרים את היבול ✂🌾 = גידולים."
+},
+"p14|beyond": {
+"tr": "התשובה היא מעבר לידע שלי.",
+"use": "מילת יחס לפני שם עצם: beyond the hills / beyond my control.\nבהשאלה: beyond belief = לא יאומן.\nמשמש גם כתואר הפועל: and beyond.",
+"tip": "beyond – 'ביונד', כמו 'To infinity and beyond!' של באז שנות-אור 🚀 = מעבר ל-."
+}
+}

@@ -306,6 +306,34 @@ input,textarea,select{font-size:max(16px,1em)}
 .row2:has([aria-pressed="true"]) .btn.knowyes[aria-pressed="false"],.row2:has([aria-pressed="true"]) .btn.knowno[aria-pressed="false"]{opacity:.55}
 .qz .btn.secondary{background:var(--surface);color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* private lesson */
+.item.priv{background:var(--accent-soft);border-radius:16px}
+.item.priv .num{background:var(--accent);color:var(--accent-ink)}
+.btn.sentgo{background:var(--accent);color:var(--accent-ink)}
+.sent-head{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);margin-inline:-20px;padding:10px 20px 8px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.sh-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sh-count{font-size:1.05rem}.sh-count b{font-size:1.4rem}
+.btn.small{width:auto;min-height:40px;padding:6px 14px;font-size:.95rem}
+.sent-head .bar2{display:block;background:var(--surface)}
+.sent-head .sync-state{margin:0;font-size:.8rem;min-height:1.2em}
+.sent-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.sent-item{border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.sent-item.done{border-color:var(--ok);background:var(--ok-soft)}
+.si-top{display:flex;align-items:center;gap:10px}
+.si-n{flex:none;min-width:30px;height:30px;border-radius:50%;background:var(--surface);display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
+.sent-item.done .si-n{background:var(--ok);color:var(--bg)}
+.si-w{flex:1;display:flex;flex-direction:column;min-width:0}
+.si-e{font-family:var(--en);font-size:1.25rem;font-weight:600;text-align:right;unicode-bidi:isolate}
+.si-h{color:var(--muted);font-size:.95rem}
+.si-ok{color:var(--ok);font-weight:800;visibility:hidden}.sent-item.done .si-ok{visibility:visible}
+.spk.playing{background:var(--accent);color:var(--accent-ink)}
+.sent-item textarea{width:100%;resize:none;overflow:hidden;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--ink);font-family:var(--he);line-height:1.45;min-height:46px;display:block;touch-action:manipulation}
+.sent-item textarea.si-en{font-family:var(--en);text-align:left}
+.sent-item textarea::placeholder{color:var(--muted);opacity:.8;font-family:var(--he);direction:rtl;text-align:right}
+.sent-item textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.exp-list{margin:0;padding:12px 12px 12px 34px;background:var(--surface);border-radius:12px;font-family:var(--en);text-align:left;line-height:1.5;user-select:text;-webkit-user-select:text}
+.exp-list li{margin:3px 0}
+.exp-miss{margin:8px 0;color:var(--bad);font-weight:600}.exp-miss.ok{color:var(--ok)}
 </style>
 
 <div class="app" dir="rtl" id="app"></div>
@@ -338,19 +366,38 @@ const dayCount=k=>(DAYS[k]||[]).length;
 /* my own notes per card: NOTES[id]=[text, timestamp] (synced, newest wins) */
 let NOTES={};try{NOTES=JSON.parse(localStorage.getItem('dictNotes')||'{}')}catch(e){}
 function saveNotes(){LS.set('dictNotes',JSON.stringify(NOTES));dirty()}
+/* private-lesson sentences: SENT[card id] = {en:[text, time], he:[text, time]}. Never deleted (old lists stay saved); newest edit of each field wins */
+let SENT={};try{SENT=JSON.parse(localStorage.getItem('dictSent')||'{}')}catch(e){}
+function saveSent(){LS.set('dictSent',JSON.stringify(SENT));dirty()}
 function saveDays(){LS.set('dictDays',JSON.stringify(DAYS));dirty()}
 function logDay(id){const k=dayKey();const a=DAYS[k]=DAYS[k]||[];if(!a.includes(id)){a.push(id);saveDays()}}
-function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}')})}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}'),sent:JSON.parse(LS.get('dictSent')||'{}')})}
+/* push: read the account copy, merge it with this device, and write back only if the account did not change in
+   between (updateTime precondition); otherwise read again. So two open devices never overwrite each other. */
 async function push(){
-  const t=+(LS.get('dictUpdated')||Date.now());
-  try{const r=await fetch(docUrl(SYNC_ID),{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:snapshot()},updated:{integerValue:String(t)}}})});
-    if(!r.ok)throw new Error(r.status);LS.set('dictSynced',String(t));setSync('ok')}catch(e){setSync('error');clearTimeout(SYNC.timer);SYNC.timer=setTimeout(push,15000)}
+  clearTimeout(SYNC.timer);SYNC.timer=null;
+  if(SYNC.pushing){SYNC.again=true;return}
+  SYNC.pushing=true;
+  try{
+    for(let n=0;n<5;n++){
+      const rem=await pull();let data=JSON.parse(snapshot());
+      if(rem){const m=mergeData(rem.data,data);if(normD(m)!==normD(data))applyRemote(m,Date.now());data=m}
+      const t=Date.now(),pre=rem&&rem.ut?'&currentDocument.updateTime='+encodeURIComponent(rem.ut):rem?'':'&currentDocument.exists=false';
+      const r=await fetch(docUrl(SYNC_ID)+pre,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:JSON.stringify(data)},updated:{integerValue:String(t)}}})});
+      if(r.ok){const j=await r.json().catch(()=>({}));SYNC.ut=j.updateTime||'';LS.set('dictSynced',String(t));setSync('ok');return}
+      if(![400,409,412].includes(r.status))throw new Error(r.status);
+    }
+    throw new Error('busy');
+  }catch(e){setSync('error');clearTimeout(SYNC.timer);SYNC.timer=setTimeout(push,15000)}
+  finally{SYNC.pushing=false;if(SYNC.again){SYNC.again=false;push()}}
 }
 async function pull(){
-  const r=await fetch(docUrl(SYNC_ID));
+  const r=await fetch(docUrl(SYNC_ID),{cache:'no-store'});
   if(r.status===404)return null;if(!r.ok)throw new Error(r.status);
-  const j=await r.json();const f=j.fields||{};return{data:JSON.parse(f.data?.stringValue||'{}'),updated:+(f.updated?.integerValue||0)};
+  const j=await r.json();const f=j.fields||{};return{data:JSON.parse(f.data?.stringValue||'{}'),updated:+(f.updated?.integerValue||0),ut:j.updateTime||''};
 }
+/* comparable form of the saved data */
+function normD(o){return JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},sent:o.sent||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))})}
 function mergeData(a,b){
   const prog={...(a.prog||{})};for(const k in (b.prog||{}))prog[k]=Math.max(prog[k]||0,b.prog[k]||0);
   const sdel={...(a.sdel||{})};for(const k in (b.sdel||{}))sdel[k]=Math.max(sdel[k]||0,b.sdel[k]||0);
@@ -360,27 +407,36 @@ function mergeData(a,b){
   const know={...ka};for(const k in kb)if(!know[k]||(kb[k][1]||0)>(know[k][1]||0))know[k]=kb[k];
   const days={};for(const s of [a.days||{},b.days||{}])for(const k in s)days[k]=[...new Set([...(days[k]||[]),...s[k]])].sort();
   const notes={...(a.notes||{})};for(const k in (b.notes||{}))if(!notes[k]||(b.notes[k][1]||0)>(notes[k][1]||0))notes[k]=b.notes[k];
-  return{prog,sess,sdel,know,days,notes};
+  /* sentences: every card from both sides is kept; per field the newer text wins */
+  const sent={};for(const x of [a.sent||{},b.sent||{}])for(const k in x){const o=sent[k]=sent[k]||{};
+    for(const f of ['en','he'])if(x[k]&&x[k][f]&&(!o[f]||(x[k][f][1]||0)>(o[f][1]||0)))o[f]=x[k][f]}
+  return{prog,sess,sdel,know,days,notes,sent};
 }
 function applyRemote(d,t){
   SYNC.applying=true;
-  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
-  if(!['quiz','cards'].includes(S.screen))draw();
+  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  /* the sentences page is updated in place (never redrawn while typing); other pages keep their scroll position */
+  if(S.screen==='sent')sentRefresh();else if(!['quiz','cards'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
 }
-async function syncNow(forceRemote){
-  setSync('loading');
+async function syncNow(quiet){
+  if(SYNC.pushing)return;
+  if(!quiet)setSync('loading');
   try{const rem=await pull();SYNC.ready=true;
-    if(!rem){await push();setSync('ok');return}
+    if(!rem){await push();return}
+    if(SYNC.pushing||SYNC.timer)return;
     const local=JSON.parse(snapshot()),merged=mergeData(rem.data,local);
-    const same=o=>JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))});
-    if(same(merged)!==same(local))applyRemote(merged,Date.now());
-    if(same(merged)!==same(rem.data)){LS.set('dictUpdated',String(Date.now()));await push()}
+    if(normD(merged)!==normD(local))applyRemote(merged,Date.now());
+    if(normD(merged)!==normD(rem.data)){LS.set('dictUpdated',String(Date.now()));await push();return}
     setSync('ok');
   }catch(e){SYNC.ready=true;setSync('error')}
 }
-function setSync(st){SYNC.state=st;const el=document.getElementById('syncState');if(el){el.textContent=syncLabel();el.className='sync-state '+st}}
+function setSync(st){SYNC.state=st;const el=document.getElementById('syncState');if(el){el.textContent=syncLabel();el.className='sync-state '+st}
+  const se=document.getElementById('sentSync');if(se){se.textContent=sentSyncLabel();se.className='sync-state '+st}}
+function sentSyncLabel(){return {idle:'',loading:'מתחבר לחשבון…',saving:'שומר…',ok:'נשמר בחשבון שלך ✓',error:'נשמר במכשיר הזה בלבד'}[SYNC.state]||''}
+/* while the sentences page is open, check the account every few seconds so text typed on another device shows up here */
+setInterval(()=>{if(S.screen==='sent'&&document.visibilityState==='visible'&&SYNC.ready&&!SYNC.pushing&&!SYNC.timer)syncNow(true)},4000);
 function syncLabel(){return {idle:'',loading:'מתחבר…',saving:'שומר…',ok:'מסונכרן בין המכשירים ✓',error:'אין חיבור כרגע · נשמר במכשיר ויסונכרן אחר כך'}[SYNC.state]||''}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&SYNC.ready&&!['quiz','cards'].includes(S.screen))syncNow(false);if(document.visibilityState==='hidden'&&SYNC.timer){clearTimeout(SYNC.timer);push()}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&SYNC.ready&&!['quiz','cards'].includes(S.screen))syncNow(S.screen==='sent');if(document.visibilityState==='hidden'&&SYNC.timer){push()}});
 const D=__DATA__;
 const LVN=['קל מאוד','קל','קל-בינוני','בינוני','בינוני+','בינוני-קשה','קשה','קשה מאוד','מתקדם','מומחה'];
 const SET=50;
@@ -388,16 +444,20 @@ const SET=50;
    showing the others. Sibling cards are spread ~one group (50) apart so they never come one after another. */
 /* optional 5th field {id, src}: an English form split out of a dictionary line ("know, knew" -> know / knew); src = old card ids its marks come from */
 const RAW=D.map(r=>({e:r[0],h:r[1],l:r[2],s:r[3],uid:(r[4]&&r[4].id)||r[0],src:r[4]&&r[4].src}));
+/* private-lesson lists (src/private.json): their own section, "level" 11, one group per list; card id "p<list>|<english>" */
+const PRIV=__PRIVATE__,PL=11;
+PRIV.lists.forEach(L=>L.w.forEach(([e,h,s])=>RAW.push({e,h:[h],l:PL,s,uid:'p'+L.n+'|'+e,list:L.n})));
 const words=[];
 for(let l=1;l<=10;l++){const prim=RAW.filter(r=>r.l===l),Np=prim.length||1,items=[];
   prim.forEach((r,p)=>{const n=r.h.length;r.h.forEach((m,k)=>items.push({key:k?((p+k*SET)%Np)+k*.01+.001:p,
     w:{id:n>1?r.uid+'#'+k:r.uid,src:r.src&&r.src[k],e:r.e,h:[m],others:r.h.filter((_,j)=>j!==k),l:r.l,s:Array.isArray(r.s)?(r.s[k]||r.s[0]):r.s}}))});
   items.sort((a,b)=>a.key-b.key);items.forEach(it=>words.push(it.w))}
+RAW.filter(r=>r.l===PL).forEach(r=>words.push({id:r.uid,e:r.e,h:r.h,others:[],l:PL,s:r.s,list:r.list}));
 /* the same English word can come from separate dictionary lines (spring: מעיין, אביב / קפיץ, לקפוץ):
    every card shows all the other meanings of that English word */
-{const all={};RAW.forEach(r=>{const k=r.e.toLowerCase();(all[k]=all[k]||[]).push(...r.h)});
-  words.forEach(w=>{const ms=all[w.e.toLowerCase()];if(ms.length>1)w.others=[...new Set(ms.filter(m=>m!==w.h[0]))]})}
-const WORDS_N=RAW.length;
+{const all={};RAW.forEach(r=>{if(r.l===PL)return;const k=r.e.toLowerCase();(all[k]=all[k]||[]).push(...r.h)});
+  words.forEach(w=>{if(w.l===PL)return;const ms=all[w.e.toLowerCase()];if(ms.length>1)w.others=[...new Set(ms.filter(m=>m!==w.h[0]))]})}
+const WORDS_N=RAW.filter(r=>r.l!==PL).length;
 /* per card: tr = Hebrew translation of the example sentence, use = usage notes, tip = how to remember the meaning */
 const EXTRA=__EXTRA__;
 const XO={};
@@ -430,8 +490,13 @@ document.addEventListener('click',e=>{
   const t=e.target.closest('[data-tr]');
   if(t){const s=t.nextElementSibling;if(s){s.hidden=!s.hidden;t.textContent=s.hidden?'תרגום לעברית':'הסתרת התרגום'}}});
 const byLv=l=>words.filter(w=>w.l===l);
-const group=(l,g)=>byLv(l).slice(g*SET,g*SET+SET);
-const nGroups=l=>Math.ceil(byLv(l).length/SET);
+const group=(l,g)=>l===PL?byLv(l).filter(w=>PRIV.lists[g]&&w.list===PRIV.lists[g].n):byLv(l).slice(g*SET,g*SET+SET);
+const nGroups=l=>l===PL?PRIV.lists.length:Math.ceil(byLv(l).length/SET);
+/* names: the private section has lists instead of numbered levels and groups */
+const PNAME='מילים לשיעור פרטי';
+const lvName=l=>l===PL?PNAME:`רמה ${l}`;
+const lvFull=l=>l===PL?PNAME:`רמה ${l} · ${LVN[l-1]}`;
+const gName=(l,g)=>l===PL?`רשימה ${(PRIV.lists[g]||{}).n}`:`קבוצה ${g+1}`;
 let prog={};try{prog=JSON.parse(localStorage.getItem('dictProg')||'{}')}catch(e){}
 // migrate old keys "word|unit"
 for(const k of Object.keys(prog)){if(k.includes('|')){const e=k.split('|')[0];if(prog[k]>=1)prog[e]=1;delete prog[k]}}
@@ -512,7 +577,7 @@ function keepAlive(on){try{if(on){if(!KEEP.el){const k=new Audio('data:audio/mpe
     if(KEEP.el.paused){const p=KEEP.el.play();p&&p.catch(()=>{})}}else if(KEEP.el)KEEP.el.pause()}catch(e){}}
 function stopAudio(){const a=AU.el;if(a){try{a.pause()}catch(e){}}if(AU.end){const f=AU.end;f(null)}}
 /* play audio/<kind>/<hash>.mp3; resolves true when it played to the end, false if no file could be played, null if stopped */
-function playFile(kind,text){stopAudio();const a=audioEl(),h=fnv(text);
+function playFile(kind,text,rate){stopAudio();const a=audioEl(),h=fnv(text);
   return new Promise(res=>{let i=AU.base,timer=null;
     const fin=ok=>{if(AU.end!==done)return;AU.end=null;clearTimeout(timer);a.onended=a.onerror=a.onplaying=null;res(ok)};
     const done=ok=>fin(ok);AU.end=done;
@@ -520,7 +585,7 @@ function playFile(kind,text){stopAudio();const a=audioEl(),h=fnv(text);
       a.onerror=()=>{if(AU.end!==done)return;if(i===0&&!AU.ok0&&++AU.miss0>=2)AU.base=1;i++;next()};
       a.onplaying=()=>{if(i===0)AU.ok0=true};a.onended=()=>fin(true);
       clearTimeout(timer);timer=setTimeout(()=>fin(a.currentTime>0),20000);
-      a.src=AUD_BASES[i]+kind+'/'+h+'.mp3';
+      a.src=AUD_BASES[i]+kind+'/'+h+'.mp3';try{a.defaultPlaybackRate=a.playbackRate=rate||1;a.preservesPitch=true}catch(e){}
       const p=a.play();p&&p.catch(e=>{if(AU.end!==done)return;if(e&&e.name==='NotAllowedError')fin(false)})};
     next()})}
 function cleanEn(t){return t.replace(/\s*\(.*?\)/g,'').replace(/…|\.\.\./g,', ').replace(/^\d+(st|nd|rd|th)\s*-\s*/,'').replace(/\s*-\s*10th$/,'')}
@@ -535,7 +600,7 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 
 /* state */
 let S={screen:'home',l:1,g:0,mode:'read',active:null};
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards'].includes(S.screen))S.screen='home'}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent'].includes(S.screen))S.screen='home'}catch(e){}
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
@@ -544,7 +609,7 @@ const toTop=document.createElement('button');toTop.className='totop';toTop.setAt
 toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});document.body.appendChild(toTop);
 window.addEventListener('scroll',()=>{toTop.hidden=window.scrollY<500},{passive:true});
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen})[S.screen]();
+  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -587,7 +652,7 @@ function spreadShuffle(ws){const n=ws.length,slot=new Array(n).fill(null),grp={}
       if(!done)gap--}
     if(!done)g.forEach(w=>{const f=slot.indexOf(null);slot[f]=w})}
   let j=0;for(let i=0;i<n;i++)if(!slot[i])slot[i]=singles[j++];return slot}
-function pickList(ws){const out=[];for(let l=1;l<=10;l++){const lw=ws.filter(w=>w.l===l);if(lw.length)out.push(...spreadShuffle(lw))}return out}
+function pickList(ws){const out=[];for(let l=1;l<=PL;l++){const lw=ws.filter(w=>w.l===l);if(lw.length)out.push(...spreadShuffle(lw))}return out}
 function quizPanel(key,ws,title,name,from,noSet,cls){
   if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)(SDEL[key]=Date.now(),delete SESS[key]);
   const ss=SESS[key];
@@ -639,6 +704,7 @@ function home(){
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     ${todayCard()}
     ${searchBox()}
+    ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+L.n).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
       return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}${(()=>{const mk=ws.filter(x=>kst(x)).length;return mk&&mk<ws.length?` · לא סומנו ${ws.length-mk}`:''})()}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
@@ -657,23 +723,24 @@ function countLine(ws){const y=ws.filter(isY).length,n=ws.filter(isN).length;
 function level(){
   const ws=byLv(S.l),n=nGroups(S.l),nw=ws.filter(isN);
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">כל הרמות</button>${HOME}</div>
-    <div><h2>רמה ${S.l} · ${LVN[S.l-1]}</h2><p class="sub">${countLine(ws)}</p></div>
+    <div class="nav"><button class="back" id="bk">${S.l===PL?'מסך ראשי':'כל הרמות'}</button>${HOME}</div>
+    <div><h2>${lvFull(S.l)}</h2><p class="sub">${countLine(ws)}</p></div>
+    ${S.l===PL?sentBtn():''}
     ${searchBox()}
-    ${quizPanel('L'+S.l,ws,'בוחן על כל הרמה',`רמה ${S.l}`,'level')}
+    ${quizPanel('L'+S.l,ws,S.l===PL?'בוחן על כל המילים':'בוחן על כל הרמה',lvName(S.l),'level')}
     ${catPanel('L'+S.l,ws)}
-    <button class="btn secondary" id="list">רשימת המילים ברמה · סימון ✓ / ✗</button>
-    <p class="lbl">או תרגול לפי קבוצות של 50 מילים</p>
+    <button class="btn secondary" id="list">${S.l===PL?'כל המילים':'רשימת המילים ברמה'} · סימון ✓ / ✗</button>
+    <p class="lbl">${S.l===PL?'או תרגול לפי רשימה':'או תרגול לפי קבוצות של 50 מילים'}</p>
     <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
-      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">קבוצה ${g+1}</span><br><span class="d">${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">${gName(S.l,g)}</span><br><span class="d">${S.l===PL?gw.length+' מילים · ':''}${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
-  bindSettings();bindQuizPanel('L'+S.l,ws,`רמה ${S.l}`,'level');bindCatPanel('L'+S.l,ws,`רמה ${S.l}`,'level');
+  bindSettings();bindQuizPanel('L'+S.l,ws,lvName(S.l),'level');bindCatPanel('L'+S.l,ws,lvName(S.l),'level');const sb=$('sentGo');if(sb)sb.onclick=()=>go({screen:'sent'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'level'});bindSearch(ws);
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
 
-const gkey=()=>'G'+S.l+'-'+S.g;
+const gkey=()=>S.l===PL?'GP'+(PRIV.lists[S.g]||{}).n:'G'+S.l+'-'+S.g;
 const HOME='<button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
 /* search by English word or Hebrew meaning */
 const snorm=s=>String(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').replace(/[-־'"״׳.,;:()\/]/g,' ').replace(/\s+/g,' ').trim();
@@ -696,10 +763,10 @@ function bindRows(){
 }
 function groupScreen(){
   const ws=group(S.l,S.g),nw=ws.filter(isN),un=ws.filter(w=>!kst(w)).length;
-  const name=`קבוצה ${S.g+1} · רמה ${S.l}`;
+  const name=`${gName(S.l,S.g)} · ${lvName(S.l)}`;
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">רמה ${S.l}</button>${HOME}</div>
-    <div><h2>קבוצה ${S.g+1}</h2><p class="sub">רמה ${S.l} · ${LVN[S.l-1]}</p>
+    <div class="nav"><button class="back" id="bk">${S.l===PL?'שיעור פרטי':lvName(S.l)}</button>${HOME}</div>
+    <div><h2>${gName(S.l,S.g)}</h2><p class="sub">${lvFull(S.l)}</p>
       <p class="known-line">${countLine(ws)}</p></div>
     ${searchBox()}
     <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
@@ -720,8 +787,8 @@ function wordsScreen(){
   const rows=()=>{const hits=searchHits(F[f],S.q),list=hits||F[f];
     return list.length?`<ul class="words">${list.map(wordRow).join('')}</ul>`:`<p class="hint center">${hits?'לא נמצאו מילים.':'אין מילים כאן.'}</p>`};
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">${lv?`רמה ${S.l}`:`קבוצה ${S.g+1}`}</button>${HOME}</div>
-    <div><h2>${lv?`כל המילים ברמה ${S.l}`:`המילים בקבוצה ${S.g+1}`}</h2><p class="sub">${lv?'':`רמה ${S.l} · `}סמני ✓ אם את יודעת, ✗ אם לא. לחיצה נוספת מבטלת.</p></div>
+    <div class="nav"><button class="back" id="bk">${lv?(S.l===PL?'שיעור פרטי':lvName(S.l)):gName(S.l,S.g)}</button>${HOME}</div>
+    <div><h2>${lv?(S.l===PL?'כל המילים לשיעור הפרטי':`כל המילים ברמה ${S.l}`):(S.l===PL?`המילים ב${gName(S.l,S.g)}`:`המילים בקבוצה ${S.g+1}`)}</h2><p class="sub">${lv?'':`${lvName(S.l)} · `}סמני ✓ אם את יודעת, ✗ אם לא. לחיצה נוספת מבטלת.</p></div>
     <div class="sbox"><input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><button class="sclear" id="sclear" aria-label="מחיקת החיפוש" ${S.q?'':'hidden'}>✕</button></div>
     <div class="seg seg4" role="group" aria-label="סינון">${[['all','הכל'],['y','יודעת'],['n','לא יודעת'],['u','לא סומנו']].map(([k,t])=>`<button data-f="${k}" aria-pressed="${f===k}">${t} (${F[k].length})</button>`).join('')}</div>
     <div id="wlist">${rows()}</div>
@@ -733,6 +800,61 @@ function wordsScreen(){
   $('srch').oninput=e=>{S.q=e.target.value;$('wlist').innerHTML=rows();bindRows()};
   bindRows();
 }
+
+/* ---------- private lesson: writing sentences for the newest list (PRIV.write) ---------- */
+const sentList=()=>PRIV.lists.find(x=>x.n===PRIV.write)||PRIV.lists[PRIV.lists.length-1];
+const sentId=(L,e)=>'p'+L.n+'|'+e;
+const sv=(id,f)=>((SENT[id]||{})[f]||[''])[0]||'';
+const sentDone=L=>L.w.filter(([e])=>sv(sentId(L,e),'en').trim()).length;
+function sentBtn(){const L=sentList();if(!L)return '';
+  return `<button class="btn sentgo" id="sentGo">✍ כתיבת משפטים · רשימה ${L.n} · ${sentDone(L)}/${L.w.length}</button>`}
+let EXP=false;
+function autoGrow(t){t.style.height='auto';t.style.height=t.scrollHeight+2+'px'}
+function sentScreen(){const L=sentList();
+  app.innerHTML=`<div class="screen sentscr">
+    <div class="nav"><button class="back" id="bk">שיעור פרטי</button>${HOME}</div>
+    <div><h2>כתיבת משפטים · רשימה ${esc(L.n)}</h2><p class="sub">לכל מילה כתבי משפט באנגלית. הפירוש בעברית לא חובה. הכול נשמר אוטומטית בחשבון שלך.</p></div>
+    <div class="sent-head" id="sentHead">
+      <div class="sh-row"><span class="sh-count" id="shCount"></span><button class="btn small" id="expBtn" aria-expanded="${EXP}">ייצוא המשפטים</button></div>
+      <div class="bar2"><i id="shBar"></i></div>
+      <p class="sync-state ${SYNC.state}" id="sentSync">${sentSyncLabel()}</p>
+    </div>
+    <div id="expBox"></div>
+    <ol class="sent-list">${L.w.map(([e,h],i)=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
+      <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
+      <textarea class="si-en" dir="ltr" rows="1" data-id="${esc(id)}" data-f="en" placeholder="המשפט שלי באנגלית" aria-label="משפט באנגלית עם ${esc(e)}" autocapitalize="sentences" autocomplete="off">${esc(sv(id,'en'))}</textarea>
+      <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
+  </div>`;
+  $('bk').onclick=()=>go({screen:'level',l:PL});
+  app.querySelectorAll('.sent-item textarea').forEach(t=>{autoGrow(t);
+    t.oninput=()=>{autoGrow(t);const id=t.dataset.id,o=SENT[id]=SENT[id]||{};o[t.dataset.f]=[t.value,Date.now()];saveSent();sentRefresh()}});
+  app.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>sayWord(b.dataset.sw,b));
+  $('expBtn').onclick=()=>{EXP=!EXP;sentRefresh();if(EXP)$('expBox').scrollIntoView({block:'nearest',behavior:'smooth'})};
+  sentRefresh()}
+/* counter, bar, ✓ marks, export box and texts that changed on another device; the field being typed in is left alone */
+function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentList(),N=L.w.length,n=sentDone(L);
+  $('shCount').innerHTML=`<b>${n}</b> מתוך ${N}${n===N?' · הכול כתוב ✓':''}`;$('shBar').style.width=(N?n/N*100:0)+'%';
+  app.querySelectorAll('.sent-item').forEach(li=>li.classList.toggle('done',!!sv(li.dataset.sid,'en').trim()));
+  app.querySelectorAll('.sent-item textarea').forEach(t=>{const v=sv(t.dataset.id,t.dataset.f);if(t!==document.activeElement&&t.value!==v){t.value=v;autoGrow(t)}});
+  const eb=$('expBtn');eb.setAttribute('aria-expanded',EXP);eb.textContent=EXP?'סגירת הייצוא':'ייצוא המשפטים';
+  const box=$('expBox');box.innerHTML=EXP?expHtml(L):'';
+  if(EXP){$('expCopy').onclick=()=>copyText(expText(L),$('expCopy'));$('expClose').onclick=()=>{EXP=false;sentRefresh()}}}
+function expRows(L){const rows=[],miss=[];L.w.forEach(([e],i)=>{const t=sv(sentId(L,e),'en').trim().replace(/\s+/g,' ');if(t)rows.push(`${t} (${e})`);else miss.push(i+1)});return{rows,miss}}
+const expText=L=>expRows(L).rows.map((r,i)=>`${i+1}. ${r}`).join('\n');
+function expHtml(L){const {rows,miss}=expRows(L);
+  return `<section class="panel exp"><h3>המשפטים שלי · רשימה ${esc(L.n)}</h3>
+    ${rows.length?`<ol class="exp-list" dir="ltr">${rows.map(r=>`<li>${esc(r)}</li>`).join('')}</ol>`:'<p class="hint">עוד לא נכתבו משפטים.</p>'}
+    <p class="exp-miss ${miss.length?'':'ok'}">${miss.length?`חסרים ${miss.length===1?'משפט אחד':miss.length+' משפטים'} (${miss.length===1?'מילה':'מילים'} ${miss.join(', ')})`:'כל המשפטים כתובים ✓'}</p>
+    <div class="row2"><button class="btn" id="expCopy" ${rows.length?'':'disabled'}>העתקת הרשימה</button><button class="btn secondary" id="expClose">סגירה</button></div></section>`}
+function copyText(t,btn){const ok=()=>{btn.textContent='הועתק ✓';setTimeout(()=>{if(btn.isConnected)btn.textContent='העתקת הרשימה'},2000)};
+  const old=()=>{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;opacity:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);try{document.execCommand('copy');ok()}catch(e){}ta.remove()};
+  try{navigator.clipboard.writeText(t).then(ok,old)}catch(e){old()}}
+/* speaker next to a word: recorded American voice, a little slower; the button is colored while it plays */
+function sayWord(e,btn){unlockAudio();try{if(TTS&&(speechSynthesis.speaking||speechSynthesis.pending))speechSynthesis.cancel()}catch(x){}
+  app.querySelectorAll('.spk.playing').forEach(b=>b.classList.remove('playing'));btn.classList.add('playing');
+  const off=()=>btn.classList.remove('playing');
+  playFile('w',e,.85).then(ok=>{if(ok!==false||!TTS){off();return}
+    try{const u=new SpeechSynthesisUtterance(cleanEn(e));u.lang='en-US';if(voice)u.voice=voice;u.rate=.75;u.onend=u.onerror=off;speechSynthesis.speak(u)}catch(x){off()}})}
 
 /* quiz-logic */
 let Q=null;
@@ -1019,10 +1141,21 @@ function cardScreen(){
   $('nxt').onclick=()=>{C.i++;C.open=false;saveC();draw();cardSay()};
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&(S.screen==='quiz'||S.screen==='cards'))$('exit')?.click()});
+/* remember the scroll position of each page, so a reload or a return from another app opens at the same place */
+const scrKey=()=>[S.screen,S.l,S.g,S.wl||'',S.filter||''].join('|');
+const SCR={restoring:true,t:null};
+function saveScroll(){if(SCR.restoring)return;LS.set('dictScroll',JSON.stringify({k:scrKey(),y:Math.round(window.scrollY)}))}
+window.addEventListener('scroll',()=>{clearTimeout(SCR.t);SCR.t=setTimeout(saveScroll,150)},{passive:true});
+window.addEventListener('pagehide',saveScroll);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveScroll()});
+function restoreScroll(){let v=null;try{v=JSON.parse(LS.get('dictScroll')||'null')}catch(e){}
+  const done=()=>{SCR.restoring=false};if(!v||v.k!==scrKey()||!v.y){done();return}
+  const to=()=>{app.querySelectorAll('.sent-item textarea').forEach(autoGrow);window.scrollTo(0,v.y)};
+  to();requestAnimationFrame(to);setTimeout(to,150);setTimeout(()=>{to();done()},600);
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(SCR.restoring)to()})}
 (function boot(){
   if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
   if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false}}else S.screen='group'}
-  draw();
+  draw();restoreScroll();
   syncNow(false);
 })();
 </script>

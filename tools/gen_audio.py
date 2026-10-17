@@ -27,6 +27,13 @@ for r in json.load(open(f'{ROOT}/src/words.json')):
     else:
         for s in (r[3] if isinstance(r[3], list) else [r[3]]):
             jobs[fnv(s)] = s
+# private-lesson lists (src/private.json): [english, hebrew, sentence]
+for lst in json.load(open(f'{ROOT}/src/private.json'))['lists']:
+    for e, _, s in lst['w']:
+        if kind == 'w':
+            jobs[fnv(e)] = spoken_word(e)
+        else:
+            jobs[fnv(s)] = s
 
 k = Kokoro(f'{MODEL}/kokoro-v1.0.onnx', f'{MODEL}/voices-v1.0.bin')
 tmp = f'{MODEL}/tmp_{kind}.wav'

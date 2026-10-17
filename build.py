@@ -1,7 +1,7 @@
 """Rebuilds index.html from src/: template + word data + page head."""
 from pathlib import Path
 src = Path(__file__).parent / "src"
-page = (src / "template.html").read_text(encoding="utf-8").replace("__DATA__", (src / "words.json").read_text(encoding="utf-8"))
+page = (src / "template.html").read_text(encoding="utf-8").replace("__DATA__", (src / "words.json").read_text(encoding="utf-8")).replace("__PRIVATE__", (src / "private.json").read_text(encoding="utf-8"))
 extra = {}
 for f in sorted((src / "extra").glob("*.json")) if (src / "extra").exists() else []:
     [extra.setdefault(k, {}).update(v) for k, v in __import__("json").loads(f.read_text(encoding="utf-8")).items()]
