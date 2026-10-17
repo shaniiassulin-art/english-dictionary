@@ -1,0 +1,364 @@
+{
+"guide": {
+"use": "guide + אדם + through / around + מקום.\nכשם עצם: a guide = מדריך (אדם או ספר)."
+},
+"surprise": {
+"use": "שם עצם ספיר: a big surprise; to my surprise = להפתעתי.\nכפועל: surprise + אדם.\nsurprised = מופתע."
+},
+"responsibility": {
+"use": "שם עצם: responsibility for + דבר / to + פועל.\ntake responsibility = לקחת אחריות."
+},
+"suggest": {
+"use": "suggest + פועל עם ing או suggest that + משפט.\nלא suggest you to go.\nsuggestion = הצעה."
+},
+"treat#0": {
+"use": "treat + אדם + like / as + דבר (treat others well).\ntreat + חולה = לטפל רפואית."
+},
+"forever": {
+"use": "תואר הפועל: בסוף המשפט (love you forever).\nבבריטית גם for ever."
+},
+"reference": {
+"use": "שם עצם: for reference = לעיון.\na reference to + דבר = אזכור.\nגם המלצה ממעסיק."
+},
+"religion": {
+"use": "שם עצם ספיר: every religion.\nלא ספיר באופן כללי: religion and science."
+},
+"appreciate": {
+"use": "פועל כלכלי: appreciate in value = לעלות בערך.\nההפך של appreciate (בערך) הוא depreciate."
+},
+"produce#1": {
+"tip": "produce – 'פרודיוס', מה שהחווה 'מפיקה', כמו 'פרודוקציה' 🥬🍎 = תוצרת חקלאית.",
+"use": "שם עצם לא ספיר (PRO-duce): fresh produce.\nפירות וירקות טריים."
+},
+"edge#0": {
+"use": "שם עצם ספיר: the edge of + דבר.\non the edge of = על סף."
+},
+"funds": {
+"use": "שם עצם ברבים: funds = כסף זמין למטרה.\nraise funds = לגייס כסף."
+},
+"strategy": {
+"use": "שם עצם ספיר: a strategy for + פועל עם ing.\nstrategic = אסטרטגי."
+},
+"injury": {
+"use": "שם עצם ספיר: a knee injury.\nהפועל: injure; injured = פצוע."
+},
+"wine": {
+"use": "שם עצם לא ספיר: red / white wine.\na glass of wine."
+},
+"arm#0": {
+"use": "פועל, הרבה בסביל: be armed with + נשק.\narmed = חמוש."
+},
+"run, ran|ran": {
+"use": "עבר של run: He ran.\nV3: run (has run)."
+},
+"audience": {
+"use": "שם עצם ספיר ביחיד: the audience.\nבבריטית הפועל יכול לבוא ברבים."
+},
+"begin/an/un|begin": {
+"use": "begin + פועל עם ing / to + פועל.\nרשמי יותר מ-start.\nצורות: begin – began – begun."
+},
+"core": {
+"tip": "core – 'קור', נשמע כמו 'קורה' – הקורה המרכזית שמחזיקה את כל הבית 🏠 = ליבה.",
+"use": "שם עצם: at the core of = בליבה של.\nכשם תואר: core values = ערכי ליבה."
+},
+"patient#1": {
+"use": "שם עצם ספיר: a patient = חולה שמטופל.\nבבית חולים ובמרפאה."
+},
+"medicine#0": {
+"use": "שם עצם לא ספיר: study medicine.\nבמשמעות רפואה כמקצוע."
+},
+"presence": {
+"use": "שם עצם: in the presence of = בנוכחות.\nההפך של presence הוא absence."
+},
+"reduce": {
+"use": "reduce + מושא (costs, weight, risk).\nreduce by + אחוז."
+},
+"honest": {
+"use": "שם תואר: honest with + אדם / about + דבר.\nה-h שותקת: an honest man."
+},
+"reaction": {
+"use": "שם עצם: a reaction to + דבר.\nהפועל: react to."
+},
+"excellent": {
+"use": "שם תואר מוחלט: לא very excellent.\nexcellent at + תחום."
+},
+"rare#1": {
+"use": "שם תואר על בשר: rare / medium / well done.\nשואלים במסעדה: How would you like your steak?"
+},
+"nuclear": {
+"use": "שם תואר: nuclear power, nuclear weapons.\nלפני שם עצם."
+},
+"labor#1": {
+"use": "שם עצם לא ספיר: hard labor.\nכפועל: labor = לעמול."
+},
+"guard": {
+"use": "שם עצם ספיר: a security guard.\nכפועל: guard + מקום / אדם.\non guard = על המשמר."
+},
+"description": {
+"use": "שם עצם ספיר: give a description of + דבר.\nהפועל: describe."
+},
+"exist": {
+"use": "פועל בלי מושא: Do aliens exist?\nexistence = קיום."
+},
+"stress#0": {
+"use": "stress + נקודה / מילה = להדגיש.\nstress that + משפט."
+},
+"mention": {
+"use": "mention + מושא, בלי about (mention her plans).\nDon't mention it = אין בעד מה."
+},
+"mountain": {
+"use": "שם עצם ספיר: climb a mountain.\nmountains = הרים, רכס."
+},
+"taste": {
+"use": "שם עצם: a taste of + דבר.\nכפועל: taste + שם תואר (It tastes good)."
+},
+"victory": {
+"use": "שם עצם ספיר: a victory over + יריב.\nwin a victory."
+},
+"volume#1": {
+"use": "שם עצם: turn up / down the volume.\nלא ספיר."
+},
+"toward": {
+"use": "מילת יחס: אל עבר (walk toward the door).\nבבריטית: towards."
+},
+"plane#0": {
+"use": "שם עצם ספיר: by plane / on the plane.\nבבריטית גם aeroplane."
+},
+"useful": {
+"use": "שם תואר: useful for + פועל עם ing.\nההפך של useful הוא useless."
+},
+"initial#0": {
+"use": "שם תואר: לפני שם עצם – initial idea.\ninitially = בתחילה."
+},
+"grade#2": {
+"use": "שם עצם: a high grade = דרגה גבוהה.\nבצבא ובעבודה."
+},
+"proper": {
+"use": "שם תואר: proper shoes, proper way.\nproperly = כראוי."
+},
+"failure": {
+"use": "שם עצם: a failure = כישלון (אירוע או אדם).\nfailure to + פועל = אי-הצלחה."
+},
+"pair": {
+"use": "a pair of + רבים (a pair of shoes).\nהפועל ביחיד: This pair is new."
+},
+"transfer#0": {
+"use": "transfer + X + from + מקום + to + מקום.\nהמעמד על FER."
+},
+"quarter": {
+"use": "שם עצם: a quarter of + דבר.\na quarter past / to = רבע אחרי / לפני (שעה)."
+},
+"session": {
+"use": "שם עצם ספיר: a morning session, a training session.\nin session = בישיבה."
+},
+"willing": {
+"use": "שם תואר: be willing to + פועל.\nההפך של willing הוא unwilling."
+},
+"zone": {
+"use": "שם עצם ספיר: a no-parking zone.\ntime zone = אזור זמן."
+},
+"entirely": {
+"use": "תואר הפועל: לחיזוק – entirely agree.\nנרדף: completely."
+},
+"flat#0": {
+"use": "שם תואר: flat land, flat tire.\nflat = גם קבוע במחיר: a flat rate."
+},
+"mail": {
+"use": "שם עצם לא ספיר באמריקאית: get mail.\nבבריטית: post."
+},
+"fly#1": {
+"use": "שם עצם ספיר: a fly, flies.\nבאוכל, בבית."
+},
+"spirit#2": {
+"use": "שם עצם: free spirit = נפש חופשית.\nin good spirits = במצב רוח טוב."
+},
+"shape": {
+"use": "שם עצם: in the shape of + צורה.\nin shape = בכושר."
+},
+"firm#2": {
+"use": "שם עצם ספיר: a law firm.\nחברה, בעיקר עורכי דין ורואי חשבון."
+},
+"ill": {
+"use": "שם תואר אחרי be / feel: She was ill.\nבאמריקאית: sick."
+},
+"double standard": {
+"use": "שם עצם ספיר: It's a double standard to + פועל.\nביקורת על חוסר הוגנות."
+},
+"fuel": {
+"use": "שם עצם לא ספיר: the car needs fuel.\nכפועל: fuel = להזין, לתדלק."
+},
+"kick": {
+"use": "kick + מושא (kick the ball).\nkick off = לפתוח (משחק / אירוע)."
+},
+"valley": {
+"use": "שם עצם ספיר: in the valley.\nבשמות: Silicon Valley."
+},
+"treat#1": {
+"use": "שם עצם ספיר: a real treat = פינוק.\nmy treat = אני מזמין."
+},
+"sky": {
+"use": "שם עצם: the sky / in the sky.\nskies (רבים) בשפה ספרותית."
+},
+"accident": {
+"use": "שם עצם ספיר: a car accident.\nby accident = בטעות."
+},
+"bear#0": {
+"use": "שם עצם ספיר: a bear.\nteddy bear = דובי."
+},
+"boat": {
+"use": "שם עצם ספיר: by boat / in a boat.\nקטן מ-ship."
+},
+"cheap": {
+"use": "שם תואר: cheap shoes.\nעל אדם: קמצן.\nההפך של cheap הוא expensive."
+},
+"edge#1": {
+"use": "שם עצם: an edge in his voice = נימה חדה.\non edge = עצבני."
+},
+"capacity#0": {
+"use": "שם עצם: the capacity to + פועל / for + דבר.\nשפה רשמית; בדיבור ability."
+},
+"joint#0": {
+"use": "שם תואר: לפני שם עצם – joint account.\njointly = במשותף."
+},
+"duty": {
+"use": "שם עצם: a duty to + פועל.\non duty / off duty = בתפקיד / לא בתפקיד."
+},
+"promise": {
+"use": "promise to + פועל / promise that + משפט.\nכשם עצם: keep / break a promise."
+},
+"climate": {
+"use": "שם עצם: the climate of + מקום.\nclimate change = שינוי אקלים."
+},
+"arm#1": {
+"use": "שם עצם ספיר: break an arm.\narm in arm = שלובי זרוע."
+},
+"governor": {
+"use": "שם עצם ספיר: the governor of + מדינה / מחוז.\nבאמריקה: מושל מדינה."
+},
+"hundred": {
+"use": "a hundred / one hundred + רבים.\nאחרי מספר בלי s: two hundred.\nhundreds of = מאות."
+},
+"remove": {
+"use": "remove + מושא + from + מקום.\nרשמי יותר מ-take off."
+},
+"begin/an/un|began": {
+"use": "עבר של begin: began.\nV3: begun."
+},
+"steel": {
+"use": "שם עצם לא ספיר: made of steel.\nstainless steel = נירוסטה."
+},
+"medicine#1": {
+"use": "שם עצם: take medicine.\nלא ספיר באופן כללי; ספיר לסוגים: medicines."
+},
+"path": {
+"use": "שם עצם ספיר: follow the path.\nעל השביל: on the path."
+},
+"mix": {
+"use": "mix + X + with + Y / mix X and Y.\nmix up = לבלבל."
+},
+"purchase": {
+"use": "פועל רשמי: purchase + מושא.\nבדיבור: buy.\nכשם עצם: a purchase."
+},
+"rain": {
+"use": "שם עצם לא ספיר: the rain.\nכפועל: It rains / It's raining."
+},
+"afraid": {
+"use": "שם תואר אחרי be: afraid of + דבר / afraid to + פועל.\nI'm afraid = מצטער (בנימוס)."
+},
+"border": {
+"use": "שם עצם ספיר: cross the border.\nthe border between X and Y."
+},
+"enemy": {
+"use": "שם עצם ספיר: an enemy of + אדם.\nההפך של enemy הוא friend / ally."
+},
+"ensure": {
+"use": "ensure that + משפט / ensure + מושא.\nרשמי; בדיבור make sure."
+},
+"limit": {
+"use": "שם עצם ספיר: a limit on + דבר.\nכפועל: limit + מושא + to."
+},
+"profit": {
+"use": "שם עצם: make a profit.\nprofitable = רווחי."
+},
+"stress#1": {
+"use": "שם עצם לא ספיר: under stress.\nstressed = לחוץ; stressful = מלחיץ."
+},
+"command": {
+"use": "שם עצם: give a command.\nכפועל: command + אדם + to + פועל."
+},
+"intelligence#0": {
+"use": "שם עצם לא ספיר: military intelligence.\nבהקשר של ריגול וביטחון."
+},
+"ocean": {
+"use": "שם עצם ספיר: the ocean.\nבשמות: the Atlantic Ocean."
+},
+"proof#0": {
+"use": "סיומת אחרי שם עצם: waterproof, bulletproof, fireproof.\nמחוברת או עם מקף."
+},
+"volume#2": {
+"use": "שם עצם: the volume of + גוף.\nבמדע ובמתמטיקה."
+},
+"crowd#0": {
+"use": "פועל: crowd around / into + מקום.\ncrowded = צפוף."
+},
+"forest": {
+"use": "שם עצם ספיר: in the forest.\nגדול מ-woods."
+},
+"plane#1": {
+"use": "שם עצם במתמטיקה: a flat plane.\nמונח גאומטרי."
+},
+"suddenly": {
+"use": "תואר הפועל: בתחילת המשפט ואחריו פסיק.\nשם התואר: sudden."
+},
+"appearance": {
+"use": "שם עצם: change your appearance.\nmake an appearance = להופיע."
+},
+"initial#1": {
+"use": "שם עצם, בדרך כלל ברבים: your initials.\nכפועל: initial = לחתום בראשי תיבות."
+},
+"grade#3": {
+"use": "שם עצם: a steep grade = שיפוע תלול.\nבאמריקאית; בבריטית gradient."
+},
+"jump": {
+"use": "jump over / into / onto + מקום.\njump the queue = לדלג בתור."
+},
+"native#0": {
+"use": "שם תואר: native language, native speaker.\nכשם עצם: a native of + מקום."
+},
+"noted": {
+"use": "שם תואר רשמי: a noted writer.\nnoted for = ידוע ב-."
+},
+"behavior": {
+"use": "שם עצם לא ספיר: good behavior.\nבבריטית: behaviour."
+},
+"transfer#1": {
+"use": "שם עצם (TRANS-fer): a bank transfer.\nגם מעבר שחקן: a transfer to."
+},
+"honor": {
+"use": "שם עצם: in honor of = לכבוד.\nכפועל: honor + אדם.\nבבריטית: honour."
+},
+"launch": {
+"use": "launch + טיל / מוצר / קמפיין.\nכשם עצם: the launch of."
+},
+"survey#0": {
+"use": "פועל (sur-VEY): survey + שטח = למדוד ולבחון.\nשפה רשמית ומקצועית (מודדים, מהנדסים)."
+},
+"update": {
+"use": "פועל: update + אדם / קובץ.\nכשם עצם: an update on + נושא."
+},
+"ray": {
+"use": "שם עצם ספיר: a ray of light / sun.\na ray of hope = קרן תקווה."
+},
+"debt": {
+"use": "שם עצם: in debt = בחובות.\npay off a debt."
+},
+"flat#1": {
+"use": "שם עצם ספיר בבריטית: a flat.\nבאמריקאית: apartment."
+},
+"expensive": {
+"use": "שם תואר: על מוצר או שירות.\nלא expensive price; אומרים high price."
+},
+"supreme": {
+"use": "שם תואר: the Supreme Court = בית המשפט העליון.\nבשמות באות גדולה."
+}
+}

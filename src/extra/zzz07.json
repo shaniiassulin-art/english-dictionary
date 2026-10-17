@@ -1,0 +1,366 @@
+{
+"degree#0": {
+"use": "שם עצם ספיר: a degree in + תחום (a degree in biology).\nget / have a degree; bachelor's / master's degree."
+},
+"insurance": {
+"use": "שם עצם לא ספיר: health insurance, car insurance.\ninsurance against / for + סיכון."
+},
+"majority": {
+"use": "the majority of + רבים (the majority of students).\nהפועל בדרך כלל ברבים.\nההפך של majority הוא minority."
+},
+"opinion": {
+"tip": "opinion – 'אופיניון', נשמע כמו 'אופי' – הדעה שלך מראה את האופי שלך 🗣 = דעה.",
+"use": "שם עצם ספיר: in my opinion = לדעתי.\nopinion about / on + נושא.\nלא אומרים according to me."
+},
+"physical": {
+"use": "שם תואר: physical exercise, physical health.\nההפך של physical הוא mental."
+},
+"stupid": {
+"tip": "stupid – 'סטיופיד', נשמע כמו stop – הראש עשה 'סטופ', הפסיק לחשוב 🤪 = טיפש.",
+"use": "שם תואר: על אדם או מעשה – a stupid mistake.\nבוטה ולא מנומס על אנשים; עדין יותר: silly."
+},
+"active": {
+"use": "שם תואר: active person, active volcano.\nבדקדוק: active voice (ההפך מסביל)."
+},
+"charge#2": {
+"use": "פועל: charge at / towards + אויב = להסתער.\nבהקשר צבאי וגם של בעלי חיים."
+},
+"dance": {
+"use": "פועל בלי מושא: dance with + אדם.\nכשם עצם: a dance."
+},
+"administration": {
+"use": "שם עצם: the administration = ההנהלה.\nבאמריקאית גם הממשל: the Biden administration."
+},
+"approach": {
+"use": "שם עצם: an approach to + בעיה (a new approach to learning).\nכפועל: approach + מקום / אדם = להתקרב (בלי to)."
+},
+"civil#0": {
+"use": "שם תואר: לפני שם עצם – civil rights, civil war.\nשל אזרחים, לא של הצבא או הדת."
+},
+"direction": {
+"use": "שם עצם ספיר: in the direction of = בכיוון של.\ndirections = הוראות הגעה."
+},
+"defense": {
+"use": "שם עצם לא ספיר: defense of + דבר / against + איום.\nבבריטית: defence."
+},
+"figure#3": {
+"use": "שם עצם ספיר: ספרות במספר – in figures = בספרות.\na six-figure salary = משכורת של שש ספרות."
+},
+"ship#0": {
+"use": "שם עצם ספיר: on a ship / by ship.\nספינה גדולה; boat = סירה קטנה."
+},
+"stock#0": {
+"use": "שם עצם: stock of + דבר.\nin stock / out of stock = יש / אזל במלאי."
+},
+"cancer": {
+"use": "שם עצם לא ספיר: have cancer.\nlung cancer = סרטן ריאות."
+},
+"independent": {
+"use": "שם תואר: independent of / from = לא תלוי ב-.\nשם העצם: independence."
+},
+"master#0": {
+"use": "פועל: master + מיומנות (master a language).\nלהגיע לשליטה מלאה."
+},
+"wonder#0": {
+"use": "שם עצם ספיר: a wonder of the world.\nno wonder = לא פלא ש-."
+},
+"scene#1": {
+"use": "שם עצם: the scene of + אירוע (the scene of the crime).\nat the scene = בזירה."
+},
+"capital#2": {
+"use": "שם עצם לא ספיר: כסף להשקעה בעסק.\nבכלכלה ועסקים."
+},
+"weekend": {
+"use": "שם עצם ספיר: at the weekend (בריטית) / on the weekend (אמריקאית).\nthis weekend / next weekend בלי מילת יחס."
+},
+"band#0": {
+"use": "שם עצם ספיר: a band = להקת רוק / פופ.\nלהקת מחול: dance group."
+},
+"beach": {
+"use": "שם עצם ספיר: on the beach / at the beach.\ngo to the beach."
+},
+"spend#1": {
+"use": "spend + כסף + on + דבר (spends money on clothes).\nלא spend for."
+},
+"lack": {
+"use": "שם עצם: lack of + דבר.\nכפועל: lack + מושא בלי of (He lacks experience)."
+},
+"protect": {
+"use": "protect + מושא + from / against + סכנה.\nשם העצם: protection."
+},
+"imagine": {
+"use": "imagine + שם עצם / פועל עם ing (imagine living there).\nלא imagine to."
+},
+"operation#0": {
+"use": "שם עצם ספיר: a military / rescue operation.\nin operation = פועל, בשימוש."
+},
+"coach#1": {
+"use": "שם עצם ספיר: כרכרה עם סוסים (בסיפורים).\nבבריטית היום גם אוטובוס בין עירוני."
+},
+"organization": {
+"use": "שם עצם ספיר: work for an organization.\nבבריטית גם organisation."
+},
+"spring#0": {
+"use": "שם עצם ספיר: a spring = מעיין.\nhot spring = מעיין חם."
+},
+"spring, sprang|spring#0": {
+"use": "שם עצם ספיר: a spring in a bed / watch.\nקפיץ מתכת."
+},
+"subject#1": {
+"use": "פועל רשמי: subject + X + to + Y = לכפות על X את Y.\nבסביל: be subjected to = לעבור (דבר רע)."
+},
+"commercial#0": {
+"use": "שם תואר: commercial area, commercial success.\nשקשור למסחר ולרווח."
+},
+"train#1": {
+"use": "שם עצם ספיר: by train, on the train.\ncatch / miss a train."
+},
+"effort": {
+"use": "שם עצם: make an effort = להתאמץ.\nלא ספיר באופן כללי: It takes effort."
+},
+"impact#0": {
+"use": "שם עצם: the impact of + התנגשות.\non impact = ברגע הפגיעה."
+},
+"senior#0": {
+"use": "שם תואר: senior manager, senior officer.\nההפך של senior הוא junior."
+},
+"cash#0": {
+"use": "שם עצם לא ספיר: in cash = במזומן.\npay cash."
+},
+"fan#0": {
+"use": "שם עצם ספיר: turn on the fan.\nאותה מילה גם 'מעריץ'."
+},
+"secret": {
+"use": "שם עצם ספיר: keep a secret.\nin secret = בסוד.\nכשם תואר: a secret plan."
+},
+"judge#1": {
+"use": "שם עצם ספיר: the judge.\nגם שופט בתחרות: the judges."
+},
+"wear": {
+"use": "wear + בגד / משקפיים / תכשיט.\nצורות: wear – wore – worn.\nלהתלבש = get dressed."
+},
+"claim#1": {
+"use": "שם עצם ספיר: make / file a claim.\nבביטוח ובחוק."
+},
+"thus": {
+"use": "תואר הפועל רשמי: בתחילת חלק חדש של משפט, אחרי נקודה-פסיק.\nבכתיבה אקדמית."
+},
+"address#0": {
+"use": "פועל: address + בעיה = לטפל.\naddress + קהל = לנאום בפני."
+},
+"bought": {
+"use": "עבר ו-V3 של buy.\nלא לבלבל עם brought (הביא)."
+},
+"color#0": {
+"use": "פועל: color + מושא (color the pictures).\nבבריטית: colour."
+},
+"dream": {
+"use": "dream about / of + דבר.\nכשם עצם: have a dream.\nצורות: dreamed / dreamt."
+},
+"fit#1": {
+"use": "שם תואר: stay / keep fit = לשמור על כושר.\nאחרי be / stay / keep."
+},
+"rich": {
+"use": "שם תואר: rich man, rich country.\nrich in = עשיר ב-.\nthe rich = העשירים."
+},
+"material#1": {
+"tip": "material – 'מטריאל', כמו 'מטריאליסט' בעברית = מי שחושב רק על חפצים וכסף 💍 = חומרני.",
+"use": "שם תואר: material things = דברים חומריים.\nההפך של material הוא spiritual."
+},
+"choose": {
+"use": "choose + מושא / choose to + פועל.\nchoose between X and Y.\nצורות: choose – chose – chosen."
+},
+"direct#0": {
+"use": "פועל: direct + traffic / attention = לכוון.\ndirect someone to + מקום = להראות דרך."
+},
+"touch": {
+"use": "touch + מושא, בלי מילת יחס.\nkeep in touch = לשמור על קשר."
+},
+"easily": {
+"use": "תואר הפועל: אחרי הפועל (won easily).\nשם התואר: easy."
+},
+"necessary": {
+"use": "שם תואר: It is necessary to + פועל.\nnecessary for + אדם / דבר."
+},
+"competition": {
+"use": "שם עצם: ספיר על אירוע (win a competition), לא ספיר על התחרותיות.\ncompete = להתחרות."
+},
+"rule#1": {
+"use": "שם עצם לא ספיר: under British rule.\nשלטון של מדינה או מלך."
+},
+"grand#0": {
+"use": "שם תואר: grand house, grand hotel.\nבעיקר לפני שם עצם."
+},
+"contract#1": {
+"use": "שם עצם ספיר: sign a contract.\na contract with + אדם / חברה."
+},
+"skin": {
+"use": "שם עצם: לא ספיר על עור האדם (dry skin).\nגם קליפה של פרי: banana skin."
+},
+"degree#1": {
+"use": "שם עצם: thirty degrees.\ndegrees Celsius = מעלות צלזיוס."
+},
+"marriage": {
+"use": "שם עצם: a happy marriage.\nהפועל: marry; get married to."
+},
+"patients": {
+"use": "שם עצם ספיר ברבים של patient.\nרופא sees patients."
+},
+"luck": {
+"use": "שם עצם לא ספיר: Good luck! (בלי a).\nby luck = במזל."
+},
+"sweet": {
+"use": "שם תואר: sweet cake.\nבבריטית כשם עצם: sweets = ממתקים.\nעל אדם: חמוד."
+},
+"overall": {
+"use": "תואר הפועל: בתחילת המשפט ואחריו פסיק.\nכשם תואר: the overall result."
+},
+"drink": {
+"use": "drink + משקה.\nצורות: drink – drank – drunk.\nכשם עצם: a drink."
+},
+"glad": {
+"use": "שם תואר אחרי be: I'm glad to + פועל / glad that + משפט.\nלא לפני שם עצם (לא a glad man)."
+},
+"doubt": {
+"use": "שם עצם: no doubt that = אין ספק ש-.\nכפועל: doubt that / whether + משפט."
+},
+"largest": {
+"use": "הדרגה העליונה של large: the largest.\nתמיד עם the."
+},
+"damage": {
+"use": "שם עצם לא ספיר: a lot of damage (לא damages).\nכפועל: damage + מושא."
+},
+"civil#1": {
+"use": "שם תואר: be civil to + אדם = מנומס.\nרשמי ומעט מיושן."
+},
+"grow": {
+"use": "בלי מושא = לגדול (Plants grow).\nעם מושא = לגדל (grow vegetables).\nצורות: grow – grew – grown."
+},
+"notice#0": {
+"use": "notice + מושא / that + משפט.\nלא בא בצורת ing כפועל מצב."
+},
+"figure#4": {
+"use": "שם עצם: an important figure in history.\npublic figure = אישיות ציבורית."
+},
+"side effect": {
+"use": "שם עצם ספיר, הרבה ברבים: side effects of + תרופה.\nבהקשר רפואי."
+},
+"ship#1": {
+"use": "פועל: ship + מוצר / הזמנה = לשלוח.\nshipping = משלוח."
+},
+"disease": {
+"use": "שם עצם: heart disease.\nמחלה מסוימת – ספיר: a rare disease."
+},
+"stock#1": {
+"use": "פועל: stock + מוצר / מקום.\nstock up on = להצטייד."
+},
+"machine": {
+"use": "שם עצם ספיר: washing machine, coffee machine.\nבשמות מכשירים."
+},
+"trip#0": {
+"use": "פועל: trip on / over + דבר.\ntrip up = להכשיל."
+},
+"carry": {
+"use": "carry + מושא (carry a bag).\ncarry on = להמשיך."
+},
+"master#1": {
+"use": "פועל: master + חיים / רגשות / פחד = לשלוט ולהתגבר.\nשפה רשמית וספרותית."
+},
+"explain": {
+"use": "explain + דבר + to + אדם (explain it to me).\nלא explain me."
+},
+"wonder#1": {
+"tip": "wonder – 'וונדר', נשמע כמו wander ('וונדר' = לשוטט) – המחשבה משוטטת ותוהה 🤔 = לתהות.",
+"use": "wonder + why / if / whether + משפט.\nI wonder... = אני תוהה."
+},
+"capital#3": {
+"use": "שם תואר: capital letters = אותיות גדולות.\nin capitals = באותיות גדולות."
+},
+"reality": {
+"use": "שם עצם: in reality = במציאות.\nreality show = תוכנית ריאליטי."
+},
+"winter": {
+"use": "in winter / in the winter.\nלפני שם עצם: winter coat."
+},
+"band#1": {
+"use": "פועל נדיר: band + פצע = לחבוש.\nנפוץ: bandage / put a band-aid on."
+},
+"effective": {
+"use": "שם תואר: effective medicine, effective way.\nשל מעשה שמשיג את המטרה."
+},
+"male": {
+"use": "שם תואר ושם עצם: male / female.\nעל בעלי חיים ובטפסים."
+},
+"plant": {
+"use": "שם עצם ספיר: a plant.\nכפועל: plant + עץ / זרעים.\nגם מפעל: power plant."
+},
+"worse": {
+"use": "דרגת יותר של bad: worse than.\nget worse = להחמיר."
+},
+"crime": {
+"use": "שם עצם: a crime = פשע אחד; crime = פשיעה (לא ספיר).\ncommit a crime."
+},
+"operation#1": {
+"use": "שם עצם ספיר: have an operation on + איבר.\nנרדף: surgery."
+},
+"coach#2": {
+"use": "באמריקאית: fly coach = לטוס במחלקת תיירים.\nבלי a ובלי in."
+},
+"spot#0": {
+"use": "שם עצם ספיר: a spot on + בגד.\nגם נקודה או מקום: a nice spot."
+},
+"eventually": {
+"use": "תואר הפועל: לפני הפועל או בסוף המשפט.\nלא 'אולי' (eventually = בסוף בפועל)."
+},
+"spring#1": {
+"use": "in spring / in the spring.\nלפני שם עצם: spring flowers."
+},
+"otherwise": {
+"use": "בתחילת חלק שני של משפט: Hurry, otherwise we'll be late.\nגם 'מלבד זאת': otherwise, it's fine."
+},
+"spring, sprang|spring#1": {
+"use": "פועל ספרותי: spring + into / onto / out.\nצורות: spring – sprang – sprung."
+},
+"subject#2": {
+"use": "שם עצם: a British subject = נתין של מלך / מלכה.\nבהקשר היסטורי ופוליטי."
+},
+"spring, sprang|sprang": {
+"use": "עבר של spring: sprang onto.\nV3: sprung."
+},
+"commercial#1": {
+"use": "שם עצם ספיר באמריקאית: a TV commercial.\nבבריטית: advert / ad."
+},
+"agreement": {
+"use": "שם עצם ספיר: reach an agreement.\nin agreement with = מסכים עם."
+},
+"block#0": {
+"use": "שם עצם ספיר: blocks of stone / ice.\nגם בלוק דירות: a block of flats."
+},
+"impact#1": {
+"use": "שם עצם: an impact on + דבר (a big impact on my mood).\nhave / make an impact."
+},
+"challenge#0": {
+"use": "פועל: challenge + אדם + to + תחרות / פועל.\nגם להטיל ספק: challenge an idea."
+},
+"senior#1": {
+"use": "שם תואר: senior citizens = קשישים (מנומס).\nבמקום old people."
+},
+"primary#0": {
+"use": "בבריטית: primary school = בית ספר יסודי.\nבאמריקאית: elementary school."
+},
+"cash#1": {
+"use": "פועל: cash a check = לפדות צ'ק.\ncash in = להמיר בכסף."
+},
+"rates#0": {
+"use": "שם עצם: crime rates, birth rate.\nשיעור לפי אחוזים או מספרים."
+},
+"fan#1": {
+"use": "שם עצם ספיר: a fan of + זמר / קבוצה.\nbig fan = מעריץ גדול."
+},
+"advice": {
+"use": "שם עצם לא ספיר: some advice, a piece of advice (לא an advice).\nהפועל: advise."
+},
+"nation": {
+"use": "שם עצם ספיר: the whole nation = כל העם.\nnational = לאומי."
+}
+}
