@@ -1,0 +1,482 @@
+{
+"Jew": {
+"use": "יהודי (שם עצם): a religious Jew.\nכתואר אומרים Jewish: a Jewish family.",
+"tip": "Jew – 'ג'וּ', מ-Judah (יהודה) ✡."
+},
+"maturity": {
+"use": "בגרות: show maturity.\nmature = בוגר.",
+"tip": "mature – 'מצ'ור', כמו פרי בשל.\nmaturity = בשלות, בגרות."
+},
+"distinguish": {
+"use": "distinguish between A and B = להבחין בין.\ndistinguished = מכובד.",
+"tip": "distinct = שונה.\ndistinguish = לזהות מה שונה."
+},
+"dominate": {
+"use": "לשלוט, לגבור: dominate the game.\ndominant = דומיננטי.",
+"tip": "dominate = 'דומיננטי', להיות הבוס 👑."
+},
+"dynasty": {
+"use": "שושלת: a royal dynasty.",
+"tip": "dynasty – 'דיינסטי', כמו 'דינסטיה' = שושלת מלוכה."
+},
+"prospective": {
+"use": "פוטנציאלי, עתידי: prospective buyers / students.",
+"tip": "pro (קדימה) + spect (להסתכל) = מסתכלים קדימה."
+},
+"appetite": {
+"use": "תיאבון: no appetite.\nappetite for = תשוקה ל-.",
+"tip": "appetite – 'אפטייט', appetizer = מנה ראשונה שפותחת תיאבון 🍽."
+},
+"regulate": {
+"use": "לווסת, להסדיר בחוק: regulate gun sales.\nregulation = תקנה.",
+"tip": "regular = רגיל.\nregulate = להביא לסדר הרגיל."
+},
+"swallow": {
+"use": "לבלוע: It hurts when I swallow.\nגם סנונית.",
+"tip": "swallow – 'סוואלו', בליעה גדולה 😮."
+},
+"bully": {
+"use": "בריון; להציק: Don't bully other kids.\nbullying = בריונות.",
+"tip": "bully – 'בולי', bull = שור: מתנהג כמו שור 🐂."
+},
+"pharmacy": {
+"use": "בית מרקחת: buy medicine at the pharmacy.\npharmacist = רוקח.",
+"tip": "pharmacy – 'פרמסי', כמו 'פארם' 💊."
+},
+"roast": {
+"use": "לצלות, לקלות: roast a chicken.\nשם עצם: צלי.",
+"tip": "roast – 'רוסט', רוסטביף = בשר צלוי 🍗."
+},
+"rubbish#0": {
+"use": "זבל (בריטית): throw the rubbish in the bin.",
+"tip": "rubbish – 'ראביש', מה שמשפשפים (rub) ומשליכים."
+},
+"saga": {
+"use": "סאגה, סיפור ארוך: a family saga.",
+"tip": "saga = 'סאגה' בעברית."
+},
+"lethal": {
+"use": "קטלני: a lethal bite / weapon.",
+"tip": "lethal – 'ליתל', Lethal Weapon = נשק קטלני."
+},
+"mortal#0": {
+"use": "בן תמותה: All humans are mortal.\nimmortal = בן אלמוות.",
+"tip": "mort = מוות.\nmortal = מי שימות יום אחד."
+},
+"abundance": {
+"use": "שפע: an abundance of fruit.\nabundant = שופע.",
+"tip": "abundance – 'אבנדנס', 'בונד' = גל: גלים של שפע."
+},
+"antique": {
+"use": "עתיק, עתיקה: antique furniture.",
+"tip": "antique – 'אנטיק', כמו 'אנטיקה' 🏺."
+},
+"endangered": {
+"use": "בסכנת הכחדה: an endangered animal.",
+"tip": "en + danger (סכנה) = בסכנה 🐅."
+},
+"fragile": {
+"use": "שביר: a fragile box.\nכתוב על חבילות: Fragile!",
+"tip": "fragile – 'פרג'ייל', fragment = שבר 🥚."
+},
+"sunlight": {
+"use": "אור שמש: Plants need sunlight.",
+"tip": "sun (שמש) + light (אור) ☀."
+},
+"fulfill": {
+"use": "להגשים: fulfill a dream.\nfulfillment = הגשמה.",
+"tip": "full (מלא) + fill (למלא) = למלא עד הסוף."
+},
+"prestigious": {
+"use": "יוקרתי: a prestigious university.",
+"tip": "prestige = 'פרסטיז'' = יוקרה."
+},
+"curtain": {
+"use": "וילון: close the curtain.\nגם מסך בתיאטרון.",
+"tip": "curtain – 'קרטן', כמו 'קרטון' שמסתיר את החלון."
+},
+"fatigue#0": {
+"use": "לעייף (רשמי): The walk fatigued the children.",
+"tip": "fatigue – 'פטיג', כמו 'פטיגה' = עייפות 😩."
+},
+"coupon": {
+"use": "קופון: a coupon for free coffee.",
+"tip": "coupon = 'קופון' בעברית 🎟."
+},
+"dentist": {
+"use": "רופא שיניים: go to the dentist.",
+"tip": "dent = שן 🦷.\ndentist = מי שמטפל בשיניים."
+},
+"envelope": {
+"use": "מעטפה: put the letter in an envelope.",
+"tip": "envelope – 'אנבלופ', en + velop = לעטוף ✉."
+},
+"stunt": {
+"use": "פעלול: do your own stunts.\nstuntman = כפיל פעלולים.",
+"tip": "stunt – 'סטאנט', פעלול מסוכן בסרט 🏍."
+},
+"mouse (mice)|mice": {
+"use": "עכברים (רבים של mouse).",
+"tip": "mouse → mice, כמו 'מייס' 🐭🐭."
+},
+"farther": {
+"use": "רחוק יותר (מרחק): walk farther.\nfar – farther – farthest.",
+"tip": "far (רחוק) + ther = יותר רחוק."
+},
+"recession": {
+"use": "מיתון כלכלי: lose jobs in a recession.",
+"tip": "recede = לסגת.\nrecession = נסיגה של הכלכלה 📉."
+},
+"dismiss#0": {
+"use": "לדחות, לבטל: dismiss a case / an idea.",
+"tip": "dis + miss = לשלוח הצידה, לא להתייחס."
+},
+"clarify": {
+"use": "להבהיר: clarify your question.\nclarification = הבהרה.",
+"tip": "clear = ברור.\nclarify = להפוך לברור."
+},
+"constitute#0": {
+"use": "להקים, למנות: constitute a committee.",
+"tip": "constitution = חוקה, מה שמקים מדינה."
+},
+"diagram": {
+"use": "תרשים: look at the diagram.",
+"tip": "diagram = 'דיאגרמה' 📊."
+},
+"correspondence": {
+"use": "התכתבות: keep correspondence.",
+"tip": "correspond = להתכתב ✉."
+},
+"desirable": {
+"use": "רצוי, נחשק: a desirable job.",
+"tip": "desire (רצון) + able = שרוצים אותו."
+},
+"grandson": {
+"use": "נכד.\ngranddaughter = נכדה.",
+"tip": "grand + son = 'הבן הגדול', הנכד."
+},
+"incorporate": {
+"use": "לשלב, לכלול: incorporate ideas into a plan.",
+"tip": "in + corpor (גוף) = להכניס לגוף אחד."
+},
+"allowance": {
+"use": "דמי כיס: a weekly allowance.\nגם הקצבה.",
+"tip": "allow = להרשות: הכסף שמרשים לך להוציא 💵."
+},
+"gasoline": {
+"use": "בנזין (אמריקאית): the price of gasoline.\nבקיצור: gas.",
+"tip": "gas = בנזין ⛽."
+},
+"proposition": {
+"use": "הצעה: an interesting proposition.",
+"tip": "propose = להציע."
+},
+"rim": {
+"use": "שפה, קצה עגול: the rim of a cup.",
+"tip": "rim – 'רים', השפה של הכוס או של הגלגל."
+},
+"genesis#0": {
+"use": "ספר בראשית: the Book of Genesis.",
+"tip": "gene = לידה.\nGenesis = ההתחלה, הבריאה."
+},
+"utter": {
+"use": "לומר, להוציא קול: not utter a word.\nכתואר: מוחלט (utter nonsense).",
+"tip": "utter – 'אטר', להוציא (out) מילה מהפה."
+},
+"ivory": {
+"use": "שנהב: Selling ivory is illegal.",
+"tip": "ivory – 'אייבורי', Ivory Coast = חוף השנהב 🐘."
+},
+"mock": {
+"use": "ללעוג: Don't mock others.\nmockery = לעג.",
+"tip": "mock – 'מוק', כמו 'מוקיון' שלועגים לו 🤡."
+},
+"wolf (wolves)|wolf": {
+"use": "זאב.\nבריבוי: wolves.",
+"tip": "wolf – 'וולף', The Wolf of Wall Street 🐺."
+},
+"disclose": {
+"use": "לחשוף, לגלות מידע: disclose the price.",
+"tip": "dis (הפוך) + close (לסגור) = לפתוח את הסוד."
+},
+"analyze": {
+"use": "לנתח: analyze data.\nanalysis = ניתוח.",
+"tip": "analyze – 'אנלייז', כמו 'אנליזה' 📊."
+},
+"ruler#0": {
+"use": "סרגל: draw with a ruler.",
+"tip": "rule = קו ישר, כלל.\nruler = כלי לקו ישר 📏."
+},
+"tolerate": {
+"use": "לסבול, להשלים עם: I can't tolerate noise.",
+"tip": "tolerance = סובלנות."
+},
+"advertisement": {
+"use": "פרסומת, מודעה: an advertisement for.\nבקיצור: ad.",
+"tip": "advertise = לפרסם 📺."
+},
+"spill": {
+"use": "לשפוך בטעות: spill milk.\nDon't cry over spilt milk = אל תבכי על חלב שנשפך.",
+"tip": "spill – 'ספיל', שפיכה של משקה 🥛."
+},
+"slaughter": {
+"use": "שחיטה, טבח; לשחוט.",
+"tip": "slaughter – 'סלוטר', slaughterhouse = בית מטבחיים."
+},
+"testify": {
+"use": "להעיד: testify in court.\ntestimony = עדות.",
+"tip": "test = מבחן: להעיד = לתת 'מבחן' של האמת."
+},
+"envy": {
+"use": "קנאה: with envy.\nפועל: לקנא ב-.",
+"tip": "envy – 'אנבי', green with envy = ירוק מקנאה 💚."
+},
+"exile": {
+"use": "גלות: live in exile.\nפועל: להגלות.",
+"tip": "ex (החוצה) + ile = מי שזרקו החוצה מארצו."
+},
+"sperm": {
+"use": "זרע (של זכר).",
+"tip": "sperm – 'ספרם', כמו 'ספרמה'."
+},
+"urine": {
+"use": "שתן: a urine test = בדיקת שתן.",
+"tip": "urine – 'יורין', כמו 'אורינה' ברפואה."
+},
+"isle": {
+"use": "אי (ספרותי): a small isle.\nה-s לא נשמעת: 'איל'.",
+"tip": "isle = island בקיצור. British Isles = האיים הבריטיים 🏝."
+},
+"convey": {
+"use": "להעביר, למסור (רעיון, רגש): Words can't convey my feelings.",
+"tip": "conveyor belt = מסוע שמעביר דברים."
+},
+"rubbish#1": {
+"use": "שטויות (בריטית): Don't talk rubbish!",
+"tip": "rubbish = זבל: מילים של זבל."
+},
+"exploit#0": {
+"use": "מעשי גבורה, הרפתקאות: his exploits in the war.",
+"tip": "exploit = מעשה נועז שמספרים עליו."
+},
+"obey": {
+"use": "לציית: obey the rules / your parents.\nobedient = צייתן.",
+"tip": "obey – 'אוביי', 'או-קיי' לפקודה ✔."
+},
+"straightforward": {
+"use": "פשוט, ישיר: a straightforward question.\nגם אדם ישר וכן.",
+"tip": "straight (ישר) + forward (קדימה) = ישר קדימה, בלי סיבובים."
+},
+"mortal#1": {
+"use": "קטלני: a mortal wound.",
+"tip": "mort = מוות."
+},
+"critique": {
+"use": "ביקורת מפורטת: a critique of the film.",
+"tip": "critique – 'קריטיק', ביקורת כתובה."
+},
+"decay": {
+"use": "ריקבון: tooth decay = עששת.\nפועל: להירקב.",
+"tip": "decay – 'דיקיי', de (למטה) + cay (ליפול): להתפרק 🍂."
+},
+"refined": {
+"use": "מעודן: refined taste.\nגם מזוקק (refined sugar).",
+"tip": "fine = עדין.\nrefined = שעידנו אותו."
+},
+"boil": {
+"use": "להרתיח, לרתוח: boil water.\nboiled egg = ביצה קשה.",
+"tip": "boil – 'בויל', boiler = דוד 🫖."
+},
+"dessert": {
+"use": "קינוח: for dessert.\n≠ desert (מדבר).",
+"tip": "dessert עם שתי s כי רוצים 'עוד עוגה' 🍰."
+},
+"entertain": {
+"use": "לבדר: entertain the children.\nentertainment = בידור.",
+"tip": "entertainer = בדרן 🎪."
+},
+"imply": {
+"use": "לרמוז: What do you imply?",
+"tip": "imply – 'אימפליי', implication = משמעות סמויה."
+},
+"manners": {
+"use": "נימוסים: good manners.\nTable manners = נימוסי שולחן.",
+"tip": "manner = דרך.\nmanners = הדרך הנכונה להתנהג 🎩."
+},
+"overly": {
+"use": "יותר מדי: overly worried.",
+"tip": "over = מעל, יותר מדי."
+},
+"fatigue#1": {
+"use": "עייפות רבה, תשישות.",
+"tip": "fatigue – 'פטיג', כמו 'פטיגה' 😩."
+},
+"bald": {
+"use": "קירח: My father is bald.",
+"tip": "bald – 'בולד', bald eagle = עיט לבן ראש."
+},
+"shave": {
+"use": "להתגלח: shave every morning.\nshaver = מכונת גילוח.",
+"tip": "shave – 'שייב', 'שייבר' 🪒."
+},
+"certainty": {
+"use": "ודאות: with certainty.",
+"tip": "certain = בטוח.\ncertainty = ודאות."
+},
+"inadequate": {
+"use": "לא מספיק, לקוי: inadequate food.",
+"tip": "in (לא) + adequate (מספיק)."
+},
+"confess": {
+"use": "להודות: confess to a crime.\nconfession = וידוי.",
+"tip": "confess – 'קונפס', confession = וידוי בכנסייה."
+},
+"deliberate#0": {
+"use": "מכוון, מתוכנן: a deliberate act.\ndeliberately = בכוונה.",
+"tip": "deliberate = שקול: עשו את זה אחרי מחשבה."
+},
+"enzyme": {
+"use": "אנזים: Enzymes help digest food.",
+"tip": "enzyme = 'אנזים' 🧪."
+},
+"evolutionary": {
+"use": "אבולוציוני, התפתחותי: evolutionary theory.",
+"tip": "evolution = אבולוציה."
+},
+"dismiss#1": {
+"use": "לפטר: dismiss workers.",
+"tip": "dismiss = לשלוח הביתה."
+},
+"overlooked": {
+"use": "לא שמו לב, התעלמו: The mistake was overlooked.\nגם משקיף על (overlooking the sea).",
+"tip": "over + look = להסתכל מעל, ולפספס."
+},
+"persuade": {
+"use": "persuade someone to = לשכנע.\npersuasion = שכנוע.",
+"tip": "persuade – 'פרסווייד', כמו 'פרסומת' שמשכנעת."
+},
+"constitute#1": {
+"use": "להוות: Women constitute half the team.",
+"tip": "constitute = להרכיב."
+},
+"despair": {
+"use": "ייאוש: in despair.\nפועל: להתייאש.",
+"tip": "de (בלי) + spair (תקווה) = בלי תקווה."
+},
+"endure": {
+"use": "לסבול, להחזיק מעמד: endure pain.",
+"tip": "endurance = סיבולת."
+},
+"drift": {
+"use": "להיסחף: The boat drifted away.\nשם עצם: סחף.",
+"tip": "drift – 'דריפט', כמו רכב שמחליק הצידה 🚗."
+},
+"hatch#0": {
+"use": "לבקוע: The chicks will hatch.",
+"tip": "hatch = לפתוח: הביצה נפתחת 🐣."
+},
+"remedy": {
+"use": "תרופה, פתרון: a remedy for a cough.",
+"tip": "remedy – 'רמדי', כמו 'רפואה'."
+},
+"revision": {
+"use": "עריכה מחדש, תיקון: needs revision.\nבבריטית גם חזרה לקראת מבחן.",
+"tip": "re + vision = להסתכל שוב."
+},
+"slate#0": {
+"use": "be slated to = מתוכנן ל-.",
+"tip": "slate = לוח: לרשום על הלוח מראש."
+},
+"dye": {
+"use": "לצבוע (שיער, בד): dye your hair.\nשם עצם: צבע.\n≠ die (למות).",
+"tip": "dye – 'דאיי', hair dye = צבע לשיער 💇."
+},
+"pardon": {
+"use": "Pardon? = סליחה, מה אמרת?\nגם חנינה; לחון.",
+"tip": "pardon – 'פרדון', כמו 'pardon' בצרפתית = סליחה."
+},
+"vocabulary": {
+"use": "אוצר מילים: improve your vocabulary.",
+"tip": "vocal = קול, מילים.\nvocabulary = אוצר המילים 📚."
+},
+"genesis#1": {
+"use": "היווצרות, מקור: the genesis of an idea.",
+"tip": "Genesis = בראשית, התחלה."
+},
+"rainfall": {
+"use": "כמות גשמים: low rainfall.",
+"tip": "rain + fall = הגשם שיורד 🌧."
+},
+"advancement#0": {
+"use": "התקדמות: technological advancement.",
+"tip": "advance = להתקדם."
+},
+"absorb": {
+"use": "לספוג: A sponge absorbs water.\nabsorbed in = שקוע ב-.",
+"tip": "absorb – 'אבזורב', כמו נייר סופג 🧽."
+},
+"reluctant": {
+"use": "מסתייג, לא רוצה: reluctant to help.",
+"tip": "reluctant – 'רילאקטנט', כמו 'לא מתלהב'."
+},
+"wolf (wolves)|wolves": {
+"use": "זאבים (רבים של wolf).",
+"tip": "wolf → wolves: f הופכת ל-ves 🐺🐺."
+},
+"reliance": {
+"use": "הסתמכות: reliance on oil.",
+"tip": "rely = לסמוך."
+},
+"spoil#0": {
+"use": "לבזוז; spoils = שלל.",
+"tip": "spoils of war = שלל מלחמה."
+},
+"ruler#1": {
+"use": "שליט: a cruel ruler.",
+"tip": "rule = לשלוט.\nruler = מי ששולט 👑."
+},
+"accompany": {
+"use": "ללוות: accompany you to the doctor.",
+"tip": "company = חברה: להיות חברה למישהו."
+},
+"cuisine": {
+"use": "מטבח (סגנון בישול): Italian cuisine.",
+"tip": "cuisine – 'קוויזין', כמו 'קוזינה' = מטבח 🍝."
+},
+"sympathetic": {
+"use": "אוהד, מבין: sympathetic to my problem.",
+"tip": "sympathy = אהדה, השתתפות בצער."
+},
+"undergo": {
+"use": "לעבור (ניתוח, שינוי): undergo surgery.",
+"tip": "under + go = לעבור מתחת, לחוות."
+},
+"infectious": {
+"use": "מדבק: an infectious disease.",
+"tip": "infection = זיהום 🦠."
+},
+"inferior": {
+"use": "נחות: inferior quality.\ninferior to = נחות מ-.",
+"tip": "ההפך: superior = עליון."
+},
+"masterpiece": {
+"use": "יצירת מופת: The Mona Lisa is a masterpiece.",
+"tip": "master (אמן) + piece (יצירה) 🖼."
+},
+"exhaust": {
+"use": "להתיש: The walk exhausted me.\nשם עצם: גזי פליטה.",
+"tip": "exhausted = מותש 😩."
+},
+"pupil": {
+"use": "תלמיד (בריטית).\nגם אישון העין.",
+"tip": "pupil – 'פיופיל', תלמיד קטן."
+},
+"primitive": {
+"use": "פרימיטיבי, קדום: primitive huts.",
+"tip": "primitive = 'פרימיטיבי'."
+},
+"confront": {
+"use": "להתעמת עם: confront your fears.",
+"tip": "con + front (חזית) = פנים מול פנים."
+}
+}

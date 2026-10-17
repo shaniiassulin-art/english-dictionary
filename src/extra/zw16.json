@@ -1,0 +1,482 @@
+{
+"solitary": {
+"use": "בודד, מתבודד: a solitary life.\nsolitary confinement = בידוד בכלא.",
+"tip": "solo = לבד.\nsolitary = חי לבד 🧘."
+},
+"blink": {
+"use": "למצמץ: Don't blink!\nin the blink of an eye = כהרף עין.",
+"tip": "blink – 'בלינק', כמו נורה שמהבהבת 😉."
+},
+"inflammation": {
+"use": "דלקת: reduce inflammation.\ninflamed = מודלק.",
+"tip": "in + flame (להבה) = משהו 'בוער' בגוף 🔥."
+},
+"revolt": {
+"use": "מרד; למרוד: revolt against the king.",
+"tip": "revolt – 'ריוולט', revolution = מהפכה."
+},
+"shrink": {
+"use": "להתכווץ: My shirt shrank.\nshrink – shrank – shrunk.\nבסלנג: פסיכולוג.",
+"tip": "shrink – 'שרינק', Honey, I Shrunk the Kids = מותק, הקטנתי את הילדים."
+},
+"dilemma": {
+"use": "דילמה: face a dilemma.",
+"tip": "di (שניים) + lemma (הנחה) = שתי אפשרויות קשות 🤔."
+},
+"glove": {
+"use": "כפפה: a pair of gloves.\nfits like a glove = מתאים בדיוק.",
+"tip": "glove – 'גלאב', love בתוך glove ❤🧤."
+},
+"grapes": {
+"use": "ענבים: a bunch of grapes = אשכול ענבים.",
+"tip": "grape – 'גרייפ', grapefruit = אשכולית 🍇."
+},
+"vest": {
+"use": "אפודה, וסט: wear a vest.\nlife vest = חגורת הצלה.",
+"tip": "vest – 'וסט', כמו 'ווסט' של חליפה 🦺."
+},
+"presently": {
+"use": "כעת, עכשיו (רשמי): presently out.\nגם בקרוב (בריטית).",
+"tip": "present = הווה.\npresently = בהווה, עכשיו."
+},
+"attach#1": {
+"use": "attach importance to = לייחס חשיבות ל-.",
+"tip": "attach = להצמיד: להצמיד חשיבות."
+},
+"nationality": {
+"use": "לאום, אזרחות: What is your nationality?",
+"tip": "nation = אומה.\nnationality = לאומיות 🌐."
+},
+"intentional": {
+"use": "מכוון: The mistake was not intentional.",
+"tip": "intention = כוונה."
+},
+"strive": {
+"use": "strive to/for = לשאוף ל-, להתאמץ.",
+"tip": "strive – 'סטרייב', כמו stride = צעד גדול קדימה."
+},
+"confrontation": {
+"use": "עימות: avoid a confrontation.",
+"tip": "confront = להתעמת."
+},
+"persecution": {
+"use": "רדיפה: religious persecution.",
+"tip": "persecute = לרדוף.\nper + secute (ללכת אחרי)."
+},
+"impulse": {
+"use": "דחף: on impulse = מתוך דחף פתאומי.\nimpulsive = אימפולסיבי.",
+"tip": "impulse = 'אימפולס', כמו דחף חשמלי פתאומי ⚡."
+},
+"obstacle": {
+"use": "מכשול: overcome an obstacle.",
+"tip": "obstacle – 'אובסטקל', obstacle course = מסלול מכשולים 🏃."
+},
+"perceive": {
+"use": "להבחין, לתפוס: perceive a change.\nperception = תפיסה.",
+"tip": "perceive – 'פרסיב', כמו 'פרספקטיבה' = נקודת מבט."
+},
+"butcher#1": {
+"use": "לשחוט; גם לטבוח.",
+"tip": "butcher = קצב 🥩."
+},
+"razor": {
+"use": "סכין גילוח: shave with a razor.",
+"tip": "razor – 'רייזר', razor-sharp = חד כתער 🪒."
+},
+"aisle": {
+"use": "מעבר בין שורות (בסופר, במטוס): aisle five.\naisle seat = מושב מעבר.\nה-s לא נשמעת: 'אייל'.",
+"tip": "aisle – 'אייל', נשמע כמו I'll."
+},
+"disguise": {
+"use": "תחפושת: in disguise = בתחפושת.\nפועל: להסוות.",
+"tip": "dis + guise (מראה) = לשנות מראה 🥸."
+},
+"insanity": {
+"use": "אי שפיות: Doing the same thing again is insanity.",
+"tip": "in (לא) + sane (שפוי) = לא שפוי."
+},
+"integrate": {
+"use": "לשלב: integrate new students.\nintegration = שילוב.",
+"tip": "integrate – 'אינטגרייט', כמו 'אינטגרציה' = שילוב."
+},
+"devastated": {
+"use": "הרוס (פיזית או רגשית): devastated by the news.",
+"tip": "devastate = להחריב.\ndevastated = מרוסק."
+},
+"vain#1": {
+"use": "שחצן, מתגנדר: so vain.\nvanity = יוהרה.",
+"tip": "vain – 'וויין', vanity = שולחן איפור מול מראה 🪞."
+},
+"empathy": {
+"use": "אמפתיה: Empathy helps us understand others.",
+"tip": "empathy = 'אמפתיה', em (בתוך) + pathy (רגש)."
+},
+"knot": {
+"use": "קשר בחבל: tie a knot.\ntie the knot = להתחתן.",
+"tip": "knot – 'נוט', ה-k שקטה, כמו not 🪢."
+},
+"knife (knives)|knives": {
+"use": "סכינים (רבים של knife).",
+"tip": "knife → knives: f הופכת ל-ves 🔪🔪."
+},
+"backward": {
+"use": "אחורה: a step backward.\nגם מפגר, מיושן.",
+"tip": "back (אחור) + ward (כיוון)."
+},
+"continuation": {
+"use": "המשך: a continuation of the first book.",
+"tip": "continue = להמשיך."
+},
+"disadvantage": {
+"use": "חיסרון: the main disadvantage.\nat a disadvantage = בעמדת נחיתות.",
+"tip": "dis (הפוך) + advantage (יתרון)."
+},
+"limitation": {
+"use": "מגבלה: know your limitations.",
+"tip": "limit = גבול."
+},
+"analogy": {
+"use": "אנלוגיה, הקבלה: use an analogy.",
+"tip": "analogy = 'אנלוגיה', השוואה בין דברים דומים."
+},
+"convoy": {
+"use": "שיירה: a convoy of trucks.",
+"tip": "convoy – 'קונבוי', שיירה שנוסעת יחד 🚚🚚."
+},
+"pedestrian": {
+"use": "הולך רגל: stop for a pedestrian.\npedestrian crossing = מעבר חצייה.",
+"tip": "ped = רגל (pedal, pedicure) 🚶."
+},
+"distract": {
+"use": "להסיח דעת: Don't distract the driver.\ndistraction = הסחת דעת.",
+"tip": "dis + tract (למשוך) = למשוך את תשומת הלב הצידה."
+},
+"hazardous": {
+"use": "מסוכן: hazardous to health.\nhazard = סכנה.",
+"tip": "hazard – 'הזרד', hazard lights = אורות מצוקה ⚠."
+},
+"illustrate": {
+"use": "להמחיש; לאייר: Pictures illustrate the story.",
+"tip": "illustration = איור 🖍."
+},
+"prophecy": {
+"use": "נבואה: The prophecy came true.\nprophet = נביא.",
+"tip": "prophet = נביא.\nprophecy = מה שהנביא אומר."
+},
+"recurring": {
+"use": "חוזר ונשנה: a recurring dream.",
+"tip": "re (שוב) + occur (לקרות) = קורה שוב ושוב 🔁."
+},
+"ample": {
+"use": "מרווח, מספיק בהחלט: ample space / time.",
+"tip": "ample – 'אמפל', כמו 'אמפלי' = שופע."
+},
+"masculine": {
+"use": "גברי: a masculine voice.",
+"tip": "male = זכר.\nmasculine = גברי, 'מאצ'ו'."
+},
+"spontaneous": {
+"use": "ספונטני: spontaneous applause.",
+"tip": "spontaneous = 'ספונטני'."
+},
+"stove": {
+"use": "כיריים, תנור: put the pot on the stove.",
+"tip": "stove – 'סטוב', כמו 'סטוב' = תנור חימום 🔥."
+},
+"appoint": {
+"use": "למנות: appoint a manager.\nappointment = מינוי; גם פגישה.",
+"tip": "appoint – להצביע (point) על מישהו לתפקיד 👉."
+},
+"beware": {
+"use": "היזהר: Beware of the dog!",
+"tip": "be + aware (מודע) = היה מודע, היזהר ⚠."
+},
+"comprehend": {
+"use": "להבין לעומק (רשמי): I can't comprehend.",
+"tip": "comprehension = הבנת הנקרא 📖."
+},
+"premature": {
+"use": "פג; מוקדם מדי: a premature baby / decision.",
+"tip": "pre (לפני) + mature (בשל) = לפני הזמן."
+},
+"adore": {
+"use": "לאהוב מאוד, להעריץ: I adore my grandchildren.\nadorable = מקסים.",
+"tip": "adorable = מתוק מאוד 🥰."
+},
+"compulsory": {
+"use": "חובה: School is compulsory.",
+"tip": "compel = לאלץ.\ncompulsory = שחייבים."
+},
+"counterpart#0": {
+"use": "עמית, בעל תפקיד מקביל: his French counterpart.",
+"tip": "counter (מול) + part (חלק) = החלק שמולך."
+},
+"delegate": {
+"use": "נציג: send a delegate.\nפועל: להאציל סמכות.",
+"tip": "delegation = משלחת."
+},
+"emission": {
+"use": "פליטה: carbon emissions.",
+"tip": "emit = לפלוט 💨."
+},
+"irregular": {
+"use": "לא סדיר: irregular heartbeat.\nirregular verbs = פעלים לא סדירים.",
+"tip": "ir (לא) + regular (רגיל)."
+},
+"offender": {
+"use": "עבריין: a young offender.",
+"tip": "offend = לפגוע.\noffense = עבירה."
+},
+"fracture": {
+"use": "שבר (בעצם): a fracture in her leg.",
+"tip": "fracture – 'פרקצ'ר', כמו 'פרקטורה' = שבר 🦴."
+},
+"limb#0": {
+"use": "ענף עבה; קצה.\nout on a limb = במצב מסוכן.",
+"tip": "limb = זרוע של עץ."
+},
+"peek": {
+"use": "להציץ: Don't peek!",
+"tip": "peek-a-boo = קוקו! 👀."
+},
+"stain": {
+"use": "כתם: a coffee stain.\nפועל: להכתים.\nstainless steel = נירוסטה.",
+"tip": "stain – 'סטיין', stainless = בלי כתמים 🍷."
+},
+"transcript": {
+"use": "תמליל; גיליון ציונים: a transcript of my grades.",
+"tip": "trans + script (כתב) = מה שהועבר לכתב 📄."
+},
+"unwilling": {
+"use": "לא מוכן: unwilling to help.",
+"tip": "un (לא) + willing (מוכן מרצון)."
+},
+"pottery": {
+"use": "קדרות; כלי חרס: make pottery.",
+"tip": "pot = סיר.\npottery = הכנת סירים מחימר 🏺."
+},
+"prank": {
+"use": "מתיחה: play a prank on someone.",
+"tip": "prank – 'פרנק', כמו 'פראנק' 😜 ביוטיוב."
+},
+"accomplishment": {
+"use": "הישג: a big accomplishment.",
+"tip": "accomplish = להשיג 🏅."
+},
+"irrigation": {
+"use": "השקיה: irrigation system = מערכת השקיה.",
+"tip": "irrigate = להשקות 💧 (טפטוף ישראלי)."
+},
+"retrieve": {
+"use": "להחזיר, להביא בחזרה: retrieve the ball / data.",
+"tip": "retriever = כלב שמביא חזרה 🐕."
+},
+"moist": {
+"use": "לח: moist soil, a moist cake.\nmoisture = לחות.",
+"tip": "moist – 'מויסט', moisturizer = קרם לחות."
+},
+"flock#0": {
+"use": "לנהור: People flocked to the beach.",
+"tip": "flock = להקה: אנשים באים כמו להקת ציפורים 🐦🐦."
+},
+"monarch": {
+"use": "מלך, מונרך.\nmonarchy = מלוכה.",
+"tip": "mono (אחד) + arch (שליט) = שליט יחיד 👑."
+},
+"trait": {
+"use": "תכונה: a personality trait.",
+"tip": "trait – 'טרייט', כמו 'טרייט' = קו אופי."
+},
+"underestimate": {
+"use": "להמעיט בערך: Don't underestimate her.",
+"tip": "under (מתחת) + estimate (להעריך) = להעריך נמוך מדי."
+},
+"emphasize": {
+"use": "להדגיש: emphasize the main idea.\nemphasis = הדגשה.",
+"tip": "emphasize – 'אמפסייז', כמו 'אמפזה' = הדגשה."
+},
+"mourning": {
+"use": "אבל: in mourning = באבל.\n≠ morning (בוקר).",
+"tip": "mourn = להתאבל.\nmourning נשמע כמו morning, אבל עם u של עצב."
+},
+"ring, rang|ring": {
+"use": "לצלצל: ring the bell.\nring – rang – rung.\nring someone = להתקשר.",
+"tip": "ring – 'רינג' 🔔, ring tone = צלצול."
+},
+"vice versa": {
+"use": "להפך, וגם ההפך: I help him and vice versa.",
+"tip": "vice versa = 'ויס ורסה', בלטינית: המקום הפוך."
+},
+"communal": {
+"use": "משותף לקהילה: a communal kitchen.",
+"tip": "community = קהילה.\ncommunal = של הקהילה."
+},
+"jewel": {
+"use": "אבן חן, תכשיט: full of jewels.\njewelry = תכשיטים.",
+"tip": "jewel – 'ג'ול', כמו 'ג'ואלרי' 💎."
+},
+"mutually": {
+"use": "הדדית: mutually beneficial = מועיל לשני הצדדים.",
+"tip": "mutual = הדדי 🤝."
+},
+"scenery": {
+"use": "נוף: mountain scenery.\nגם תפאורה.",
+"tip": "scene = מראה.\nscenery = הנוף כולו 🏞."
+},
+"staple": {
+"use": "מצרך בסיסי: a staple food.\nגם סיכה של שדכן.",
+"tip": "stapler = שדכן.\nstaple = משהו שתמיד 'מוצמד' לתפריט."
+},
+"suppression": {
+"use": "דיכוי: suppression of free speech.",
+"tip": "suppress = לדכא, ללחוץ למטה."
+},
+"durable": {
+"use": "עמיד, מחזיק מעמד: durable shoes.",
+"tip": "duration = משך.\ndurable = שמחזיק הרבה זמן."
+},
+"navigate": {
+"use": "לנווט: navigate without a map.\nnavigation = ניווט.",
+"tip": "navigation = ניווט 🧭 (navy = צי)."
+},
+"reinforce": {
+"use": "לחזק, לתגבר: reinforce a wall.\nreinforcements = תגבורת.",
+"tip": "re + in + force (כוח) = להוסיף כוח."
+},
+"suspend": {
+"use": "להשעות: suspend a student.\nגם לתלות.",
+"tip": "suspend – 'סספנד', suspension = השעיה."
+},
+"stunned": {
+"use": "המום: stunned by the news.",
+"tip": "stun – 'סטאן', stun gun = אקדח הלם ⚡."
+},
+"rehearsal": {
+"use": "חזרה (לפני הופעה): a rehearsal.\ndress rehearsal = חזרה גנרלית.",
+"tip": "rehearse = לעשות חזרות 🎭."
+},
+"gradual": {
+"use": "הדרגתי: a gradual change.",
+"tip": "grade = דרגה: שלב אחרי שלב."
+},
+"depart": {
+"use": "לעזוב, לצאת (רשמי): The train departs at six.\ndeparture = יציאה.",
+"tip": "departure = המראה, יציאה בשדה התעופה 🛫."
+},
+"airborne": {
+"use": "מוטס, באוויר: an airborne virus.",
+"tip": "air (אוויר) + borne (נישא) = נישא באוויר."
+},
+"stimulate": {
+"use": "לעורר, להמריץ: Coffee stimulates the brain.",
+"tip": "stimulus = גירוי.\nstimulate = לגרות ☕."
+},
+"govern": {
+"use": "למשול: govern a country.\ngovernment = ממשלה.",
+"tip": "government = ממשלה, מי שמושל."
+},
+"confuse": {
+"use": "לבלבל: The map confused me.\nconfused = מבולבל.",
+"tip": "confuse – 'קונפיוז', כמו 'קונפוזיה' = בלבול 😵."
+},
+"unsafe": {
+"use": "לא בטוח: The bridge is unsafe.",
+"tip": "un (לא) + safe (בטוח)."
+},
+"disappoint": {
+"use": "לאכזב: Don't disappoint me.\ndisappointed = מאוכזב.",
+"tip": "dis + appoint: לבטל את המינוי, ולאכזב 😞."
+},
+"harness": {
+"use": "לרתום: harness the power of the wind.\nשם עצם: רתמה.",
+"tip": "harness = רתמה של סוס: לרתום כוח לעבודה 🐎."
+},
+"mole#0": {
+"use": "חפרפרת.\nגם מרגל שתול.",
+"tip": "mole – 'מוֹל', חופרת מתחת לאדמה."
+},
+"translator": {
+"use": "מתרגם: work as a translator.",
+"tip": "translate (לתרגם) + or."
+},
+"transmit": {
+"use": "לשדר, להעביר: transmit signals / a disease.",
+"tip": "trans (מעבר) + mit (לשלוח) = לשלוח הלאה 📡."
+},
+"replica": {
+"use": "העתק: a replica of an ancient ship.",
+"tip": "replica = 'רפליקה', העתק מדויק."
+},
+"susceptible": {
+"use": "susceptible to = רגיש ל-, חשוף ל-.",
+"tip": "susceptible – 'ססספטיבל', שקל 'לתפוס' אותו."
+},
+"counterpart#1": {
+"use": "בן זוג (שימוש נדיר).",
+"tip": "counterpart = החלק המשלים."
+},
+"frightening": {
+"use": "מפחיד: a frightening movie.\nfrightened = מפוחד.",
+"tip": "fright = פחד 😱."
+},
+"wander": {
+"use": "לשוטט: wander around the city.\n≠ wonder (לתהות).",
+"tip": "wander – 'וונדר', עם a = לטייל בלי כיוון."
+},
+"heartbeat": {
+"use": "דופק: check the heartbeat.\nin a heartbeat = מיד.",
+"tip": "heart (לב) + beat (פעימה) 💓."
+},
+"tutor": {
+"use": "מורה פרטי: a math tutor.\nפועל: לתת שיעורים פרטיים.",
+"tip": "tutor – 'טיוטור', כמו 'טוטוריאל' = מדריך."
+},
+"extinct": {
+"use": "נכחד: Dinosaurs are extinct.",
+"tip": "extinct – 'אקסטינקט', extinction = הכחדה 🦕."
+},
+"circumstance": {
+"use": "נסיבות: under no circumstances = בשום אופן.",
+"tip": "circum (מסביב) + stance (לעמוד) = מה שעומד מסביב."
+},
+"limb#1": {
+"use": "גפה (יד או רגל): lose a limb.",
+"tip": "limb = איבר שבולט מהגוף, כמו ענף מעץ."
+},
+"forbid": {
+"use": "forbid someone to = לאסור.\nforbidden = אסור.",
+"tip": "forbidden fruit = הפרי האסור 🍎."
+},
+"assign": {
+"use": "להקצות, להטיל: assign homework.\nassignment = מטלה.",
+"tip": "assign – 'אסיין', sign = לסמן משימה למישהו."
+},
+"erase": {
+"use": "למחוק: erase the board.\neraser = מחק.",
+"tip": "erase – 'אירייז', eraser = מחק ✏."
+},
+"accelerate": {
+"use": "להאיץ: The car accelerated.\naccelerator = דוושת הגז.",
+"tip": "accelerate – 'אקסלרייט', מאיץ החלקיקים 🏎."
+},
+"disregard": {
+"use": "להתעלם מ-: disregard advice.",
+"tip": "dis (בלי) + regard (התחשבות) = בלי להתחשב."
+},
+"downhill": {
+"use": "במורד: ride downhill.\ngo downhill = להידרדר.",
+"tip": "down (למטה) + hill (גבעה) ⛷."
+},
+"advertise": {
+"use": "לפרסם: advertise on TV.\nadvertisement = פרסומת.",
+"tip": "advertise – 'אדברטייז', ad = פרסומת 📺."
+},
+"disagreement": {
+"use": "מחלוקת, אי הסכמה: a disagreement about money.",
+"tip": "dis (לא) + agreement (הסכמה)."
+},
+"disciples": {
+"use": "תלמידים (של מורה רוחני).",
+"tip": "disciple – 'דיסייפל', discipline = משמעת של תלמיד."
+}
+}

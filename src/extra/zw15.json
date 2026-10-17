@@ -1,0 +1,482 @@
+{
+"performer": {
+"use": "אמן במה, מבצע: a talented performer.",
+"tip": "perform = להופיע.\nperformer = מי שמופיע 🎤."
+},
+"restrict": {
+"use": "להגביל: restrict the use of phones.\nrestriction = הגבלה.",
+"tip": "strict = קפדני.\nrestrict = לשים גבול קפדני 🚫."
+},
+"rivalry": {
+"use": "יריבות: a rivalry between two teams.",
+"tip": "rival = יריב.\nrivalry = מצב של יריבות ⚔."
+},
+"warmth": {
+"use": "חום: the warmth of the sun.\nגם חום לב.",
+"tip": "warm (חם) + th = חום, כמו strong → strength."
+},
+"luggage": {
+"use": "מזוודות, כבודה (לא ספיר): a lot of luggage.",
+"tip": "luggage – 'לאגג'', lug = לסחוב: מה שסוחבים בטיול 🧳."
+},
+"vacant": {
+"use": "פנוי, ריק: a vacant apartment / seat.",
+"tip": "vacant – 'וייקנט', vacation = חופשה: ימים 'פנויים'."
+},
+"awe": {
+"use": "יראת כבוד, השתאות: in awe.\nawesome = מדהים.",
+"tip": "awe – 'אוֹ', כמו 'וואו' 😮.\nawesome = מעורר השתאות."
+},
+"decorative": {
+"use": "קישוטי, לנוי בלבד: purely decorative.",
+"tip": "decorate = לקשט 🎄."
+},
+"explode": {
+"use": "להתפוצץ: The balloon exploded.\nexplosion = פיצוץ.",
+"tip": "explode – 'אקספלוד', כמו פיצוץ 💥."
+},
+"ironic": {
+"use": "אירוני: It's ironic that...\nirony = אירוניה.",
+"tip": "ironic = 'אירוני', כשקורה ההפך ממה שמצפים."
+},
+"minimize": {
+"use": "למזער: minimize the risk.\nבמחשב: למזער חלון.",
+"tip": "minimum = מינימום.\nminimize = להקטין למינימום ➖."
+},
+"predominantly": {
+"use": "ברובו, בעיקר: predominantly Jewish.",
+"tip": "dominant = שולט.\npredominantly = כשרוב שולט."
+},
+"spicy": {
+"use": "חריף, פיקנטי: spicy food.",
+"tip": "spice = תבלין 🌶.\nspicy = מתובל וחריף."
+},
+"coffin": {
+"use": "ארון מתים: carry the coffin.",
+"tip": "coffin – 'קופין', כמו 'קופסה' של מתים ⚰."
+},
+"conductor": {
+"use": "מנצח: the conductor led the orchestra.\nגם כרטיסן ברכבת; מוליך חשמל.",
+"tip": "conduct = להוביל, לנהל 🎼."
+},
+"elastic#1": {
+"use": "גומייה (לשיער או בבגד).",
+"tip": "elastic = גמיש, נמתח."
+},
+"sticky": {
+"use": "דביק: sticky hands.\nsticky note = פתק דביק.",
+"tip": "stick = להדביק.\nsticker = מדבקה 🍯."
+},
+"inconsistent": {
+"use": "לא עקבי, סותר: an inconsistent story.",
+"tip": "in (לא) + consistent (עקבי)."
+},
+"subjective": {
+"use": "סובייקטיבי, אישי: Beauty is subjective.\nההפך: objective.",
+"tip": "subject = הנושא, האדם עצמו.\nסובייקטיבי = לפי האדם."
+},
+"surround": {
+"use": "להקיף: Trees surround the house.\nsurrounded by = מוקף ב-.",
+"tip": "surround sound = צליל שמקיף אותך 🔊."
+},
+"cautious": {
+"use": "זהיר: be cautious when crossing.",
+"tip": "caution = זהירות ⚠ (Caution: wet floor)."
+},
+"overhaul#1": {
+"use": "סרבל (נכון יותר: overalls).",
+"tip": "overall = 'אוברול', סרבל עבודה 👷."
+},
+"distribute": {
+"use": "לחלק, להפיץ: distribute papers.\ndistribution = הפצה.",
+"tip": "distributor = מפיץ."
+},
+"hesitate": {
+"use": "להסס: Don't hesitate to ask.\nhesitation = היסוס.",
+"tip": "hesitate – 'הזיטייט', כמו לעצור רגע 'היס'."
+},
+"imprisoned": {
+"use": "כלוא, נכלא: imprisoned for ten years.",
+"tip": "im + prison (כלא) = בכלא."
+},
+"modify": {
+"use": "לשנות, להתאים: modify the plan.\nmodification = שינוי.",
+"tip": "modify – 'מודיפיי', כמו mod במשחקים = שינוי."
+},
+"harmless": {
+"use": "לא מזיק: a harmless snake.",
+"tip": "harm (נזק) + less (בלי) = בלי נזק."
+},
+"neglect": {
+"use": "להזניח: neglect your health.\nשם עצם: הזנחה.",
+"tip": "neglect – 'ניגלקט', לא לשים לב (no + elect)."
+},
+"probable": {
+"use": "סביר: Rain is probable.\nprobably = כנראה.",
+"tip": "probably = כנראה.\nprobable = שכנראה יקרה."
+},
+"prejudice": {
+"use": "דעה קדומה: fight prejudice.",
+"tip": "pre (לפני) + judice (שיפוט) = לשפוט לפני שמכירים."
+},
+"probation": {
+"use": "מבחן, שחרור על תנאי: on probation.",
+"tip": "probe = לבדוק.\nprobation = תקופת בדיקה."
+},
+"gamble": {
+"use": "להמר: gamble with money.\ngambling = הימורים.",
+"tip": "gamble – 'גמבל', כמו game = משחק מזל 🎲."
+},
+"definite": {
+"use": "ברור, סופי: a definite answer.\ndefinitely = בהחלט.",
+"tip": "define = להגדיר.\ndefinite = מוגדר וברור."
+},
+"precedent": {
+"use": "תקדים: set a precedent.",
+"tip": "pre (לפני) + cede (ללכת) = מה שהלך לפני."
+},
+"negotiation": {
+"use": "משא ומתן: the negotiation lasted all night.",
+"tip": "negotiate = לשאת ולתת 🤝."
+},
+"specify": {
+"use": "לציין במפורש: specify the date.",
+"tip": "specific = ספציפי.\nspecify = להיות ספציפי."
+},
+"allergic": {
+"use": "allergic to = אלרגי ל-.\nallergy = אלרגיה.",
+"tip": "allergic = 'אלרגי' 🤧."
+},
+"compensate": {
+"use": "compensate for = לפצות על.\ncompensation = פיצוי.",
+"tip": "compensate – 'קומפנסייט', כמו 'קומפנסציה' = פיצוי."
+},
+"exclude": {
+"use": "להוציא, לא לכלול: exclude someone.\nexcluding = לא כולל.",
+"tip": "ex (החוצה) + clude (לסגור) = לסגור בחוץ."
+},
+"apparatus": {
+"use": "מכשיר, ציוד: lab apparatus.",
+"tip": "apparatus = 'אפרטוס', מנגנון."
+},
+"prevalent": {
+"use": "נפוץ, שכיח: prevalent in hot countries.",
+"tip": "prevail = לגבור: מה שגובר, נפוץ."
+},
+"vegetarian": {
+"use": "צמחוני: She is a vegetarian.\nvegan = טבעוני.",
+"tip": "vegetable = ירק 🥗."
+},
+"ecological": {
+"use": "אקולוגי: ecological damage.",
+"tip": "eco = סביבה, 'אקולוגי' 🌍."
+},
+"faint#0": {
+"use": "חלש, קלוש: a faint sound / light.",
+"tip": "faint – 'פיינט', כמו paint חלש ודהוי."
+},
+"sailor": {
+"use": "מלח, ימאי: a sailor sailed.",
+"tip": "sail (לשוט) + or ⛵."
+},
+"air conditioner": {
+"use": "מזגן: turn on the air conditioner.\nבקיצור: AC.",
+"tip": "air + condition = 'מתנה' את האוויר ❄."
+},
+"unwanted": {
+"use": "לא רצוי: unwanted emails.",
+"tip": "un + wanted (רצוי)."
+},
+"continuity": {
+"use": "רציפות, המשכיות.",
+"tip": "continue = להמשיך."
+},
+"viewer": {
+"use": "צופה: millions of viewers.",
+"tip": "view = לצפות 📺."
+},
+"attribute#0": {
+"use": "attribute to = לייחס ל-.",
+"tip": "attribute – 'אטריביוט', tribute = כבוד: לתת קרדיט."
+},
+"mold#0": {
+"use": "עובש: mold on the bread.\nmoldy = מעופש.",
+"tip": "mold – 'מולד', כמו 'מוּלד' על לחם ישן 🍞."
+},
+"occurrence": {
+"use": "התרחשות, מקרה: a rare occurrence.",
+"tip": "occur = לקרות."
+},
+"conquer": {
+"use": "לכבוש: conquer a city.\nconqueror = כובש.",
+"tip": "conquer – 'קונקר', כמו 'קונקיסטדור' = כובש."
+},
+"conquest": {
+"use": "כיבוש: the conquest of the land.",
+"tip": "conquer = לכבוש.\nconquest = הכיבוש."
+},
+"favored": {
+"use": "מועדף: the favored candidate.",
+"tip": "favorite = אהוב, מועדף ⭐."
+},
+"simplicity": {
+"use": "פשטות: the simplicity of the design.",
+"tip": "simple = פשוט."
+},
+"herb": {
+"use": "עשב תיבול: fresh herbs.\nגם צמח מרפא.",
+"tip": "herb – 'הרב' (בבריטית), 'ארב' (באמריקאית) 🌿."
+},
+"herd#0": {
+"use": "לאסוף עדר: herd the sheep.",
+"tip": "herd = עדר.\nלקבץ את העדר."
+},
+"relieve": {
+"use": "להקל: relieve the pain.\nrelief = הקלה.",
+"tip": "relief = 'פשש, הקלה' 😌."
+},
+"peach": {
+"use": "אפרסק: a juicy peach.",
+"tip": "peach – 'פיץ'', Princess Peach במריו 🍑."
+},
+"worm": {
+"use": "תולעת: The bird caught a worm.\nbookworm = תולעת ספרים.",
+"tip": "worm – 'וורם', The early bird catches the worm 🪱."
+},
+"activate": {
+"use": "להפעיל: activate your card.\nactivation = הפעלה.",
+"tip": "active = פעיל.\nactivate = להפוך לפעיל ▶."
+},
+"recycling": {
+"use": "מחזור: Recycling helps the environment.\nrecycle = למחזר.",
+"tip": "re (שוב) + cycle (מעגל) = להחזיר למעגל ♻."
+},
+"shipment": {
+"use": "משלוח: The shipment arrived late.",
+"tip": "ship = לשלוח (לא רק ספינה!) 📦."
+},
+"extinction": {
+"use": "הכחדה: face extinction.\nextinct = נכחד.",
+"tip": "extinct – 'אקסטינקט', כמו דינוזאורים 🦖."
+},
+"foil": {
+"use": "לסכל: foil a robbery.\nגם נייר כסף (aluminum foil).",
+"tip": "foil – 'פויל', לעטוף את התוכנית בנייר כסף ולעצור אותה."
+},
+"restriction": {
+"use": "הגבלה: a restriction on water use.",
+"tip": "restrict = להגביל 🚫."
+},
+"stripes": {
+"use": "פסים: black and white stripes.\nstriped = מפוספס.",
+"tip": "stripes – 'סטרייפס', כמו דגל ארה\"ב: Stars and Stripes 🦓."
+},
+"transplant": {
+"use": "השתלה: a heart transplant.\nפועל: להשתיל.",
+"tip": "trans (העברה) + plant (לשתול) = לשתול במקום אחר."
+},
+"dispatch": {
+"use": "לשגר, לשלוח: dispatch an ambulance.",
+"tip": "dispatch – 'דיספץ'', מוקד שמשגר ניידות 🚑."
+},
+"horrific": {
+"use": "נורא, מזעזע: a horrific accident.",
+"tip": "horror = אימה 😱."
+},
+"stubborn": {
+"use": "עקשן: stubborn as a mule.",
+"tip": "stubborn – 'סטאברן', 'סטאב' = גדם: לא זז מהמקום."
+},
+"insect": {
+"use": "חרק: an insect bit me.",
+"tip": "in + sect (חתך) = גוף שמחולק לחלקים 🐜."
+},
+"pinch": {
+"use": "לצבוט.\na pinch of salt = קורט מלח.",
+"tip": "pinch – 'פינץ'', צביטה קטנה בין שתי אצבעות 🤏."
+},
+"syrup": {
+"use": "סירופ: pancakes with syrup.\ncough syrup = סירופ לשיעול.",
+"tip": "syrup = 'סירופ' 🥞."
+},
+"attach#0": {
+"use": "לצרף, לחבר: attach a photo.\nattachment = קובץ מצורף.",
+"tip": "attach 📎 = לצרף קובץ למייל."
+},
+"rigid": {
+"use": "נוקשה: rigid rules.",
+"tip": "rigid – 'ריג'יד', קשיח כמו מקל."
+},
+"conception": {
+"use": "מושג, תפיסה: no conception of.\nגם התעברות.",
+"tip": "concept = רעיון, מושג."
+},
+"splendid": {
+"use": "נהדר, מפואר: a splendid time.",
+"tip": "splendid – 'ספלנדיד', כמו 'ספלנדור' = הדר ✨."
+},
+"merge": {
+"use": "להתמזג, למזג: The companies merged.",
+"tip": "merge – 'מרג'', merge lanes = התמזגות נתיבים."
+},
+"violate": {
+"use": "להפר: violate the rules / rights.",
+"tip": "violate – 'ויולייט', violence = אלימות כלפי החוק."
+},
+"ark": {
+"use": "תיבה: Noah's Ark = תיבת נח.\nגם ארון הקודש.",
+"tip": "ark – 'ארק', כמו 'ארון' 🚢."
+},
+"vivid": {
+"use": "חי, ברור, צבעוני: a vivid memory / vivid colors.",
+"tip": "vivid – 'וויוויד', viva = חיים: מלא חיים."
+},
+"butcher#0": {
+"use": "קצב: buy meat at the butcher.",
+"tip": "butcher – 'בוצ'ר', כמו 'בשר' 🥩."
+},
+"utilize": {
+"use": "לנצל, להשתמש (רשמי): utilize your time.",
+"tip": "utility = תועלת.\nutilize = להפיק תועלת."
+},
+"dwarf": {
+"use": "גמד: Snow White and the Seven Dwarfs.\nפועל: לגמד.",
+"tip": "dwarf – 'דוורף', שבעת הגמדים 🧙."
+},
+"appropriately": {
+"use": "כראוי: dress appropriately.",
+"tip": "appropriate = מתאים."
+},
+"preceding": {
+"use": "קודם: the preceding chapter.",
+"tip": "pre (לפני) + ceding (ללכת) = מה שבא לפני."
+},
+"uprising": {
+"use": "התקוממות: crush an uprising.",
+"tip": "up + rising = לקום נגד 👊."
+},
+"vain#0": {
+"use": "in vain = לשווא.",
+"tip": "vain = ריק.\nin vain = לריק, לשווא."
+},
+"endurance": {
+"use": "סיבולת: Running takes endurance.",
+"tip": "endure = לשרוד, להחזיק מעמד 🏃."
+},
+"knife (knives)|knife": {
+"use": "סכין.\nבריבוי: knives.\nה-k לא נשמעת.",
+"tip": "knife – 'נייף', ה-k שקטה כמו know ו-knee 🔪."
+},
+"potent": {
+"use": "חזק, רב עוצמה: a potent medicine.",
+"tip": "potent – 'פוטנט', potential = פוטנציאל, כוח."
+},
+"amusement": {
+"use": "שעשוע: amusement park = פארק שעשועים.",
+"tip": "amuse = לשעשע 🎢."
+},
+"faint#1": {
+"use": "להתעלף: faint from the heat.",
+"tip": "faint = חלש: להיחלש עד התעלפות 😵."
+},
+"arrogant": {
+"use": "יהיר: arrogant and rude.\narrogance = יהירות.",
+"tip": "arrogant – 'ארוגנט', כמו 'ארוגנטי' 😤."
+},
+"baggage": {
+"use": "כבודה, מזוודות (לא ספיר).\nemotional baggage = מטען רגשי.",
+"tip": "bag = תיק.\nbaggage = כל התיקים 🧳."
+},
+"coma": {
+"use": "תרדמת: in a coma.",
+"tip": "coma = 'קומה' רפואית."
+},
+"dwelling": {
+"use": "מגורים, משכן: an ancient dwelling.",
+"tip": "dwell = לגור."
+},
+"seizure": {
+"use": "תפיסה, החרמה: a seizure of drugs.\nגם התקף (אפילפסיה).",
+"tip": "seize = לתפוס בכוח."
+},
+"cereal": {
+"use": "דגני בוקר: cereal with milk.",
+"tip": "Ceres = אלת התבואה 🥣."
+},
+"attribute#1": {
+"use": "תכונה: his best attribute.",
+"tip": "attribute = מה שמיוחס לאדם."
+},
+"discoveries": {
+"use": "תגליות: his discoveries changed medicine.",
+"tip": "discover = לגלות 🔭."
+},
+"mold#1": {
+"use": "לעצב, ליצוק: mold clay into a bowl.\nשם עצם: תבנית.",
+"tip": "mold = תבנית, כמו תבנית לעוגה."
+},
+"anticipate": {
+"use": "לצפות מראש: anticipate a big crowd.",
+"tip": "anti (לפני) + cipate (לקחת) = לקחת בחשבון מראש."
+},
+"regain": {
+"use": "להשיב לעצמו: regain strength.",
+"tip": "re (שוב) + gain (להשיג) = להשיג שוב."
+},
+"thrive": {
+"use": "לשגשג: Plants thrive in the sun.",
+"tip": "thrive – 'ת'רייב', thriving = משגשג 🌱."
+},
+"analog": {
+"use": "אנלוגי: an analog watch.\nההפך: digital.",
+"tip": "analog = 'אנלוגי', עם מחוגים ⏰."
+},
+"excel": {
+"use": "excel at/in = להצטיין ב-.",
+"tip": "excellent = מצוין.\nגם תוכנת Excel 📊."
+},
+"paramount": {
+"use": "בעל חשיבות עליונה: Safety is paramount.",
+"tip": "para + mount (הר) = בפסגת ההר."
+},
+"renew": {
+"use": "לחדש: renew a passport.\nrenewal = חידוש.",
+"tip": "re (שוב) + new (חדש) = לעשות חדש שוב."
+},
+"herd#1": {
+"use": "עדר: a herd of cows.",
+"tip": "herd – 'הרד', shepherd = רועה עדר 🐄."
+},
+"resemble": {
+"use": "להיות דומה ל- (בלי to): You resemble your mother.\nresemblance = דמיון.",
+"tip": "re + semble (דומה, similar) = להיראות דומה."
+},
+"undertake": {
+"use": "לקחת על עצמו: undertake a project.",
+"tip": "under + take = לקחת מתחת לאחריות שלך."
+},
+"notify": {
+"use": "להודיע: notify us of changes.\nnotification = התראה.",
+"tip": "notification 🔔 = התראה בטלפון."
+},
+"sorrow": {
+"use": "צער, עצב: great sorrow.",
+"tip": "sorrow – 'סורו', sorry = מצטער 😢."
+},
+"disgrace": {
+"use": "חרפה, בושה: His behavior was a disgrace.",
+"tip": "dis (בלי) + grace (חן) = בלי כבוד."
+},
+"genus": {
+"use": "סוג (בביולוגיה): the genus Panthera.",
+"tip": "genus – 'ג'ינוס', gene = משפחה ביולוגית."
+},
+"greet": {
+"use": "לקבל בברכה: greet guests.\ngreeting = ברכה.",
+"tip": "greet – 'גריט', greeting card = כרטיס ברכה 👋."
+},
+"rumor": {
+"use": "שמועה: Don't believe every rumor.",
+"tip": "rumor – 'רומר', כמו 'רינון' = שמועה 🗣."
+}
+}
