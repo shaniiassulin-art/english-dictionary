@@ -867,7 +867,7 @@ function sayWord(e,btn){unlockAudio();try{if(TTS&&(speechSynthesis.speaking||spe
 
 /* quiz-logic */
 let Q=null;
-const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false});
+const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false,skip:false});
 /* outside voice mode words are read only when a speaker button is pressed, except in the listening quiz, where the word is hidden */
 /* "מצב רץ" auto-play mode (button in the quiz / cards top bar, remembered on this device): read each new word aloud */
 let AUTO=LS.get('dictAuto')==='1';
@@ -875,10 +875,10 @@ const AUTOBTN=()=>`<button class="autob${AUTO?' on':''}" id="autoBtn" aria-press
 function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>{AUTO=!AUTO;LS.set('dictAuto',AUTO?'1':'0');draw();if(AUTO&&cur)speak(cur)}}
 function autoSay(){if(Q&&(Q.mode==='listen'||AUTO)&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
 function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},st:{},base:0,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});autoSay()}
-function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),marks:Q.marks||{},st:Q.st||{},base:Q.base||0,name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent};saveSess()}
+function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),marks:Q.marks||{},st:Q.st||{},base:Q.base||0,name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent,skip:Q.skip};saveSess()}
 function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return false;
   Q={key,list:objs(s.ids),i:s.i,score:s.score||0,pts:s.pts||0,max:s.max||0,mist:objs(s.mist||[]),marks:s.marks||{},st:s.st||{},base:s.base||0,name:s.name,from:s.from,l:s.l,g:s.g,mode:s.mode,...blankQ(),
-    stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent};
+    stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent,skip:!!s.skip};
   if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}
   /* sessions saved before words kept their own state: words already passed count as marked with their saved mark */
   if(!s.st)Q.list.slice(0,Q.i).forEach(w=>{if(!Q.marks[w.id]&&kst(w))Q.marks[w.id]=kst(w)});
@@ -913,13 +913,17 @@ function qShow(){const w=Q.list[Q.i];Q.opts=buildOpts(w);Q.sel=[];Q.stage='pick'
 function qCheck(){const nm=meanings(Q.list[Q.i]).length;Q.checked=true;const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
   Q.pts+=got;Q.max+=nm;saveQ();draw();const f=app.querySelector('.fb');f&&f.scrollIntoView({block:'nearest',behavior:'smooth'});return{got,bad,nm}}
 /* each word keeps its own state (typed text, options, answer) while moving between words with the arrows */
-const curState=()=>({stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent,old:Q.old});
+const curState=()=>({stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent,old:Q.old,skip:Q.skip});
 function enterWord(j){Q.i=j;const s=(Q.st||{})[j],w=Q.list[j];Object.assign(Q,blankQ(),{old:false},s||{});
   /* marked in an older version of the quiz, before answers were kept: show it answered */
   if(!s&&w&&(Q.marks||{})[w.id])Object.assign(Q,{stage:'pick',opts:buildOpts(w),sel:[],checked:true,old:true})}
 function goTo(j){if(j<0||j>=Q.list.length)return;Q.st=Q.st||{};Q.st[Q.i]=curState();enterWord(j);saveQ();draw();window.scrollTo(0,0);if(!Q.checked)autoSay()}
 function recount(){const m=Q.marks||{};Q.score=(Q.base||0)+Q.list.filter(w=>m[w.id]==='y').length;Q.mist=Q.list.filter(w=>m[w.id]==='n')}
-function qMark(v){const w=Q.list[Q.i],n=Q.list.length;setKnow(w.id,v);Q.marks=Q.marks||{};Q.marks[w.id]=v;recount();
+function qMark(v){const w=Q.list[Q.i];setKnow(w.id,v);Q.marks=Q.marks||{};Q.marks[w.id]=v;recount();
+  /* marked before answering: open the answer (options with the right ones, tip, notes) as if checked, and stay on the word */
+  if(!Q.checked&&!V.on){if(!Q.opts)Q.opts=buildOpts(w);Q.stage='pick';Q.sel=[];Q.checked=true;Q.skip=true;Q.sent=Q.sent;saveQ();draw();window.scrollTo(0,0);return false}
+  return qNext()}
+function qNext(){const n=Q.list.length;
   Q.st=Q.st||{};Q.st[Q.i]=curState();
   /* on to the next word not marked yet; when none is left after this one, the quiz is done */
   let j=Q.i+1;while(j<n&&Q.marks[Q.list[j].id])j++;
@@ -1060,7 +1064,7 @@ function quizScreen(){
     const mine=(Q.mine||[]).filter(x=>x&&x.trim());
     let fb='';
     if(Q.checked){const got=Q.sel.filter(k=>Q.opts[k][1]).length,bad=Q.sel.filter(k=>!Q.opts[k][1]).length;
-      if(!Q.old)fb=`<p class="fb ${got===nm&&!bad?'ok':'bad'}" role="status" aria-live="polite">${got===nm&&!bad?'נכון!':'לא נכון'}</p>`}
+      if(!Q.old&&!Q.skip)fb=`<p class="fb ${got===nm&&!bad?'ok':'bad'}" role="status" aria-live="polite">${got===nm&&!bad?'נכון!':'לא נכון'}</p>`}
     body=`${w.others.length?`<div class="others sm">פירושים אחרים:${numList(w.others)}</div>`:''}<p class="mine"><span>מה שכתבת:</span> ${mine.length?mine.map(esc).join(' · '):'<span>(לא נכתב)</span>'}</p>
       ${Q.checked?'':`<p class="ask">${nm>1?`סמני את כל הפירושים הנכונים (${nm})`:'בחרי את הפירוש הנכון'}</p>`}
       <div class="opts">${Q.opts.map(([t,ok],k)=>{const on=Q.sel.includes(k);let c=on?' on':'',pre='';
@@ -1068,7 +1072,7 @@ function quizScreen(){
         return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}</button>`}).join('')}</div>
       ${fb}
       ${Q.checked?xfull(w):''}
-      <div class="sticky">${Q.checked?`${(Q.marks||{})[w.id]?`<p class="rv-now">סימנת: <b class="${Q.marks[w.id]==='y'?'kn':'unk'}">${Q.marks[w.id]==='y'?'✓ ידעתי':'✗ לא ידעתי'}</b></p>`:''}<div class="row2"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>`
+      <div class="sticky">${Q.checked?`${(Q.marks||{})[w.id]?`<p class="rv-now">סימנת: <b class="${Q.marks[w.id]==='y'?'kn':'unk'}">${Q.marks[w.id]==='y'?'✓ ידעתי':'✗ לא ידעתי'}</b></p>`:''}<div class="row2"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>${(Q.marks||{})[w.id]?`<button class="btn secondary" id="qnext">למילה הבאה ←</button>`:''}`
         :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>
         <div class="row2 quick"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>`}</div>`;
   }
@@ -1110,6 +1114,7 @@ function quizScreen(){
     $('markY').onclick=()=>qMark('y');$('markN').onclick=()=>qMark('n');
   }else{
     $('markY').onclick=()=>qMark('y');$('markN').onclick=()=>qMark('n');
+    const qn=$('qnext');if(qn)qn.onclick=()=>qNext();
   }
 }
 function result(){
