@@ -1123,7 +1123,8 @@ async function voiceLoop(){
 
 function quizScreen(){
   const w=Q.list[Q.i],n=Q.list.length,listen=Q.mode==='listen',M=meanings(w),nm=M.length;
-  const showWord=!listen||Q.shown||Q.stage==='pick';
+  /* listening quiz: the written word stays hidden until בדיקה (or הצגת המילה כתובה) */
+  const showWord=!listen||Q.shown||Q.checked;
   const rv=Q.checked||!!(Q.marks||{})[w.id];
   const sentence=Q.sent?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span>${trPart(w,rv)}</div></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
   const wordBox=showWord?`<div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>`
