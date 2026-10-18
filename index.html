@@ -112,7 +112,7 @@ details.wl summary{cursor:pointer;color:var(--accent);font-weight:700;min-height
 .prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .25s}
 .count{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.95rem;flex:none}
 .word{display:flex;flex-direction:column;align-items:center;gap:14px;padding:36px 12px 28px;text-align:center}
-.word .w{font-family:var(--en);font-weight:600;font-size:clamp(2rem,9vw,2.8rem);direction:ltr;line-height:1.15;overflow-wrap:anywhere}
+.word .w{font-family:var(--en);font-weight:600;font-size:clamp(2rem,9vw,2.8rem);direction:ltr;line-height:1.15}
 .word .spk{width:52px;height:52px}
 .ask{font-weight:700;margin:0}
 .inp{width:100%;min-height:56px;border:2px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);font:inherit;font-size:1.15rem;padding:12px 16px}
@@ -317,6 +317,10 @@ input,textarea,select{font-size:max(16px,1em)}
 .row2:has([aria-pressed="true"]) .btn.knowyes[aria-pressed="false"],.row2:has([aria-pressed="true"]) .btn.knowno[aria-pressed="false"]{opacity:.55}
 .qz .btn.secondary{background:var(--surface);color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* English words never break inside a word; a word too long for its line gets a smaller font (fitWords) */
+.word .w,.card .w,.words .e,.si-e,.mist .e{overflow-wrap:normal;}
+.nw{white-space:nowrap}
+.word .w,.card .w,.words .e,.si-e,.mist .e{word-break:normal;hyphens:none;-webkit-hyphens:none;min-width:0;max-width:100%}
 /* private lesson */
 .item.priv{background:var(--accent-soft);border-radius:16px}
 .item.priv .num{background:var(--accent);color:var(--accent-ink)}
@@ -678,13 +682,23 @@ function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign
 const toTop=document.createElement('button');toTop.className='totop';toTop.setAttribute('aria-label','חזרה לראש הדף');toTop.textContent='↑';toTop.hidden=true;
 toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});document.body.appendChild(toTop);
 window.addEventListener('scroll',()=>{toTop.hidden=window.scrollY<500},{passive:true});
+/* shrink the font of an English word that does not fit on its line, instead of splitting it */
+const FITSEL='.word .w,.card .w,.words .e,.si-e,.mist .e';
+function fitWords(root){(root||document).querySelectorAll(FITSEL).forEach(el=>{
+  /* each word in its own no-wrap box: a phrase may wrap between words, never inside one (not even at a hyphen) */
+  if(!el.dataset.nw&&!el.children.length){el.innerHTML=el.textContent.split(/(\s+)/).map(t=>/^\s+$/.test(t)?' ':t?`<span class="nw">${esc(t)}</span>`:'').join('');el.dataset.nw='1'}
+  el.style.fontSize='';
+  let fs=parseFloat(getComputedStyle(el).fontSize);const min=fs*.4;
+  while(el.scrollWidth>el.clientWidth+1&&fs>min){fs*=.93;el.style.fontSize=fs.toFixed(1)+'px'}})}
+window.addEventListener('resize',()=>{clearTimeout(window._fw);window._fw=setTimeout(()=>fitWords(),150)});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitWords());
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
     sc.addEventListener('mousedown',e=>e.preventDefault());sc.onclick=()=>{si.value='';si.dispatchEvent(new Event('input'));sc.hidden=true;si.focus()}}
-  const h=$('home');if(h)h.onclick=goHome}
+  const h=$('home');if(h)h.onclick=goHome;fitWords(app)}
 /* small house button: leave (a quiz or cards are saved as usual) and open the main screen */
 function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
   if(S.screen==='quiz'||S.screen==='cards'){saveQ&&Q&&S.screen==='quiz'&&saveQ();S.active=null}go({screen:'home'})}
@@ -828,7 +842,7 @@ function bindSearch(ws){const inp=$('srch'),out=$('srchRes');if(!inp)return;
   inp.oninput=show;if(S.q)show()}
 function wordRow(w){const st=kst(w);return `<li class="${st==='n'?'bad':st==='y'?'ok':''}"><button class="spk" data-say="${esc(w.e)}" aria-label="השמעת ${esc(w.e)}">${SPK}</button><div class="txt"><div class="e">${esc(w.e)}</div><div class="h">${esc(label(w))}</div>${w.others.length?`<div class="oth">פירושים נוספים: ${esc(numText(w.others))}</div>`:''}<div class="ex">${highlight(w.s,w.e)}</div>${trPart(w,true)}${xtras(w,true)}</div>
   <div class="yn" role="group" aria-label="האם את יודעת את ${esc(w.e)}"><button class="yn-b y" data-k="${esc(w.id)}" data-v="y" aria-pressed="${st==='y'}" aria-label="יודעת">✓</button><button class="yn-b n" data-k="${esc(w.id)}" data-v="n" aria-pressed="${st==='n'}" aria-label="לא יודעת">✗</button></div></li>`}
-function bindRows(){
+function bindRows(){fitWords(app);
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
   app.querySelectorAll('.yn-b').forEach(b=>b.onclick=()=>{const id=b.dataset.k,v=b.dataset.v;setKnow(id,kst(W[id])===v?null:v);const y=window.scrollY||0;draw();window.scrollTo(0,y)});
 }
