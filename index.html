@@ -342,7 +342,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .sent-item textarea.si-en{font-family:var(--en);text-align:left}
 .sent-item textarea::placeholder{color:var(--muted);opacity:.8;font-family:var(--he);direction:rtl;text-align:right}
 .sent-item textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
-.exp-list{margin:0;padding:12px 12px 12px 34px;background:var(--surface);border-radius:12px;font-family:var(--en);text-align:left;line-height:1.5;user-select:text;-webkit-user-select:text}
+.exp-list{list-style:none;margin:0;padding:12px;background:var(--surface);border-radius:12px;font-family:var(--en);text-align:left;line-height:1.5;user-select:text;-webkit-user-select:text}
 .exp-list li{margin:3px 0}
 .exp-miss{margin:8px 0;color:var(--bad);font-weight:600}.exp-miss.ok{color:var(--ok)}
 </style>
@@ -907,10 +907,10 @@ function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentLi
   const box=$('expBox');box.innerHTML=EXP?expHtml(L):'';
   if(EXP){$('expCopy').onclick=()=>copyText(expText(L),$('expCopy'));$('expClose').onclick=()=>{EXP=false;sentRefresh()}}}
 function expRows(L){const rows=[],miss=[];L.w.forEach(([e],i)=>{const t=sv(sentId(L,e),'en').trim().replace(/\s+/g,' ');if(t)rows.push(`${t} (${e})`);else miss.push(i+1)});return{rows,miss}}
-const expText=L=>expRows(L).rows.map((r,i)=>`${i+1}. ${r}`).join('\n');
+const expText=L=>expRows(L).rows.join('\n');
 function expHtml(L){const {rows,miss}=expRows(L);
   return `<section class="panel exp"><h3>המשפטים שלי · רשימה ${esc(L.n)}</h3>
-    ${rows.length?`<ol class="exp-list" dir="ltr">${rows.map(r=>`<li>${esc(r)}</li>`).join('')}</ol>`:'<p class="hint">עוד לא נכתבו משפטים.</p>'}
+    ${rows.length?`<ul class="exp-list" dir="ltr">${rows.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:'<p class="hint">עוד לא נכתבו משפטים.</p>'}
     <p class="exp-miss ${miss.length?'':'ok'}">${miss.length?`חסרים ${miss.length===1?'משפט אחד':miss.length+' משפטים'} (${miss.length===1?'מילה':'מילים'} ${miss.join(', ')})`:'כל המשפטים כתובים ✓'}</p>
     <div class="row2"><button class="btn" id="expCopy" ${rows.length?'':'disabled'}>העתקת הרשימה</button><button class="btn secondary" id="expClose">סגירה</button></div></section>`}
 function copyText(t,btn){const ok=()=>{btn.textContent='הועתק ✓';setTimeout(()=>{if(btn.isConnected)btn.textContent='העתקת הרשימה'},2000)};
