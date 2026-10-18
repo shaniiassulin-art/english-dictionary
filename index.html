@@ -533,9 +533,11 @@ function xlines(t,tip){const s=String(t);const raw=(tip?s.replace(/(\.)\s+(?=\S)
     if(p&&(x.length<14||/^[=(←-⯿\uD83C-\uDBFF]/.test(x)||/(\.\.\.|…|\b(e\.g|i\.e|Vol|Dr|Mr|Mrs|St|vs|[A-Za-z])\.)$/i.test(p)))out[out.length-1]=p+' '+x;else out.push(x)}
   return out}
 /* usage notes: one numbered point per line */
+/* escape a line and set its English runs in <bdi> (escaping after the split, so &quot; etc. stay intact) */
+const bdiEsc=x=>String(x).split(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p)).join('');
 function xuse(t){const L=String(t).split('\n').map(x=>x.trim().replace(/^\d+[.)]\s*/,'')).filter(Boolean);
-  return '<ol class="num">'+L.map(x=>'<li>'+esc(x).replace(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/g,'<bdi>$1</bdi>')+'</li>').join('')+'</ol>'}
-function xfmt(t,tip){return '<ul>'+xlines(t,tip).map(x=>'<li>'+esc(x).replace(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/g,'<bdi>$1</bdi>')+'</li>').join('')+'</ul>'}
+  return '<ol class="num">'+L.map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ol>'}
+function xfmt(t,tip){return '<ul>'+xlines(t,tip).map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ul>'}
 function xtras(w){const x=EXTRA[w.xid||w.id]||{},o=XO[w.id];
   const b=(k,l)=>`<button class="xbtn" data-xt="${k}" data-xid="${esc(w.id)}" aria-expanded="${o===k}">${l}</button>`;
   let h=`<div class="xwrap" data-xw="${esc(w.id)}"><div class="xtras">${x.tip?b('tip','💡 טיפ לזכירה'):''}${x.use?b('use','📌 דגשים'):''}</div>`;
