@@ -375,7 +375,9 @@ const GOAL=240;
 const dayKey=(t=Date.now())=>{const d=new Date(t-5*3600e3);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
 const dayDate=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d,12)};
 const dayLabel=k=>dayDate(k).toLocaleDateString('he-IL',{weekday:'long',day:'numeric',month:'numeric',year:'numeric'});
-const dayCount=k=>(DAYS[k]||[]).length;
+/* private-lesson cards (ids pw<week>|… and the older p<list>|…) don't count toward the daily goal */
+const isPrivId=id=>/^(pw\d|p\d+\|)/.test(id);
+const dayCount=k=>(DAYS[k]||[]).filter(id=>!isPrivId(id)).length;
 /* my own notes per card: NOTES[id]=[text, timestamp] (synced, newest wins) */
 let NOTES={};try{NOTES=JSON.parse(localStorage.getItem('dictNotes')||'{}')}catch(e){}
 function saveNotes(){LS.set('dictNotes',JSON.stringify(NOTES));dirty()}
@@ -599,7 +601,7 @@ try{localStorage.setItem('dictKnow',JSON.stringify(KNOW))}catch(e){}
 const kst=w=>{const v=(KNOW[w.id]||[])[0];return v==='y'||v==='n'?v:undefined};
 const isY=w=>kst(w)==='y', isN=w=>kst(w)==='n';
 const known=isY;
-function setKnow(id,v){KNOW[id]=[v||'u',Date.now()];saveKnow();if(v==='y'||v==='n')logDay(id)}
+function setKnow(id,v){KNOW[id]=[v||'u',Date.now()];saveKnow();if((v==='y'||v==='n')&&!isPrivId(id))logDay(id)}
 /* each entry in w.h is one meaning; near-synonyms are already grouped with " / " */
 const meanings=w=>w.h;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
