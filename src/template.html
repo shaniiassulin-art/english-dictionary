@@ -200,6 +200,12 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .words li.bad .e::after{content:" · טעות";font-family:var(--he);font-size:.8rem;font-weight:700}
 .rm{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--bad-soft);color:var(--bad);cursor:pointer;font-size:.95rem}
 .mist-panel{background:var(--bad-soft)}
+.cartog{display:flex;align-items:center;gap:12px;width:100%;text-align:start;border:2px solid var(--line,#ddd);border-radius:14px;background:none;color:inherit;padding:10px 12px;margin-bottom:12px;cursor:pointer;font:inherit}
+.cartog .ci{font-size:1.6rem}.cartog .ct{flex:1;display:flex;flex-direction:column;gap:2px}.cartog .ct span{font-size:.85rem;opacity:.75}
+.cartog .sw{width:44px;height:26px;border-radius:13px;background:#ccc;position:relative;flex:none}.cartog .sw i{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:right .15s}
+.cartog.on{border-color:var(--accent)}.cartog.on .sw{background:var(--accent)}.cartog.on .sw i{right:21px}
+.cartag{text-align:center;font-weight:700;opacity:.7;margin:4px 0}.carmean{text-align:center;margin:14px 0;padding:10px;border-radius:12px}.carmean .lbl{margin:0 0 4px;font-size:.85rem;opacity:.7}.carmean .cm{font-size:1.5rem;font-weight:800;margin:0}.carmean .oth{font-size:.9rem;opacity:.75;margin:6px 0 0}
+.car .reading{outline:3px solid var(--accent);outline-offset:4px;border-radius:12px}.sticky.carbar{display:flex;flex-direction:row;gap:10px}.car .xfull{margin-bottom:90px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
 .mist-panel h3{color:var(--bad)}
@@ -597,7 +603,7 @@ function prefetchAudio(kind,text){const key=kind+fnv(text);if(PRE.has(key))retur
     fetch(AUD_BASES[i]+kind+'/'+fnv(text)+'.mp3').then(r=>{if(!r.ok)throw 0;return r.blob()}).then(b=>{if(PRE.has(key))PRE.set(key,URL.createObjectURL(b))}).catch(()=>tryB(i+1))};
   tryB(AU.base);
   while(PRE.size>16){const [k,u]=PRE.entries().next().value;if(u)URL.revokeObjectURL(u);PRE.delete(k)}}
-function prefetchWords(from,n){if(!Q)return;for(let j=from;j<Math.min(Q.list.length,from+(n||3));j++){const w=Q.list[j];prefetchAudio(WORDSET.has(w.e)?'w':'s',w.e);if(w.s)prefetchAudio(WORDSET.has(w.s)?'w':'s',w.s)}}
+function prefetchWords(from,n,list){list=list||(Q&&Q.list);if(!list)return;for(let j=from;j<Math.min(list.length,from+(n||3));j++){const w=list[j];prefetchAudio(WORDSET.has(w.e)?'w':'s',w.e);if(w.s)prefetchAudio(WORDSET.has(w.s)?'w':'s',w.s)}}
 function stopAudio(){const a=AU.el;if(a){try{a.pause()}catch(e){}}if(AU.end){const f=AU.end;f(null)}}
 /* play audio/<kind>/<hash>.mp3; resolves true when it played to the end, false if no file could be played, null if stopped */
 function playFile(kind,text,rate){stopAudio();const a=audioEl(),h=fnv(text);
@@ -623,8 +629,8 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
     out=out.replace(new RegExp('\\b('+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[a-z]*)','i'),'<mark>$1</mark>')});return out}
 
 /* state */
-let S={screen:'home',l:1,g:0,mode:'read',active:null};
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent'].includes(S.screen))S.screen='home'}catch(e){}
+let S={screen:'home',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car'].includes(S.screen))S.screen='home'}catch(e){}
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
@@ -643,7 +649,7 @@ function fitWords(root){(root||document).querySelectorAll(FITSEL).forEach(el=>{
 window.addEventListener('resize',()=>{clearTimeout(window._fw);window._fw=setTimeout(()=>fitWords(),150)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitWords());
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen})[S.screen]();
+  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -651,7 +657,7 @@ function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.
   const h=$('home');if(h)h.onclick=goHome;fitWords(app)}
 /* small house button: leave (a quiz or cards are saved as usual) and open the main screen */
 function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
-  if(S.screen==='quiz'||S.screen==='cards'){saveQ&&Q&&S.screen==='quiz'&&saveQ();S.active=null}go({screen:'home'})}
+  if(S.screen==='car')carStop();if(S.screen==='quiz'||S.screen==='cards'||S.screen==='car'){saveQ&&Q&&S.screen==='quiz'&&saveQ();S.active=null}go({screen:'home'})}
 /* swipe from right to left = back to the previous screen */
 (function(){let x0=null,y0=0,t0=0;
   document.addEventListener('touchstart',e=>{const t=e.touches[0];if(e.touches.length>1||e.target.closest('input,textarea')){x0=null;return}x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
@@ -660,15 +666,17 @@ function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
 
 function settings(allLabel){
   return `<div class="set-box">
-    <div><p class="lbl">סוג הבוחן</p>
+    <button class="cartog${CARON?' on':''}" id="carTog" aria-pressed="${CARON}"><span class="ci">🚗</span><span class="ct"><b>מצב רכב</b><span>${CARON?'פועל: מקריא ברצף מילה, משפט, תרגום וטיפ – בלי לגעת במסך':'כבוי · לחצי כדי להאזין למילים ברצף בזמן נסיעה'}</span></span><span class="sw" aria-hidden="true"><i></i></span></button>
+    ${CARON?'':`<div><p class="lbl">סוג הבוחן</p>
       <div class="seg" role="group" aria-label="סוג הבוחן">
         <button data-mode="read" aria-pressed="${S.mode==='read'}">קריאה</button>
         <button data-mode="listen" aria-pressed="${S.mode==='listen'}">שמיעה</button>
       </div>
-      <p class="hint">${S.mode==='read'?'רואים את המילה כתובה, כותבים פירוש ובוחרים תשובה.':'שומעים את המילה, כותבים פירוש, ואז רואים אותה ובוחרים תשובה.'} בתוך הבוחן, כפתור המיקרופון מפעיל מצב קולי: עונים בדיבור בלי לגעת במסך.</p></div>
+      <p class="hint">${S.mode==='read'?'רואים את המילה כתובה, כותבים פירוש ובוחרים תשובה.':'שומעים את המילה, כותבים פירוש, ואז רואים אותה ובוחרים תשובה.'} בתוך הבוחן, כפתור המיקרופון מפעיל מצב קולי: עונים בדיבור בלי לגעת במסך.</p></div>`}
   </div>`;
 }
 function bindSettings(){
+  const ct=$('carTog');if(ct)ct.onclick=()=>{CARON=!CARON;LS.set('dictCar',CARON?'1':'0');draw()};
   app.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{S.mode=b.dataset.mode;persist();draw()});
 }
 /* a new random order for every quiz; the same English word never comes close to itself;
@@ -688,6 +696,8 @@ function spreadShuffle(ws){const n=ws.length,slot=new Array(n).fill(null),grp={}
   let j=0;for(let i=0;i<n;i++)if(!slot[i])slot[i]=singles[j++];return slot}
 function pickList(ws){const out=[];for(let l=1;l<=PL;l++){const lw=ws.filter(w=>w.l===l);if(lw.length)out.push(...spreadShuffle(lw))}return out}
 function quizPanel(key,ws,title,name,from,noSet,cls){
+  if(CARON){const cs=SESS['C'+key];
+    return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}${cs&&cs.kind==='car'?`<button class="btn carbtn" data-carres="${key}">🚗 המשך · מילה ${Math.min(cs.i+1,cs.ids.length)} מתוך ${cs.ids.length}</button><button class="link" data-carnew="${key}">התחלה מחדש</button>`:`<button class="btn carbtn" data-carnew="${key}">🚗 התחלת מצב רכב · ${ws.length} מילים</button>`}</section>`}
   if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)(SDEL[key]=Date.now(),delete SESS[key]);
   const ss=SESS[key];
   if(ss){const n=ss.ids.length,at=Math.min(ss.i+1,n);
@@ -701,6 +711,10 @@ function quizPanel(key,ws,title,name,from,noSet,cls){
 /* quizzes on one marking category: ✗ don't know, ✓ know, unmarked. base = group/level key; 'N'+base keeps older saved sessions */
 const CATS=[['N','✗ לא ידעתי',isN,'לא יודעת'],['U','לא סומנו',w=>!kst(w),'לא סומנו'],['Y','✓ ידעתי',isY,'יודעת']];
 function catPanel(base,ws){if(!ws.some(w=>kst(w))&&!CATS.some(c=>SESS[c[0]+base]))return '';
+  if(CARON){const rows=CATS.map(([p,lbl,f])=>{const k=p+base,cs=SESS['C'+k],n=ws.filter(f).length;if(!n)return '';
+      return cs&&cs.kind==='car'?`<div class="cat-row"><button class="btn cat-${p}" data-carres="${k}">🚗 המשך · ${lbl} · מילה ${Math.min(cs.i+1,cs.ids.length)} מתוך ${cs.ids.length}</button><div class="cat-links"><button class="link" data-carnew="${k}">התחלה מחדש</button></div></div>`
+        :`<div class="cat-row"><button class="btn cat-${p}" data-carnew="${k}">🚗 ${lbl} · ${n===1?'מילה אחת':n+' מילים'}</button></div>`}).join('');
+    return rows?`<section class="panel cat-panel"><h3>מצב רכב לפי סימון</h3>${rows}</section>`:''}
   const rows=CATS.map(([p,lbl,f])=>{const k=p+base,ss=SESS[k],n=ws.filter(f).length;
     /* nothing left in this category (e.g. every word is marked): drop its unfinished quiz */
     if(!n&&ss){SDEL[k]=Date.now();delete SESS[k];saveSess();return ''}
@@ -728,6 +742,8 @@ function catUpdate(key,ws,f){const ss=SESS[key];if(!ss)return;const byId={get:id
   Object.assign(ss,{ids:all.map(o=>o.id),i:ni,st,base:(ss.base||0)+gone,mist:(ss.mist||[]).filter(id=>all.some(o=>o.id===id)),t:Date.now()});
   ss.marks=Object.fromEntries(Object.entries(marks).filter(([id])=>all.some(o=>o.id===id)));saveSess()}
 function bindQuizPanel(key,ws,name,from){
+  const cn=app.querySelector(`[data-carnew="${key}"]`);if(cn)cn.onclick=()=>startCar(pickList(ws),name,from,key);
+  const cr=app.querySelector(`[data-carres="${key}"]`);if(cr)cr.onclick=()=>{const cs=SESS['C'+key];startCar(objs(cs.ids),cs.name||name,from,key,cs.i)};
   const st=app.querySelector(`[data-start="${key}"]`);if(st)st.onclick=()=>startQuiz(pickList(ws),name,from,key);
   const rs=app.querySelector(`[data-resume="${key}"]`);if(rs)rs.onclick=()=>resumeQuiz(key);
   const rr=app.querySelector(`[data-restart="${key}"]`);if(rr)rr.onclick=()=>{(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw()};
@@ -1180,6 +1196,61 @@ function result(){
 
 /* flashcards */
 let C=null;
+
+/* ---------- מצב רכב: plays every word in a row – word, example sentence, Hebrew meaning, memory tip – and goes on by itself ---------- */
+let CAR=null;
+function saveCar(){if(!CAR)return;const k='C'+CAR.key;if(CAR.i>=CAR.deck.length){(SDEL[k]=Date.now(),delete SESS[k])}else SESS[k]={kind:'car',t:Date.now(),ids:ids(CAR.deck),i:CAR.i,name:CAR.name,from:CAR.from,l:S.l,g:S.g};saveSess()}
+/* the tip as Hebrew speech: without the English word at its start, emojis, quotes and symbols */
+function speakTip(t){return String(t||'').replace(/^[^–]*[A-Za-z][^–]*–\s*/,'').replace(/[\u{1F000}-\u{1FFFF}☀-➿⬀-⯿️‍]/gu,'')
+  .replace(/[A-Za-z][A-Za-z'’ \-]*[A-Za-z]|[A-Za-z]/g,' ').replace(/[→⇒➡←⬅]/g,', ').replace(/\s*=\s*/g,', כלומר ').replace(/\+/g,' ו').replace(/['"״׳]/g,'').replace(/\s*\/\s*/g,', ').replace(/\s+/g,' ').replace(/(,\s*)+/g,', ').trim()}
+const carMean=w=>w.h.join(', ').replace(/ \/ /g,', ');
+function startCar(list,name,from,key,at){if(!list.length)return;
+  CAR={key,deck:list,i:Math.min(at||0,list.length-1),name,from,play:true,tok:0,step:''};saveCar();S.active=key;go({screen:'car'});carPlay(true)}
+function carStop(){if(!CAR)return;CAR.play=false;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}keepAlive(false);try{V.lock&&V.lock.release()}catch(e){}V.lock=null;carMedia()}
+/* started from a tap: the first speech must start inside it (iOS) */
+function carPlay(inTap){if(!CAR)return;CAR.play=true;const tk=++CAR.tok;unlockAudio();keepAlive(true);playbackSession();
+  try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}
+  prefetchWords(CAR.i,4,CAR.deck);carMedia();
+  if(inTap&&TTS){try{speechSynthesis.cancel()}catch(e){}sayNow(' ','he-IL',()=>{});}
+  carLoop(tk)}
+async function carLoop(tk){const alive=()=>CAR&&CAR.play&&CAR.tok===tk&&S.screen==='car';
+  while(alive()&&CAR.i<CAR.deck.length){const w=CAR.deck[CAR.i],x=EXTRA[w.xid||w.id]||{};prefetchWords(CAR.i,4,CAR.deck);
+    const step=async(name,fn)=>{if(!alive())return false;CAR.step=name;carMark();await fn();return alive()};
+    if(!await step('w',()=>say(w.e,'en-US')))return;
+    if(w.s&&!await step('s',()=>say(w.s,'en-US')))return;
+    if(!await step('h',()=>say(carMean(w),'he-IL')))return;
+    if(x.tip&&!await step('t',async()=>{const t=speakTip(x.tip);if(t)await sayAll(['טיפ לזכירה:',t],alive)}))return;
+    CAR.i++;saveCar();if(CAR.i<CAR.deck.length){draw();window.scrollTo(0,0)}}
+  if(alive()&&CAR.i>=CAR.deck.length){CAR.play=false;saveCar();await say('סיימת את כל המילים','he-IL');carStop();draw()}}
+/* highlight the part being read */
+function carMark(){app.querySelectorAll('[data-cstep]').forEach(el=>el.classList.toggle('reading',el.dataset.cstep===CAR.step&&CAR.play))}
+function carGo(d){if(!CAR)return;const was=CAR.play;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}
+  CAR.i=Math.max(0,Math.min(CAR.deck.length-1,CAR.i+d));CAR.step='';saveCar();draw();window.scrollTo(0,0);if(was)carPlay(true)}
+/* steering-wheel / headphone buttons */
+function carMedia(){const ms=navigator.mediaSession;if(!ms)return;try{
+  if(!CAR||S.screen!=='car'){['play','pause','nexttrack','previoustrack'].forEach(a=>ms.setActionHandler(a,null));return}
+  const w=CAR.deck[CAR.i];if(w&&window.MediaMetadata)ms.metadata=new MediaMetadata({title:w.e,artist:carMean(w),album:'מצב רכב'});
+  ms.setActionHandler('play',()=>{carPlay(false);draw()});ms.setActionHandler('pause',()=>{carStop();draw()});
+  ms.setActionHandler('nexttrack',()=>carGo(1));ms.setActionHandler('previoustrack',()=>carGo(-1));
+  ms.playbackState=CAR.play?'playing':'paused'}catch(e){}}
+function carScreen(){const n=CAR.deck.length;
+  if(CAR.i>=n){S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">🚗</div><h2 style="margin-top:14px">סיימת להאזין לכל ${n} המילים</h2></div><button class="btn secondary" id="b">חזרה</button></div>`;
+    $('b').onclick=()=>go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'});return}
+  const w=CAR.deck[CAR.i],x=EXTRA[w.xid||w.id]||{};
+  app.innerHTML=`<div class="screen full car">
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה ממצב רכב">✕</button>${HOME}<div class="prog"><i style="width:${CAR.i/n*100}%"></i></div><span class="count">${CAR.i+1} / ${n}</span></div>
+    <p class="cartag">🚗 מצב רכב · ${esc(CAR.name||'')}</p>
+    <div class="word" data-cstep="w"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
+    ${w.s?`<div class="sentence" data-cstep="s"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(w.s,w.e)}</span>${trPart(w)}</div></div>`:''}
+    <div class="carmean" data-cstep="h"><p class="lbl">תרגום המילה</p><p class="cm">${w.h.map(esc).join('<br>')}</p>${w.others.length?`<p class="oth">פירושים נוספים: ${esc(numText(w.others))}</p>`:''}</div>
+    <div data-cstep="t">${xfull(w)}</div>
+    <div class="sticky carbar"><button class="btn secondary" id="cPrev" ${CAR.i?'':'disabled'} aria-label="המילה הקודמת">› הקודמת</button><button class="btn" id="cPlay">${CAR.play?'⏸ עצירה':'▶ המשך'}</button><button class="btn secondary" id="cNext" aria-label="המילה הבאה">הבאה ‹</button></div>
+  </div>`;
+  $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
+  $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
+  $('cPlay').onclick=()=>{if(CAR.play)carStop();else carPlay(true);draw()};
+  $('cPrev').onclick=()=>carGo(-1);$('cNext').onclick=()=>carGo(1);
+  carMark();carMedia()}
 function saveC(){if(!C)return;if(C.i>=C.deck.length){(SDEL[C.key]=Date.now(),delete SESS[C.key])}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g}}saveSess()}
 function cardScreen(){
   const n=C.deck.length;
@@ -1217,6 +1288,7 @@ function restoreScroll(){let v=null;try{v=JSON.parse(LS.get('dictScroll')||'null
 (function boot(){
   if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
   if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false}}else S.screen='group'}
+  if(S.screen==='car'){const cs=S.active&&SESS['C'+S.active];if(cs&&cs.kind==='car'){CAR={key:S.active,deck:objs(cs.ids),i:cs.i,name:cs.name,from:cs.from,play:false,tok:0,step:''}}else S.screen=S.active&&S.active.startsWith('L')?'level':'group'}
   draw();restoreScroll();
   syncNow(false);
 })();
