@@ -538,7 +538,8 @@ function xlines(t,tip){const s=String(t);const raw=(tip?s.replace(/(\.)\s+(?=\S)
   return out}
 /* usage notes: one numbered point per line */
 /* escape a line and set its English runs in <bdi> (escaping after the split, so &quot; etc. stay intact) */
-const bdiEsc=x=>String(x).split(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p)).join('');
+const RTLAR={'→':'←','⇒':'⇐','➡':'⬅','⟶':'⟵'};
+const bdiEsc=x=>String(x).split(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p).replace(/[→⇒➡⟶]/g,c=>RTLAR[c])).join('');
 function xuse(t){const L=String(t).split('\n').map(x=>x.trim().replace(/^\d+[.)]\s*/,'')).filter(Boolean);
   return '<ol class="num">'+L.map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ol>'}
 function xfmt(t,tip){return '<ul>'+xlines(t,tip).map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ul>'}
