@@ -200,7 +200,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .words li.bad .e::after{content:" · טעות";font-family:var(--he);font-size:.8rem;font-weight:700}
 .rm{flex:none;width:36px;height:36px;border-radius:50%;border:0;background:var(--bad-soft);color:var(--bad);cursor:pointer;font-size:.95rem}
 .mist-panel{background:var(--bad-soft)}
-.cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}
+.cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
 .mist-panel h3{color:var(--bad)}
 .mist-panel .btn{background:var(--bad-soft);color:var(--bad)}
@@ -696,10 +696,28 @@ function catPanel(base,ws){if(!ws.some(w=>kst(w))&&!CATS.some(c=>SESS[c[0]+base]
     /* nothing left in this category (e.g. every word is marked): drop its unfinished quiz */
     if(!n&&ss){SDEL[k]=Date.now();delete SESS[k];saveSess();return ''}
     if(ss&&ss.kind==='quiz'&&ss.v===2){const at=Math.min(ss.i+1,ss.ids.length);
-      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><button class="link" data-restart="${k}">התחלה מחדש</button></div>`}
+      const ch=catDiff(ss,ws,f),upd=ch.out+ch.add?`<button class="link" data-catupd="${k}">עדכון (${[ch.out?ch.out+' עברו קטגוריה':'',ch.add?ch.add+' חדשות':''].filter(Boolean).join(', ')})</button>`:'';
+      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><div class="cat-links">${upd}<button class="link" data-restart="${k}">התחלה מחדש</button></div></div>`}
     return n?`<div class="cat-row"><button class="btn cat-${p}" data-start="${k}">${lbl} · ${n===1?'מילה אחת':n+' מילים'}</button></div>`:''}).join('');
   return rows?`<section class="panel cat-panel"><h3>בוחן לפי סימון</h3>${rows}</section>`:''}
-function bindCatPanel(base,ws,name,from){CATS.forEach(([p,,f,nm])=>bindQuizPanel(p+base,ws.filter(f),nm+' · '+name,from))}
+function bindCatPanel(base,ws,name,from){CATS.forEach(([p,,f,nm])=>{bindQuizPanel(p+base,ws.filter(f),nm+' · '+name,from);
+  const b=app.querySelector(`[data-catupd="${p+base}"]`);if(b)b.onclick=()=>{catUpdate(p+base,ws,f);draw()}})}
+/* an unfinished category quiz vs. the marks now: words that left the category, and words that joined it */
+function catDiff(ss,ws,f){const byId={get:id=>objs([id])[0]},inS=new Set(objs(ss.ids).map(w=>w.id));
+  const out=ss.ids.filter(id=>{const w=byId.get(id);return !w||!f(w)}).length,add=ws.filter(w=>f(w)&&!inS.has(w.id)).length;return {out,add}}
+/* "עדכון": drop the words that left the category, add the ones that joined (at the end), and stay on the same word
+   (or the next one still in the category) with every word's saved state */
+function catUpdate(key,ws,f){const ss=SESS[key];if(!ss)return;const byId={get:id=>objs([id])[0]};
+  const cur=ss.i,keep=ss.ids.map((id,j)=>({id:(byId.get(id)||{}).id,j})).filter(o=>{const w=byId.get(o.id);return w&&f(w)});
+  const inS=new Set(keep.map(o=>o.id).concat(objs(ss.ids).map(w=>w.id))),added=pickList(ws.filter(w=>f(w)&&!inS.has(w.id))).map(w=>({id:w.id,j:-1}));
+  const all=keep.concat(added);if(!all.length){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();return}
+  const fields=['stage','mine','opts','sel','checked','shown','sent','skip'],st0=ss.st||{},curSt={};fields.forEach(x=>curSt[x]=ss[x]);
+  const st={};all.forEach((o,n)=>{if(o.j===cur)st[n]=curSt;else if(o.j>=0&&st0[o.j])st[n]=st0[o.j]});
+  let ni=all.findIndex(o=>o.j>=cur);if(ni<0)ni=all.length-1;
+  const marks=ss.marks||{},gone=ss.ids.filter(id=>!all.some(o=>o.id===id)&&marks[id]==='y').length;
+  Object.assign(ss,blankQ(),st[ni]||{});delete st[ni];
+  Object.assign(ss,{ids:all.map(o=>o.id),i:ni,st,base:(ss.base||0)+gone,mist:(ss.mist||[]).filter(id=>all.some(o=>o.id===id)),t:Date.now()});
+  ss.marks=Object.fromEntries(Object.entries(marks).filter(([id])=>all.some(o=>o.id===id)));saveSess()}
 function bindQuizPanel(key,ws,name,from){
   const st=app.querySelector(`[data-start="${key}"]`);if(st)st.onclick=()=>startQuiz(pickList(ws),name,from,key);
   const rs=app.querySelector(`[data-resume="${key}"]`);if(rs)rs.onclick=()=>resumeQuiz(key);
