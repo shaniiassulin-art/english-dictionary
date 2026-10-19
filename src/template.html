@@ -664,9 +664,10 @@ function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
   document.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
     if(dx<-70&&Math.abs(dx)>2*Math.abs(dy)&&Date.now()-t0<800&&S.screen!=='home'){const b=$('bk')||$('exit')||$('back');b&&b.click()}},{passive:true})})();
 
+function carToggle(){return `<button class="cartog${CARON?' on':''}" id="carTog" aria-pressed="${CARON}"><span class="ci">🚗</span><span class="ct"><b>מצב רכב</b><span>${CARON?'פועל: מקריא ברצף מילה, משפט, תרגום וטיפ – בלי לגעת במסך':'כבוי · לחצי כדי להאזין למילים ברצף בזמן נסיעה'}</span></span><span class="sw" aria-hidden="true"><i></i></span></button>`}
 function settings(allLabel){
   return `<div class="set-box">
-    <button class="cartog${CARON?' on':''}" id="carTog" aria-pressed="${CARON}"><span class="ci">🚗</span><span class="ct"><b>מצב רכב</b><span>${CARON?'פועל: מקריא ברצף מילה, משפט, תרגום וטיפ – בלי לגעת במסך':'כבוי · לחצי כדי להאזין למילים ברצף בזמן נסיעה'}</span></span><span class="sw" aria-hidden="true"><i></i></span></button>
+    ${carToggle()}
     ${CARON?'':`<div><p class="lbl">סוג הבוחן</p>
       <div class="seg" role="group" aria-label="סוג הבוחן">
         <button data-mode="read" aria-pressed="${S.mode==='read'}">קריאה</button>
@@ -701,7 +702,7 @@ function quizPanel(key,ws,title,name,from,noSet,cls){
   if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)(SDEL[key]=Date.now(),delete SESS[key]);
   const ss=SESS[key];
   if(ss){const n=ss.ids.length,at=Math.min(ss.i+1,n);
-    return `<section class="panel ${cls||''}"><h3>${title}</h3>
+    return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':carToggle()}
       <p class="resume-info">עצרת ב${ss.mode==='listen'?'בוחן שמיעה':'בוחן קריאה'} במילה <b>${at} מתוך ${n}</b> · ידעת ${ss.score} עד עכשיו</p>
       <div class="bar2"><i style="width:${ss.i/n*100}%"></i></div>
       <button class="btn" data-resume="${key}">המשך מהמילה ${at}</button>
