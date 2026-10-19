@@ -216,7 +216,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .cartog .sw{width:44px;height:26px;border-radius:13px;background:#ccc;position:relative;flex:none}.cartog .sw i{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:right .15s}
 .cartog.on{border-color:var(--accent)}.cartog.on .sw{background:var(--accent)}.cartog.on .sw i{right:21px}
 .cartag{text-align:center;font-weight:700;opacity:.7;margin:4px 0}.carmean{text-align:center;margin:14px 0;padding:10px;border-radius:12px}.carmean .lbl{margin:0 0 4px;font-size:.85rem;opacity:.7}.carmean .cm{font-size:1.5rem;font-weight:800;margin:0}.carmean .oth{font-size:.9rem;opacity:.75;margin:6px 0 0}
-.car .reading{outline:3px solid var(--accent);outline-offset:4px;border-radius:12px}.sticky.carbar{display:flex;flex-direction:row;gap:10px}.car .xfull{margin-bottom:90px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
+.car .reading{outline:3px solid var(--accent);outline-offset:4px;border-radius:12px}.carrow{display:flex;gap:8px}.carrow .btn{flex:1;padding-left:6px;padding-right:6px}.carnav{display:flex;justify-content:space-between}.carmean.think .cm{opacity:.6}.carhint{margin:0;text-align:center;font-size:.78rem;opacity:.7}.car .xfull{margin-bottom:150px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
 .mist-panel h3{color:var(--bad)}
@@ -1258,14 +1258,14 @@ function result(){
 let C=null;
 
 /* ---------- מצב רכב: plays every word in a row – word, example sentence, Hebrew meaning, memory tip – and goes on by itself ---------- */
-let CAR=null;
+let CAR=null;const CARWAIT=4000;
 function saveCar(){if(!CAR)return;const k='C'+CAR.key;if(CAR.i>=CAR.deck.length){(SDEL[k]=Date.now(),delete SESS[k])}else SESS[k]={kind:'car',t:Date.now(),ids:ids(CAR.deck),i:CAR.i,name:CAR.name,from:CAR.from,l:S.l,g:S.g};saveSess()}
 /* the tip as Hebrew speech: without the English word at its start, emojis, quotes and symbols */
 function speakTip(t){return String(t||'').replace(/^[^–]*[A-Za-z][^–]*–\s*/,'').replace(/[\u{1F000}-\u{1FFFF}☀-➿⬀-⯿️‍]/gu,'')
   .replace(/[A-Za-z][A-Za-z'’ \-]*[A-Za-z]|[A-Za-z]/g,' ').replace(/[→⇒➡←⬅]/g,', ').replace(/\s*=\s*/g,', כלומר ').replace(/\+/g,' ו').replace(/['"״׳]/g,'').replace(/\s*\/\s*/g,', ').replace(/\s+/g,' ').replace(/(,\s*)+/g,', ').trim()}
 const carMean=w=>w.h.join(', ').replace(/ \/ /g,', ');
 function startCar(list,name,from,key,at){if(!list.length)return;
-  CAR={key,deck:list,i:Math.min(at||0,list.length-1),name,from,play:true,tok:0,step:''};saveCar();S.active=key;go({screen:'car'});carPlay(true)}
+  CAR={key,deck:list,i:Math.min(at||0,list.length-1),name,from,play:true,tok:0,step:'',rev:false};saveCar();S.active=key;go({screen:'car'});carPlay(true)}
 function carStop(){if(!CAR)return;CAR.play=false;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}keepAlive(false);try{V.lock&&V.lock.release()}catch(e){}V.lock=null;carMedia()}
 /* started from a tap: the first speech must start inside it (iOS) */
 function carPlay(inTap){if(!CAR)return;CAR.play=true;const tk=++CAR.tok;unlockAudio();keepAlive(true);playbackSession();
@@ -1278,20 +1278,27 @@ async function carLoop(tk){const alive=()=>CAR&&CAR.play&&CAR.tok===tk&&S.screen
     const step=async(name,fn)=>{if(!alive())return false;CAR.step=name;carMark();await fn();return alive()};
     if(!await step('w',()=>say(w.e,'en-US')))return;
     if(w.s&&!await step('s',()=>say(w.s,'en-US')))return;
+    /* a few seconds to think before the answer */
+    if(!CAR.rev){if(!await step('p',async()=>{const t0=Date.now();while(alive()&&Date.now()-t0<CARWAIT)await wait(100)}))return;CAR.rev=true;draw()}
     if(!await step('h',()=>say(carMean(w),'he-IL')))return;
     if(x.tip&&!await step('t',async()=>{const t=speakTip(x.tip);if(t)await sayAll(['טיפ לזכירה:',t],alive)}))return;
-    CAR.i++;saveCar();if(CAR.i<CAR.deck.length){draw();window.scrollTo(0,0)}}
+    CAR.i++;CAR.rev=false;saveCar();if(CAR.i<CAR.deck.length){draw();window.scrollTo(0,0)}}
   if(alive()&&CAR.i>=CAR.deck.length){CAR.play=false;saveCar();await say('סיימת את כל המילים','he-IL');carStop();draw()}}
 /* highlight the part being read */
 function carMark(){app.querySelectorAll('[data-cstep]').forEach(el=>el.classList.toggle('reading',el.dataset.cstep===CAR.step&&CAR.play))}
+/* ✓ / ✗ for the word now playing (also from the next / previous buttons on the steering wheel or headphones), then on to the next word */
+function tone(f){try{const ac=V.ac||(V.ac=new (window.AudioContext||window.webkitAudioContext)());ac.resume&&ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.value=.15;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.15)}catch(e){}}
+function carKnow(v){if(!CAR||CAR.i>=CAR.deck.length)return;setKnow(CAR.deck[CAR.i].id,v);tone(v==='y'?990:330);
+  if(CAR.i>=CAR.deck.length-1){const was=CAR.play;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}CAR.i++;CAR.rev=false;saveCar();carStop();draw();return}
+  carGo(1)}
 function carGo(d){if(!CAR)return;const was=CAR.play;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}
-  CAR.i=Math.max(0,Math.min(CAR.deck.length-1,CAR.i+d));CAR.step='';saveCar();draw();window.scrollTo(0,0);if(was)carPlay(true)}
+  CAR.i=Math.max(0,Math.min(CAR.deck.length-1,CAR.i+d));CAR.step='';CAR.rev=false;saveCar();draw();window.scrollTo(0,0);if(was)carPlay(true)}
 /* steering-wheel / headphone buttons */
 function carMedia(){const ms=navigator.mediaSession;if(!ms)return;try{
   if(!CAR||S.screen!=='car'){['play','pause','nexttrack','previoustrack'].forEach(a=>ms.setActionHandler(a,null));return}
   const w=CAR.deck[CAR.i];if(w&&window.MediaMetadata)ms.metadata=new MediaMetadata({title:w.e,artist:carMean(w),album:'מצב רכב'});
   ms.setActionHandler('play',()=>{carPlay(false);draw()});ms.setActionHandler('pause',()=>{carStop();draw()});
-  ms.setActionHandler('nexttrack',()=>carGo(1));ms.setActionHandler('previoustrack',()=>carGo(-1));
+  ms.setActionHandler('nexttrack',()=>carKnow('y'));ms.setActionHandler('previoustrack',()=>carKnow('n'));
   ms.playbackState=CAR.play?'playing':'paused'}catch(e){}}
 function carScreen(){const n=CAR.deck.length;
   if(CAR.i>=n){S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">🚗</div><h2 style="margin-top:14px">סיימת להאזין לכל ${n} המילים</h2></div><button class="btn secondary" id="b">חזרה</button></div>`;
@@ -1302,14 +1309,17 @@ function carScreen(){const n=CAR.deck.length;
     <p class="cartag">🚗 מצב רכב · ${esc(CAR.name||'')}</p>
     <div class="word" data-cstep="w"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
     ${w.s?`<div class="sentence" data-cstep="s"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(w.s,w.e)}</span>${trPart(w)}</div></div>`:''}
-    <div class="carmean" data-cstep="h"><p class="lbl">תרגום המילה</p><p class="cm">${w.h.map(esc).join('<br>')}</p>${w.others.length?`<p class="oth">פירושים נוספים: ${esc(numText(w.others))}</p>`:''}</div>
-    <div data-cstep="t">${xfull(w)}</div>
-    <div class="sticky carbar"><button class="btn secondary" id="cPrev" ${CAR.i?'':'disabled'} aria-label="המילה הקודמת">› הקודמת</button><button class="btn" id="cPlay">${CAR.play?'⏸ עצירה':'▶ המשך'}</button><button class="btn secondary" id="cNext" aria-label="המילה הבאה">הבאה ‹</button></div>
+    ${CAR.rev?`<div class="carmean" data-cstep="h"><p class="lbl">תרגום המילה</p><p class="cm">${w.h.map(esc).join('<br>')}</p>${w.others.length?`<p class="oth">פירושים נוספים: ${esc(numText(w.others))}</p>`:''}</div>
+    <div data-cstep="t">${xfull(w)}</div>`:`<div class="carmean think" data-cstep="p"><p class="lbl">תרגום המילה</p><p class="cm">🤔 מה הפירוש?</p><button class="link" id="cRev">הצגת התשובה</button></div>`}
+    <div class="sticky carbar"><div class="carnav"><button class="link" id="cPrev" ${CAR.i?'':'disabled'}>› למילה הקודמת</button><button class="link" id="cNext">למילה הבאה ‹</button></div>
+      <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי</button><button class="btn" id="cPlay">${CAR.play?'⏸ עצירה':'▶ המשך'}</button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי</button></div>
+      <p class="carhint">כפתורי ההגה / האוזניות: הבא ⏭ = ידעתי · הקודם ⏮ = לא ידעתי · ⏯ = עצירה</p></div>
   </div>`;
   $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
   $('cPlay').onclick=()=>{if(CAR.play)carStop();else carPlay(true);draw()};
-  $('cPrev').onclick=()=>carGo(-1);$('cNext').onclick=()=>carGo(1);
+  $('cPrev').onclick=()=>carGo(-1);$('cNext').onclick=()=>carGo(1);$('cY').onclick=()=>carKnow('y');$('cN').onclick=()=>carKnow('n');
+  const rv=$('cRev');if(rv)rv.onclick=()=>{CAR.rev=true;const was=CAR.play;if(was){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}}draw();if(was)carPlay(true)};
   carMark();carMedia()}
 function saveC(){if(!C)return;if(C.i>=C.deck.length){(SDEL[C.key]=Date.now(),delete SESS[C.key])}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g}}saveSess()}
 function cardScreen(){
