@@ -1,117 +1,97 @@
 {
-"p13|achieve": {
-"tr": "הוא השיג את המטרה שלו אחרי שנים רבות.",
-"use": "achieve + מטרה / הצלחה / חלום – בלי מילת יחס.\nלרוב על משהו שהושג במאמץ (לא על קנייה).\nachievement = הישג.",
-"tip": "achieve – 'אצ'יב', נשמע כמו 'אצ'יב' = צ'יף (chief, ראש) – מי שמגיע לראש השיג משהו 🏆 = להשיג."
+"p13|prestigious": {
+"tr": "הרווארד היא אוניברסיטה יוקרתית.",
+"use": "מתאר בדרך כלל מוסד, ארגון או פרס – לא אדם: prestigious university / award / job.\nלפני שם עצם או אחרי be.\nprestige = יוקרה.",
+"tip": "prestigious – 'פרסטיג'ס', כמו 'פרסטיז'' בעברית = יוקרה 🎓 = יוקרתי."
 },
-"p13|fame": {
-"tr": "הזמר זכה לפרסום בגיל צעיר.",
-"use": "שם עצם לא ספיר: find / achieve fame – בלי a.\nfamous = מפורסם (שם התואר).\nfame and fortune = פרסום ועושר.",
-"tip": "fame – 'פיים', כמו famous ('פיימוס') – מפורסם 🌟 = פרסום, תהילה."
+"p13|institutions": {
+"tr": "בנקים ובתי ספר הם מוסדות חשובים.",
+"use": "שם עצם ספיר: financial / academic institutions.\nעל ארגון גדול וקבוע (בנק, אוניברסיטה, בית חולים).\ninstitute = מכון.",
+"tip": "institution – 'אינסטיטושן', כמו 'אינסטנציה' / 'מכון' (Institute) 🏛 = מוסד."
 },
-"p13|seek": {
-"tr": "צעירים רבים מחפשים הרפתקאות בחו\"ל.",
-"use": "seek – sought – sought (צורות לא סדירות).\nseek + שם עצם – בלי for (seek help, לא seek for help).\nרשמי יותר מ-look for.",
-"tip": "seek – 'סיק', כמו במחבואים: Hide and Seek = להתחבא ולחפש 🙈 = לחפש."
+"p13|dominate": {
+"tr": "חברות גדולות שולטות בשוק.",
+"use": "dominate + שם עצם – בלי on / over.\ndominate the market / the game / the conversation.\ndominant = דומיננטי.",
+"tip": "dominate – 'דומינייט', כמו 'דומיננטי' בעברית 👑 = לשלוט."
 },
-"p13|avoid": {
-"tr": "נסי להימנע מסוכר לפני השינה.",
-"use": "avoid + שם עצם / פועל עם ing (avoid eating), לא avoid to.\nבלי from (avoid sugar, לא avoid from).\navoidable = שאפשר להימנע ממנו.",
-"tip": "avoid – 'אבויד', נשמע כמו 'אבוי!' – 'אבוי, תתרחקי מזה!' 🚫 = להימנע."
+"p13|disorder": {
+"tr": "היא סובלת מהפרעת אכילה.",
+"use": "ברפואה: eating / sleep / mental disorder = הפרעה.\nsuffer from a disorder.\nבמשמעות אחרת: אי-סדר (in disorder).",
+"tip": "disorder – dis (בלי) + order (סדר) = 'בלי סדר' בגוף או בנפש 🧠 = הפרעה, מחלה."
 },
-"p13|childhood": {
-"tr": "ביליתי את ילדותי בכפר קטן.",
-"use": "שם עצם: in my childhood = בילדותי.\nchildhood friend / memories = חבר ילדות / זיכרונות ילדות.\n-hood = תקופה או מצב (adulthood = בגרות).",
-"tip": "childhood – child (ילד) + hood (תקופה) = תקופת הילדות 🧒."
+"p13|greyhounds": {
+"tr": "כלבי גרייהאונד הם הכלבים המהירים בעולם.",
+"use": "שם עצם ספיר; רבים: greyhounds.\nבאמריקאית גם: Greyhound = חברת אוטובוסים.\ngrey (אפור) + hound (כלב ציד).",
+"tip": "greyhound – grey (אפור) + hound (כלב) = 'כלב אפור' מהיר 🐕💨 = גרייהאונד."
 },
-"p13|adventure": {
-"tr": "הטיול שלנו לג'ונגל היה הרפתקה אמיתית.",
-"use": "שם עצם ספיר: a real adventure / go on an adventure.\nadventurous = הרפתקן, אוהב הרפתקאות.\nמשמש הרבה בסרטים וספרים: adventure movie.",
-"tip": "adventure – 'אדוונצ'ר', כמו 'אדוונצ'ר' בפארק השעשועים 🎢 = הרפתקה."
+"p13|insanity": {
+"tr": "לנהוג כל כך מהר בגשם זה טירוף מוחלט.",
+"use": "שם עצם לא ספיר: pure / total insanity.\ninsane = משוגע.\nבמשפט: plead insanity = לטעון לאי-שפיות.",
+"tip": "insanity – in (לא) + sane (שפוי, כמו 'סאני' = שפוי) = לא שפוי 🤪 = טירוף."
 },
-"p13|fascinated": {
-"tr": "הילדים היו מרותקים לדינוזאורים.",
-"use": "על אדם: be fascinated by / with + דבר.\nfascinating = מרתק (על הדבר עצמו).\nחזק מ-interested.",
-"tip": "fascinated – 'פסינייטד', כמו 'פסינציה' – מרותק לגמרי 🤩 = מרותק."
+"p13|mental illness": {
+"tr": "אין במה להתבייש במחלת נפש.",
+"use": "שם עצם: suffer from a mental illness.\nmental = של הנפש / השכל; illness = מחלה.\nmental health = בריאות הנפש.",
+"tip": "mental illness – 'מנטלי' (נפשי) + ill (חולה) = מחלה נפשית 🧠."
 },
-"p13|medieval": {
-"tr": "ביקרנו בטירה מימי הביניים בצרפת.",
-"use": "שם תואר לפני שם עצם: medieval castle / history / times.\nעל התקופה 500–1500 בערך.\nבשיחה גם: מיושן מאוד.",
-"tip": "medieval – medi (אמצע, כמו 'מדיום') + eval (עידן) = 'העידן שבאמצע' = ימי הביניים 🏰."
+"p13|rather than": {
+"tr": "הייתי רוצה תה במקום קפה.",
+"use": "מחבר שני דברים מאותו סוג: tea rather than coffee.\nאחרי rather than בא פועל בסיסי או ing: walk rather than drive.\nwould rather = הייתי מעדיף.",
+"tip": "rather than – 'ראד'ר דן', כמו I'd rather = 'הייתי מעדיף' – זה ולא ההוא ⚖ = במקום."
 },
-"p13|knights": {
-"tr": "האבירים רכבו על סוסיהם אל הקרב.",
-"use": "רבים של knight; ה-k וה-gh שותקות: 'נייטס'.\nnight (לילה) נשמע אותו דבר.\nknight in shining armor = אביר על סוס לבן.",
-"tip": "knight – 'נייט', נשמע כמו night (לילה) – אביר ששומר על הטירה בלילה 🛡 = אביר."
+"p13|synonym": {
+"tr": "המילה big היא מילה נרדפת ל-large.",
+"use": "שם עצם ספיר: a synonym for / of + מילה.\nההפך: antonym = מילה הפוכה.\nsynonymous = נרדף.",
+"tip": "synonym – syn (יחד, כמו 'סינכרון') + onym (שם) = 'שם ביחד' 🟰 = מילה נרדפת."
 },
-"p13|heroism": {
-"tr": "החייל קיבל מדליה על הגבורה שלו.",
-"use": "שם עצם לא ספיר: an act of heroism = מעשה גבורה.\nhero = גיבור; heroic = הרואי.\nאל תבלבלי: heroin = סם.",
-"tip": "heroism – hero ('הירו' = גיבור) + ism = 'הרואיות' 🦸 = גבורה."
+"p13|transaction": {
+"tr": "הבנק גבה עמלה על העסקה.",
+"use": "שם עצם ספיר: a business / bank transaction.\nmake / complete a transaction.\nבבנקים ובעסקים.",
+"tip": "transaction – trans (מעבר) + action (פעולה) = 'פעולה שבה כסף עובר' – 'טרנזקציה' 💳 = עסקה."
 },
-"p13|endurance": {
-"tr": "הטיפוס על ההר היה מבחן של כוח סיבולת.",
-"use": "שם עצם לא ספיר: a test of endurance.\nבספורט: endurance training = אימון סיבולת.\nendure = לסבול, להחזיק מעמד.",
-"tip": "endurance – 'אנדורנס', נשמע כמו 'אין-דור' – מחזיק מעמד דור שלם 💪 = סיבולת."
+"p13|recipient": {
+"tr": "נמען המכתב גר בלונדון.",
+"use": "שם עצם ספיר: the recipient of + מכתב / פרס / תרומה (רשמי).\nreceive = לקבל.",
+"tip": "recipient – 'רסיפיינט', כמו receive ('ריסיב' = לקבל) / 'רספשן' 📬 = מקבל."
 },
-"p13|malaria": {
-"tr": "יתושים יכולים להעביר מלריה.",
-"use": "שם עצם לא ספיר: get / catch malaria – בלי a.\nבאזורים חמים, מועברת על ידי יתושים.\nכמו בעברית: מלריה.",
-"tip": "malaria – 'מלריה' בעברית! mal (רע) + aria (אוויר) = 'אוויר רע' 🦟."
+"p13|prerequisite": {
+"tr": "מעבר המבחן הוא תנאי מוקדם לקורס.",
+"use": "שם עצם: a prerequisite for / of + דבר.\nבלימודים: קורס שחייבים לעבור קודם (רשמי).",
+"tip": "prerequisite – pre (לפני) + requisite (דרוש, כמו require) = 'דרוש לפני' ✅ = תנאי מוקדם."
 },
-"p13|meticulous": {
-"tr": "היא קפדנית בכל פרט בעבודה שלה.",
-"use": "על אדם או עבודה: meticulous about / in + דבר.\nmeticulous planning / records = תכנון / רישום מדוקדק.\nחיובי לרוב.",
-"tip": "meticulous – 'מטיקולוס', נשמע כמו 'מתקן כל קוץ' – מתקן כל קוצו של יוד 🔍 = קפדני."
+"p13|riddle": {
+"tr": "את יכולה לפתור את החידה הזאת?",
+"use": "שם עצם ספיר: solve a riddle / tell a riddle.\nבהשאלה: משהו מסתורי.\npuzzle = פאזל, חידה.",
+"tip": "riddle – 'רידל', כמו 'רידלר' (Riddler) – הנבל מבאטמן שתמיד שואל חידות ❓ = חידה."
 },
-"p13|thesis": {
-"tr": "הוא כתב את התזה שלו על מצרים העתיקה.",
-"use": "שם עצם ספיר; רבים: theses.\nwrite a thesis on / about + נושא.\nבאוניברסיטה: עבודת תואר שני / דוקטורט.",
-"tip": "thesis – 'ת'יסיס' = 'תזה' בעברית 📚 = עבודת מחקר."
+"p13|freed": {
+"tr": "האסיר שוחרר אחרי עשר שנים.",
+"use": "עבר ו-V3 של free (לשחרר): free – freed – freed.\nלרוב בסביל: be freed from + כלא.\nfree = גם חופשי / בחינם.",
+"tip": "freed – free (חופשי) + d = 'נעשה חופשי' 🕊 = שוחרר."
 },
-"p13|intelligence": {
-"tr": "המודיעין הצבאי הזהיר מפני ההתקפה.",
-"use": "שם עצם לא ספיר: military / secret intelligence.\nבצבא ובריגול: מודיעין; במקום אחר: אינטליגנציה.\nCIA = Central Intelligence Agency.",
-"tip": "intelligence – כמו ה-CIA (Central Intelligence Agency) = סוכנות המודיעין 🕵 = מודיעין."
+"p13|expelled": {
+"tr": "הוא סולק מבית הספר בגלל העתקה.",
+"use": "be expelled from + בית ספר / מדינה.\nexpel – expelled (שתי l).\nexpulsion = סילוק, גירוש.",
+"tip": "expelled – ex (החוצה) + pel (לדחוף, כמו 'פרופלר') = נדחף החוצה 🚪 = גורש."
 },
-"p13|revolt": {
-"tr": "האיכרים פתחו במרד נגד המלך.",
-"use": "כשם עצם: a revolt against + שלטון.\nכפועל: revolt against + שלטון = למרוד.\nrevolting = מגעיל (משמעות אחרת!).",
-"tip": "revolt – 'ריבולט', כמו 'רבולוציה' = מהפכה ✊ = מרד."
+"p13|liberated": {
+"tr": "העיר שוחררה בסוף המלחמה.",
+"use": "על עם, עיר או ארץ: be liberated from + כובש.\nliberation = שחרור.\nעל אדם גם: liberated = משוחרר (בדעותיו).",
+"tip": "liberated – 'ליברייטד', כמו 'ליברלי' / liberty = חירות 🗽 = שוחרר."
 },
-"p13|correspondents": {
-"tr": "כתבים זרים דיווחו מאזור המלחמה.",
-"use": "שם עצם ספיר: foreign / war correspondent.\nכתב שמדווח ממקום מסוים, לרוב מחו\"ל.\ncorrespond = להתכתב.",
-"tip": "correspondent – 'קורספונדנט', כמו 'כתבנו' בחו\"ל – 'Our correspondent in Paris' 🎙 = כתב."
+"p13|licensed": {
+"tr": "רק חשמלאי בעל רישיון יכול לעשות את העבודה הזאת.",
+"use": "שם תואר לפני מקצוע: licensed electrician / doctor / driver.\nlicensed to + פועל = מורשה ל-.\nlicense = רישיון.",
+"tip": "licensed – 'לייסנסד', כמו 'ליסנס' = רישיון 🪪 = בעל רישיון."
 },
-"p13|traditional": {
-"tr": "אכלנו ארוחה מסורתית בחג.",
-"use": "שם תואר: traditional food / music / family.\ntradition = מסורת.\nההפך: modern.",
-"tip": "traditional – 'טרדישנל', כמו 'טרדיציה' = מסורת 🕯 = מסורתי."
+"p13|crops": {
+"tr": "החקלאים מגדלים גידולים כמו חיטה ותירס.",
+"use": "שם עצם ספיר, לרוב ברבים: grow / harvest crops.\ncrop = גם יבול של עונה.\ncrop (פועל) = לחתוך תמונה.",
+"tip": "crop – 'קרופ', כמו Crop בטלפון (לחתוך תמונה) – כמו שקוצרים את היבול ✂🌾 = גידולים."
 },
-"p13|charging": {
-"tr": "החיילים הסתערו לעבר האויב.",
-"use": "charge at / toward + אויב = להסתער.\nבמשמעות אחרת: charge = לגבות / להטעין (charge a phone).\nבהקשר של קרב, שוורים, חיות.",
-"tip": "charging – 'צ'רג'ינג', כמו 'צ'ארג'ר' שמטעין – מלא אנרגיה ומסתער קדימה 🐂 = מסתערים."
-},
-"p13|reputation": {
-"tr": "למסעדה יש מוניטין טוב.",
-"use": "שם עצם: a good / bad reputation.\nreputation for + דבר = מוניטין של.\nעל אדם, מקום או חברה.",
-"tip": "reputation – 'רפיוטיישן', נשמע כמו 'רפואה' טובה – לרופא טוב יש שם טוב ⭐ = מוניטין."
-},
-"p13|bitter": {
-"tr": "הוא הרגיש ממורמר אחרי שאיבד את עבודתו.",
-"use": "על אדם: feel bitter about + דבר = ממורמר.\nעל טעם: bitter = מר (bitter coffee).\nbitterness = מרירות.",
-"tip": "bitter – 'ביטר', נשמע כמו 'בִּטֵּר' – מר בפה ומר בלב 😖 = ממורמר."
-},
-"p13|fascination": {
-"tr": "יש לה התפעלות עמוקה מהיסטוריה עתיקה.",
-"use": "שם עצם: a fascination with / for + דבר.\nfascinate = לרתק.\nחזק מ-interest.",
-"tip": "fascination – 'פסינציה' בעברית 🤩 = התפעלות עמוקה."
-},
-"p13|exploits": {
-"tr": "הספר מספר על מעשי הגבורה של טייס אמיץ.",
-"use": "שם עצם ברבים (EX-ploits): exploits = מעשים נועזים.\nכפועל (ex-PLOIT) = לנצל.\nספרותי, בסיפורי הרפתקאות.",
-"tip": "exploits – 'אקספלויטס', נשמע כמו 'אקספלורר' (Explorer) – הרפתקאות של חוקר אמיץ 🗺 = מעשי גבורה."
+"p13|beyond": {
+"tr": "התשובה היא מעבר לידע שלי.",
+"use": "מילת יחס לפני שם עצם: beyond the hills / beyond my control.\nבהשאלה: beyond belief = לא יאומן.\nמשמש גם כתואר הפועל: and beyond.",
+"tip": "beyond – 'ביונד', כמו 'To infinity and beyond!' של באז שנות-אור 🚀 = מעבר ל-."
 }
 }

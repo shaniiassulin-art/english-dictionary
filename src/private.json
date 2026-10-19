@@ -1,47 +1,211 @@
-{"week":"2026-10-17","write":"14",
-"lists":[
-{"n":"13","w":[
-["achieve","להשיג","He achieved his goal after many years."],
-["fame","פרסום / תהילה","The singer found fame at a young age."],
-["seek","לחפש / לבקש / לשאוף ל","Many young people seek adventure abroad."],
-["avoid","להימנע מ- / להתחמק מ","Try to avoid sugar before bed."],
-["childhood","ילדות","I spent my childhood in a small village."],
-["adventure","הרפתקה","Our trip to the jungle was a real adventure."],
-["fascinated","מרותק / מוקסם","The children were fascinated by the dinosaurs."],
-["medieval","של ימי הביניים","We visited a medieval castle in France."],
-["knights","אבירים","The knights rode their horses into battle."],
-["heroism","גבורה","The soldier received a medal for his heroism."],
-["endurance","כוח סיבולת","Climbing the mountain was a test of endurance."],
-["malaria","מלריה (קדחת)","Mosquitoes can carry malaria."],
-["meticulous","קפדני / מדוקדק","She is meticulous about every detail of her work."],
-["thesis","תזה (עבודת מחקר)","He wrote his thesis on ancient Egypt."],
-["intelligence","מודיעין (צבאי)","Military intelligence warned about the attack."],
-["revolt","מרד","The farmers started a revolt against the king."],
-["correspondents","עיתונאים / כתבים","Foreign correspondents reported from the war zone."],
-["traditional","מסורתי","We ate a traditional meal on the holiday."],
-["charging","מסתערים / שועטים קדימה","The soldiers were charging toward the enemy."],
-["reputation","מוניטין / שם טוב","The restaurant has a good reputation."],
-["bitter","ממורמר","He felt bitter after losing his job."],
-["fascination","התפעלות עמוקה","She has a deep fascination with ancient history."],
-["exploits","מעשי גבורה","The book tells of the exploits of a brave pilot."]]},
-{"n":"14","w":[
-["prestigious","יוקרתי / בעל מוניטין","Harvard is a prestigious university."],
-["institutions","מוסדות","Banks and schools are important institutions."],
-["dominate","לשלוט / להיות דומיננטי","Big companies dominate the market."],
-["disorder","מחלה / הפרעה","She suffers from an eating disorder."],
-["greyhounds","כלבי גרייהאונד","Greyhounds are the fastest dogs in the world."],
-["insanity","אי־שפיות / טירוף","Driving so fast in the rain is pure insanity."],
-["mental illness","מחלת נפש","Mental illness is nothing to be ashamed of."],
-["rather than","במקום / ולא","I would like tea rather than coffee."],
-["synonym","מילה נרדפת","Big is a synonym for large."],
-["transaction","עסקה","The bank charged a fee for the transaction."],
-["recipient","מקבל / נמען","The recipient of the letter lives in London."],
-["prerequisite","תנאי מוקדם","Passing this test is a prerequisite for the course."],
-["riddle","חידה","Can you solve this riddle?"],
-["freed","שוחרר / שוחררה","The prisoner was freed after ten years."],
-["expelled","גורש / סולק","He was expelled from school for cheating."],
-["liberated","שוחרר / שוחררה","The city was liberated at the end of the war."],
-["licensed","בעל רישיון / מורשה","Only a licensed electrician can do this job."],
-["crops","גידולים חקלאיים","The farmers grow crops like wheat and corn."],
-["beyond","מעבר ל־ / מעבר לתחום","The answer is beyond my knowledge."]]}
-]}
+{
+ "week": "2026-10-19",
+ "write": "14",
+ "lists": [
+  {
+   "n": "13",
+   "w": [
+    [
+     "prestigious",
+     "יוקרתי / בעל מוניטין",
+     "Harvard is a prestigious university."
+    ],
+    [
+     "institutions",
+     "מוסדות",
+     "Banks and schools are important institutions."
+    ],
+    [
+     "dominate",
+     "לשלוט / להיות דומיננטי",
+     "Big companies dominate the market."
+    ],
+    [
+     "disorder",
+     "מחלה / הפרעה",
+     "She suffers from an eating disorder."
+    ],
+    [
+     "greyhounds",
+     "כלבי גרייהאונד",
+     "Greyhounds are the fastest dogs in the world."
+    ],
+    [
+     "insanity",
+     "אי־שפיות / טירוף",
+     "Driving so fast in the rain is pure insanity."
+    ],
+    [
+     "mental illness",
+     "מחלת נפש",
+     "Mental illness is nothing to be ashamed of."
+    ],
+    [
+     "rather than",
+     "במקום / ולא",
+     "I would like tea rather than coffee."
+    ],
+    [
+     "synonym",
+     "מילה נרדפת",
+     "Big is a synonym for large."
+    ],
+    [
+     "transaction",
+     "עסקה",
+     "The bank charged a fee for the transaction."
+    ],
+    [
+     "recipient",
+     "מקבל / נמען",
+     "The recipient of the letter lives in London."
+    ],
+    [
+     "prerequisite",
+     "תנאי מוקדם",
+     "Passing this test is a prerequisite for the course."
+    ],
+    [
+     "riddle",
+     "חידה",
+     "Can you solve this riddle?"
+    ],
+    [
+     "freed",
+     "שוחרר / שוחררה",
+     "The prisoner was freed after ten years."
+    ],
+    [
+     "expelled",
+     "גורש / סולק",
+     "He was expelled from school for cheating."
+    ],
+    [
+     "liberated",
+     "שוחרר / שוחררה",
+     "The city was liberated at the end of the war."
+    ],
+    [
+     "licensed",
+     "בעל רישיון / מורשה",
+     "Only a licensed electrician can do this job."
+    ],
+    [
+     "crops",
+     "גידולים חקלאיים",
+     "The farmers grow crops like wheat and corn."
+    ],
+    [
+     "beyond",
+     "מעבר ל־ / מעבר לתחום",
+     "The answer is beyond my knowledge."
+    ]
+   ]
+  },
+  {
+   "n": "14",
+   "w": [
+    [
+     "accusation",
+     "האשמה",
+     "The accusation against him turned out to be false."
+    ],
+    [
+     "admission",
+     "קבלה, הודאה",
+     "His admission of guilt surprised everyone."
+    ],
+    [
+     "threaten",
+     "לאיים",
+     "The storm threatened to destroy the village."
+    ],
+    [
+     "committee",
+     "ועדה",
+     "The committee will make a decision next week."
+    ],
+    [
+     "conducted",
+     "ערך, ביצע",
+     "The scientists conducted an experiment in the lab."
+    ],
+    [
+     "excavate",
+     "לחפור",
+     "Archaeologists excavated the remains of an ancient city."
+    ],
+    [
+     "lubricate",
+     "לשמן",
+     "You need to lubricate the bike chain once a month."
+    ],
+    [
+     "morality",
+     "מוסר, מוסריות",
+     "Many old stories teach a lesson about morality."
+    ],
+    [
+     "clarity",
+     "בהירות",
+     "The new camera takes pictures with amazing clarity."
+    ],
+    [
+     "rural",
+     "כפרי",
+     "She grew up in a small rural village."
+    ],
+    [
+     "suburban",
+     "פרברי",
+     "They moved from the city to a quiet suburban neighborhood."
+    ],
+    [
+     "deception",
+     "רמאות, הונאה",
+     "The magician's trick was a clever deception."
+    ],
+    [
+     "fatality",
+     "מוות, הרוג",
+     "There was one fatality in the car accident."
+    ],
+    [
+     "inhospitable",
+     "לא מסביר פנים, לא מתאים למחיה",
+     "The desert is an inhospitable place to live."
+    ],
+    [
+     "industrious",
+     "חרוץ, שקדן",
+     "She is an industrious student who never misses a class."
+    ],
+    [
+     "insistent",
+     "מתעקש, עקשן",
+     "The child was insistent that he wanted ice cream."
+    ],
+    [
+     "inoffensive",
+     "לא פוגעני",
+     "He told an inoffensive joke that made everyone laugh."
+    ],
+    [
+     "exerted",
+     "הפעיל (השפעה, לחץ)",
+     "The writings of Aristotle exerted a huge influence on later thinkers."
+    ],
+    [
+     "defaced",
+     "השחית",
+     "Someone defaced the school wall with graffiti."
+    ],
+    [
+     "alleged",
+     "לכאורה, נטען",
+     "The alleged thief was arrested last night."
+    ]
+   ]
+  }
+ ]
+}
