@@ -1211,7 +1211,8 @@ function carStop(){if(!CAR)return;CAR.play=false;CAR.tok++;stopAudio();try{speec
 function carPlay(inTap){if(!CAR)return;CAR.play=true;const tk=++CAR.tok;unlockAudio();keepAlive(true);playbackSession();
   try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}
   prefetchWords(CAR.i,4,CAR.deck);carMedia();
-  if(inTap&&TTS){try{speechSynthesis.cancel()}catch(e){}sayNow(' ','he-IL',()=>{});}
+  /* iOS: the device voice must speak once inside a tap before it may speak by itself (only the first time; never right after cancel) */
+  if(inTap&&TTS&&!CAR.unl){CAR.unl=true;sayNow('מתחילים','he-IL',()=>{})}
   carLoop(tk)}
 async function carLoop(tk){const alive=()=>CAR&&CAR.play&&CAR.tok===tk&&S.screen==='car';
   while(alive()&&CAR.i<CAR.deck.length){const w=CAR.deck[CAR.i],x=EXTRA[w.xid||w.id]||{};prefetchWords(CAR.i,4,CAR.deck);
@@ -1224,6 +1225,9 @@ async function carLoop(tk){const alive=()=>CAR&&CAR.play&&CAR.tok===tk&&S.screen
     if(x.tip&&!await step('t',async()=>{const t=speakTip(x.tip);if(t)await sayAll(['טיפ לזכירה:',t],alive)}))return;
     CAR.i++;CAR.rev=false;saveCar();if(CAR.i<CAR.deck.length){draw();window.scrollTo(0,0)}}
   if(alive()&&CAR.i>=CAR.deck.length){CAR.play=false;saveCar();await say('סיימת את כל המילים','he-IL');carStop();draw()}}
+/* back from another app or a locked screen: the phone paused the reading – go on from the start of the same word */
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&CAR&&CAR.play&&S.screen==='car'){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}
+  setTimeout(()=>{if(CAR&&CAR.play&&S.screen==='car'){keepAlive(true);try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}carLoop(++CAR.tok)}},300)}});
 /* highlight the part being read */
 function carMark(){app.querySelectorAll('[data-cstep]').forEach(el=>el.classList.toggle('reading',el.dataset.cstep===CAR.step&&CAR.play))}
 /* ✓ / ✗ for the word now playing (also from the next / previous buttons on the steering wheel or headphones), then on to the next word */
@@ -1253,7 +1257,7 @@ function carScreen(){const n=CAR.deck.length;
     <div data-cstep="t">${xfull(w)}</div>`:`<div class="carmean think" data-cstep="p"><p class="lbl">תרגום המילה</p><p class="cm">🤔 מה הפירוש?</p><button class="link" id="cRev">הצגת התשובה</button></div>`}
     <div class="sticky carbar"><div class="carnav"><button class="link" id="cPrev" ${CAR.i?'':'disabled'}>› למילה הקודמת</button><button class="link" id="cNext">למילה הבאה ‹</button></div>
       <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי</button><button class="btn" id="cPlay">${CAR.play?'⏸ עצירה':'▶ המשך'}</button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי</button></div>
-      <p class="carhint">כפתורי ההגה / האוזניות: הבא ⏭ = ידעתי · הקודם ⏮ = לא ידעתי · ⏯ = עצירה</p></div>
+      <p class="carhint">המסך נשאר דולק – השאירי את האתר פתוח (אם עוברים לאפליקציה אחרת או נועלים, ההקראה נעצרת וממשיכה כשחוזרים).</p><p class="carhint">כפתורי ההגה / האוזניות: הבא ⏭ = ידעתי · הקודם ⏮ = לא ידעתי · ⏯ = עצירה</p></div>
   </div>`;
   $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
