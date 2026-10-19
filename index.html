@@ -216,7 +216,9 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .cartog .sw{width:44px;height:26px;border-radius:13px;background:#ccc;position:relative;flex:none}.cartog .sw i{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:right .15s}
 .cartog.on{border-color:var(--accent)}.cartog.on .sw{background:var(--accent)}.cartog.on .sw i{right:21px}
 .cartag{text-align:center;font-weight:700;opacity:.7;margin:4px 0}.carmean{text-align:center;margin:14px 0;padding:10px;border-radius:12px}.carmean .lbl{margin:0 0 4px;font-size:.85rem;opacity:.7}.carmean .cm{font-size:1.5rem;font-weight:800;margin:0}.carmean .oth{font-size:.9rem;opacity:.75;margin:6px 0 0}
-.car .reading{outline:3px solid var(--accent);outline-offset:4px;border-radius:12px}.carrow{display:flex;gap:8px}.carrow .btn{flex:1;padding-left:6px;padding-right:6px}.carnav{display:flex;justify-content:space-between}.carmean.think .cm{opacity:.6}.carhint{margin:0;text-align:center;font-size:.78rem;opacity:.7}.car .xfull{margin-bottom:150px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
+.car .reading{outline:3px solid var(--accent);outline-offset:4px;border-radius:12px}.carrow{display:flex;gap:8px}.carrow .btn{flex:1;padding-left:6px;padding-right:6px}.carnav{display:flex;justify-content:space-between}.carmean.think .cm{opacity:.6}.carrow .btn,.carnav .btn{flex-direction:column;gap:0}.carrow .btn small,.carnav .btn small{display:block;font-size:.72rem;font-weight:500;opacity:.8;margin-top:2px}
+.carnav{display:grid!important;grid-template-columns:repeat(4,1fr);gap:6px}.carnav .btn{padding:8px 2px;font-size:1.1rem;line-height:1.1;min-height:54px}
+.carwait{margin:0;text-align:center;font-weight:700;color:var(--accent)}.carset{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:8px}.carset select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}.carset .lbl{margin:4px 0 0;font-weight:700}.carhint{margin:0;text-align:center;font-size:.78rem;opacity:.7}.car .xfull{margin-bottom:150px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
 .mist-panel h3{color:var(--bad)}
@@ -795,7 +797,10 @@ const $=id=>document.getElementById(id);
    and is used for the Hebrew parts of voice mode. */
 const TTS='speechSynthesis' in window;
 let voice=null;function pickVoice(){if(!TTS)return;const v=speechSynthesis.getVoices();voice=v.find(x=>/en[-_]US/i.test(x.lang)&&/Google|Samantha|Aria|Jenny|Natural/i.test(x.name))||v.find(x=>/en[-_]US/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null}
-if(TTS){pickVoice();speechSynthesis.onvoiceschanged=pickVoice}
+/* Hebrew device voice: the one chosen in מצב רכב (saved), else an enhanced / premium voice if the phone has one */
+let heVoice=null;const heVoices=()=>TTS?speechSynthesis.getVoices().filter(x=>/^(he|iw)/i.test(x.lang)):[];
+function pickHe(){const v=heVoices(),want=LS.get('dictHeVoice');heVoice=v.find(x=>x.name===want)||v.find(x=>/enhanced|premium|משופר|איכות/i.test(x.name))||v.find(x=>!/compact/i.test(x.voiceURI||''))||v[0]||null}
+if(TTS){pickVoice();pickHe();speechSynthesis.onvoiceschanged=()=>{pickVoice();pickHe();if(S.screen==='car'&&CAR&&CAR.set)draw()}}
 const fnv=s=>{let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0}return h.toString(16).padStart(8,'0')};
 const AUD_BASES=['audio/','https://cdn.jsdelivr.net/gh/shaniiassulin-art/english-dictionary@main/audio/','https://raw.githubusercontent.com/shaniiassulin-art/english-dictionary/main/audio/'];
 const SILENT='data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAABgAAAowAZmZmZmZmZmZmZmZmZmZmZoWFhYWFhYWFhYWFhYWFhYWFo6Ojo6Ojo6Ojo6Ojo6Ojo8LCwsLCwsLCwsLCwsLCwsLC4eHh4eHh4eHh4eHh4eHh4eH/////////////////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQCowAAAAAAAAKMPp3BgAAAAAAAAAAAAAAAAAD/8zDEAAAAA0gAAAAATEFNRVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/8zLEQQAAA0gAAAAAVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MwxIMAAANIAAAAAFVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//MyxL0AAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zMMS+AAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVQ==';
@@ -1223,24 +1228,24 @@ let V={on:false,token:0,status:'',lock:null,ac:null,miss:0};
 function setStatus(t){V.status=t;const el=$('vbarTxt');if(el)el.textContent=t}
 /* iOS: speech only plays if the first utterance starts inside the tap, never right after cancel(), and not while the mic is still closing */
 /* iOS sometimes leaves the speech queue stuck after other audio played: if nothing starts within 1.5 s, reset and try once more */
-function sayNow(text,lang,res,retry){try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;u.rate=lang==='he-IL'?1.1:.85;
+function sayNow(text,lang,res,retry,rate){try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;if(lang==='he-IL'&&heVoice)u.voice=heVoice;u.rate=rate||(lang==='he-IL'?1.1:.85);
     let done=false,started=false;const fin=()=>{if(!done){done=true;clearTimeout(t1);clearTimeout(t2);res()}};u.onstart=()=>{started=true};u.onend=fin;u.onerror=fin;
-    const t1=setTimeout(()=>{if(!started&&!done&&!retry&&!speechSynthesis.speaking){done=true;clearTimeout(t2);try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>sayNow(text,lang,res,true),100)}},1500);
-    const t2=setTimeout(fin,text.length*300+5000);try{speechSynthesis.resume()}catch(e){}speechSynthesis.speak(u)}catch(e){res()}}
+    const t1=setTimeout(()=>{if(!started&&!done&&!retry&&!speechSynthesis.speaking){done=true;clearTimeout(t2);try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>sayNow(text,lang,res,true,rate),100)}},1500);
+    const t2=setTimeout(fin,text.length*300/Math.min(1,rate||1)+5000);try{speechSynthesis.resume()}catch(e){}speechSynthesis.speak(u)}catch(e){res()}}
 /* several short sentences, one after another (long utterances get cut on iPhone) */
 /* parts are joined into as few utterances as possible (each new utterance adds a pause on iPhone), max ~220 letters each */
-async function sayAll(parts,alive){const chunks=[];let cur='';for(const p of parts.filter(Boolean)){if(cur&&cur.length+p.length>220){chunks.push(cur);cur=''}cur+=(cur?' ':'')+p}if(cur)chunks.push(cur);
-  for(const c of chunks){await say(c,'he-IL');if(alive&&!alive())return false}return true}
+async function sayAll(parts,alive,rate){const chunks=[];let cur='';for(const p of parts.filter(Boolean)){if(cur&&cur.length+p.length>220){chunks.push(cur);cur=''}cur+=(cur?' ':'')+p}if(cur)chunks.push(cur);
+  for(const c of chunks){await say(c,'he-IL',rate);if(alive&&!alive())return false}return true}
 const HNUM=['אחד','שתיים','שלוש','ארבע','חמש','שש','שבע','שמונה','תשע','עשר'];
 const heOpt=o=>o.replace(/ \/ /g,', ');
-async function say(text,lang){if(!text)return;
+async function say(text,lang,rate){if(!text)return;
   /* give the phone time to switch from the microphone back to the speaker, or the start of the speech is cut */
   const gap=200-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
   /* English word or sentence: recorded file (audible even on silent); Hebrew and missing files: device voice */
   if(lang==='en-US'&&(await playFile(WORDSET.has(text)?'w':'s',text))!==false)return;
   if(!TTS)return;
   if(speechSynthesis.speaking||speechSynthesis.pending){speechSynthesis.cancel();await wait(80)}
-  return new Promise(res=>sayNow(text,lang,res))}
+  return new Promise(res=>sayNow(text,lang,res,false,rate))}
 /* wait until nothing is speaking (iOS sometimes reports the end of speech early) */
 async function waitQuiet(){const t0=Date.now();while(Date.now()-t0<15000){
   const sp=TTS&&(speechSynthesis.speaking||speechSynthesis.pending),au=AU.el&&!AU.el.paused&&!AU.el.ended;if(!sp&&!au)return;await wait(40)}}
@@ -1423,6 +1428,8 @@ let C=null;
 
 /* ---------- מצב רכב: plays every word in a row – word, example sentence, Hebrew meaning, memory tip – and goes on by itself ---------- */
 let CAR=null;const CARWAIT=4000;
+/* reading speed of the Hebrew in מצב רכב (saved): tips are read a little slower than the meaning */
+const CRATES=[['איטית',.8],['רגילה',.95],['מהירה',1.1]];let CRATE=+(LS.get('dictCarRate')||.8);
 function saveCar(){if(!CAR)return;const k='C'+CAR.key;if(CAR.i>=CAR.deck.length){(SDEL[k]=Date.now(),delete SESS[k])}else SESS[k]={kind:'car',t:Date.now(),ids:ids(CAR.deck),i:CAR.i,name:CAR.name,from:CAR.from,l:S.l,g:S.g};saveSess()}
 /* the tip as Hebrew speech: without the English word at its start, emojis, quotes and symbols */
 function speakTip(t){return String(t||'').replace(/^[^–]*[A-Za-z][^–]*–\s*/,'').replace(/[\u{1F000}-\u{1FFFF}☀-➿⬀-⯿️‍]/gu,'')
@@ -1432,7 +1439,7 @@ function startCar(list,name,from,key,at){if(!list.length)return;
   CAR={key,deck:list,i:Math.min(at||0,list.length-1),name,from,play:true,tok:0,step:'',rev:false};saveCar();S.active=key;go({screen:'car'});carPlay(true)}
 function carStop(){if(!CAR)return;CAR.play=false;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}keepAlive(false);try{V.lock&&V.lock.release()}catch(e){}V.lock=null;carMedia()}
 /* started from a tap: the first speech must start inside it (iOS) */
-function carPlay(inTap){if(!CAR)return;CAR.play=true;const tk=++CAR.tok;unlockAudio();keepAlive(true);playbackSession();
+function carPlay(inTap){if(!CAR)return;CAR.play=true;CAR.wait=false;const tk=++CAR.tok;unlockAudio();keepAlive(true);playbackSession();
   try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}
   prefetchWords(CAR.i,4,CAR.deck);carMedia();
   /* iOS: the device voice must speak once inside a tap before it may speak by itself (only the first time; never right after cancel) */
@@ -1445,29 +1452,41 @@ async function carLoop(tk){const alive=()=>CAR&&CAR.play&&CAR.tok===tk&&S.screen
     if(w.s&&!await step('s',()=>say(w.s,'en-US')))return;
     /* a few seconds to think before the answer */
     if(!CAR.rev){if(!await step('p',async()=>{const t0=Date.now();while(alive()&&Date.now()-t0<CARWAIT)await wait(100)}))return;CAR.rev=true;draw()}
-    if(!await step('h',()=>say(carMean(w),'he-IL')))return;
-    if(x.tip&&!await step('t',async()=>{const t=speakTip(x.tip);if(t)await sayAll(['טיפ לזכירה:',t],alive)}))return;
-    CAR.i++;CAR.rev=false;saveCar();if(CAR.i<CAR.deck.length){draw();window.scrollTo(0,0)}}
+    if(!await step('h',()=>say(carMean(w),'he-IL',Math.min(1,CRATE+.15))))return;
+    if(x.tip&&!await step('t',async()=>{const t=speakTip(x.tip);if(t)await sayAll(['טיפ לזכירה:',t],alive,CRATE)}))return;
+    /* the next word comes only after ידעתי / לא ידעתי */
+    if(!alive())return;CAR.step='m';CAR.wait=true;tone(660);draw();return}
   if(alive()&&CAR.i>=CAR.deck.length){CAR.play=false;saveCar();await say('סיימת את כל המילים','he-IL');carStop();draw()}}
 /* back from another app or a locked screen: the phone paused the reading – go on from the start of the same word */
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&CAR&&CAR.play&&S.screen==='car'){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&CAR&&CAR.play&&!CAR.wait&&S.screen==='car'){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}
   setTimeout(()=>{if(CAR&&CAR.play&&S.screen==='car'){keepAlive(true);try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}carLoop(++CAR.tok)}},300)}});
 /* highlight the part being read */
-function carMark(){app.querySelectorAll('[data-cstep]').forEach(el=>el.classList.toggle('reading',el.dataset.cstep===CAR.step&&CAR.play))}
+function carMark(){app.querySelectorAll('[data-cstep]').forEach(el=>el.classList.toggle('reading',el.dataset.cstep===CAR.step&&CAR.play&&!CAR.wait))}
 /* ✓ / ✗ for the word now playing (also from the next / previous buttons on the steering wheel or headphones), then on to the next word */
 function tone(f){try{const ac=V.ac||(V.ac=new (window.AudioContext||window.webkitAudioContext)());ac.resume&&ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.value=.15;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.15)}catch(e){}}
 function carKnow(v){if(!CAR||CAR.i>=CAR.deck.length)return;setKnow(CAR.deck[CAR.i].id,v);tone(v==='y'?990:330);
-  if(CAR.i>=CAR.deck.length-1){const was=CAR.play;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}CAR.i++;CAR.rev=false;saveCar();carStop();draw();return}
-  carGo(1)}
+  if(CAR.i>=CAR.deck.length-1){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}CAR.i++;CAR.rev=false;CAR.wait=false;saveCar();carStop();draw();return}
+  /* marking always goes on playing the next word */
+  CAR.play=true;carGo(1)}
 function carGo(d){if(!CAR)return;const was=CAR.play;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}
-  CAR.i=Math.max(0,Math.min(CAR.deck.length-1,CAR.i+d));CAR.step='';CAR.rev=false;saveCar();draw();window.scrollTo(0,0);if(was)carPlay(true)}
+  CAR.i=Math.max(0,Math.min(CAR.deck.length-1,CAR.i+d));CAR.step='';CAR.rev=false;CAR.wait=false;saveCar();draw();window.scrollTo(0,0);if(was)carPlay(true)}
 /* steering-wheel / headphone buttons */
 function carMedia(){const ms=navigator.mediaSession;if(!ms)return;try{
   if(!CAR||S.screen!=='car'){['play','pause','nexttrack','previoustrack'].forEach(a=>ms.setActionHandler(a,null));return}
   const w=CAR.deck[CAR.i];if(w&&window.MediaMetadata)ms.metadata=new MediaMetadata({title:w.e,artist:carMean(w),album:'מצב רכב'});
-  ms.setActionHandler('play',()=>{carPlay(false);draw()});ms.setActionHandler('pause',()=>{carStop();draw()});
+  ms.setActionHandler('play',()=>{if(!CAR.play||CAR.wait){carPlay(false);draw()}});ms.setActionHandler('pause',()=>{carStop();draw()});
   ms.setActionHandler('nexttrack',()=>carKnow('y'));ms.setActionHandler('previoustrack',()=>carKnow('n'));
-  ms.playbackState=CAR.play?'playing':'paused'}catch(e){}}
+  ms.playbackState=CAR.play&&!CAR.wait?'playing':'paused'}catch(e){}}
+/* ⚙ קול ומהירות: which Hebrew voice of the phone reads, and how fast the tips are read */
+function carSettings(){const vs=heVoices();
+  return `<div class="carset"><p class="lbl">הקול שמקריא בעברית</p>
+    ${vs.length?`<select id="heSel">${vs.map(v=>`<option value="${esc(v.name)}"${heVoice&&heVoice.name===v.name?' selected':''}>${esc(v.name)}${/enhanced|premium|משופר/i.test(v.name)?' ⭐':''}</option>`).join('')}</select>`:'<p class="hint">לא נמצא קול עברי במכשיר.</p>'}
+    <button class="link" id="heTry">השמעת דוגמה</button>
+    <p class="hint">קול איכותי יותר באייפון: הגדרות ← נגישות ← תוכן מוקרא ← קולות ← עברית ← להוריד את "כרמית (משופר)". אחרי ההורדה לסגור ולפתוח את האתר ולבחור אותו כאן.</p>
+    <p class="lbl">מהירות ההקראה של התרגום והטיפים</p><div class="seg">${CRATES.map(([n,r])=>`<button data-crate="${r}" aria-pressed="${Math.abs(CRATE-r)<.01}">${n}</button>`).join('')}</div></div>`}
+function bindCarSettings(){const sel=$('heSel');if(sel)sel.onchange=()=>{LS.set('dictHeVoice',sel.value);pickHe();try{speechSynthesis.cancel()}catch(e){}sayNow('כך אני נשמעת. טיפ לזכירה: הכלב רץ מהר.','he-IL',()=>{},false,CRATE)};
+  const t=$('heTry');if(t)t.onclick=()=>{try{speechSynthesis.cancel()}catch(e){}sayNow('כך אני נשמעת. טיפ לזכירה: הכלב רץ מהר.','he-IL',()=>{},false,CRATE)};
+  app.querySelectorAll('[data-crate]').forEach(b=>b.onclick=()=>{CRATE=+b.dataset.crate;LS.set('dictCarRate',String(CRATE));draw();try{speechSynthesis.cancel()}catch(e){}sayNow('טיפ לזכירה: הכלב רץ מהר.','he-IL',()=>{},false,CRATE)})}
 function carScreen(){const n=CAR.deck.length;
   if(CAR.i>=n){S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">🚗</div><h2 style="margin-top:14px">סיימת להאזין לכל ${n} המילים</h2></div><button class="btn secondary" id="b">חזרה</button></div>`;
     $('b').onclick=()=>go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'});return}
@@ -1475,17 +1494,21 @@ function carScreen(){const n=CAR.deck.length;
   app.innerHTML=`<div class="screen full car">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה ממצב רכב">✕</button>${HOME}<div class="prog"><i style="width:${CAR.i/n*100}%"></i></div><span class="count">${CAR.i+1} / ${n}</span></div>
     <p class="cartag">🚗 מצב רכב · ${esc(CAR.name||'')}</p>
+    ${CAR.set?carSettings():''}
     <div class="word" data-cstep="w"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
     ${w.s?`<div class="sentence" data-cstep="s"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(w.s,w.e)}</span>${trPart(w)}</div></div>`:''}
     ${CAR.rev?`<div class="carmean" data-cstep="h"><p class="lbl">תרגום המילה</p><p class="cm">${w.h.map(esc).join('<br>')}</p>${w.others.length?`<p class="oth">פירושים נוספים: ${esc(numText(w.others))}</p>`:''}</div>
     <div data-cstep="t">${xfull(w)}</div>`:`<div class="carmean think" data-cstep="p"><p class="lbl">תרגום המילה</p><p class="cm">🤔 מה הפירוש?</p><button class="link" id="cRev">הצגת התשובה</button></div>`}
-    <div class="sticky carbar"><div class="carnav"><button class="link" id="cPrev" ${CAR.i?'':'disabled'}>› למילה הקודמת</button><button class="link" id="cNext">למילה הבאה ‹</button></div>
-      <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי</button><button class="btn" id="cPlay">${CAR.play?'⏸ עצירה':'▶ המשך'}</button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי</button></div>
-      <p class="carhint">המסך נשאר דולק – השאירי את האתר פתוח (אם עוברים לאפליקציה אחרת או נועלים, ההקראה נעצרת וממשיכה כשחוזרים).</p><p class="carhint">כפתורי ההגה / האוזניות: הבא ⏭ = ידעתי · הקודם ⏮ = לא ידעתי · ⏯ = עצירה</p></div>
+    <div class="sticky carbar">
+      ${CAR.wait?'<p class="carwait">סמני אם ידעת את המילה – ואז עוברים למילה הבאה</p>':''}
+      <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי<small>ועוברים למילה הבאה</small></button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי<small>ועוברים למילה הבאה</small></button></div>
+      <div class="carnav"><button class="btn secondary" id="cPrev" ${CAR.i?'':'disabled'}>⏮<small>מילה קודמת</small></button><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירה</small>':'▶<small>'+(CAR.wait?'השמעה שוב':'המשך')+'</small>'}</button><button class="btn secondary" id="cNext">⏭<small>דילוג בלי לסמן</small></button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">⚙<small>קול ומהירות</small></button></div>
+      <p class="carhint">בכפתורי ההגה / האוזניות: ⏭ הבא = ידעתי · ⏮ הקודם = לא ידעתי · ⏯ = עצירה / המשך</p></div>
   </div>`;
   $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
-  $('cPlay').onclick=()=>{if(CAR.play)carStop();else carPlay(true);draw()};
+  $('cPlay').onclick=()=>{if(CAR.play&&!CAR.wait)carStop();else{carPlay(true)}draw()};
+  $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};bindCarSettings();
   $('cPrev').onclick=()=>carGo(-1);$('cNext').onclick=()=>carGo(1);$('cY').onclick=()=>carKnow('y');$('cN').onclick=()=>carKnow('n');
   const rv=$('cRev');if(rv)rv.onclick=()=>{CAR.rev=true;const was=CAR.play;if(was){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}}draw();if(was)carPlay(true)};
   carMark();carMedia()}
