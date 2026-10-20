@@ -900,48 +900,31 @@ const sentDone=L=>L.w.filter(([e])=>sv(sentId(L,e),'en').trim()).length;
 function sentBtn(){const L=sentList();if(!L)return '';
   return `<button class="btn sentgo" id="sentGo">✍ כתיבת משפטים · רשימה ${L.n} · ${sentDone(L)}/${L.w.length}</button>`}
 let EXP=false;
-/* ---------- sentence check: LanguageTool (free public grammar & spelling checker, api.languagetool.org) ---------- */
+/* ---------- sentence check (Gemini smart check only) ---------- */
 const CHK={};
-document.addEventListener('click',e=>{const f=e.target.closest('[data-fix]');if(f)applyFix(f.dataset.fix,+f.dataset.k,+f.dataset.r)});
 const CATHE={TYPOS:'שגיאת כתיב',GRAMMAR:'דקדוק',PUNCTUATION:'פיסוק',CASING:'אות גדולה / קטנה',TYPOGRAPHY:'כתיב / רווחים',CONFUSED_WORDS:'מילה מבולבלת',STYLE:'סגנון',REDUNDANCY:'מילה מיותרת',SEMANTICS:'משמעות',COLLOCATIONS:'צירוף מילים',COMPOUNDING:'מילה מחוברת / נפרדת',MISC:'הערה',NONSTANDARD_PHRASES:'ביטוי לא תקני',AMERICAN_ENGLISH_STYLE:'סגנון',BRITISH_ENGLISH:'אנגלית בריטית',REPETITIONS_STYLE:'חזרה על מילה'};
 /* does the sentence use the list word (or a form of it: plural, -ed, -ing, …)? */
 function hasWord(t,e){const words=String(e).toLowerCase().replace(/\(.*?\)/g,'').match(/[a-z]+/g)||[];const low=' '+t.toLowerCase().replace(/[^a-z' ]/g,' ')+' ';
   return words.filter(w=>w.length>2||words.length===1).every(w=>{const st=w.length>4?w.replace(/(e|y|ed|es|s|ing)$/,''):w;return new RegExp('[ ]'+st.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(low)})}
 /* results are kept on this device (dictChk) so they are still there after leaving the site; a result belongs to the exact text it checked */
 const saveChk=()=>{try{LS.set('dictChk',JSON.stringify(CHK))}catch(e){}};
-try{Object.assign(CHK,JSON.parse(LS.get('dictChk')||'{}'));for(const k in CHK){const c=CHK[k];if(c.aiPend){c.aiPend=false;if(!c.ai)c.aiErr='interrupted'}if(c.ltPend)c.ltPend=false}}catch(e){}
+try{Object.assign(CHK,JSON.parse(LS.get('dictChk')||'{}'));for(const k in CHK){const c=CHK[k];if(!c.ai&&!c.aiErr&&!c.aiPend){delete CHK[k];continue}if(c.aiPend){c.aiPend=false;if(!c.ai)c.aiErr='interrupted'}if(c.ltPend)c.ltPend=false}}catch(e){}
 /* both checks start at once: the quick spelling & grammar check shows in about a second, the smart check (meaning) replaces it when it arrives */
+/* smart check only (Gemini): spelling, grammar and meaning, explained in Hebrew */
 async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);if(!box)return;
   if(!t){box.innerHTML='<p class="chk-msg">קודם כתבי משפט באנגלית.</p>';return}
-  const run=Date.now();CHK[id]={t:sv(id,'en'),run,lt:null,ai:null,aiErr:null,aiPend:!!GKEY(),ltPend:true};paintChk(id,e);
-  const live=()=>CHK[id]&&CHK[id].run===run;
-  const p1=ltRun(t).then(r=>{if(!live())return;Object.assign(CHK[id],r?{lt:r,ltPend:false}:{ltPend:false,ltErr:true});saveChk();paintChk(id,e)});
-  const p2=GKEY()?aiRun(e,t).then(r=>{if(!live())return;Object.assign(CHK[id],r.j?{ai:r.j,aiPend:false}:{aiErr:r.why,aiPend:false});saveChk();paintChk(id,e)}):null;
-  await Promise.all([p1,p2])}
+  if(!GKEY()){box.innerHTML='<p class="chk-msg bad">אין מפתח לבדיקה. <button class="link small-link" data-aiset="1">להגדרת המפתח</button></p>';return}
+  const run=Date.now();CHK[id]={t:sv(id,'en'),run,ai:null,aiErr:null,aiPend:true};paintChk(id,e);
+  const r=await aiRun(e,t);if(!CHK[id]||CHK[id].run!==run)return;
+  Object.assign(CHK[id],r.j?{ai:r.j,aiPend:false}:{aiErr:r.why,aiPend:false});saveChk();paintChk(id,e)}
 function paintChk(id,e){const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,e)}
-/* LanguageTool spelling & grammar check */
-async function ltRun(t){try{const r=await fetch('https://api.languagetool.org/v2/check',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({language:'en-US',text:t})});
-    if(!r.ok)return null;const d=await r.json();
-    return (d.matches||[]).map(m=>({o:m.offset,l:m.length,long:m.message,rep:(m.replacements||[]).slice(0,3).map(x=>x.value),cat:(m.rule&&m.rule.category&&m.rule.category.id)||'MISC'}))}catch(x){return null}}
+
 function chkHtml(id,e){const c=CHK[id];if(!c)return '';
-  if(c.ai)return '<p class="chk-head ok">🧠 בדיקה חכמה (כולל משמעות)</p>'+aiHtml(id);
-  let top='';
-  if(c.aiPend)top='<p class="chk-head">⏳ הבדיקה החכמה (משמעות) עוד רצה… בינתיים – בדיקת כתיב ודקדוק רגילה:</p>';
-  else if(c.aiErr){const w=c.aiErr,msg=w==='key'?'המפתח לא מתאים':w==='quota'?'הגעת למכסת הבדיקות החינמית לעכשיו':w==='timeout'?'גוגל לא ענה בזמן':w==='interrupted'?'הבדיקה נקטעה כשיצאת מהאתר':'משהו השתבש';
-    top=`<p class="chk-head bad">⚠️ הבדיקה החכמה לא הצליחה (${msg}) – מוצגת רק בדיקת כתיב ודקדוק רגילה, בלי בדיקת משמעות. <button class="link small-link" data-rechk="${esc(id)}">לנסות שוב</button></p><p class="chk-en">${esc(w)}</p>`}
-  else top='<p class="chk-head">בדיקת כתיב ודקדוק רגילה (לא בודקת משמעות) · <button class="link small-link" data-aiset="1">להפעלת בדיקה חכמה</button></p>';
-  if(c.ltPend)return top+'<p class="chk-msg">בודקת…</p>';
-  if(!c.lt)return top+'<p class="chk-msg bad">בדיקת הכתיב לא הצליחה עכשיו. נסי שוב בעוד רגע.</p>';
-  const t=c.t;let h='';
-  if(!hasWord(t,e))h+=`<li class="warn">⚠️ המשפט לא כולל את המילה <bdi>${esc(e)}</bdi>.</li>`;
-  c.lt.forEach((m,k)=>{const bad=t.substr(m.o,m.l);
-    h+=`<li><b>${esc(CATHE[m.cat]||'הערה')}:</b> <bdi class="chk-bad">${esc(bad)}</bdi>${m.rep.length?` ← ${m.rep.map((r,ri)=>`<button class="chk-fix" data-fix="${esc(id)}" data-k="${k}" data-r="${ri}"><bdi>${esc(r||'(למחוק)')}</bdi></button>`).join(' ')}`:''}
-      <span class="chk-en" dir="ltr">${esc(m.long)}</span></li>`});
-  return top+(h?`<ul class="chk-list">${h}</ul>${c.lt.length?'<p class="chk-msg">לחיצה על הצעה מתקנת את המשפט.</p>':''}`:'<p class="chk-msg ok">✓ לא נמצאו טעויות כתיב ודקדוק</p>')}
-/* tap a spelling/grammar suggestion: replace that part of the sentence */
-function applyFix(id,k,ri){const c=CHK[id];if(!c||!c.lt)return;const m=c.lt[k];if(!m)return;const nt=c.t.slice(0,m.o)+m.rep[ri]+c.t.slice(m.o+m.l);
-  const d=m.rep[ri].length-m.l;c.lt=c.lt.filter((_,j)=>j!==k).map(x=>x.o>m.o?{...x,o:x.o+d}:x);c.t=nt;setSentText(id,nt);saveChk();
-  const li=$('chk-'+id)&&$('chk-'+id).closest('li');paintChk(id,li?li.querySelector('[data-w]').dataset.w:'')}
+  if(c.ai)return aiHtml(id);
+  if(c.aiPend)return '<p class="chk-msg">⏳ בודקת את המשפט…</p>';
+  if(c.aiErr){const w=c.aiErr,msg=w==='key'?'המפתח לא מתאים':w==='quota'?'הגעת למכסת הבדיקות החינמית לעכשיו':w==='timeout'?'גוגל לא ענה בזמן':w==='interrupted'?'הבדיקה נקטעה כשיצאת מהאתר':'משהו השתבש';
+    return `<p class="chk-msg bad">⚠️ הבדיקה לא הצליחה (${msg}). <button class="link small-link" data-rechk="${esc(id)}">לנסות שוב</button></p><p class="chk-en">${esc(w)}</p>`}
+  return ''}
 /* ---------- smart check (meaning too): Google Gemini with the user's own free key, saved only on this device ---------- */
 /* the owner's key, built in so the smart check works on every device without setup (kept scrambled so it isn't picked up as plain text) */
 const GK0=[96,90,66,100,79,114,78,38,70,93,36,112,68,66,38,79,33,99,96,64,72,82,122,83,117,124,72,35,65,86,98,64,66,68,102,121,78,120,80,34,64,85,79,93,33,89,69,47,117,86,57,70,86].map(n=>String.fromCharCode(n^23)).reverse().join('');
