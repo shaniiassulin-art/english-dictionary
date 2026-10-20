@@ -1147,7 +1147,7 @@ Student's sentence: «${t}»
 Check: spelling, grammar, punctuation, whether the word "${e}" (or a correct form of it) is used, whether it is used with the right meaning and in a natural way, and whether the whole sentence makes sense.
 Answer ONLY with JSON: {"word_used_correctly":true or false,"mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","why":"short explanation in simple Hebrew"}],"meaning":"one or two short sentences in simple Hebrew about the meaning and use of the word in this sentence","corrected":"the full corrected sentence (same as the student's if nothing to fix)","hebrew":"translation of the corrected sentence to Hebrew"}
 Write all explanations in simple, everyday Hebrew. Do not mark style preferences as mistakes.`;
-  try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+encodeURIComponent(GKEY()),{method:'POST',headers:{'Content-Type':'application/json'},
+  try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
       body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:.2}})});
     if(!r.ok)throw r.status;const d=await r.json();const txt=((((d.candidates||[])[0]||{}).content||{}).parts||[]).map(p=>p.text||'').join('');
     const j=JSON.parse(txt.replace(/^```(json)?|```$/g,'').trim());CHK[id]={ai:true,t:sv(id,'en'),j}}
@@ -1171,7 +1171,7 @@ let AISET=false;
 function sentAiBox(){const b=$('aiBox');if(!b)return;b.innerHTML=AISET?`<section class="panel aiset"><h3>🧠 בדיקה חכמה (גם משמעות)</h3>
   <p class="hint">הבדיקה החכמה משתמשת ב־Gemini של גוגל: בודקת איות ודקדוק, וגם אם המילה משמשת במשמעות הנכונה ואם המשפט הגיוני – עם הסבר בעברית. צריך מפתח חינמי (פעם אחת):</p>
   <ol class="aisteps"><li>להיכנס עם חשבון גוגל ל־<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li><li>ללחוץ על Create API key ולהעתיק את המפתח</li><li>להדביק כאן וללחוץ שמירה</li></ol>
-  <input class="inp" id="gemKey" dir="ltr" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="המפתח (מתחיל ב־AIza…)" value="${esc(GKEY())}">
+  <input class="inp" id="gemKey" dir="ltr" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="המפתח (מתחיל ב־AQ. או AIza)" value="${esc(GKEY())}">
   <div class="row2"><button class="btn" id="gemSave">שמירה</button><button class="btn secondary" id="gemDel">${GKEY()?'מחיקת המפתח':'סגירה'}</button></div>
   <p class="hint">המפתח נשמר רק במכשיר הזה. המשפטים נשלחים לגוגל לבדיקה.</p></section>`:'';
   if(AISET){$('gemSave').onclick=()=>{LS.set('dictGemKey',$('gemKey').value.trim());AISET=false;draw()};
