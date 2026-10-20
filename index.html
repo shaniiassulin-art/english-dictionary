@@ -343,6 +343,9 @@ input,textarea,select{font-size:max(16px,1em)}
 .sent-item{border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
 .sent-item.done{border-color:var(--ok);background:var(--ok-soft)}
 .si-top{display:flex;align-items:center;gap:10px}
+.si-chk .link{min-height:32px;padding:2px 4px}.chk-list{margin:4px 0 0;padding:0 18px 0 0;display:flex;flex-direction:column;gap:6px;font-size:.92rem}.chk-list li.warn{color:var(--bad)}
+.chk-bad{color:var(--bad);text-decoration:line-through;font-family:var(--en)}.chk-fix{border:1.5px solid var(--ok);background:var(--ok-soft);color:var(--ok);border-radius:8px;padding:2px 8px;font:inherit;font-family:var(--en);font-weight:700;cursor:pointer}
+.chk-en{display:block;font-size:.78rem;color:var(--muted);text-align:left;font-family:var(--en)}.chk-msg{margin:4px 0 0;font-size:.85rem;color:var(--muted)}.chk-msg.ok{color:var(--ok);font-weight:700}.chk-msg.bad{color:var(--bad)}
 .si-n{flex:none;min-width:30px;height:30px;border-radius:50%;background:var(--surface);display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
 .sent-item.done .si-n{background:var(--ok);color:var(--bg)}
 .si-w{flex:1;display:flex;flex-direction:column;min-width:0}
@@ -1112,6 +1115,34 @@ const sentDone=L=>L.w.filter(([e])=>sv(sentId(L,e),'en').trim()).length;
 function sentBtn(){const L=sentList();if(!L)return '';
   return `<button class="btn sentgo" id="sentGo">✍ כתיבת משפטים · רשימה ${L.n} · ${sentDone(L)}/${L.w.length}</button>`}
 let EXP=false;
+/* ---------- sentence check: LanguageTool (free public grammar & spelling checker, api.languagetool.org) ---------- */
+const CHK={};
+document.addEventListener('click',e=>{const f=e.target.closest('[data-fix]');if(f)applyFix(f.dataset.fix,+f.dataset.k,+f.dataset.r)});
+const CATHE={TYPOS:'שגיאת כתיב',GRAMMAR:'דקדוק',PUNCTUATION:'פיסוק',CASING:'אות גדולה / קטנה',TYPOGRAPHY:'כתיב / רווחים',CONFUSED_WORDS:'מילה מבולבלת',STYLE:'סגנון',REDUNDANCY:'מילה מיותרת',SEMANTICS:'משמעות',COLLOCATIONS:'צירוף מילים',COMPOUNDING:'מילה מחוברת / נפרדת',MISC:'הערה',NONSTANDARD_PHRASES:'ביטוי לא תקני',AMERICAN_ENGLISH_STYLE:'סגנון',BRITISH_ENGLISH:'אנגלית בריטית',REPETITIONS_STYLE:'חזרה על מילה'};
+/* does the sentence use the list word (or a form of it: plural, -ed, -ing, …)? */
+function hasWord(t,e){const words=String(e).toLowerCase().replace(/\(.*?\)/g,'').match(/[a-z]+/g)||[];const low=' '+t.toLowerCase().replace(/[^a-z' ]/g,' ')+' ';
+  return words.filter(w=>w.length>2||words.length===1).every(w=>{const st=w.length>4?w.replace(/(e|y|ed|es|s|ing)$/,''):w;return new RegExp('[ ]'+st.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(low)})}
+async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);if(!box)return;
+  if(!t){box.innerHTML='<p class="chk-msg">קודם כתבי משפט באנגלית.</p>';return}
+  box.innerHTML='<p class="chk-msg">בודקת…</p>';
+  try{const r=await fetch('https://api.languagetool.org/v2/check',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({language:'en-US',text:t,motherTongue:'he'})});
+    if(!r.ok)throw 0;const d=await r.json();
+    CHK[id]={t:sv(id,'en'),m:(d.matches||[]).map(m=>({o:m.offset,l:m.length,msg:m.shortMessage||m.message,long:m.message,rep:(m.replacements||[]).slice(0,3).map(x=>x.value),cat:(m.rule&&m.rule.category&&m.rule.category.id)||'MISC'}))}}
+  catch(x){box.innerHTML='<p class="chk-msg bad">לא הצלחתי לבדוק עכשיו (צריך חיבור לאינטרנט). נסי שוב בעוד רגע.</p>';return}
+  const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,e)}
+function chkHtml(id,e){const c=CHK[id];if(!c)return '';const t=c.t;let h='';
+  if(!hasWord(t,e))h+=`<li class="warn">⚠️ המשפט לא כולל את המילה <bdi>${esc(e)}</bdi>.</li>`;
+  c.m.forEach((m,k)=>{const bad=t.substr(m.o,m.l);
+    h+=`<li><b>${esc(CATHE[m.cat]||'הערה')}:</b> <bdi class="chk-bad">${esc(bad)}</bdi>${m.rep.length?` ← ${m.rep.map((r,ri)=>`<button class="chk-fix" data-fix="${esc(id)}" data-k="${k}" data-r="${ri}" aria-label="תיקון ל-${esc(r)}"><bdi>${esc(r||'(למחוק)')}</bdi></button>`).join(' ')}`:''}
+      <span class="chk-en" dir="ltr">${esc(m.long)}</span></li>`});
+  return h?`<ul class="chk-list">${h}</ul>${c.m.length?'<p class="chk-msg">לחיצה על הצעה מתקנת את המשפט.</p>':''}`:'<p class="chk-msg ok">✓ לא נמצאו טעויות במשפט</p>'}
+/* tap a suggestion: replace that part of the sentence */
+function applyFix(id,k,ri){const c=CHK[id];if(!c)return;const m=c.m[k];if(!m)return;const t=c.t,nt=t.slice(0,m.o)+m.rep[ri]+t.slice(m.o+m.l);
+  const o=SENT[id]=SENT[id]||{};o.en=[nt,Date.now()];saveSent();
+  const ta=app.querySelector(`textarea.si-en[data-id="${CSS.escape(id)}"]`);if(ta){ta.value=nt;autoGrow(ta)}
+  /* shift the other suggestions that come after this one, and drop this one */
+  const d=m.rep[ri].length-m.l;c.m=c.m.filter((_,j)=>j!==k).map(x=>x.o>m.o?{...x,o:x.o+d}:x);c.t=nt;
+  const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,b.closest('li').querySelector('[data-w]').dataset.w);sentRefresh()}
 function autoGrow(t){t.style.height='auto';t.style.height=t.scrollHeight+2+'px'}
 function sentScreen(){const L=sentList();
   app.innerHTML=`<div class="screen sentscr">
@@ -1126,12 +1157,15 @@ function sentScreen(){const L=sentList();
     <ol class="sent-list">${L.w.map(([e,h],i)=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
       <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
       <textarea class="si-en" dir="ltr" rows="1" data-id="${esc(id)}" data-f="en" placeholder="המשפט שלי באנגלית" aria-label="משפט באנגלית עם ${esc(e)}" autocapitalize="sentences" autocomplete="off" autocorrect="on" spellcheck="true" lang="en">${esc(sv(id,'en'))}</textarea>
+      <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 בדיקת המשפט</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]&&CHK[id].t===sv(id,'en')?chkHtml(id,e):''}</div></div>
       <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off" autocorrect="on" spellcheck="true" lang="he">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
   </div>`;
   $('bk').onclick=()=>go({screen:'level',l:PL});
   app.querySelectorAll('.sent-item textarea').forEach(t=>{autoGrow(t);
-    t.oninput=()=>{autoGrow(t);const id=t.dataset.id,o=SENT[id]=SENT[id]||{};o[t.dataset.f]=[t.value,Date.now()];saveSent();sentRefresh()}});
+    t.oninput=()=>{autoGrow(t);const id=t.dataset.id,o=SENT[id]=SENT[id]||{};o[t.dataset.f]=[t.value,Date.now()];saveSent();sentRefresh();
+      if(t.dataset.f==='en'&&CHK[id]){delete CHK[id];const r=$('chk-'+id);if(r)r.innerHTML=''}}});
   app.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>sayWord(b.dataset.sw,b));
+  app.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>checkSentence(b.dataset.chk,b.dataset.w));
   $('expBtn').onclick=()=>{EXP=!EXP;sentRefresh();if(EXP)$('expBox').scrollIntoView({block:'nearest',behavior:'smooth'})};
   sentRefresh()}
 /* counter, bar, ✓ marks, export box and texts that changed on another device; the field being typed in is left alone */
