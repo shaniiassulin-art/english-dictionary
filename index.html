@@ -1130,11 +1130,14 @@ async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);i
   if(!t){box.innerHTML='<p class="chk-msg">קודם כתבי משפט באנגלית.</p>';return}
   box.innerHTML='<p class="chk-msg">בודקת…</p>';
   if(GKEY())return aiCheck(id,e,t);
+  return ltCheck(id,e,t,'chk-'+id)}
+/* LanguageTool spelling & grammar check into the element boxId */
+async function ltCheck(id,e,t,boxId){const box=$(boxId);if(!box)return;box.innerHTML='<p class="chk-msg">בודקת…</p>';
   try{const r=await fetch('https://api.languagetool.org/v2/check',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({language:'en-US',text:t})});
     if(!r.ok)throw r.status;const d=await r.json();
     CHK[id]={t:sv(id,'en'),m:(d.matches||[]).map(m=>({o:m.offset,l:m.length,msg:m.shortMessage||m.message,long:m.message,rep:(m.replacements||[]).slice(0,3).map(x=>x.value),cat:(m.rule&&m.rule.category&&m.rule.category.id)||'MISC'}))}}
   catch(x){box.innerHTML=`<p class="chk-msg bad">לא הצלחתי לבדוק עכשיו${typeof x==='number'?' (שגיאה '+x+')':''}. נסי שוב בעוד רגע.</p>`;return}
-  const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,e)}
+  const b=$(boxId);if(b)b.innerHTML=chkHtml(id,e)}
 function chkHtml(id,e){const c=CHK[id];if(!c)return '';if(c.ai)return aiHtml(id);const t=c.t;let h='';
   if(!hasWord(t,e))h+=`<li class="warn">⚠️ המשפט לא כולל את המילה <bdi>${esc(e)}</bdi>.</li>`;
   c.m.forEach((m,k)=>{const bad=t.substr(m.o,m.l);
@@ -1157,11 +1160,22 @@ Student's sentence: «${t}»
 Check: spelling, grammar, punctuation, whether the word "${e}" (or a correct form of it) is used, whether it is used with the right meaning and in a natural way, and whether the whole sentence makes sense.
 Answer ONLY with JSON: {"word_used_correctly":true or false,"mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","why":"short explanation in simple Hebrew"}],"meaning":"one or two short sentences in simple Hebrew about the meaning and use of the word in this sentence","corrected":"the full corrected sentence (same as the student's if nothing to fix)","hebrew":"translation of the corrected sentence to Hebrew"}
 Write all explanations in simple, everyday Hebrew. Do not mark style preferences as mistakes.`;
-  try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
-      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:.2}})});
-    if(!r.ok)throw r.status;const d=await r.json();const txt=((((d.candidates||[])[0]||{}).content||{}).parts||[]).map(p=>p.text||'').join('');
-    const j=JSON.parse(txt.replace(/^```(json)?|```$/g,'').trim());CHK[id]={ai:true,t:sv(id,'en'),j}}
-  catch(x){if(box)box.innerHTML=`<p class="chk-msg bad">הבדיקה החכמה לא הצליחה${x===400||x===403?' – כנראה שהמפתח לא תקין. <button class="link small-link" data-aiset="1">לבדיקת המפתח</button>':typeof x==='number'?' (שגיאה '+x+'). נסי שוב בעוד רגע.':'. נסי שוב בעוד רגע.'}</p>`;return}
+  /* fast models first; each try is cut after 20 s; a clear reason is shown when all fail */
+  const MODELS=['gemini-flash-lite-latest','gemini-2.5-flash-lite','gemini-2.0-flash','gemini-flash-latest'];let why='';
+  for(const mdl of MODELS){const ac=new AbortController(),to=setTimeout(()=>ac.abort(),20000);
+    try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+mdl+':generateContent',{method:'POST',signal:ac.signal,headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
+        body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:.2,maxOutputTokens:1500}})});
+      const d=await r.json().catch(()=>({}));clearTimeout(to);
+      if(!r.ok){why=(r.status===400||r.status===401||r.status===403)?'key':(r.status===429?'quota':'http '+r.status)+(d.error&&d.error.message?' – '+d.error.message:'');
+        if(why==='key')break;continue}
+      const txt=((((d.candidates||[])[0]||{}).content||{}).parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('');
+      const m=txt.match(/\{[\s\S]*\}/);if(!m){why='empty answer';continue}
+      CHK[id]={ai:true,t:sv(id,'en'),j:JSON.parse(m[0])};why='';break}
+    catch(x){clearTimeout(to);why=x&&x.name==='AbortError'?'timeout':'network ('+(x&&x.message||x)+')'}}
+  if(why){const b0=$('chk-'+id);if(!b0)return;
+    const msg=why==='key'?'המפתח לא מתאים. <button class="link small-link" data-aiset="1">לבדיקת המפתח</button>':why==='quota'?'הגעת למכסת הבדיקות החינמית לרגע – נסי שוב בעוד דקה.':why==='timeout'?'גוגל לא ענה בזמן.':'משהו השתבש.';
+    b0.innerHTML=`<p class="chk-msg bad">הבדיקה החכמה לא הצליחה: ${msg}</p><p class="chk-en">${esc(why)}</p><p class="chk-msg">בינתיים – בדיקת כתיב ודקדוק רגילה:</p><div id="lt-${esc(id)}"></div>`;
+    await ltCheck(id,e,t,'lt-'+id);return}
   const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,e)}
 function aiHtml(id){const c=CHK[id],j=c.j||{};let h='';const ms=j.mistakes||[];
   h+=ms.length?`<ul class="chk-list">${ms.map((m,k)=>`<li><bdi class="chk-bad">${esc(m.wrong||'')}</bdi> ← <button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}"><bdi>${esc(m.fix||'(למחוק)')}</bdi></button><span class="chk-why">${esc(m.why||'')}</span></li>`).join('')}</ul>`
