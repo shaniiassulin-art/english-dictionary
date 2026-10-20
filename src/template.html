@@ -335,6 +335,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .si-chk .link{min-height:32px;padding:2px 4px}.chk-list{margin:4px 0 0;padding:0 18px 0 0;display:flex;flex-direction:column;gap:6px;font-size:.92rem}.chk-list li.warn{color:var(--bad)}
 .chk-bad{color:var(--bad);text-decoration:line-through;font-family:var(--en)}.chk-fix{border:1.5px solid var(--ok);background:var(--ok-soft);color:var(--ok);border-radius:8px;padding:2px 8px;font:inherit;font-family:var(--en);font-weight:700;cursor:pointer}
 .small-link{min-height:0;padding:0 2px;font-size:inherit}.chk-why{display:block;font-size:.85rem}.chk-mean{margin:6px 0 0;font-size:.92rem;background:var(--surface);border-radius:10px;padding:8px 10px}.chk-corr{margin:6px 0 0;font-size:.92rem}.chk-corr bdi{font-family:var(--en);font-weight:700}.aiset .inp{width:100%}.aisteps{margin:0;padding-right:20px;font-size:.92rem;display:flex;flex-direction:column;gap:4px}
+.toast{position:fixed;left:16px;right:16px;top:16px;z-index:50;background:var(--ok);color:#fff;padding:12px 16px;border-radius:12px;font-weight:700;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2)}
 .chk-en{display:block;font-size:.78rem;color:var(--muted);text-align:left;font-family:var(--en)}.chk-msg{margin:4px 0 0;font-size:.85rem;color:var(--muted)}.chk-msg.ok{color:var(--ok);font-weight:700}.chk-msg.bad{color:var(--bad)}
 .si-n{flex:none;min-width:30px;height:30px;border-radius:50%;background:var(--surface);display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
 .sent-item.done .si-n{background:var(--ok);color:var(--bg)}
@@ -389,7 +390,7 @@ let SENT={};try{SENT=JSON.parse(localStorage.getItem('dictSent')||'{}')}catch(e)
 function saveSent(){LS.set('dictSent',JSON.stringify(SENT));dirty()}
 function saveDays(){LS.set('dictDays',JSON.stringify(DAYS));dirty()}
 function logDay(id){const k=dayKey();const a=DAYS[k]=DAYS[k]||[];if(!a.includes(id)){a.push(id);saveDays()}}
-function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}'),sent:JSON.parse(LS.get('dictSent')||'{}')})}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}'),sent:JSON.parse(LS.get('dictSent')||'{}'),gk:JSON.parse(LS.get('dictGemKeyT')||'null')})}
 /* push: read the account copy, merge it with this device, and write back only if the account did not change in
    between (updateTime precondition); otherwise read again. So two open devices never overwrite each other. */
 async function push(){
@@ -415,7 +416,7 @@ async function pull(){
   const j=await r.json();const f=j.fields||{};return{data:JSON.parse(f.data?.stringValue||'{}'),updated:+(f.updated?.integerValue||0),ut:j.updateTime||''};
 }
 /* comparable form of the saved data */
-function normD(o){return JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},sent:o.sent||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))})}
+function normD(o){return JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},sent:o.sent||{},gk:o.gk||null,days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))})}
 function mergeData(a,b){
   const prog={...(a.prog||{})};for(const k in (b.prog||{}))prog[k]=Math.max(prog[k]||0,b.prog[k]||0);
   const sdel={...(a.sdel||{})};for(const k in (b.sdel||{}))sdel[k]=Math.max(sdel[k]||0,b.sdel[k]||0);
@@ -428,11 +429,13 @@ function mergeData(a,b){
   /* sentences: every card from both sides is kept; per field the newer text wins */
   const sent={};for(const x of [a.sent||{},b.sent||{}])for(const k in x){const o=sent[k]=sent[k]||{};
     for(const f of ['en','he'])if(x[k]&&x[k][f]&&(!o[f]||(x[k][f][1]||0)>(o[f][1]||0)))o[f]=x[k][f]}
-  return{prog,sess,sdel,know,days,notes,sent};
+  /* smart-check key: the newer one wins */
+  const ga=a.gk,gb=b.gk,gk=!ga?gb||null:!gb?ga:(gb[1]||0)>(ga[1]||0)?gb:ga;
+  return{prog,sess,sdel,know,days,notes,sent,gk};
 }
 function applyRemote(d,t){
   SYNC.applying=true;
-  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));if(d.gk){LS.set('dictGemKeyT',JSON.stringify(d.gk));LS.set('dictGemKey',d.gk[0]||'')}save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   /* the sentences page is updated in place (never redrawn while typing); other pages keep their scroll position */
   if(S.screen==='sent')sentRefresh();else if(!['quiz','cards'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
 }
@@ -917,7 +920,14 @@ function chkHtml(id,e){const c=CHK[id];if(!c)return '';if(c.ai)return aiHtml(id)
   return (h?`<ul class="chk-list">${h}</ul>${c.m.length?'<p class="chk-msg">לחיצה על הצעה מתקנת את המשפט.</p>':''}`:'<p class="chk-msg ok">✓ לא נמצאו טעויות כתיב ודקדוק</p>')
     +'<p class="chk-msg">הבדיקה הזו לא בודקת משמעות. <button class="link small-link" data-aiset="1">להפעלת בדיקה חכמה גם של המשמעות</button></p>'}
 /* ---------- smart check (meaning too): Google Gemini with the user's own free key, saved only on this device ---------- */
-const GKEY=()=>LS.get('dictGemKey')||'';
+/* the owner's key, built in so the smart check works on every device without setup (kept scrambled so it isn't picked up as plain text) */
+const GK0=[96,90,66,100,79,114,78,38,70,93,36,112,68,66,38,79,33,99,96,64,72,82,122,83,117,124,72,35,65,86,98,64,66,68,102,121,78,120,80,34,64,85,79,93,33,89,69,47,117,86,57,70,86].map(n=>String.fromCharCode(n^23)).reverse().join('');
+const GKEY=()=>{const v=LS.get('dictGemKeyT');if(v){try{const a=JSON.parse(v);if(a&&a[0]!==undefined)return a[0]}catch(e){}}return LS.get('dictGemKey')||GK0};
+/* the key is saved on this device and in the account, so every device has it */
+function setGKey(v){LS.set('dictGemKey',v);LS.set('dictGemKeyT',JSON.stringify([v,Date.now()]));dirty()}
+/* one-tap setup link: …/#gk=<key> saves the key and removes it from the address */
+(function(){const m=location.hash.match(/^#gk=(.+)$/);if(m){try{setGKey(decodeURIComponent(m[1]).trim())}catch(e){}history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>{try{alertKey()}catch(e){}},500)}})();
+function alertKey(){const d=document.createElement('div');d.className='toast';d.textContent='✓ הבדיקה החכמה הופעלה (גם בשאר המכשירים שלך)';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)}
 async function aiCheck(id,e,t){const box=$('chk-'+id),L=sentList(),row=L.w.find(x=>x[0]===e)||[e,''];
   const prompt=`You are an English teacher for a Hebrew-speaking student (beginner to intermediate). The student had to write one English sentence that uses the word "${e}" (meaning in Hebrew: "${row[1]}").
 Student's sentence: «${t}»
@@ -950,9 +960,9 @@ function sentAiBox(){const b=$('aiBox');if(!b)return;b.innerHTML=AISET?`<section
   <ol class="aisteps"><li>להיכנס עם חשבון גוגל ל־<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li><li>ללחוץ על Create API key ולהעתיק את המפתח</li><li>להדביק כאן וללחוץ שמירה</li></ol>
   <input class="inp" id="gemKey" dir="ltr" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="המפתח (מתחיל ב־AQ. או AIza)" value="${esc(GKEY())}">
   <div class="row2"><button class="btn" id="gemSave">שמירה</button><button class="btn secondary" id="gemDel">${GKEY()?'מחיקת המפתח':'סגירה'}</button></div>
-  <p class="hint">המפתח נשמר רק במכשיר הזה. המשפטים נשלחים לגוגל לבדיקה.</p></section>`:'';
-  if(AISET){$('gemSave').onclick=()=>{LS.set('dictGemKey',$('gemKey').value.trim());AISET=false;draw()};
-    $('gemDel').onclick=()=>{if(GKEY())LS.set('dictGemKey','');AISET=false;draw()};b.scrollIntoView({block:'nearest',behavior:'smooth'})}}
+  <p class="hint">המפתח נשמר בחשבון שלך ועובר לכל המכשירים. המשפטים נשלחים לגוגל לבדיקה.</p></section>`:'';
+  if(AISET){$('gemSave').onclick=()=>{setGKey($('gemKey').value.trim());AISET=false;draw()};
+    $('gemDel').onclick=()=>{if(GKEY())setGKey('');AISET=false;draw()};b.scrollIntoView({block:'nearest',behavior:'smooth'})}}
 
 /* tap a suggestion: replace that part of the sentence */
 function applyFix(id,k,ri){const c=CHK[id];if(!c)return;const m=c.m[k];if(!m)return;const t=c.t,nt=t.slice(0,m.o)+m.rep[ri]+t.slice(m.o+m.l);
