@@ -350,7 +350,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .si-h{color:var(--muted);font-size:.95rem}
 .si-ok{color:var(--ok);font-weight:800;visibility:hidden}.sent-item.done .si-ok{visibility:visible}
 .spk.playing{background:var(--accent);color:var(--accent-ink)}
-.sent-item textarea{width:100%;resize:none;overflow:hidden;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--ink);font-family:var(--he);line-height:1.45;min-height:46px;display:block;touch-action:manipulation}
+.sync-state{min-height:1.4em}.sent-item textarea{width:100%;resize:none;overflow:hidden;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--ink);font-family:var(--he);line-height:1.45;min-height:46px;display:block;touch-action:auto;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .sent-item textarea.si-en{font-family:var(--en);text-align:left}
 .sent-item textarea::placeholder{color:var(--muted);opacity:.8;font-family:var(--he);direction:rtl;text-align:right}
 .sent-item textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
@@ -457,8 +457,10 @@ async function syncNow(quiet){
     setSync('ok');
   }catch(e){SYNC.ready=true;setSync('error')}
 }
-function setSync(st){SYNC.state=st;const el=document.getElementById('syncState');if(el){el.textContent=syncLabel();el.className='sync-state '+st}
-  const se=document.getElementById('sentSync');if(se){se.textContent=sentSyncLabel();se.className='sync-state '+st}}
+/* DOM writes only when something really changed: on iPhone any change on the page closes the spelling-suggestions bubble of a text field */
+function setTxt(el,t){if(el&&el.textContent!==t)el.textContent=t}function setCls(el,c){if(el&&el.className!==c)el.className=c}function setHtml(el,h){if(el&&el.innerHTML!==h)el.innerHTML=h}
+function setSync(st){SYNC.state=st;const el=document.getElementById('syncState');if(el){setTxt(el,syncLabel());setCls(el,'sync-state '+st)}
+  const se=document.getElementById('sentSync');if(se){setTxt(se,sentSyncLabel());setCls(se,'sync-state '+st)}}
 function sentSyncLabel(){return {idle:'',loading:'מתחבר לחשבון…',saving:'שומר…',ok:'נשמר בחשבון שלך ✓',error:'נשמר במכשיר הזה בלבד'}[SYNC.state]||''}
 /* while the sentences page is open, check the account every few seconds so text typed on another device shows up here */
 setInterval(()=>{if(S.screen==='sent'&&document.visibilityState==='visible'&&SYNC.ready&&!SYNC.pushing&&!SYNC.timer)syncNow(true)},4000);
@@ -1123,8 +1125,8 @@ function sentScreen(){const L=sentList();
     <div id="expBox"></div>
     <ol class="sent-list">${L.w.map(([e,h],i)=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
       <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
-      <textarea class="si-en" dir="ltr" rows="1" data-id="${esc(id)}" data-f="en" placeholder="המשפט שלי באנגלית" aria-label="משפט באנגלית עם ${esc(e)}" autocapitalize="sentences" autocomplete="off">${esc(sv(id,'en'))}</textarea>
-      <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
+      <textarea class="si-en" dir="ltr" rows="1" data-id="${esc(id)}" data-f="en" placeholder="המשפט שלי באנגלית" aria-label="משפט באנגלית עם ${esc(e)}" autocapitalize="sentences" autocomplete="off" autocorrect="on" spellcheck="true" lang="en">${esc(sv(id,'en'))}</textarea>
+      <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off" autocorrect="on" spellcheck="true" lang="he">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
   </div>`;
   $('bk').onclick=()=>go({screen:'level',l:PL});
   app.querySelectorAll('.sent-item textarea').forEach(t=>{autoGrow(t);
@@ -1134,11 +1136,11 @@ function sentScreen(){const L=sentList();
   sentRefresh()}
 /* counter, bar, ✓ marks, export box and texts that changed on another device; the field being typed in is left alone */
 function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentList(),N=L.w.length,n=sentDone(L);
-  $('shCount').innerHTML=`<b>${n}</b> מתוך ${N}${n===N?' · הכול כתוב ✓':''}`;$('shBar').style.width=(N?n/N*100:0)+'%';
-  app.querySelectorAll('.sent-item').forEach(li=>li.classList.toggle('done',!!sv(li.dataset.sid,'en').trim()));
+  setHtml($('shCount'),`<b>${n}</b> מתוך ${N}${n===N?' · הכול כתוב ✓':''}`);const bw=(N?n/N*100:0)+'%';if($('shBar').style.width!==bw)$('shBar').style.width=bw;
+  app.querySelectorAll('.sent-item').forEach(li=>{const d=!!sv(li.dataset.sid,'en').trim();if(li.classList.contains('done')!==d)li.classList.toggle('done',d)});
   app.querySelectorAll('.sent-item textarea').forEach(t=>{const v=sv(t.dataset.id,t.dataset.f);if(t!==document.activeElement&&t.value!==v){t.value=v;autoGrow(t)}});
-  const eb=$('expBtn');eb.setAttribute('aria-expanded',EXP);eb.textContent=EXP?'סגירת הייצוא':'ייצוא המשפטים';
-  const box=$('expBox');box.innerHTML=EXP?expHtml(L):'';
+  const eb=$('expBtn');if(eb.getAttribute('aria-expanded')!==String(EXP))eb.setAttribute('aria-expanded',EXP);setTxt(eb,EXP?'סגירת הייצוא':'ייצוא המשפטים');
+  const box=$('expBox');setHtml(box,EXP?expHtml(L):'');
   if(EXP){$('expCopy').onclick=()=>copyText(expText(L),$('expCopy'));$('expClose').onclick=()=>{EXP=false;sentRefresh()}}}
 function expRows(L){const rows=[],miss=[];L.w.forEach(([e],i)=>{const t=sv(sentId(L,e),'en').trim().replace(/\s+/g,' ');if(t)rows.push(`${t} (${e})`);else miss.push(i+1)});return{rows,miss}}
 const expText=L=>expRows(L).rows.join('\n');
