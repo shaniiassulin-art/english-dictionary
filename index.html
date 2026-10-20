@@ -1138,7 +1138,7 @@ async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);i
   if(!t){box.innerHTML='<p class="chk-msg">קודם כתבי משפט באנגלית.</p>';return}
   if(!GKEY()){box.innerHTML='<p class="chk-msg bad">אין מפתח לבדיקה. <button class="link small-link" data-aiset="1">להגדרת המפתח</button></p>';return}
   const run=Date.now();CHK[id]={t:sv(id,'en'),run,ai:null,aiErr:null,aiPend:true};paintChk(id,e);
-  const r=await aiRun(e,t);if(!CHK[id]||CHK[id].run!==run)return;
+  const r=await aiRun(e,t,st=>{if(CHK[id]&&CHK[id].run===run){CHK[id].steps={...st};paintChk(id,e)}});if(!CHK[id]||CHK[id].run!==run)return;
   Object.assign(CHK[id],r.j?{ai:r.j,aiPend:false,sec:Math.round((Date.now()-run)/1000),mdl:r.mdl}:{aiErr:r.why,aiPend:false});saveChk();paintChk(id,e)}
 /* a check cut off by leaving the site (the phone pauses the page) starts again by itself on return */
 function resumeChecks(){if(S.screen!=='sent')return;const L=sentList();if(!L)return;
@@ -1149,7 +1149,7 @@ function paintChk(id,e){const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,e)}
 
 function chkHtml(id,e){const c=CHK[id];if(!c)return '';
   if(c.ai)return aiHtml(id);
-  if(c.aiPend){const sec=Math.round((Date.now()-(c.run||Date.now()))/1000);return `<p class="chk-msg">⏳ בודקת את המשפט… ${sec?sec+' שנ׳':''}</p>`}
+  if(c.aiPend){const sec=Math.round((Date.now()-(c.run||Date.now()))/1000);return `<p class="chk-msg">⏳ בודקת את המשפט… ${sec?sec+' שנ׳':''}</p>${c.steps?`<p class="chk-en">${Object.entries(c.steps).map(([m,v])=>esc(m.replace('gemini-',''))+' '+esc(v)).join(' · ')}</p>`:''}`}
   if(c.aiErr){const w=c.aiErr,msg=w==='key'?'המפתח לא מתאים':w==='quota'?'הגעת למכסת הבדיקות החינמית לעכשיו':w==='busy'?'השרתים של גוגל עמוסים כרגע – נסי שוב בעוד דקה':w==='timeout'?'גוגל לא ענה בזמן':w==='interrupted'?'הבדיקה נקטעה כשיצאת מהאתר':'משהו השתבש';
     return `<p class="chk-msg bad">⚠️ הבדיקה לא הצליחה (${msg}). <button class="link small-link" data-rechk="${esc(id)}">לנסות שוב</button></p><p class="chk-en">${esc(w)}</p>`}
   return ''}
@@ -1162,38 +1162,37 @@ function setGKey(v){LS.set('dictGemKey',v);LS.set('dictGemKeyT',JSON.stringify([
 /* one-tap setup link: …/#gk=<key> saves the key and removes it from the address */
 (function(){const m=location.hash.match(/^#gk=(.+)$/);if(m){try{setGKey(decodeURIComponent(m[1]).trim())}catch(e){}history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>{try{alertKey()}catch(e){}},500)}})();
 function alertKey(){const d=document.createElement('div');d.className='toast';d.textContent='✓ הבדיקה החכמה הופעלה (גם בשאר המכשירים שלך)';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)}
-async function aiRun(e,t){const L=sentList(),row=L.w.find(x=>x[0]===e)||[e,''];
+async function aiRun(e,t,onStep){const L=sentList(),row=L.w.find(x=>x[0]===e)||[e,''];
   const prompt=`You are an English teacher for a Hebrew-speaking student (beginner to intermediate). The student had to write one English sentence that uses the word "${e}" (meaning in Hebrew: "${row[1]}").
 Student's sentence: «${t}»
 Check: spelling, grammar, punctuation, whether the word "${e}" (or a correct form of it) is used, whether it is used with the right meaning and in a natural way, and whether the whole sentence makes sense.
 Answer ONLY with JSON: {"word_used_correctly":true or false,"mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","why":"short explanation in simple Hebrew"}],"meaning":"one or two short sentences in simple Hebrew about the meaning and use of the word in this sentence","corrected":"the full corrected sentence (same as the student's if nothing to fix)","hebrew":"translation of the corrected sentence to Hebrew"}
 Write all explanations in simple, everyday Hebrew. Do not mark style preferences as mistakes. Be brief.`;
-  /* speed: thinking turned off, short answer, and two models asked at the same time – the first good answer wins (the other is cancelled).
-     The model that answered last is asked first. 404 → model dropped; 503/500 busy → next pair; all busy → wait and repeat (3 rounds). */
+  /* speed: thinking off, short answer, and "hedged" requests – the first model is asked at once, another one joins every 1.5 s
+     (or right away when one fails), the first good answer wins and the rest are cancelled; everything stops after 25 s.
+     The model that answered last is asked first. Progress (`onStep`) is shown live so a slow model can be seen. */
   const all=['gemini-flash-lite-latest','gemini-2.5-flash-lite','gemini-2.0-flash-lite','gemini-2.0-flash','gemini-2.5-flash','gemini-flash-latest'],good=LS.get('dictGemModel');
-  const MODELS=good&&all.includes(good)?[good,...all.filter(x=>x!==good)]:all;let why='';const gone=new Set(),noThink=new Set(JSON.parse(LS.get('dictGemNoThink')||'[]'));
+  const MODELS=good&&all.includes(good)?[good,...all.filter(x=>x!==good)]:all;let why='';const noThink=new Set(JSON.parse(LS.get('dictGemNoThink')||'[]'));
   const call=async(mdl,signal)=>{const gc={responseMimeType:'application/json',temperature:.2,maxOutputTokens:900};
-    if(!noThink.has(mdl))gc.thinkingConfig=/2\.5/.test(mdl)?{thinkingBudget:0}:/latest/.test(mdl)?{thinkingLevel:'minimal'}:undefined;if(!gc.thinkingConfig)delete gc.thinkingConfig;
+    if(!noThink.has(mdl)){if(/2\.5/.test(mdl))gc.thinkingConfig={thinkingBudget:0};else if(/latest/.test(mdl))gc.thinkingConfig={thinkingLevel:'minimal'}}
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+mdl+':generateContent',{method:'POST',signal,headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
       body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:gc})});
     const d=await r.json().catch(()=>({}));const em=(d.error&&d.error.message)||'';
-    /* this model does not accept the "no thinking" setting: remember and ask again without it */
     if(r.status===400&&gc.thinkingConfig&&/think/i.test(em)){noThink.add(mdl);LS.set('dictGemNoThink',JSON.stringify([...noThink]));return call(mdl,signal)}
     if(!r.ok)throw {status:r.status,em};
     const txt=((((d.candidates||[])[0]||{}).content||{}).parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('');
     const m=txt.match(/\{[\s\S]*\}/);if(!m)throw {status:0,em:'empty answer'};return {mdl,j:JSON.parse(m[0])}};
-  for(let round=0;round<3;round++){if(round)await wait(2000*round);
-    const left=MODELS.filter(m=>!gone.has(m));
-    for(let i=0;i<left.length;i+=2){const pair=left.slice(i,i+2),acs=pair.map(()=>new AbortController()),tos=acs.map(ac=>setTimeout(()=>ac.abort(),15000));
-      const res=await new Promise(done=>{let n=pair.length,fin=false;
-        pair.forEach((mdl,k)=>call(mdl,acs[k].signal).then(r=>{if(fin)return;fin=true;acs.forEach((ac,q)=>{if(q!==k)ac.abort()});done(r)}).catch(x=>{
-          if(x&&x.name==='AbortError'){if(!fin)why='timeout'}
-          else if(x&&x.status!==undefined){const s=x.status;if(s===404)gone.add(mdl);else if(s===400||s===401||s===403)why='key';else if(s===429){why='quota';gone.add(mdl)}else if(s===503||s===500)why='busy';else why=(s?'http '+s:'')+(x.em?' – '+x.em:'')}
-          else why='network ('+(x&&x.message||x)+')';
-          if(--n===0&&!fin){fin=true;done(null)}}))});
-      tos.forEach(clearTimeout);
-      if(res){LS.set('dictGemModel',res.mdl);return {j:res.j,mdl:res.mdl}}
-      if(why==='key')return {why}}}
+  const steps={};const step=(m,st)=>{steps[m]=st;onStep&&onStep(steps)};
+  const res=await new Promise(done=>{let fin=false,next=0,running=0;const acs=[];
+    const end=r=>{if(fin)return;fin=true;clearTimeout(cap);clearInterval(tick);acs.forEach(a=>a.abort());done(r)};
+    const launch=()=>{if(fin||next>=MODELS.length)return;const mdl=MODELS[next++],ac=new AbortController();acs.push(ac);running++;step(mdl,'…');
+      call(mdl,ac.signal).then(r=>{step(mdl,'✓');end(r)}).catch(x=>{running--;if(fin)return;
+        const s=x&&x.status;if(s===400||s===401||s===403){why='key';step(mdl,'מפתח');end(null);return}
+        why=s===429?'quota':(s===503||s===500)?'busy':s===404?why||'busy':x&&x.name==='AbortError'?'timeout':s?'http '+s+(x.em?' – '+x.em:''):'network ('+(x&&x.message||x)+')';
+        step(mdl,s===503||s===500?'עמוס':s===429?'מכסה':s===404?'לא קיים':'שגיאה');
+        if(next<MODELS.length)launch();else if(!running)end(null)})};
+    const tick=setInterval(launch,1500),cap=setTimeout(()=>{if(!why)why='timeout';end(null)},25000);launch()});
+  if(res){LS.set('dictGemModel',res.mdl);return {j:res.j,mdl:res.mdl}}
   return {why}}
 function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[];
   h+=ms.length?`<ul class="chk-list">${ms.map((m,k)=>`<li><bdi class="chk-bad">${esc(m.wrong||'')}</bdi> ← <button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}"><bdi>${esc(m.fix||'(למחוק)')}</bdi></button><span class="chk-why">${esc(m.why||'')}</span></li>`).join('')}</ul>`
