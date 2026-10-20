@@ -575,8 +575,11 @@ const $=id=>document.getElementById(id);
 const TTS='speechSynthesis' in window;
 let voice=null;function pickVoice(){if(!TTS)return;const v=speechSynthesis.getVoices();voice=v.find(x=>/en[-_]US/i.test(x.lang)&&/Google|Samantha|Aria|Jenny|Natural/i.test(x.name))||v.find(x=>/en[-_]US/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null}
 /* Hebrew device voice: the one chosen in מצב רכב (saved), else an enhanced / premium voice if the phone has one */
-let heVoice=null;const heVoices=()=>TTS?speechSynthesis.getVoices().filter(x=>/^(he|iw)/i.test(x.lang)):[];
-function pickHe(){const v=heVoices(),want=LS.get('dictHeVoice');heVoice=v.find(x=>x.name===want)||v.find(x=>/enhanced|premium|משופר|איכות/i.test(x.name))||v.find(x=>!/compact/i.test(x.voiceURI||''))||v[0]||null}
+/* iPhone lists the same voice name twice when the enhanced version is downloaded (e.g. two "Carmit"): they differ only in voiceURI */
+let heVoice=null;const vid=x=>x.voiceURI||x.name,vq=x=>{const t=(x.voiceURI||'')+' '+x.name;return /premium/i.test(t)?2:/enhanced|משופר/i.test(t)?1:0};
+const heVoices=()=>{if(!TTS)return[];const seen=new Set();return speechSynthesis.getVoices().filter(x=>/^(he|iw)/i.test(x.lang)&&!seen.has(vid(x))&&seen.add(vid(x))).sort((a,b)=>vq(b)-vq(a))};
+const heLabel=x=>{const n={Carmit:'כרמית'}[x.name.replace(/\s*\(.*$/,'')]||x.name.replace(/\s*\(.*$/,'');return n+[' (רגיל)',' (משופר ⭐ – איכותי יותר)',' (פרימיום ⭐⭐ – הכי איכותי)'][vq(x)]};
+function pickHe(){const v=heVoices(),want=LS.get('dictHeVoice');heVoice=v.find(x=>vid(x)===want)||v[0]||null}
 if(TTS){pickVoice();pickHe();speechSynthesis.onvoiceschanged=()=>{pickVoice();pickHe();if(S.screen==='car'&&CAR&&CAR.set)draw()}}
 const fnv=s=>{let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0}return h.toString(16).padStart(8,'0')};
 const AUD_BASES=['audio/','https://cdn.jsdelivr.net/gh/shaniiassulin-art/english-dictionary@main/audio/','https://raw.githubusercontent.com/shaniiassulin-art/english-dictionary/main/audio/'];
@@ -1257,7 +1260,7 @@ function carMedia(){const ms=navigator.mediaSession;if(!ms)return;try{
 /* ⚙ קול ומהירות: which Hebrew voice of the phone reads, and how fast the tips are read */
 function carSettings(){const vs=heVoices();
   return `<div class="carset"><p class="lbl">הקול שמקריא בעברית</p>
-    ${vs.length?`<select id="heSel">${vs.map(v=>`<option value="${esc(v.name)}"${heVoice&&heVoice.name===v.name?' selected':''}>${esc(v.name)}${/enhanced|premium|משופר/i.test(v.name)?' ⭐':''}</option>`).join('')}</select>`:'<p class="hint">לא נמצא קול עברי במכשיר.</p>'}
+    ${vs.length?`<select id="heSel">${vs.map(v=>`<option value="${esc(vid(v))}"${heVoice&&vid(heVoice)===vid(v)?' selected':''}>${esc(heLabel(v))}</option>`).join('')}</select>${vs.length>1?'<p class="hint">אותו קול יכול להופיע פעמיים: גרסה רגילה וגרסה משופרת שהורדת. המשופרת נשמעת טבעית יותר.</p>':''}`:'<p class="hint">לא נמצא קול עברי במכשיר.</p>'}
     <button class="link" id="heTry">השמעת דוגמה</button>
     <p class="hint">קול איכותי יותר באייפון: הגדרות ← נגישות ← תוכן מוקרא ← קולות ← עברית ← להוריד את "כרמית (משופר)". אחרי ההורדה לסגור ולפתוח את האתר ולבחור אותו כאן.</p>
     <p class="lbl">מהירות ההקראה של התרגום והטיפים</p><div class="seg">${CRATES.map(([n,r])=>`<button data-crate="${r}" aria-pressed="${Math.abs(CRATE-r)<.01}">${n}</button>`).join('')}</div></div>`}
