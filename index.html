@@ -345,6 +345,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .si-top{display:flex;align-items:center;gap:10px}
 .si-chk .link{min-height:32px;padding:2px 4px}.chk-list{margin:4px 0 0;padding:0 18px 0 0;display:flex;flex-direction:column;gap:6px;font-size:.92rem}.chk-list li.warn{color:var(--bad)}
 .chk-bad{color:var(--bad);text-decoration:line-through;font-family:var(--en)}.chk-fix{border:1.5px solid var(--ok);background:var(--ok-soft);color:var(--ok);border-radius:8px;padding:2px 8px;font:inherit;font-family:var(--en);font-weight:700;cursor:pointer}
+.small-link{min-height:0;padding:0 2px;font-size:inherit}.chk-why{display:block;font-size:.85rem}.chk-mean{margin:6px 0 0;font-size:.92rem;background:var(--surface);border-radius:10px;padding:8px 10px}.chk-corr{margin:6px 0 0;font-size:.92rem}.chk-corr bdi{font-family:var(--en);font-weight:700}.aiset .inp{width:100%}.aisteps{margin:0;padding-right:20px;font-size:.92rem;display:flex;flex-direction:column;gap:4px}
 .chk-en{display:block;font-size:.78rem;color:var(--muted);text-align:left;font-family:var(--en)}.chk-msg{margin:4px 0 0;font-size:.85rem;color:var(--muted)}.chk-msg.ok{color:var(--ok);font-weight:700}.chk-msg.bad{color:var(--bad)}
 .si-n{flex:none;min-width:30px;height:30px;border-radius:50%;background:var(--surface);display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
 .sent-item.done .si-n{background:var(--ok);color:var(--bg)}
@@ -1125,17 +1126,57 @@ function hasWord(t,e){const words=String(e).toLowerCase().replace(/\(.*?\)/g,'')
 async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);if(!box)return;
   if(!t){box.innerHTML='<p class="chk-msg">קודם כתבי משפט באנגלית.</p>';return}
   box.innerHTML='<p class="chk-msg">בודקת…</p>';
-  try{const r=await fetch('https://api.languagetool.org/v2/check',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({language:'en-US',text:t,motherTongue:'he'})});
-    if(!r.ok)throw 0;const d=await r.json();
+  if(GKEY())return aiCheck(id,e,t);
+  try{const r=await fetch('https://api.languagetool.org/v2/check',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({language:'en-US',text:t})});
+    if(!r.ok)throw r.status;const d=await r.json();
     CHK[id]={t:sv(id,'en'),m:(d.matches||[]).map(m=>({o:m.offset,l:m.length,msg:m.shortMessage||m.message,long:m.message,rep:(m.replacements||[]).slice(0,3).map(x=>x.value),cat:(m.rule&&m.rule.category&&m.rule.category.id)||'MISC'}))}}
-  catch(x){box.innerHTML='<p class="chk-msg bad">לא הצלחתי לבדוק עכשיו (צריך חיבור לאינטרנט). נסי שוב בעוד רגע.</p>';return}
+  catch(x){box.innerHTML=`<p class="chk-msg bad">לא הצלחתי לבדוק עכשיו${typeof x==='number'?' (שגיאה '+x+')':''}. נסי שוב בעוד רגע.</p>`;return}
   const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,e)}
-function chkHtml(id,e){const c=CHK[id];if(!c)return '';const t=c.t;let h='';
+function chkHtml(id,e){const c=CHK[id];if(!c)return '';if(c.ai)return aiHtml(id);const t=c.t;let h='';
   if(!hasWord(t,e))h+=`<li class="warn">⚠️ המשפט לא כולל את המילה <bdi>${esc(e)}</bdi>.</li>`;
   c.m.forEach((m,k)=>{const bad=t.substr(m.o,m.l);
     h+=`<li><b>${esc(CATHE[m.cat]||'הערה')}:</b> <bdi class="chk-bad">${esc(bad)}</bdi>${m.rep.length?` ← ${m.rep.map((r,ri)=>`<button class="chk-fix" data-fix="${esc(id)}" data-k="${k}" data-r="${ri}" aria-label="תיקון ל-${esc(r)}"><bdi>${esc(r||'(למחוק)')}</bdi></button>`).join(' ')}`:''}
       <span class="chk-en" dir="ltr">${esc(m.long)}</span></li>`});
-  return h?`<ul class="chk-list">${h}</ul>${c.m.length?'<p class="chk-msg">לחיצה על הצעה מתקנת את המשפט.</p>':''}`:'<p class="chk-msg ok">✓ לא נמצאו טעויות במשפט</p>'}
+  return (h?`<ul class="chk-list">${h}</ul>${c.m.length?'<p class="chk-msg">לחיצה על הצעה מתקנת את המשפט.</p>':''}`:'<p class="chk-msg ok">✓ לא נמצאו טעויות כתיב ודקדוק</p>')
+    +'<p class="chk-msg">הבדיקה הזו לא בודקת משמעות. <button class="link small-link" data-aiset="1">להפעלת בדיקה חכמה גם של המשמעות</button></p>'}
+/* ---------- smart check (meaning too): Google Gemini with the user's own free key, saved only on this device ---------- */
+const GKEY=()=>LS.get('dictGemKey')||'';
+async function aiCheck(id,e,t){const box=$('chk-'+id),L=sentList(),row=L.w.find(x=>x[0]===e)||[e,''];
+  const prompt=`You are an English teacher for a Hebrew-speaking student (beginner to intermediate). The student had to write one English sentence that uses the word "${e}" (meaning in Hebrew: "${row[1]}").
+Student's sentence: «${t}»
+Check: spelling, grammar, punctuation, whether the word "${e}" (or a correct form of it) is used, whether it is used with the right meaning and in a natural way, and whether the whole sentence makes sense.
+Answer ONLY with JSON: {"word_used_correctly":true or false,"mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","why":"short explanation in simple Hebrew"}],"meaning":"one or two short sentences in simple Hebrew about the meaning and use of the word in this sentence","corrected":"the full corrected sentence (same as the student's if nothing to fix)","hebrew":"translation of the corrected sentence to Hebrew"}
+Write all explanations in simple, everyday Hebrew. Do not mark style preferences as mistakes.`;
+  try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key='+encodeURIComponent(GKEY()),{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{responseMimeType:'application/json',temperature:.2}})});
+    if(!r.ok)throw r.status;const d=await r.json();const txt=((((d.candidates||[])[0]||{}).content||{}).parts||[]).map(p=>p.text||'').join('');
+    const j=JSON.parse(txt.replace(/^```(json)?|```$/g,'').trim());CHK[id]={ai:true,t:sv(id,'en'),j}}
+  catch(x){if(box)box.innerHTML=`<p class="chk-msg bad">הבדיקה החכמה לא הצליחה${x===400||x===403?' – כנראה שהמפתח לא תקין. <button class="link small-link" data-aiset="1">לבדיקת המפתח</button>':typeof x==='number'?' (שגיאה '+x+'). נסי שוב בעוד רגע.':'. נסי שוב בעוד רגע.'}</p>`;return}
+  const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,e)}
+function aiHtml(id){const c=CHK[id],j=c.j||{};let h='';const ms=j.mistakes||[];
+  h+=ms.length?`<ul class="chk-list">${ms.map((m,k)=>`<li><bdi class="chk-bad">${esc(m.wrong||'')}</bdi> ← <button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}"><bdi>${esc(m.fix||'(למחוק)')}</bdi></button><span class="chk-why">${esc(m.why||'')}</span></li>`).join('')}</ul>`
+    :`<p class="chk-msg ok">✓ ${j.word_used_correctly===false?'אין טעויות כתיב ודקדוק':'המשפט נכון'}</p>`;
+  if(j.word_used_correctly===false)h+=`<p class="chk-msg bad">⚠️ המילה לא משמשת נכון במשפט.</p>`;
+  if(j.meaning)h+=`<p class="chk-mean">💬 ${esc(j.meaning)}</p>`;
+  if(j.corrected&&j.corrected.trim()!==c.t.trim())h+=`<p class="chk-corr"><span>משפט מתוקן:</span> <bdi dir="ltr">${esc(j.corrected)}</bdi> <button class="chk-fix" data-aiall="${esc(id)}">להחליף</button></p>`;
+  if(j.hebrew)h+=`<p class="chk-msg">בעברית: ${esc(j.hebrew)}</p>`;
+  return h}
+function setSentText(id,nt){const o=SENT[id]=SENT[id]||{};o.en=[nt,Date.now()];saveSent();
+  const ta=app.querySelector(`textarea.si-en[data-id="${CSS.escape(id)}"]`);if(ta){ta.value=nt;autoGrow(ta)}sentRefresh()}
+document.addEventListener('click',e=>{
+  const a=e.target.closest('[data-aifix]');if(a){const id=a.dataset.aifix,c=CHK[id],m=c&&c.j.mistakes[+a.dataset.k];if(m&&m.wrong&&c.t.includes(m.wrong)){c.t=c.t.replace(m.wrong,m.fix||'');c.j.mistakes.splice(+a.dataset.k,1);setSentText(id,c.t);const b=$('chk-'+id);if(b)b.innerHTML=aiHtml(id)}return}
+  const al=e.target.closest('[data-aiall]');if(al){const id=al.dataset.aiall,c=CHK[id];if(c){c.t=c.j.corrected;c.j.mistakes=[];setSentText(id,c.t);const b=$('chk-'+id);if(b)b.innerHTML=aiHtml(id)}return}
+  const s=e.target.closest('[data-aiset]');if(s){AISET=!AISET;sentAiBox()}});
+let AISET=false;
+function sentAiBox(){const b=$('aiBox');if(!b)return;b.innerHTML=AISET?`<section class="panel aiset"><h3>🧠 בדיקה חכמה (גם משמעות)</h3>
+  <p class="hint">הבדיקה החכמה משתמשת ב־Gemini של גוגל: בודקת איות ודקדוק, וגם אם המילה משמשת במשמעות הנכונה ואם המשפט הגיוני – עם הסבר בעברית. צריך מפתח חינמי (פעם אחת):</p>
+  <ol class="aisteps"><li>להיכנס עם חשבון גוגל ל־<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></li><li>ללחוץ על Create API key ולהעתיק את המפתח</li><li>להדביק כאן וללחוץ שמירה</li></ol>
+  <input class="inp" id="gemKey" dir="ltr" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="המפתח (מתחיל ב־AIza…)" value="${esc(GKEY())}">
+  <div class="row2"><button class="btn" id="gemSave">שמירה</button><button class="btn secondary" id="gemDel">${GKEY()?'מחיקת המפתח':'סגירה'}</button></div>
+  <p class="hint">המפתח נשמר רק במכשיר הזה. המשפטים נשלחים לגוגל לבדיקה.</p></section>`:'';
+  if(AISET){$('gemSave').onclick=()=>{LS.set('dictGemKey',$('gemKey').value.trim());AISET=false;draw()};
+    $('gemDel').onclick=()=>{if(GKEY())LS.set('dictGemKey','');AISET=false;draw()};b.scrollIntoView({block:'nearest',behavior:'smooth'})}}
+
 /* tap a suggestion: replace that part of the sentence */
 function applyFix(id,k,ri){const c=CHK[id];if(!c)return;const m=c.m[k];if(!m)return;const t=c.t,nt=t.slice(0,m.o)+m.rep[ri]+t.slice(m.o+m.l);
   const o=SENT[id]=SENT[id]||{};o.en=[nt,Date.now()];saveSent();
@@ -1153,11 +1194,12 @@ function sentScreen(){const L=sentList();
       <div class="bar2"><i id="shBar"></i></div>
       <p class="sync-state ${SYNC.state}" id="sentSync">${sentSyncLabel()}</p>
     </div>
-    <div id="expBox"></div>
+    <div id="expBox"></div><div id="aiBox"></div>
+    <p class="hint center">${GKEY()?'🧠 בדיקה חכמה פעילה (גם משמעות) · <button class="link small-link" data-aiset="1">הגדרה</button>':'<button class="link small-link" data-aiset="1">🧠 להפעלת בדיקה חכמה שבודקת גם משמעות</button>'}</p>
     <ol class="sent-list">${L.w.map(([e,h],i)=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
       <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
       <textarea class="si-en" dir="ltr" rows="1" data-id="${esc(id)}" data-f="en" placeholder="המשפט שלי באנגלית" aria-label="משפט באנגלית עם ${esc(e)}" autocapitalize="sentences" autocomplete="off" autocorrect="on" spellcheck="true" lang="en">${esc(sv(id,'en'))}</textarea>
-      <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 בדיקת המשפט</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]&&CHK[id].t===sv(id,'en')?chkHtml(id,e):''}</div></div>
+      <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 ${GKEY()?'בדיקת המשפט (כולל משמעות)':'בדיקת המשפט'}</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]&&CHK[id].t===sv(id,'en')?chkHtml(id,e):''}</div></div>
       <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off" autocorrect="on" spellcheck="true" lang="he">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
   </div>`;
   $('bk').onclick=()=>go({screen:'level',l:PL});
