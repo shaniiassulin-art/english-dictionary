@@ -794,7 +794,6 @@ function home(){
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     ${todayCard()}
     ${searchBox()}
-    <button class="btn secondary trgo" id="trOpen">🌐 תרגום מילה או משפט</button>
     ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+L.n).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
@@ -804,7 +803,7 @@ function home(){
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
-  $('today').onclick=()=>go({screen:'days'});$('trOpen').onclick=()=>{S.trFrom='home';go({screen:'tr'})};
+  $('today').onclick=()=>go({screen:'days'});
   bindSearch(DW);bindSettings();bindQuizPanel('ALL',DW,'כל המילים','home');bindCatPanel('ALL',DW,'כל המילים','home');
 }
 
@@ -1017,7 +1016,7 @@ function sentScreen(){const L=sentList();
       <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 ${GKEY()?'בדיקת המשפט (כולל משמעות)':'בדיקת המשפט'}</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]&&CHK[id].t===sv(id,'en')?chkHtml(id,e):''}</div></div>
       <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off" autocorrect="on" spellcheck="true" lang="he">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
   </div>`;
-  $('bk').onclick=()=>go({screen:'level',l:PL});$('trOpen').onclick=()=>{S.trFrom='sent';go({screen:'tr'})};
+  $('bk').onclick=()=>go({screen:'level',l:PL});$('trOpen').onclick=()=>go({screen:'tr'});
   app.querySelectorAll('.sent-item textarea').forEach(t=>{autoGrow(t);
     t.oninput=()=>{autoGrow(t);const id=t.dataset.id,o=SENT[id]=SENT[id]||{};o[t.dataset.f]=[t.value,Date.now()];saveSent();sentRefresh();
       if(t.dataset.f==='en'&&CHK[id]&&CHK[id].t!==t.value){delete CHK[id];saveChk();const r=$('chk-'+id);if(r)r.innerHTML=''}}});
@@ -1446,13 +1445,13 @@ function trPaint(){const b=$('trRes');if(!b)return;const r=TR.res;let h='';
   const cp=$('trCopy');if(cp)cp.onclick=()=>copyText(r.main,cp)}
 function trScreen(){
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">${S.trFrom==='sent'?'כתיבת משפטים':'מסך ראשי'}</button>${HOME}</div>
+    <div class="nav"><button class="back" id="bk">כתיבת משפטים</button>${HOME}</div>
     <div><h2>🌐 תרגום</h2><p class="sub">כתבי מילה או כמה מילים, באנגלית או בעברית – והתרגום יופיע.</p></div>
     <div class="tr-in"><textarea id="trQ" rows="2" dir="auto" placeholder="מילה או משפט לתרגום" autocomplete="off" spellcheck="true">${esc(TR.q)}</textarea>
       <div class="row2"><button class="btn" id="trGo">תרגום</button><button class="btn secondary" id="trClr">ניקוי</button></div>
 </div>
     <div id="trRes"></div></div>`;
-  $('bk').onclick=()=>go({screen:S.trFrom==='sent'?'sent':'home'});
+  $('bk').onclick=()=>go({screen:'sent'});
   const ta=$('trQ');autoGrow(ta);let tm=null;
   ta.oninput=()=>{autoGrow(ta);TR.q=ta.value;LS.set('dictTrQ',TR.q);clearTimeout(tm);tm=setTimeout(doTranslate,700)};
   ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();clearTimeout(tm);doTranslate()}};
