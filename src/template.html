@@ -205,8 +205,8 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .cartog .sw{width:44px;height:26px;border-radius:13px;background:#ccc;position:relative;flex:none}.cartog .sw i{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:right .15s}
 .cartog.on{border-color:var(--accent)}.cartog.on .sw{background:var(--accent)}.cartog.on .sw i{right:21px}
 .cartag{text-align:center;font-weight:700;opacity:.7;margin:4px 0}.carmean{text-align:center;margin:14px 0;padding:10px;border-radius:12px}.carmean .lbl{margin:0 0 4px;font-size:.85rem;opacity:.7}.carmean .cm{font-size:1.5rem;font-weight:800;margin:0}.carmean .oth{font-size:.9rem;opacity:.75;margin:6px 0 0}
-.car .reading{outline:3px solid var(--accent);outline-offset:4px;border-radius:12px}.carrow{display:flex;gap:8px}.carrow .btn{flex:1;padding-left:6px;padding-right:6px}.carnav{display:flex;justify-content:space-between}.carmean.think .cm{opacity:.6}.carrow .btn,.carnav .btn{flex-direction:column;gap:0}.carrow .btn small,.carnav .btn small{display:block;font-size:.72rem;font-weight:500;opacity:.8;margin-top:2px}
-.carnav{display:grid!important;grid-template-columns:repeat(4,1fr);gap:6px}.carnav .btn{padding:8px 2px;font-size:1.1rem;line-height:1.1;min-height:54px}
+.carrow{display:flex;gap:8px}.carrow .btn{flex:1;padding-left:6px;padding-right:6px}.carnav{display:flex;justify-content:space-between}.carmean.think .cm{opacity:.6}.carrow .btn,.carnav .btn{flex-direction:column;gap:0}.carrow .btn small,.carnav .btn small{display:block;font-size:.72rem;font-weight:500;opacity:.8;margin-top:2px}
+.carnav{display:grid!important;grid-template-columns:2fr 1fr;gap:6px}.carnav .btn{padding:8px 2px;font-size:1.1rem;line-height:1.1;min-height:54px}
 .carwait{margin:0;text-align:center;font-weight:700;color:var(--accent)}.carset{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:8px}.carset select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}.carset .lbl{margin:4px 0 0;font-weight:700}.carhint{margin:0;text-align:center;font-size:.78rem;opacity:.7}.car .xfull{margin-bottom:150px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
@@ -1279,14 +1279,15 @@ function carScreen(){const n=CAR.deck.length;
     <div class="sticky carbar">
       ${CAR.wait?'<p class="carwait">סמני אם ידעת את המילה – ואז עוברים למילה הבאה</p>':''}
       <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי<small>ועוברים למילה הבאה</small></button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי<small>ועוברים למילה הבאה</small></button></div>
-      <div class="carnav"><button class="btn secondary" id="cPrev" ${CAR.i?'':'disabled'}>⏮<small>מילה קודמת</small></button><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירה</small>':'▶<small>'+(CAR.wait?'השמעה שוב':'המשך')+'</small>'}</button><button class="btn secondary" id="cNext">⏭<small>דילוג בלי לסמן</small></button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">⚙<small>קול ומהירות</small></button></div>
+      <div class="carnav"><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירת ההקראה</small>':'▶<small>'+(CAR.wait?'להקריא שוב את המילה':'המשך ההקראה')+'</small>'}</button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">⚙<small>קול ומהירות</small></button></div>
+
       <p class="carhint">בכפתורי ההגה / האוזניות: ⏭ הבא = ידעתי · ⏮ הקודם = לא ידעתי · ⏯ = עצירה / המשך</p></div>
   </div>`;
   $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
   $('cPlay').onclick=()=>{if(CAR.play&&!CAR.wait)carStop();else{carPlay(true)}draw()};
   $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};bindCarSettings();
-  $('cPrev').onclick=()=>carGo(-1);$('cNext').onclick=()=>carGo(1);$('cY').onclick=()=>carKnow('y');$('cN').onclick=()=>carKnow('n');
+  $('cY').onclick=()=>carKnow('y');$('cN').onclick=()=>carKnow('n');
   const rv=$('cRev');if(rv)rv.onclick=()=>{CAR.rev=true;const was=CAR.play;if(was){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}}draw();if(was)carPlay(true)};
   carMark();carMedia()}
 function saveC(){if(!C)return;if(C.i>=C.deck.length){(SDEL[C.key]=Date.now(),delete SESS[C.key])}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g}}saveSess()}
