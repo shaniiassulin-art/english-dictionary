@@ -336,6 +336,9 @@ input,textarea,select{font-size:max(16px,1em)}
 .chk-bad{color:var(--bad);text-decoration:line-through;font-family:var(--en)}.chk-fix{border:1.5px solid var(--ok);background:var(--ok-soft);color:var(--ok);border-radius:8px;padding:2px 8px;font:inherit;font-family:var(--en);font-weight:700;cursor:pointer}
 .small-link{min-height:0;padding:0 2px;font-size:inherit}.chk-why{display:block;font-size:.85rem}.chk-mean{margin:6px 0 0;font-size:.92rem;background:var(--surface);border-radius:10px;padding:8px 10px}.chk-corr{margin:6px 0 0;font-size:.92rem}.chk-corr bdi{font-family:var(--en);font-weight:700}.aiset .inp{width:100%}.aisteps{margin:0;padding-right:20px;font-size:.92rem;display:flex;flex-direction:column;gap:4px}
 .toast{position:fixed;left:16px;right:16px;top:16px;z-index:50;background:var(--ok);color:#fff;padding:12px 16px;border-radius:12px;font-weight:700;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.trgo{width:100%}.tr-in textarea{width:100%;resize:none;overflow:hidden;border:1.5px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:1.1rem;min-height:60px;margin-bottom:10px}
+.tr-main{background:var(--surface);border-radius:14px;padding:12px 14px;margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}.tr-main .lbl{width:100%;margin:0;font-size:.85rem;color:var(--muted)}.tr-out{margin:0;font-size:1.35rem;font-weight:800;flex:1;min-width:60%}
+.tr-alts,.tr-dict{margin-top:12px}.tr-alts p,.tr-dict li{margin:4px 0}.tr-alts .lbl,.tr-dict .lbl{font-weight:700;margin:0 0 4px}.tr-dict ul{margin:0;padding-right:18px}.tr-e{font-family:var(--en);font-weight:700}.tr-dict .d{color:var(--muted);font-size:.85rem}
 .chk-head{margin:4px 0 0;font-size:.85rem;font-weight:700;color:var(--muted)}.chk-head.ok{color:var(--accent)}.chk-head.bad{color:var(--bad)}
 .chk-en{display:block;font-size:.78rem;color:var(--muted);text-align:left;font-family:var(--en)}.chk-msg{margin:4px 0 0;font-size:.85rem;color:var(--muted)}.chk-msg.ok{color:var(--ok);font-weight:700}.chk-msg.bad{color:var(--bad)}
 .si-n{flex:none;min-width:30px;height:30px;border-radius:50%;background:var(--surface);display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
@@ -648,7 +651,7 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 
 /* state */
 let S={screen:'home',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car'].includes(S.screen))S.screen='home'}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr'].includes(S.screen))S.screen='home'}catch(e){}
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
@@ -667,7 +670,7 @@ function fitWords(root){(root||document).querySelectorAll(FITSEL).forEach(el=>{
 window.addEventListener('resize',()=>{clearTimeout(window._fw);window._fw=setTimeout(()=>fitWords(),150)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitWords());
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen})[S.screen]();
+  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -791,6 +794,7 @@ function home(){
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     ${todayCard()}
     ${searchBox()}
+    <button class="btn secondary trgo" id="trOpen">🌐 תרגום מילה או משפט</button>
     ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+L.n).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
@@ -800,7 +804,7 @@ function home(){
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
-  $('today').onclick=()=>go({screen:'days'});
+  $('today').onclick=()=>go({screen:'days'});$('trOpen').onclick=()=>{S.trFrom='home';go({screen:'tr'})};
   bindSearch(DW);bindSettings();bindQuizPanel('ALL',DW,'כל המילים','home');bindCatPanel('ALL',DW,'כל המילים','home');
 }
 
@@ -1005,6 +1009,7 @@ function sentScreen(){const L=sentList();
       <p class="sync-state ${SYNC.state}" id="sentSync">${sentSyncLabel()}</p>
     </div>
     <div id="expBox"></div><div id="aiBox"></div>
+    <button class="btn secondary trgo" id="trOpen">🌐 תרגום מילה או משפט</button>
     <p class="hint center">${GKEY()?'🧠 בדיקה חכמה פעילה (גם משמעות) · <button class="link small-link" data-aiset="1">הגדרה</button>':'<button class="link small-link" data-aiset="1">🧠 להפעלת בדיקה חכמה שבודקת גם משמעות</button>'}</p>
     <ol class="sent-list">${L.w.map(([e,h],i)=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
       <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
@@ -1012,7 +1017,7 @@ function sentScreen(){const L=sentList();
       <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 ${GKEY()?'בדיקת המשפט (כולל משמעות)':'בדיקת המשפט'}</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]&&CHK[id].t===sv(id,'en')?chkHtml(id,e):''}</div></div>
       <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off" autocorrect="on" spellcheck="true" lang="he">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
   </div>`;
-  $('bk').onclick=()=>go({screen:'level',l:PL});
+  $('bk').onclick=()=>go({screen:'level',l:PL});$('trOpen').onclick=()=>{S.trFrom='sent';go({screen:'tr'})};
   app.querySelectorAll('.sent-item textarea').forEach(t=>{autoGrow(t);
     t.oninput=()=>{autoGrow(t);const id=t.dataset.id,o=SENT[id]=SENT[id]||{};o[t.dataset.f]=[t.value,Date.now()];saveSent();sentRefresh();
       if(t.dataset.f==='en'&&CHK[id]&&CHK[id].t!==t.value){delete CHK[id];saveChk();const r=$('chk-'+id);if(r)r.innerHTML=''}}});
@@ -1404,6 +1409,56 @@ function carScreen(){const n=CAR.deck.length;
   $('cY').onclick=()=>carKnow('y');$('cN').onclick=()=>carKnow('n');
   const rv=$('cRev');if(rv)rv.onclick=()=>{CAR.rev=true;const was=CAR.play;if(was){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}}draw();if(was)carPlay(true)};
   carMark();carMedia()}
+/* ---------- תרגום: translate a word or a few words (Google Translate, then MyMemory, then Gemini) ---------- */
+let TR={q:LS.get('dictTrQ')||'',res:null,busy:false,seq:0};
+const isHe=t=>/[֐-׿]/.test(t);
+async function trGoogle(q,sl,tl){const u='https://translate.googleapis.com/translate_a/single?client=gtx&sl='+sl+'&tl='+tl+'&dt=t&dt=bd&q='+encodeURIComponent(q);
+  const r=await fetch(u);if(!r.ok)throw r.status;const d=await r.json();
+  const main=(d[0]||[]).map(x=>x&&x[0]||'').join('').trim();
+  const alts=(d[1]||[]).map(p=>({pos:p[0],w:(p[1]||[]).slice(0,6)})).filter(p=>p.w.length);
+  if(!main)throw 'empty';return {main,alts,src:'Google Translate'}}
+async function trMemory(q,sl,tl){const r=await fetch('https://api.mymemory.translated.net/get?langpair='+sl+'|'+tl+'&q='+encodeURIComponent(q));if(!r.ok)throw r.status;
+  const d=await r.json();const main=(d.responseData&&d.responseData.translatedText||'').trim();if(!main||/MYMEMORY WARNING/i.test(main))throw 'empty';return {main,alts:[],src:'MyMemory'}}
+async function trGemini(q,sl,tl){if(!GKEY())throw 'nokey';
+  const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+(LS.get('dictGemModel')||'gemini-flash-lite-latest')+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
+    body:JSON.stringify({contents:[{parts:[{text:`Translate from ${sl==='he'?'Hebrew':'English'} to ${tl==='he'?'Hebrew':'English'}. Reply with the translation only.\n${q}`}]}],generationConfig:{temperature:.1,maxOutputTokens:300}})});
+  if(!r.ok)throw r.status;const d=await r.json();const main=((((d.candidates||[])[0]||{}).content||{}).parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('').trim();if(!main)throw 'empty';return {main,alts:[],src:'Gemini'}}
+const POSHE={noun:'שם עצם',verb:'פועל',adjective:'שם תואר',adverb:'תואר הפועל',preposition:'מילת יחס',conjunction:'מילת חיבור',pronoun:'כינוי גוף',interjection:'מילת קריאה',abbreviation:'קיצור',phrase:'ביטוי',article:'תווית','שם עצם':'שם עצם','פועל':'פועל','שם תואר':'שם תואר','תואר הפועל':'תואר הפועל'};
+async function doTranslate(){const q=TR.q.trim();const seq=++TR.seq;if(!q){TR.res=null;trPaint();return}
+  const he=isHe(q),sl=he?'he':'en',tl=he?'en':'he';TR.busy=true;trPaint();let res=null,errs=[];
+  for(const f of [trGoogle,trMemory,trGemini]){try{res=await f(q,sl,tl);break}catch(e){errs.push(String(e))}}
+  if(seq!==TR.seq)return;TR.busy=false;TR.res=res?{...res,q,he}:{err:errs.join(' · '),q,he};trPaint()}
+/* the user's own dictionary: words that match what was typed */
+function trDict(q){const s=q.trim().toLowerCase();if(!s)return [];const he=isHe(s);
+  const ws=DW.filter(w=>he?w.h.some(h=>h.includes(s)):w.e.toLowerCase()===s||w.e.toLowerCase().replace(/\s*\(.*\)/,'')===s);
+  const seen=new Set();return ws.filter(w=>!seen.has(w.e+'|'+w.h[0])&&seen.add(w.e+'|'+w.h[0])).slice(0,8)}
+function trPaint(){const b=$('trRes');if(!b)return;const r=TR.res;let h='';
+  if(TR.busy)h='<p class="chk-msg">מתרגמת…</p>';
+  else if(r&&r.err)h=`<p class="chk-msg bad">התרגום לא הצליח עכשיו. נסי שוב בעוד רגע.</p><p class="chk-en">${esc(r.err)}</p>`;
+  else if(r){const enOut=!r.he?false:true;
+    h=`<div class="tr-main"><p class="lbl">${r.he?'באנגלית':'בעברית'}</p><p class="tr-out" dir="${enOut?'ltr':'rtl'}">${esc(r.main)}</p>
+      <button class="spk sm" id="trSayOut" aria-label="השמעת האנגלית">${SPK}</button><button class="link small-link" id="trCopy">העתקה</button></div>`;
+    if(r.alts&&r.alts.length)h+=`<div class="tr-alts"><p class="lbl">פירושים נוספים</p>${r.alts.map(p=>`<p><b>${esc(POSHE[p.pos]||p.pos||'')}</b>${p.pos?': ':''}<span dir="${enOut?'ltr':'rtl'}">${p.w.map(esc).join(', ')}</span></p>`).join('')}</div>`;
+    h+=`<p class="chk-en">${esc(r.src)}</p>`}
+  const dw=trDict(TR.q);if(dw.length)h+=`<div class="tr-dict"><p class="lbl">📘 במילון שלך</p><ul>${dw.map(w=>`<li><bdi class="tr-e">${esc(w.e)}</bdi> – ${esc(w.h.join(' / '))} <span class="d">· רמה ${w.l===PL?'שיעור פרטי':w.l}</span></li>`).join('')}</ul></div>`;
+  b.innerHTML=h;
+  const so=$('trSayOut');if(so)so.onclick=()=>{unlockAudio();const t=(r.he?r.main:r.q).trim();if(WORDSET.has(t))speak(t);else ttsEn(t,.85)};
+  const cp=$('trCopy');if(cp)cp.onclick=()=>copyText(r.main,cp)}
+function trScreen(){
+  app.innerHTML=`<div class="screen">
+    <div class="nav"><button class="back" id="bk">${S.trFrom==='sent'?'כתיבת משפטים':'מסך ראשי'}</button>${HOME}</div>
+    <div><h2>🌐 תרגום</h2><p class="sub">כתבי מילה או כמה מילים, באנגלית או בעברית – והתרגום יופיע.</p></div>
+    <div class="tr-in"><textarea id="trQ" rows="2" dir="auto" placeholder="מילה או משפט לתרגום" autocomplete="off" spellcheck="true">${esc(TR.q)}</textarea>
+      <div class="row2"><button class="btn" id="trGo">תרגום</button><button class="btn secondary" id="trClr">ניקוי</button></div>
+</div>
+    <div id="trRes"></div></div>`;
+  $('bk').onclick=()=>go({screen:S.trFrom==='sent'?'sent':'home'});
+  const ta=$('trQ');autoGrow(ta);let tm=null;
+  ta.oninput=()=>{autoGrow(ta);TR.q=ta.value;LS.set('dictTrQ',TR.q);clearTimeout(tm);tm=setTimeout(doTranslate,700)};
+  ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();clearTimeout(tm);doTranslate()}};
+  $('trGo').onclick=()=>{clearTimeout(tm);doTranslate()};
+  $('trClr').onclick=()=>{TR.q='';TR.res=null;LS.set('dictTrQ','');draw();$('trQ').focus()};
+  trPaint();if(TR.q&&!TR.res)doTranslate()}
 function saveC(){if(!C)return;if(C.i>=C.deck.length){(SDEL[C.key]=Date.now(),delete SESS[C.key])}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g}}saveSess()}
 function cardScreen(){
   const n=C.deck.length;
