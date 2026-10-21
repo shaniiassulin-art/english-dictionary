@@ -256,7 +256,8 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .seg4 button{font-size:.88rem;padding:0 4px}
 .inps{display:flex;flex-direction:column;gap:8px}
 .opt.on{border-color:var(--accent);background:var(--accent-soft);font-weight:700}
-.opt.missed{border-color:var(--ok);border-style:dashed;color:var(--ok)}
+.opt.missed{border-color:var(--ok);border-width:3px!important;background:var(--ok-soft);color:var(--ok);font-weight:800;box-shadow:0 0 0 3px var(--ok-soft);opacity:1}
+.opt .rtag{display:inline-block;margin-inline-start:8px;padding:1px 8px;border-radius:999px;background:var(--ok);color:#fff;font-size:.78em;font-weight:700;vertical-align:middle}
 .opt.missed small{font-weight:400}
 .opt.dim{opacity:.5}
 .fb.part{color:#b26b00}
@@ -1543,7 +1544,7 @@ function quizScreen(){
       ${Q.checked?'':`<p class="ask">${nm>1?`סמני את כל הפירושים הנכונים (${nm})`:'בחרי את הפירוש הנכון'}</p>`}
       <div class="opts">${Q.opts.map(([t,ok],k)=>{const on=Q.sel.includes(k);let c=on?' on':'',pre='';
         if(Q.checked){c='';if(ok&&on){c=' right';pre='✓ '}else if(ok){c=' missed';pre='✓ '}else if(on){c=' wrong';pre='✗ '}else c=' dim'}
-        return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}</button>`}).join('')}</div>
+        return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}${c===' missed'?'<span class="rtag">התשובה הנכונה</span>':''}</button>`}).join('')}</div>
       ${fb}
       ${Q.checked?xfull(w):''}
       <div class="sticky">${Q.checked?`${(Q.marks||{})[w.id]?`<p class="rv-now">סימנת: <b class="${Q.marks[w.id]==='y'?'kn':'unk'}">${Q.marks[w.id]==='y'?'✓ ידעתי':'✗ לא ידעתי'}</b></p>`:''}<div class="row2"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>${(Q.marks||{})[w.id]?`<button class="btn secondary" id="qnext">למילה הבאה ←</button>`:''}`
