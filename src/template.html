@@ -207,6 +207,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .cartag{text-align:center;font-weight:700;opacity:.7;margin:4px 0}.carmean{text-align:center;margin:14px 0;padding:10px;border-radius:12px}.carmean .lbl{margin:0 0 4px;font-size:.85rem;opacity:.7}.carmean .cm{font-size:1.5rem;font-weight:800;margin:0}.carmean .oth{font-size:.9rem;opacity:.75;margin:6px 0 0}
 .carrow{display:flex;gap:8px}.carrow .btn{flex:1;padding-left:6px;padding-right:6px}.carnav{display:flex;justify-content:space-between}.carmean.think .cm{opacity:.6}.carrow .btn,.carnav .btn{flex-direction:column;gap:0}.carrow .btn small,.carnav .btn small{display:block;font-size:.72rem;font-weight:500;opacity:.8;margin-top:2px}
 .carnav{display:grid!important;grid-template-columns:2fr 1fr;gap:6px}.carnav .btn{padding:8px 2px;font-size:1.1rem;line-height:1.1;min-height:54px}
+.cartap{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:0;background:rgba(20,24,40,.82);color:#fff;font:inherit;font-size:24px;padding:24px;text-align:center}.cartap .big{font-size:72px;line-height:1}.cartap small{font-size:15px;opacity:.85;max-width:300px}
 .carwait{margin:0;text-align:center;font-weight:700;color:var(--accent)}.carset{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:8px}.carset select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}.carset .lbl{margin:4px 0 0;font-weight:700}.carhint{margin:0;text-align:center;font-size:.78rem;opacity:.7}.car .xfull{margin-bottom:150px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
@@ -1409,16 +1410,18 @@ async function carLoop(tk){const alive=()=>CAR&&CAR.play&&CAR.tok===tk&&S.screen
     /* the next word comes only after ידעתי / לא ידעתי */
     if(!alive())return;CAR.step='m';CAR.wait=true;tone(660);draw();return}
   if(alive()&&CAR.i>=CAR.deck.length){CAR.play=false;saveCar();await say('סיימת את כל המילים','he-IL');carStop();draw()}}
-/* back from another app / a locked screen / a reload while in מצב רכב: start again with "מתחילים" and the same word from its start;
-   if the phone does not let the page speak by itself, ▶ is shown (one tap goes on) */
-function carRestart(){if(!CAR||S.screen!=='car'||CAR.i>=CAR.deck.length)return;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}
-  CAR.play=true;CAR.wait=false;CAR.rev=false;CAR.hidOn=false;const tk=++CAR.tok;keepAlive(true);playbackSession();carMedia();
-  try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}draw();
-  const blocked=()=>{if(CAR&&CAR.tok===tk){CAR.play=false;CAR.unl=false;CAR.tok++;draw()}};
-  setTimeout(()=>{if(!CAR||CAR.tok!==tk)return;if(!TTS){carLoop(tk);return}
+/* back from another app / a locked screen / a reload while in מצב רכב: start again with "מתחילים" and the same word from its start.
+   iPhone lets a page start sound only from a tap: after a reload (and whenever starting by itself fails) a full-screen
+   "לחצי כדי להמשיך" appears, and that tap starts it (the speech must begin inside the tap, so no delay before it) */
+function carRestart(inTap){if(!CAR||S.screen!=='car'||CAR.i>=CAR.deck.length)return;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}
+  CAR.play=true;CAR.wait=false;CAR.rev=false;CAR.hidOn=false;CAR.needTap=false;const tk=++CAR.tok;if(inTap){unlockAudio();CAR.unl=true}keepAlive(true);playbackSession();carMedia();
+  try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}
+  const blocked=()=>{if(CAR&&CAR.tok===tk){CAR.play=false;CAR.needTap=true;CAR.tok++;draw()}};
+  const go=()=>{if(!CAR||CAR.tok!==tk)return;if(!TTS){carLoop(tk);return}
     let st=false;try{const u=new SpeechSynthesisUtterance('מתחילים');u.lang='he-IL';if(heVoice)u.voice=heVoice;AUDT=Date.now();
-      u.onstart=()=>{st=true};u.onend=()=>{if(!st)return blocked();setTimeout(()=>{if(CAR&&CAR.play&&CAR.tok===tk)carLoop(tk)},300)};u.onerror=()=>{if(!st)blocked()};
-      speechSynthesis.speak(u);setTimeout(()=>{if(!st&&!speechSynthesis.speaking){try{speechSynthesis.cancel()}catch(e){}blocked()}},2500)}catch(e){blocked()}},400)}
+      u.onstart=()=>{st=true};u.onend=()=>{if(!st&&!inTap)return blocked();setTimeout(()=>{if(CAR&&CAR.play&&CAR.tok===tk)carLoop(tk)},300)};u.onerror=()=>{if(st)return;if(inTap)carLoop(tk);else blocked()};
+      speechSynthesis.speak(u);setTimeout(()=>{if(!st&&!speechSynthesis.speaking&&CAR&&CAR.tok===tk){try{speechSynthesis.cancel()}catch(e){}if(inTap)carLoop(tk);else blocked()}},2500)}catch(e){inTap?carLoop(tk):blocked()}};
+  if(inTap){go();draw()}else{draw();setTimeout(go,400)}}
 document.addEventListener('visibilitychange',()=>{if(!CAR||S.screen!=='car')return;
   if(document.visibilityState==='hidden'){if(CAR.play||CAR.wait)CAR.hidOn=true;return}
   if(CAR.play||CAR.wait||CAR.hidOn)carRestart()});
@@ -1462,6 +1465,7 @@ function carScreen(){const n=CAR.deck.length;
   const w=CAR.deck[CAR.i],x=EXTRA[w.xid||w.id]||{};
   app.innerHTML=`<div class="screen full car">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה ממצב רכב">✕</button>${HOME}<div class="prog"><i style="width:${CAR.i/n*100}%"></i></div><span class="count">${CAR.i+1} / ${n}</span></div>
+    ${CAR.needTap?'<button class="cartap" id="cTap"><span class="big">▶</span><b>לחצי כדי להמשיך</b><small>הטלפון מאפשר לאתר להתחיל להקריא רק אחרי לחיצה</small></button>':''}
     <p class="cartag">🚗 מצב רכב · ${esc(CAR.name||'')}</p>
     ${CAR.set?carSettings():''}
     <div class="word" data-cstep="w"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
@@ -1477,8 +1481,8 @@ function carScreen(){const n=CAR.deck.length;
   </div>`;
   $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
-  $('cPlay').onclick=()=>{if(CAR.play&&!CAR.wait)carStop();else{carPlay(true)}draw()};
-  $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};bindCarSettings();
+  $('cPlay').onclick=()=>{if(CAR.play&&!CAR.wait)carStop();else if(CAR.needTap||!CAR.unl){carRestart(true);return}else{carPlay(true)}draw()};
+  $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};bindCarSettings();const ct=$('cTap');if(ct)ct.onclick=()=>carRestart(true);
   $('cY').onclick=()=>carKnow('y');$('cN').onclick=()=>carKnow('n');
   const rv=$('cRev');if(rv)rv.onclick=()=>{CAR.rev=true;const was=CAR.play;if(was){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}}draw();if(was)carPlay(true)};
   carMark();carMedia()}
@@ -1569,7 +1573,7 @@ function restoreScroll(){let v=null;try{v=JSON.parse(LS.get('dictScroll')||'null
 (function boot(){
   if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
   if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false}}else S.screen='group'}
-  if(S.screen==='car'){const cs=S.active&&SESS['C'+S.active];if(cs&&cs.kind==='car'){CAR={key:S.active,deck:objs(cs.ids),i:cs.i,name:cs.name,from:cs.from,play:false,tok:0,step:''};setTimeout(carRestart,600)}else S.screen=S.active&&S.active.startsWith('L')?'level':'group'}
+  if(S.screen==='car'){const cs=S.active&&SESS['C'+S.active];if(cs&&cs.kind==='car'){CAR={key:S.active,deck:objs(cs.ids),i:cs.i,name:cs.name,from:cs.from,play:false,tok:0,step:'',needTap:true}}else S.screen=S.active&&S.active.startsWith('L')?'level':'group'}
   draw();restoreScroll();
   syncNow(false);
 })();
