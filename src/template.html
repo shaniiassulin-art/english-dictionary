@@ -590,16 +590,16 @@ const TTS='speechSynthesis' in window;
 let voice=null;function pickVoice(){if(!TTS)return;const v=speechSynthesis.getVoices();voice=v.find(x=>/en[-_]US/i.test(x.lang)&&/Google|Samantha|Aria|Jenny|Natural/i.test(x.name))||v.find(x=>/en[-_]US/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null}
 /* Hebrew device voice: the one chosen in מצב רכב (saved), else an enhanced / premium voice if the phone has one */
 /* iPhone lists the same voice name twice when the enhanced version is downloaded (e.g. two "Carmit"): they differ only in voiceURI */
-let heVoice=null;const vid=x=>x.voiceURI||x.name,vq=x=>{const t=(x.voiceURI||'')+' '+x.name;return /premium|פרימיום/i.test(t)?2:/enhanced|משופר/i.test(t)?1:0};
+let heVoice=null;const vid=x=>x.voiceURI||x.name,vq=x=>{const t=(x.voiceURI||'')+' '+x.name;return /premium|פרימיום/i.test(t)?2:/enhanced|משופר/i.test(t)?1:/super-?compact/i.test(t)?-1:0};
 const heVoices=()=>{if(!TTS)return[];const seen=new Set();return speechSynthesis.getVoices().filter(x=>/^(he|iw)/i.test(x.lang)&&!seen.has(vid(x))&&seen.add(vid(x))).sort((a,b)=>vq(b)-vq(a))};
 const heBase=x=>{const b=x.name.replace(/\s*\(.*$/,'');return {Carmit:'כרמית'}[b]||b};
-const heLabel=x=>{const all=heVoices(),q=vq(x),base=heBase(x)+[' (רגיל)',' (משופר ⭐ – איכותי יותר)',' (פרימיום ⭐⭐ – הכי איכותי)'][q];
+const heLabel=x=>{const all=heVoices(),q=vq(x),base=heBase(x)+({'-1':' (בסיסי – האיכות הכי נמוכה)',0:' (רגיל)',1:' (משופר ⭐ – איכותי יותר)',2:' (פרימיום ⭐⭐ – הכי איכותי)'})[q];
   const twins=all.filter(y=>heBase(y)===heBase(x)&&vq(y)===q);if(twins.length<2)return base;
   /* same name and quality: say what does differ, as reported by the phone */
   const d=[];if(x.default)d.push('קול ברירת המחדל של המכשיר');if(x.localService===false)d.push('דרך האינטרנט');
   if(twins.some(y=>y.lang!==x.lang))d.push(x.lang);
   if(!d.length){const plain=twins.filter(y=>!y.default&&y.localService!==false);d.push(plain.length>1?'עותק '+(plain.indexOf(x)+1):'עותק נוסף')};return base+' – '+d.join(', ')};
-function pickHe(){const v=heVoices(),want=LS.get('dictHeVoice');heVoice=v.find(x=>vid(x)===want)||v[0]||null}
+function pickHe(){const v=heVoices();if(v.length&&!LS.get('dictHeV2')){LS.set('dictHeV2','1');if(/super-?compact/i.test(LS.get('dictHeVoice')||''))LS.set('dictHeVoice','')}const want=LS.get('dictHeVoice');heVoice=v.find(x=>vid(x)===want)||v[0]||null}
 if(TTS){pickVoice();pickHe();speechSynthesis.onvoiceschanged=()=>{pickVoice();pickHe();if(S.screen==='car'&&CAR&&CAR.set)draw()}}
 const fnv=s=>{let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,0x01000193)>>>0}return h.toString(16).padStart(8,'0')};
 const AUD_BASES=['audio/','https://cdn.jsdelivr.net/gh/shaniiassulin-art/english-dictionary@main/audio/','https://raw.githubusercontent.com/shaniiassulin-art/english-dictionary/main/audio/'];
@@ -1402,10 +1402,10 @@ function carMedia(){const ms=navigator.mediaSession;if(!ms)return;try{
   ms.setActionHandler('nexttrack',()=>carKnow('y'));ms.setActionHandler('previoustrack',()=>carKnow('n'));
   ms.playbackState=CAR.play&&!CAR.wait?'playing':'paused'}catch(e){}}
 /* ⚙ קול ומהירות: which Hebrew voice of the phone reads, and how fast the tips are read */
-function heDiff(vs){if(vs.length<2)return'';const qs=new Set(vs.map(vq));
-  const same=qs.size<vs.length&&!vs.some(vq);
+function heDiff(vs){if(!vs.length)return'';const qs=new Set(vs.map(vq));
+  const same=qs.size<vs.length,top=Math.max(...vs.map(vq));
   const tech=`<details class="hint"><summary>פרטים טכניים על הקולות</summary>${vs.map(v=>`<div dir="ltr" style="font-size:12px;word-break:break-all">${esc(v.name)} · ${esc(v.lang)} · ${esc(v.voiceURI||'-')}${v.default?' · default':''}${v.localService===false?' · network':''}</div>`).join('')}</details>`;
-  return (same?'<p class="hint">הטלפון מעביר לאתר את כרמית פעמיים, בלי לציין שאחת מהן משופרת – ולכן שתיהן נשמעות אותו דבר: זה אותו קול. כנראה הגרסה המשופרת לא הורדה, או שספארי לא מעביר אותה לאתרים. אפשר לבחור כל אחת מהן.</p>':'<p class="hint">הגרסה המשופרת (⭐) נשמעת טבעית יותר מהרגילה.</p>')+tech}
+  return (same?'<p class="hint">יש שני עותקים של אותו קול – הם נשמעים אותו דבר, אפשר לבחור כל אחד מהם.</p>':'')+(vs.some(v=>vq(v)<0)?'<p class="hint">"בסיסי" הוא גרסה מכווצת ופשוטה של כרמית, ו"רגיל" הוא קצת יותר טוב. ההבדל ביניהם קטן.</p>':'')+(top<1?'<p class="hint">הגרסה המשופרת (⭐), שנשמעת הרבה יותר טבעית, עדיין לא מופיעה – כנראה לא הורדה עד הסוף (הוראות למטה).</p>':'<p class="hint">הגרסה המשופרת (⭐) נשמעת טבעית יותר מהאחרות.</p>')+tech}
 function carSettings(){const vs=heVoices();
   return `<div class="carset"><p class="lbl">הקול שמקריא בעברית</p>
     ${vs.length?`<select id="heSel">${vs.map(v=>`<option value="${esc(vid(v))}"${heVoice&&vid(heVoice)===vid(v)?' selected':''}>${esc(heLabel(v))}</option>`).join('')}</select>${heDiff(vs)}`:'<p class="hint">לא נמצא קול עברי במכשיר.</p>'}
