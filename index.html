@@ -1147,7 +1147,7 @@ function chkHtml(id,e){const c=CHK[id];if(!c)return '';
   const chg=c.t!==sv(id,'en')?'<p class="chk-msg">✏️ שינית את המשפט מאז הבדיקה – לחצי שוב על "בדיקת המשפט" כדי לבדוק את הגרסה החדשה.</p>':'';
   if(c.ai)return chg+aiHtml(id);
   if(c.aiPend){const sec=Math.round((Date.now()-(c.run||Date.now()))/1000);return `<p class="chk-msg">⏳ בודקת את המשפט… ${sec?sec+' שנ׳':''}</p>${c.steps?`<p class="chk-en">${Object.entries(c.steps).map(([m,v])=>esc(m.replace('gemini-',''))+' '+esc(v)).join(' · ')}</p>`:''}`}
-  if(c.aiErr){const w=c.aiErr,msg=w==='key'?'המפתח לא מתאים':w==='quota'?'הגעת למכסת הבדיקות החינמית לעכשיו':w==='busy'?'השרתים של גוגל עמוסים כרגע – נסי שוב בעוד דקה':w==='timeout'?'גוגל לא ענה בזמן':w==='interrupted'?'הבדיקה נקטעה כשיצאת מהאתר':'משהו השתבש';
+  if(c.aiErr){const w=c.aiErr,msg=w==='key'?'המפתח לא מתאים':w==='quota'?'הגעת למכסת הבדיקות החינמית לעכשיו':w==='mixed'?'התשובה יצאה עם אותיות משובשות':w==='busy'?'השרתים של גוגל עמוסים כרגע – נסי שוב בעוד דקה':w==='timeout'?'גוגל לא ענה בזמן':w==='interrupted'?'הבדיקה נקטעה כשיצאת מהאתר':'משהו השתבש';
     return `<p class="chk-msg bad">⚠️ הבדיקה לא הצליחה (${msg}). <button class="link small-link" data-rechk="${esc(id)}">לנסות שוב</button></p><p class="chk-en">${esc(w)}</p>`}
   return ''}
 /* ---------- smart check (meaning too): Google Gemini with the user's own free key, saved only on this device ---------- */
@@ -1165,7 +1165,7 @@ Student's sentence: «${t}»
 Check: 1) spelling, grammar, punctuation; 2) is "${e}" (or a form of it) in the sentence; 3) is it used in the meaning "${row[1]}" and in a natural context; 4) does the whole sentence make sense.
 If the word is missing, or used in a wrong meaning or an unnatural context, write a suggestion: a simple, natural sentence that uses "${e}" correctly in the meaning "${row[1]}", staying as close as possible to the student's idea (if the idea cannot fit the word, write a new short everyday sentence).
 Answer ONLY with JSON: {"word_present":true or false,"word_used_correctly":true or false,"context_problem":"if the word is missing or used wrongly: short explanation in simple Hebrew of what is wrong and how the word is really used; else empty","mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","why":"short explanation in simple Hebrew"}],"meaning":"one short sentence in simple Hebrew about the meaning of the word in this sentence","corrected":"the student's sentence with only the spelling/grammar mistakes fixed","hebrew":"Hebrew translation of the corrected sentence","suggestion":"only if the word is missing or used wrongly: a correct sentence with ${e} in the right meaning and context; else empty","suggestion_hebrew":"Hebrew translation of the suggestion, or empty"}
-Write all explanations in simple, everyday Hebrew. Do not mark style preferences as mistakes. Be brief.`;
+Write all explanations in simple, everyday Hebrew, using only regular Hebrew letters (א–ת) – never Arabic, Yiddish or other scripts mixed into Hebrew words. Do not mark style preferences as mistakes. Be brief.`;
   /* speed: thinking off, short answer, and "hedged" requests – the first model is asked at once, another one joins every 1.5 s
      (or right away when one fails), the first good answer wins and the rest are cancelled; everything stops after 25 s.
      The model that answered last is asked first. Progress (`onStep`) is shown live so a slow model can be seen. */
@@ -1181,15 +1181,18 @@ Write all explanations in simple, everyday Hebrew. Do not mark style preferences
     if(r.status===400&&gc.thinkingConfig&&/think/i.test(em)){noThink.add(mdl);LS.set('dictGemNoThink',JSON.stringify([...noThink]));return call(mdl,signal)}
     if(!r.ok)throw {status:r.status,em};
     const txt=((((d.candidates||[])[0]||{}).content||{}).parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('');
-    const m=txt.match(/\{[\s\S]*\}/);if(!m)throw {status:0,em:'empty answer'};return {mdl,j:JSON.parse(m[0])}};
+    const m=txt.match(/\{[\s\S]*\}/);if(!m)throw {status:0,em:'empty answer'};
+    /* small models sometimes mix Arabic / Yiddish letters into the Hebrew: such an answer is dropped and another model answers */
+    if(/[\u0600-\u06FF\u0750-\u077F\u05F0-\u05F2\uFB1D-\uFB4F]/.test(m[0]))throw {status:0,em:'mixed letters'};
+    return {mdl,j:JSON.parse(m[0])}};
   const steps={};const step=(m,st)=>{steps[m]=st;onStep&&onStep(steps)};
   const res=await new Promise(done=>{let fin=false,next=0,running=0;const acs=[];
     const end=r=>{if(fin)return;fin=true;clearTimeout(cap);clearInterval(tick);acs.forEach(a=>a.abort());done(r)};
     const launch=()=>{if(fin||next>=MODELS.length)return;const mdl=MODELS[next++],ac=new AbortController();acs.push(ac);running++;step(mdl,'…');
       call(mdl,ac.signal).then(r=>{step(mdl,'✓');end(r)}).catch(x=>{running--;if(fin)return;
         const s=x&&x.status;if(s===400||s===401||s===403){why='key';step(mdl,'מפתח');end(null);return}
-        why=s===429?'quota':(s===503||s===500)?'busy':s===404?why||'busy':x&&x.name==='AbortError'?'timeout':s?'http '+s+(x.em?' – '+x.em:''):'network ('+(x&&x.message||x)+')';
-        if(s===404){gone.add(mdl);LS.set('dictGemGone',JSON.stringify([...gone]));delete steps[mdl];onStep&&onStep(steps)}else step(mdl,s===503||s===500?'עמוס':s===429?'מכסה':'שגיאה');
+        why=x&&x.em==='mixed letters'?'mixed':s===429?'quota':(s===503||s===500)?'busy':s===404?why||'busy':x&&x.name==='AbortError'?'timeout':s?'http '+s+(x.em?' – '+x.em:''):'network ('+(x&&x.message||x)+')';
+        if(s===404){gone.add(mdl);LS.set('dictGemGone',JSON.stringify([...gone]));delete steps[mdl];onStep&&onStep(steps)}else step(mdl,x&&x.em==='mixed letters'?'אותיות משובשות':s===503||s===500?'עמוס':s===429?'מכסה':'שגיאה');
         if(next<MODELS.length)launch();else if(!running)end(null)})};
     const tick=setInterval(launch,1500),cap=setTimeout(()=>{if(!why)why='timeout';end(null)},25000);launch()});
   if(res){LS.set('dictGemModel',res.mdl);return {j:res.j,mdl:res.mdl}}
