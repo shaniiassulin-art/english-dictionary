@@ -206,7 +206,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .cartog.on{border-color:var(--accent)}.cartog.on .sw{background:var(--accent)}.cartog.on .sw i{right:21px}
 .cartag{text-align:center;font-weight:700;opacity:.7;margin:4px 0}.carmean{text-align:center;margin:14px 0;padding:10px;border-radius:12px}.carmean .lbl{margin:0 0 4px;font-size:.85rem;opacity:.7}.carmean .cm{font-size:1.5rem;font-weight:800;margin:0}.carmean .oth{font-size:.9rem;opacity:.75;margin:6px 0 0}
 .carrow{display:flex;gap:8px}.carrow .btn{flex:1;padding-left:6px;padding-right:6px}.carnav{display:flex;justify-content:space-between}.carmean.think .cm{opacity:.6}.carrow .btn,.carnav .btn{flex-direction:column;gap:0}.carrow .btn small,.carnav .btn small{display:block;font-size:.72rem;font-weight:500;opacity:.8;margin-top:2px}
-.carnav{display:grid!important;grid-template-columns:2fr 1fr;gap:6px}.carnav .btn{padding:8px 2px;font-size:1.1rem;line-height:1.1;min-height:54px}
+.carnav{display:grid!important;grid-template-columns:1fr 1.5fr 1fr 1fr;gap:6px}.carnav .btn:disabled{opacity:.35}.carnav .btn{padding:8px 2px;font-size:1.1rem;line-height:1.1;min-height:54px}
 .cartap{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:0;background:rgba(20,24,40,.82);color:#fff;font:inherit;font-size:24px;padding:24px;text-align:center}.cartap .big{font-size:72px;line-height:1}.cartap small{font-size:15px;opacity:.85;max-width:300px}
 .carsethd{display:flex;align-items:center;justify-content:space-between;gap:8px}.carsethd b{font-size:17px}.carsethd .x{width:38px;height:38px}
 .kflash{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .25s}
@@ -1498,14 +1498,14 @@ function carScreen(){const n=CAR.deck.length;
     <div class="sticky carbar">
       ${CAR.wait?'<p class="carwait">סמני אם ידעת את המילה – ואז עוברים למילה הבאה</p>':''}
       <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי<small>ועוברים למילה הבאה</small></button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי<small>ועוברים למילה הבאה</small></button></div>
-      <div class="carnav"><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירת ההקראה</small>':'▶<small>'+(CAR.wait?'להקריא שוב את המילה':'המשך ההקראה')+'</small>'}</button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">${CAR.set?'✕<small>סגירת ההגדרות</small>':'⚙<small>קול ומהירות</small>'}</button></div>
+      <div class="carnav"><button class="btn secondary" id="cPrev"${CAR.i>0?'':' disabled'}>→<small>מילה קודמת</small></button><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירת ההקראה</small>':'▶<small>'+(CAR.wait?'להקריא שוב את המילה':'המשך ההקראה')+'</small>'}</button><button class="btn secondary" id="cNext"${CAR.i<CAR.deck.length-1?'':' disabled'}>←<small>מילה הבאה</small></button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">${CAR.set?'✕<small>סגירת ההגדרות</small>':'⚙<small>קול ומהירות</small>'}</button></div>
 
       <p class="carhint">בכפתורי ההגה / האוזניות: ⏭ הבא = ידעתי · ⏮ הקודם = לא ידעתי · ⏯ = עצירה / המשך</p></div>
   </div>`;
   $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
   $('cPlay').onclick=()=>{if(CAR.play&&!CAR.wait)carStop();else if(CAR.needTap||!CAR.unl){carRestart(true);return}else{carPlay(true)}draw()};
-  $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};bindCarSettings();const ct=$('cTap');if(ct)ct.onclick=()=>carRestart(true);
+  $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};$('cPrev').onclick=()=>carGo(-1);$('cNext').onclick=()=>carGo(1);bindCarSettings();const ct=$('cTap');if(ct)ct.onclick=()=>carRestart(true);
   $('cY').onclick=()=>carKnow('y');$('cN').onclick=()=>carKnow('n');
   const rv=$('cRev');if(rv)rv.onclick=()=>{CAR.rev=true;const was=CAR.play;if(was){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}}draw();if(was)carPlay(true)};
   carMark();carMedia()}
