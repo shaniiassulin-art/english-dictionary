@@ -1131,7 +1131,7 @@ function hasWord(t,e){const words=String(e).toLowerCase().replace(/\(.*?\)/g,'')
   return words.filter(w=>w.length>2||words.length===1).every(w=>{const st=w.length>4?w.replace(/(e|y|ed|es|s|ing)$/,''):w;return new RegExp('[ ]'+st.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).test(low)})}
 /* results are kept on this device (dictChk) so they are still there after leaving the site; a result belongs to the exact text it checked */
 const saveChk=()=>{try{LS.set('dictChk',JSON.stringify(CHK))}catch(e){}};
-try{Object.assign(CHK,JSON.parse(LS.get('dictChk')||'{}'));for(const k in CHK){const c=CHK[k];if(!c.ai&&!c.aiErr&&!c.aiPend){delete CHK[k];continue}if(c.aiPend){c.aiPend=false;if(!c.ai)c.aiErr='interrupted'}if(c.ltPend)c.ltPend=false}}catch(e){}
+try{Object.assign(CHK,JSON.parse(LS.get('dictChk')||'{}'));for(const k in CHK){const c=CHK[k];if(!c.ai&&!c.aiErr&&!c.aiPend){delete CHK[k];continue}if(c.aiPend){c.aiPend=false;if(!c.ai)c.aiErr='interrupted'}c.auto=0;if(c.ltPend)c.ltPend=false}}catch(e){}
 /* both checks start at once: the quick spelling & grammar check shows in about a second, the smart check (meaning) replaces it when it arrives */
 /* smart check only (Gemini): spelling, grammar and meaning, explained in Hebrew */
 async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);if(!box)return;
@@ -1140,15 +1140,11 @@ async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);i
   const run=Date.now();CHK[id]={t:sv(id,'en'),run,ai:null,aiErr:null,aiPend:true};paintChk(id,e);
   const r=await aiRun(e,t,st=>{if(CHK[id]&&CHK[id].run===run){CHK[id].steps={...st};paintChk(id,e)}});if(!CHK[id]||CHK[id].run!==run)return;
   Object.assign(CHK[id],r.j?{ai:r.j,aiPend:false,sec:Math.round((Date.now()-run)/1000),mdl:r.mdl}:{aiErr:r.why,aiPend:false});saveChk();paintChk(id,e)}
-/* a check cut off by leaving the site (the phone pauses the page) starts again by itself on return */
-function resumeChecks(){if(S.screen!=='sent')return;const L=sentList();if(!L)return;
-  for(const [e] of L.w){const id=sentId(L,e),c=CHK[id];if(c&&(c.aiErr==='interrupted'||c.aiErr==='timeout'||/^network/.test(c.aiErr||'')||(c.aiPend&&Date.now()-(c.run||0)>20000))&&c.t===sv(id,'en'))checkSentence(id,e)}}
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(resumeChecks,400)});
-setInterval(()=>{if(S.screen!=='sent')return;for(const id in CHK)if(CHK[id].aiPend){const b=$('chk-'+id);if(b){const li=b.closest('li.sent-item');paintChk(id,li?li.querySelector('[data-w]').dataset.w:'')}}},1000);
-function paintChk(id,e){const b=$('chk-'+id);if(b)b.innerHTML=chkHtml(id,e)}
+function paintChk(id,e){const b=$('chk-'+id);if(b)setHtml(b,chkHtml(id,e))}
 
 function chkHtml(id,e){const c=CHK[id];if(!c)return '';
-  if(c.ai)return aiHtml(id);
+  const chg=c.t!==sv(id,'en')?'<p class="chk-msg">✏️ שינית את המשפט מאז הבדיקה – לחצי שוב על "בדיקת המשפט" כדי לבדוק את הגרסה החדשה.</p>':'';
+  if(c.ai)return chg+aiHtml(id);
   if(c.aiPend){const sec=Math.round((Date.now()-(c.run||Date.now()))/1000);return `<p class="chk-msg">⏳ בודקת את המשפט… ${sec?sec+' שנ׳':''}</p>${c.steps?`<p class="chk-en">${Object.entries(c.steps).map(([m,v])=>esc(m.replace('gemini-',''))+' '+esc(v)).join(' · ')}</p>`:''}`}
   if(c.aiErr){const w=c.aiErr,msg=w==='key'?'המפתח לא מתאים':w==='quota'?'הגעת למכסת הבדיקות החינמית לעכשיו':w==='busy'?'השרתים של גוגל עמוסים כרגע – נסי שוב בעוד דקה':w==='timeout'?'גוגל לא ענה בזמן':w==='interrupted'?'הבדיקה נקטעה כשיצאת מהאתר':'משהו השתבש';
     return `<p class="chk-msg bad">⚠️ הבדיקה לא הצליחה (${msg}). <button class="link small-link" data-rechk="${esc(id)}">לנסות שוב</button></p><p class="chk-en">${esc(w)}</p>`}
@@ -1208,7 +1204,7 @@ function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[];
 function setSentText(id,nt){const o=SENT[id]=SENT[id]||{};o.en=[nt,Date.now()];saveSent();
   const ta=app.querySelector(`textarea.si-en[data-id="${CSS.escape(id)}"]`);if(ta){ta.value=nt;autoGrow(ta)}sentRefresh()}
 document.addEventListener('click',e=>{
-  const a=e.target.closest('[data-aifix]');if(a){const id=a.dataset.aifix,c=CHK[id],m=c&&c.ai&&c.ai.mistakes[+a.dataset.k];if(m&&m.wrong&&c.t.includes(m.wrong)){c.t=c.t.replace(m.wrong,m.fix||'');c.ai.mistakes.splice(+a.dataset.k,1);setSentText(id,c.t);saveChk();paintChk(id,'')}return}
+  const a=e.target.closest('[data-aifix]');if(a){const id=a.dataset.aifix,c=CHK[id],m=c&&c.ai&&c.ai.mistakes[+a.dataset.k],cur=sv(id,'en');if(m&&m.wrong&&cur.includes(m.wrong)){c.t=cur.replace(m.wrong,m.fix||'');c.ai.mistakes.splice(+a.dataset.k,1);setSentText(id,c.t);saveChk();paintChk(id,'')}return}
   const al=e.target.closest('[data-aiall]');if(al){const id=al.dataset.aiall,c=CHK[id];if(c&&c.ai){c.t=c.ai.corrected;c.ai.mistakes=[];setSentText(id,c.t);saveChk();paintChk(id,'')}return}
   const rc=e.target.closest('[data-rechk]');if(rc){const li=rc.closest('li.sent-item');checkSentence(rc.dataset.rechk,li?li.querySelector('[data-w]').dataset.w:'');return}
   const s=e.target.closest('[data-aiset]');if(s){AISET=!AISET;sentAiBox()}});
@@ -1239,20 +1235,17 @@ function sentScreen(){const L=sentList();
     <ol class="sent-list">${L.w.map(([e,h],i)=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
       <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
       <textarea class="si-en" dir="ltr" rows="1" data-id="${esc(id)}" data-f="en" placeholder="המשפט שלי באנגלית" aria-label="משפט באנגלית עם ${esc(e)}" autocapitalize="sentences" autocomplete="off" autocorrect="on" spellcheck="true" lang="en">${esc(sv(id,'en'))}</textarea>
-      <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 ${GKEY()?'בדיקת המשפט (כולל משמעות)':'בדיקת המשפט'}</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]&&CHK[id].t===sv(id,'en')?chkHtml(id,e):''}</div></div>
+      <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 ${GKEY()?'בדיקת המשפט (כולל משמעות)':'בדיקת המשפט'}</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]?chkHtml(id,e):''}</div></div>
       <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off" autocorrect="on" spellcheck="true" lang="he">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
   </div>`;
   $('bk').onclick=()=>go({screen:'level',l:PL});$('trOpen').onclick=()=>go({screen:'tr'});
   app.querySelectorAll('.sent-item textarea').forEach(t=>{autoGrow(t);
     t.oninput=()=>{autoGrow(t);const id=t.dataset.id,o=SENT[id]=SENT[id]||{};o[t.dataset.f]=[t.value,Date.now()];saveSent();sentRefresh();
-      if(t.dataset.f==='en'&&CHK[id]&&CHK[id].t!==t.value){delete CHK[id];saveChk();const r=$('chk-'+id);if(r)r.innerHTML=''}}});
+      if(t.dataset.f==='en'&&CHK[id]){const li=t.closest('li.sent-item');paintChk(id,li?li.querySelector('[data-w]').dataset.w:'')}}});
   app.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>sayWord(b.dataset.sw,b));
   app.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>checkSentence(b.dataset.chk,b.dataset.w));
-  /* when she finishes a sentence (leaves the field), the check starts by itself, so it is usually ready by the time she looks */
-  app.querySelectorAll('textarea.si-en').forEach(t=>t.addEventListener('blur',()=>{const id=t.dataset.id,v=sv(id,'en').trim();
-    if(GKEY()&&v.split(/\s+/).length>=3&&!(CHK[id]&&CHK[id].t===sv(id,'en'))){const li=t.closest('li.sent-item');checkSentence(id,li.querySelector('[data-w]').dataset.w)}}));
   $('expBtn').onclick=()=>{EXP=!EXP;sentRefresh();if(EXP)$('expBox').scrollIntoView({block:'nearest',behavior:'smooth'})};
-  sentRefresh();setTimeout(resumeChecks,300)}
+  sentRefresh()}
 /* counter, bar, ✓ marks, export box and texts that changed on another device; the field being typed in is left alone */
 function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentList(),N=L.w.length,n=sentDone(L);
   setHtml($('shCount'),`<b>${n}</b> מתוך ${N}${n===N?' · הכול כתוב ✓':''}`);const bw=(N?n/N*100:0)+'%';if($('shBar').style.width!==bw)$('shBar').style.width=bw;
