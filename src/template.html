@@ -209,6 +209,10 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .carnav{display:grid!important;grid-template-columns:2fr 1fr;gap:6px}.carnav .btn{padding:8px 2px;font-size:1.1rem;line-height:1.1;min-height:54px}
 .cartap{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:0;background:rgba(20,24,40,.82);color:#fff;font:inherit;font-size:24px;padding:24px;text-align:center}.cartap .big{font-size:72px;line-height:1}.cartap small{font-size:15px;opacity:.85;max-width:300px}
 .carsethd{display:flex;align-items:center;justify-content:space-between;gap:8px}.carsethd b{font-size:17px}.carsethd .x{width:38px;height:38px}
+.kflash{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .25s}
+.kflash.on{opacity:1}.kflash>div{display:flex;flex-direction:column;align-items:center;gap:6px;padding:28px 44px;border-radius:28px;border:4px solid;box-shadow:0 12px 40px rgba(0,0,0,.25);transform:scale(.9);transition:transform .25s}
+.kflash.on>div{transform:scale(1)}.kflash .big{font-size:84px;line-height:1;font-weight:800}.kflash b{font-size:40px}.kflash small{font-size:22px;opacity:.8}
+.kflash.ky>div{background:#e3f4e8;border-color:#2e8b57;color:#1f6b40}.kflash.kn>div{background:#fbe4e4;border-color:#c0392b;color:#9b2c22}
 .carwait{margin:0;text-align:center;font-weight:700;color:var(--accent)}.carset{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:8px}.carset select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}.carset .lbl{margin:4px 0 0;font-weight:700}.carhint{margin:0;text-align:center;font-size:.78rem;opacity:.7}.car .xfull{margin-bottom:150px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
@@ -1435,7 +1439,11 @@ document.addEventListener('visibilitychange',()=>{if(!CAR||S.screen!=='car')retu
 function carMark(){app.querySelectorAll('[data-cstep]').forEach(el=>el.classList.toggle('reading',el.dataset.cstep===CAR.step&&CAR.play&&!CAR.wait))}
 /* ✓ / ✗ for the word now playing (also from the next / previous buttons on the steering wheel or headphones), then on to the next word */
 function tone(f){try{const ac=V.ac||(V.ac=new (window.AudioContext||window.webkitAudioContext)());ac.resume&&ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.value=.15;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.15)}catch(e){}}
-function carKnow(v){if(!CAR||CAR.i>=CAR.deck.length)return;setKnow(CAR.deck[CAR.i].id,v);tone(v==='y'?990:330);
+/* a big ✓ ידעתי / ✗ לא ידעתי over the screen for a moment, so it is clear what was pressed (also from the steering wheel) */
+function knowFlash(v,word){let el=document.getElementById('kflash');if(!el){el=document.createElement('div');el.id='kflash';document.body.appendChild(el)}
+  el.className='kflash '+(v==='y'?'ky':'kn');el.innerHTML=`<div><span class="big">${v==='y'?'✓':'✗'}</span><b>${v==='y'?'ידעתי':'לא ידעתי'}</b>${word?`<small dir="ltr">${esc(word)}</small>`:''}</div>`;
+  void el.offsetWidth;el.classList.add('on');clearTimeout(knowFlash.t);knowFlash.t=setTimeout(()=>el.classList.remove('on'),1400)}
+function carKnow(v){if(!CAR||CAR.i>=CAR.deck.length)return;setKnow(CAR.deck[CAR.i].id,v);knowFlash(v,CAR.deck[CAR.i].e);tone(v==='y'?990:330);
   if(CAR.i>=CAR.deck.length-1){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}CAR.i++;CAR.rev=false;CAR.wait=false;saveCar();carStop();draw();return}
   /* marking always goes on playing the next word */
   CAR.play=true;carGo(1)}
