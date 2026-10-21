@@ -208,6 +208,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .carrow{display:flex;gap:8px}.carrow .btn{flex:1;padding-left:6px;padding-right:6px}.carnav{display:flex;justify-content:space-between}.carmean.think .cm{opacity:.6}.carrow .btn,.carnav .btn{flex-direction:column;gap:0}.carrow .btn small,.carnav .btn small{display:block;font-size:.72rem;font-weight:500;opacity:.8;margin-top:2px}
 .carnav{display:grid!important;grid-template-columns:2fr 1fr;gap:6px}.carnav .btn{padding:8px 2px;font-size:1.1rem;line-height:1.1;min-height:54px}
 .cartap{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:0;background:rgba(20,24,40,.82);color:#fff;font:inherit;font-size:24px;padding:24px;text-align:center}.cartap .big{font-size:72px;line-height:1}.cartap small{font-size:15px;opacity:.85;max-width:300px}
+.carsethd{display:flex;align-items:center;justify-content:space-between;gap:8px}.carsethd b{font-size:17px}.carsethd .x{width:38px;height:38px}
 .carwait{margin:0;text-align:center;font-weight:700;color:var(--accent)}.carset{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:8px}.carset select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}.carset .lbl{margin:4px 0 0;font-weight:700}.carhint{margin:0;text-align:center;font-size:.78rem;opacity:.7}.car .xfull{margin-bottom:150px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
@@ -945,21 +946,24 @@ function chkHtml(id,e){const c=CHK[id];if(!c)return '';
 const GK0=[96,90,66,100,79,114,78,38,70,93,36,112,68,66,38,79,33,99,96,64,72,82,122,83,117,124,72,35,65,86,98,64,66,68,102,121,78,120,80,34,64,85,79,93,33,89,69,47,117,86,57,70,86].map(n=>String.fromCharCode(n^23)).reverse().join('');
 const GKEY=()=>{const v=LS.get('dictGemKeyT');if(v){try{const a=JSON.parse(v);if(a&&a[0]!==undefined)return a[0]}catch(e){}}return LS.get('dictGemKey')||GK0};
 /* natural Hebrew voice: Gemini text-to-speech with the same key (car mode only); every clip is kept on the phone (Cache Storage) */
-const GEMV=[['Kore','קול נשי ברור'],['Aoede','קול נשי רך'],['Sulafat','קול נשי חם'],['Puck','קול גברי']];
+/* a chosen set of Gemini's voices (all the same high quality; they differ in character) */
+const GEMV=[['Kore','אישה – ברור ויציב'],['Aoede','אישה – קליל ונעים'],['Sulafat','אישה – חם'],['Achernar','אישה – רך'],['Despina','אישה – חלק ורגוע'],['Erinome','אישה – צלול'],
+  ['Puck','גבר – שמח'],['Charon','גבר – כמו קריין'],['Iapetus','גבר – ברור'],['Algieba','גבר – חלק ורגוע']];
+let enGem=null;try{const e=localStorage.getItem('dictEnVoice')||'';enGem=e.startsWith('gem:')?e.slice(4):null}catch(e){}
 const GTTSM=['gemini-2.5-flash-preview-tts','gemini-3.1-flash-tts-preview','gemini-2.5-pro-preview-tts'];
 const GEMA=new Map(),GEMP=new Map(),GTTS={err:'',busy:0};
 const gemOn=()=>!!(heGem&&GKEY());
 function wavPcm(bin,rate){const n=bin.length,buf=new ArrayBuffer(44+n),v=new DataView(buf),ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};
   ws(0,'RIFF');v.setUint32(4,36+n,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,rate,true);v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);ws(36,'data');v.setUint32(40,n,true);
   const u=new Uint8Array(buf,44);for(let i=0;i<n;i++)u[i]=bin.charCodeAt(i);return new Blob([buf],{type:'audio/wav'})}
-function gemAudio(text){const v=heGem,k=v+'|'+text;if(!v||!text)return Promise.resolve(null);if(GEMA.has(k))return Promise.resolve(GEMA.get(k));if(GEMP.has(k))return GEMP.get(k);
-  const p=(async()=>{const url='https://gemtts.invalid/'+v+'/'+fnv(text)+'.wav';let c=null;
+function gemAudio(text,v=heGem,en=false){const k=v+'|'+(en?'en|':'')+text;if(!v||!text)return Promise.resolve(null);if(GEMA.has(k))return Promise.resolve(GEMA.get(k));if(GEMP.has(k))return GEMP.get(k);
+  const p=(async()=>{const url='https://gemtts.invalid/'+v+'/'+(en?'en/':'')+fnv(text)+'.wav';let c=null;
     try{c=await caches.open('gemtts');const r=await c.match(url);if(r){const b=await r.blob();GEMA.set(k,b);return b}}catch(e){}
     let gone=[];try{gone=JSON.parse(LS.get('dictGemTtsGone')||'[]')}catch(e){}
     const last=LS.get('dictGemTtsModel'),ms=GTTSM.filter(m=>!gone.includes(m)).sort((a,b)=>(b===last)-(a===last));
     GTTS.busy++;try{for(const m of ms){const ac=new AbortController(),to=setTimeout(()=>ac.abort(),20000);
       try{const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent',{method:'POST',signal:ac.signal,headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
-          body:JSON.stringify({contents:[{parts:[{text:'Read aloud in natural, clear Israeli Hebrew: '+text}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:v}}}}})});
+          body:JSON.stringify({contents:[{parts:[{text:(en?'Read aloud in natural, clear American English: ':'Read aloud in natural, clear Israeli Hebrew: ')+text}]}],generationConfig:{responseModalities:['AUDIO'],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:v}}}}})});
         if(r.status===404){gone.push(m);LS.set('dictGemTtsGone',JSON.stringify(gone));continue}
         if(!r.ok){let msg='';try{msg=((await r.json()).error||{}).message||''}catch(e){}GTTS.err=r.status===429?'נגמרה המכסה החינמית של הקול של ג׳מיני (מתחדשת מחר) – בינתיים מקריא הקול של הטלפון.':'הקול של ג׳מיני לא ענה ('+r.status+(msg?': '+msg.slice(0,120):'')+') – מקריא הקול של הטלפון.';continue}
         const j=await r.json(),part=(((j.candidates||[])[0]||{}).content||{parts:[]}).parts.find(q=>q.inlineData);if(!part){GTTS.err='הקול של ג׳מיני החזיר תשובה בלי שמע.';continue}
@@ -971,9 +975,9 @@ function gemAudio(text){const v=heGem,k=v+'|'+text;if(!v||!text)return Promise.r
     return null}finally{GTTS.busy--;gemStatus()}})();
   GEMP.set(k,p);p.finally(()=>GEMP.delete(k));return p}
 /* resolves false when there is no Gemini clip (the caller then uses the phone's voice) */
-async function gemSay(text,rate){const b=await Promise.race([gemAudio(text),wait(9000).then(()=>null)]);if(!b)return false;
+async function gemSay(text,rate,v=heGem,en=false){const b=await Promise.race([gemAudio(text,v,en),wait(9000).then(()=>null)]);if(!b)return false;
   const h=fnv(text);PRE.set('g'+h,URL.createObjectURL(b));return(await playFile('g',text,Math.max(.7,Math.min(1.3,(rate||.95)/.95))))!==false}
-function gemStatus(){const el=document.getElementById('gemSt');if(el)el.textContent=heGem?(GTTS.busy?'⏳ מכין את הקול של ג׳מיני…':GTTS.err):''}
+function gemStatus(){const el=document.getElementById('gemSt');if(el)el.textContent=heGem||enGem?(GTTS.busy?'⏳ מכין את הקול של ג׳מיני…':GTTS.err):''}
 /* the key is saved on this device and in the account, so every device has it */
 function setGKey(v){LS.set('dictGemKey',v);LS.set('dictGemKeyT',JSON.stringify([v,Date.now()]));dirty()}
 /* one-tap setup link: …/#gk=<key> saves the key and removes it from the address */
@@ -1190,6 +1194,7 @@ async function say(text,lang,rate){if(!text)return;AUDT=Date.now();
   /* give the phone time to switch from the microphone back to the speaker, or the start of the speech is cut */
   const gap=200-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
   /* English word or sentence: recorded file (audible even on silent); Hebrew and missing files: device voice */
+  if(lang==='en-US'&&enGem&&GKEY()&&S.screen==='car'&&await gemSay(text,rate,enGem,true))return;
   if(lang==='en-US'&&(await playFile(WORDSET.has(text)?'w':'s',text))!==false)return;
   if(lang==='he-IL'&&gemOn()&&S.screen==='car'&&await gemSay(text,rate))return;
   if(!TTS)return;
@@ -1385,7 +1390,8 @@ function speakTip(t){return String(t||'').replace(/^[^–]*[A-Za-z][^–]*–\s*
   .replace(/[A-Za-z][A-Za-z'’ \-]*[A-Za-z]|[A-Za-z]/g,' ').replace(/[→⇒➡←⬅]/g,', ').replace(/\s*=\s*/g,', כלומר ').replace(/\+/g,' ו').replace(/['"״׳]/g,'').replace(/\s*\/\s*/g,', ').replace(/\s+/g,' ').replace(/(,\s*)+/g,', ').trim()}
 const carMean=w=>w.h.join(', ').replace(/ \/ /g,', ');
 /* the Gemini clips of this word and the next are made while the English plays */
-function gemPre(i){if(!gemOn())return;[i,i+1].forEach(k=>{const w=CAR.deck[k];if(!w)return;const x=EXTRA[w.xid||w.id]||{},t=speakTip(x.tip);gemAudio(carMean(w)).then(()=>t&&gemAudio('טיפ לזכירה: '+t))})}
+function gemPre(i){if(!GKEY())return;[i,i+1].forEach(k=>{const w=CAR.deck[k];if(!w)return;const x=EXTRA[w.xid||w.id]||{},t=speakTip(x.tip);
+  (enGem?gemAudio(w.e,enGem,true).then(()=>w.s&&gemAudio(w.s,enGem,true)):Promise.resolve()).then(()=>heGem&&gemAudio(carMean(w))).then(()=>heGem&&t&&gemAudio('טיפ לזכירה: '+t))})}
 function startCar(list,name,from,key,at){if(!list.length)return;
   CAR={key,deck:list,i:Math.min(at||0,list.length-1),name,from,play:true,tok:0,step:'',rev:false};saveCar();S.active=key;go({screen:'car'});carPlay(true)}
 function carStop(){if(!CAR)return;CAR.play=false;CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}keepAlive(false);try{V.lock&&V.lock.release()}catch(e){}V.lock=null;carMedia()}
@@ -1447,16 +1453,25 @@ function carMedia(){const ms=navigator.mediaSession;if(!ms)return;try{
   ms.playbackState=CAR.play&&!CAR.wait?'playing':'paused'}catch(e){}}
 /* ⚙ קול ומהירות: which Hebrew voice of the phone reads, and how fast the tips are read */
 function carSettings(){const vs=heVoices();
-  return `<div class="carset"><p class="lbl">הקול שמקריא בעברית</p>
+  return `<div class="carset"><div class="carsethd"><b>⚙ קול ומהירות</b><button class="x" id="cSetX" aria-label="סגירת ההגדרות">✕</button></div><p class="lbl">הקול שמקריא בעברית</p>
     <select id="heSel"><optgroup label="הקול של הטלפון">${vs.map(v=>`<option value="${esc(vid(v))}"${!heGem&&heVoice&&vid(heVoice)===vid(v)?' selected':''}>${esc(heLabel(v))}</option>`).join('')||'<option disabled>לא נמצא קול עברי במכשיר</option>'}</optgroup>
       <optgroup label="קול טבעי של ג׳מיני (צריך אינטרנט, בניסיון)">${GEMV.map(([n,d])=>`<option value="gem:${n}"${heGem===n?' selected':''}>ג׳מיני – ${d}</option>`).join('')}</optgroup></select>
     <p class="hint" id="gemSt">${heGem?esc(GTTS.busy?'⏳ מכין את הקול של ג׳מיני…':GTTS.err):''}</p>
     ${heGem?'<p class="hint">הקול של ג׳מיני מוקלט פעם אחת לכל פירוש וטיפ ונשמר בטלפון. אם אין אינטרנט או שהמכסה היומית נגמרה – מקריא הקול של הטלפון.</p>':vs.some(v=>vq(v)>0)?'':'<p class="hint">כרגע יש בטלפון רק את כרמית הרגילה.</p>'}
     <button class="link" id="heTry">השמעת דוגמה</button>
-    <p class="hint">קול איכותי יותר באייפון: הגדרות ← נגישות ← תוכן מוקרא ← קולות ← עברית ← להוריד את "כרמית (משופר)". אחרי ההורדה לסגור ולפתוח את האתר ולבחור אותו כאן.</p>
-    <p class="lbl">מהירות ההקראה של התרגום והטיפים</p><div class="seg">${CRATES.map(([n,r])=>`<button data-crate="${r}" aria-pressed="${Math.abs(CRATE-r)<.01}">${n}</button>`).join('')}</div></div>`}
+    ${heGem?'':'<p class="hint">קול איכותי יותר באייפון: הגדרות ← נגישות ← תוכן מוקרא ← קולות ← עברית ← להוריד את "כרמית (משופר)". אחרי ההורדה לסגור ולפתוח את האתר ולבחור אותו כאן.</p>'}
+    <p class="lbl">הקול שמקריא באנגלית (המילה והמשפט)</p>
+    <select id="enSel"><option value=""${enGem?'':' selected'}>ההקלטות הרגילות</option><optgroup label="קול טבעי של ג׳מיני (צריך אינטרנט, בניסיון)">${GEMV.map(([n,d])=>`<option value="gem:${n}"${enGem===n?' selected':''}>ג׳מיני – ${d}</option>`).join('')}</optgroup></select>
+    ${enGem?'<p class="hint">גם האנגלית בקול של ג׳מיני נוצרת פעם אחת לכל מילה ומשפט ונשמרת בטלפון, אבל זה מוסיף בקשות למכסה היומית. אם אין – מתנגנות ההקלטות הרגילות.</p>':''}
+    <button class="link" id="enTry">השמעת דוגמה באנגלית</button>
+    <p class="lbl">מהירות ההקראה של התרגום והטיפים</p><div class="seg">${CRATES.map(([n,r])=>`<button data-crate="${r}" aria-pressed="${Math.abs(CRATE-r)<.01}">${n}</button>`).join('')}</div>
+    <button class="btn secondary" id="cSetDone">סגירת ההגדרות</button></div>`}
 function heSample(txt){carStop();try{speechSynthesis.cancel()}catch(e){}draw();if(gemOn()){gemStatus();gemSay(txt,CRATE).then(ok=>{gemStatus();if(!ok)sayNow(txt,'he-IL',()=>{},false,CRATE)});setTimeout(gemStatus,50)}else sayNow(txt,'he-IL',()=>{},false,CRATE)}
-function bindCarSettings(){const sel=$('heSel');if(sel)sel.onchange=()=>{LS.set('dictHeVoice',sel.value);pickHe();heSample('כך אני נשמעת. טיפ לזכירה: הכלב רץ מהר.')};
+function enSample(){carStop();draw();const w=CAR&&CAR.deck[CAR.i],t=w?w.e:'good morning';
+  if(enGem&&GKEY()){setTimeout(gemStatus,50);gemSay(t,1,enGem,true).then(ok=>{gemStatus();if(!ok)speak(t)})}else speak(t)}
+function bindCarSettings(){const es=$('enSel');if(es)es.onchange=()=>{LS.set('dictEnVoice',es.value);enGem=es.value.startsWith('gem:')?es.value.slice(4):null;enSample()};
+  const et=$('enTry');if(et)et.onclick=enSample;const cx=()=>{CAR.set=false;draw()};['cSetX','cSetDone'].forEach(i=>{const b=$(i);if(b)b.onclick=cx});
+  const sel=$('heSel');if(sel)sel.onchange=()=>{LS.set('dictHeVoice',sel.value);pickHe();heSample('כך אני נשמעת. טיפ לזכירה: הכלב רץ מהר.')};
   const t=$('heTry');if(t)t.onclick=()=>heSample('כך אני נשמעת. טיפ לזכירה: הכלב רץ מהר.');
   app.querySelectorAll('[data-crate]').forEach(b=>b.onclick=()=>{CRATE=+b.dataset.crate;LS.set('dictCarRate',String(CRATE));draw();try{speechSynthesis.cancel()}catch(e){}heSample('טיפ לזכירה: הכלב רץ מהר.')})}
 function carScreen(){const n=CAR.deck.length;
@@ -1475,7 +1490,7 @@ function carScreen(){const n=CAR.deck.length;
     <div class="sticky carbar">
       ${CAR.wait?'<p class="carwait">סמני אם ידעת את המילה – ואז עוברים למילה הבאה</p>':''}
       <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי<small>ועוברים למילה הבאה</small></button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי<small>ועוברים למילה הבאה</small></button></div>
-      <div class="carnav"><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירת ההקראה</small>':'▶<small>'+(CAR.wait?'להקריא שוב את המילה':'המשך ההקראה')+'</small>'}</button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">⚙<small>קול ומהירות</small></button></div>
+      <div class="carnav"><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירת ההקראה</small>':'▶<small>'+(CAR.wait?'להקריא שוב את המילה':'המשך ההקראה')+'</small>'}</button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">${CAR.set?'✕<small>סגירת ההגדרות</small>':'⚙<small>קול ומהירות</small>'}</button></div>
 
       <p class="carhint">בכפתורי ההגה / האוזניות: ⏭ הבא = ידעתי · ⏮ הקודם = לא ידעתי · ⏯ = עצירה / המשך</p></div>
   </div>`;
