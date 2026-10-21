@@ -851,7 +851,9 @@ function prefetchAudio(kind,text){const key=kind+fnv(text);if(PRE.has(key))retur
 function prefetchWords(from,n,list){list=list||(Q&&Q.list);if(!list)return;for(let j=from;j<Math.min(list.length,from+(n||3));j++){const w=list[j];prefetchAudio(WORDSET.has(w.e)?'w':'s',w.e);if(w.s)prefetchAudio(WORDSET.has(w.s)?'w':'s',w.s)}}
 function stopAudio(){const a=AU.el;if(a){try{a.pause()}catch(e){}}if(AU.end){const f=AU.end;f(null)}}
 /* play audio/<kind>/<hash>.mp3; resolves true when it played to the end, false if no file could be played, null if stopped */
-function playFile(kind,text,rate){stopAudio();const a=audioEl(),h=fnv(text);
+/* when the last piece of audio started (used to ignore iPhone's automatic pause between parts in מצב רכב) */
+var AUDT=0;
+function playFile(kind,text,rate){AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
   const pre=PRE.get(kind+h);
   return new Promise(res=>{let i=pre?-1:AU.base,timer=null;
     const fin=ok=>{if(AU.end!==done)return;AU.end=null;clearTimeout(timer);a.onended=a.onerror=a.onplaying=null;res(ok)};
@@ -1355,7 +1357,7 @@ let V={on:false,token:0,status:'',lock:null,ac:null,miss:0};
 function setStatus(t){V.status=t;const el=$('vbarTxt');if(el)el.textContent=t}
 /* iOS: speech only plays if the first utterance starts inside the tap, never right after cancel(), and not while the mic is still closing */
 /* iOS sometimes leaves the speech queue stuck after other audio played: if nothing starts within 1.5 s, reset and try once more */
-function sayNow(text,lang,res,retry,rate){try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;if(lang==='he-IL'&&heVoice)u.voice=heVoice;u.rate=rate||(lang==='he-IL'?1.1:.85);
+function sayNow(text,lang,res,retry,rate){AUDT=Date.now();try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;if(lang==='he-IL'&&heVoice)u.voice=heVoice;u.rate=rate||(lang==='he-IL'?1.1:.85);
     let done=false,started=false;const fin=()=>{if(!done){done=true;clearTimeout(t1);clearTimeout(t2);res()}};u.onstart=()=>{started=true};u.onend=fin;u.onerror=fin;
     const t1=setTimeout(()=>{if(!started&&!done&&!retry&&!speechSynthesis.speaking){done=true;clearTimeout(t2);try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>sayNow(text,lang,res,true,rate),100)}},1500);
     const t2=setTimeout(fin,text.length*300/Math.min(1,rate||1)+5000);try{speechSynthesis.resume()}catch(e){}speechSynthesis.speak(u)}catch(e){res()}}
@@ -1365,7 +1367,7 @@ async function sayAll(parts,alive,rate){const chunks=[];let cur='';for(const p o
   for(const c of chunks){await say(c,'he-IL',rate);if(alive&&!alive())return false}return true}
 const HNUM=['אחד','שתיים','שלוש','ארבע','חמש','שש','שבע','שמונה','תשע','עשר'];
 const heOpt=o=>o.replace(/ \/ /g,', ');
-async function say(text,lang,rate){if(!text)return;
+async function say(text,lang,rate){if(!text)return;AUDT=Date.now();
   /* give the phone time to switch from the microphone back to the speaker, or the start of the speech is cut */
   const gap=200-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
   /* English word or sentence: recorded file (audible even on silent); Hebrew and missing files: device voice */
@@ -1601,7 +1603,10 @@ function carGo(d){if(!CAR)return;const was=CAR.play;CAR.tok++;stopAudio();try{sp
 function carMedia(){const ms=navigator.mediaSession;if(!ms)return;try{
   if(!CAR||S.screen!=='car'){['play','pause','nexttrack','previoustrack'].forEach(a=>ms.setActionHandler(a,null));return}
   const w=CAR.deck[CAR.i];if(w&&window.MediaMetadata)ms.metadata=new MediaMetadata({title:w.e,artist:carMean(w),album:'מצב רכב'});
-  ms.setActionHandler('play',()=>{if(!CAR.play||CAR.wait){carPlay(false);draw()}});ms.setActionHandler('pause',()=>{carStop();draw()});
+  ms.setActionHandler('play',()=>{if(!CAR.play||CAR.wait){carPlay(false);draw()}});
+  /* iPhone sends a "pause" by itself when the reading switches between the recorded English and the Hebrew voice:
+     a pause within 2.5 s of a new part starting is ignored, so the reading goes on; a real tap later still stops it */
+  ms.setActionHandler('pause',()=>{if(CAR.play&&!CAR.wait&&Date.now()-(AUDT||0)<2500)return;carStop();draw()});
   ms.setActionHandler('nexttrack',()=>carKnow('y'));ms.setActionHandler('previoustrack',()=>carKnow('n'));
   ms.playbackState=CAR.play&&!CAR.wait?'playing':'paused'}catch(e){}}
 /* ⚙ קול ומהירות: which Hebrew voice of the phone reads, and how fast the tips are read */
