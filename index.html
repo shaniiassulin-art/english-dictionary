@@ -232,6 +232,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .screen.car{gap:6px}.car .xfull{margin:0;gap:6px}.car .xbox{padding:8px 12px;margin:0}.car .xbox h4{margin:0 0 4px}
 .car .carbar{padding-top:6px;padding-bottom:6px;gap:6px}.car .carrow .btn{padding-top:7px;padding-bottom:7px;min-height:0}.car .carnav .btn{min-height:44px;padding:5px 2px}
 .carset .carhint{font-size:.8rem;opacity:.75}
+.caruse summary{display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none}.caruse summary::-webkit-details-marker{display:none}.caruse summary h4{margin:0}.caruse .uarr{font-size:1.3rem;transition:transform .2s;color:var(--accent)}.caruse[open] .uarr{transform:rotate(180deg)}.caruse[open] summary{margin-bottom:6px}
 .carwait{margin:0;text-align:center;font-weight:700;color:var(--accent)}.carset{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin:10px 0;display:flex;flex-direction:column;gap:8px}.carset select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink)}.carset .lbl{margin:4px 0 0;font-weight:700}.carhint{margin:0;text-align:center;font-size:.78rem;opacity:.7}.car .xfull{margin-bottom:150px}.carbar .btn{flex:1}.carbar #cPlay{flex:2}
 .cat-panel{display:flex;flex-direction:column;gap:8px}.cat-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cat-row .btn{width:100%}.cat-links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
 .cat-panel .cat-N{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--bad) 35%,transparent)}.cat-panel .cat-Y{background:var(--ok-soft);color:var(--ok);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--ok) 35%,transparent)}.cat-panel .cat-U{background:var(--bg);color:var(--ink);border:1.5px solid var(--line)}
@@ -1715,6 +1716,11 @@ function bindCarSettings(){const es=$('enSel');if(es)es.onchange=()=>{LS.set('di
   const sel=$('heSel');if(sel)sel.onchange=()=>{LS.set('dictHeVoice',sel.value);pickHe();heSample('כך אני נשמעת. טיפ לזכירה: הכלב רץ מהר.')};
   const t=$('heTry');if(t)t.onclick=()=>heSample('כך אני נשמעת. טיפ לזכירה: הכלב רץ מהר.');
   app.querySelectorAll('[data-crate]').forEach(b=>b.onclick=()=>{CRATE=+b.dataset.crate;LS.set('dictCarRate',String(CRATE));draw();try{speechSynthesis.cancel()}catch(e){}heSample('טיפ לזכירה: הכלב רץ מהר.')})}
+/* car mode: the tip in full, the usage notes folded behind an arrow (so the screen fits without scrolling) */
+function carX(w){const x=EXTRA[w.xid||w.id]||{};let h='';
+  if(x.tip)h+=`<div class="xbox"><h4>💡 טיפ לזכירה</h4>${xfmt(x.tip,1)}</div>`;
+  if(x.use)h+=`<details class="xbox caruse" id="carUse"${CAR.useOpen===w.id?' open':''}><summary><h4>📌 דגשים</h4><span class="uarr">▾</span></summary>${xuse(x.use)}</details>`;
+  return h?`<div class="xfull">${h}</div>`:''}
 function carScreen(){const n=CAR.deck.length;
   if(CAR.i>=n){S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">🚗</div><h2 style="margin-top:14px">סיימת להאזין לכל ${n} המילים</h2></div><button class="btn secondary" id="b">חזרה</button></div>`;
     $('b').onclick=()=>go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'});return}
@@ -1727,7 +1733,7 @@ function carScreen(){const n=CAR.deck.length;
     <div class="word" data-cstep="w"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
     ${w.s?`<div class="sentence" data-cstep="s"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(w.s,w.e)}</span>${trPart(w)}</div></div>`:''}
     ${CAR.rev?`<div class="carmean" data-cstep="h"><p class="lbl">תרגום המילה</p><p class="cm">${w.h.map(esc).join('<br>')}</p>${w.others.length?`<p class="oth">פירושים נוספים: ${esc(numText(w.others))}</p>`:''}</div>
-    <div data-cstep="t">${xfull(w)}</div>`:`<div class="carmean think" data-cstep="p"><p class="lbl">תרגום המילה</p><p class="cm">🤔 מה הפירוש?</p><button class="link" id="cRev">הצגת התשובה</button></div>`}
+    <div data-cstep="t">${carX(w)}</div>`:`<div class="carmean think" data-cstep="p"><p class="lbl">תרגום המילה</p><p class="cm">🤔 מה הפירוש?</p><button class="link" id="cRev">הצגת התשובה</button></div>`}
     <div class="sticky carbar">
       ${CAR.wait?'<p class="carwait">סמני אם ידעת את המילה – ואז עוברים למילה הבאה</p>':''}
       <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי<small>ועוברים למילה הבאה</small></button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי<small>ועוברים למילה הבאה</small></button></div>
@@ -1738,7 +1744,7 @@ function carScreen(){const n=CAR.deck.length;
   $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
   $('cPlay').onclick=()=>{if(CAR.play&&!CAR.wait)carStop();else if(CAR.needTap||!CAR.unl){carRestart(true);return}else{carPlay(true)}draw()};
-  $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};$('cPrev').onclick=()=>carGo(-1);$('cNext').onclick=()=>carGo(1);bindCarSettings();const ct=$('cTap');if(ct)ct.onclick=()=>carRestart(true);
+  $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};$('cPrev').onclick=()=>carGo(-1);const cu=$('carUse');if(cu)cu.ontoggle=()=>{CAR.useOpen=cu.open?w.id:null};$('cNext').onclick=()=>carGo(1);bindCarSettings();const ct=$('cTap');if(ct)ct.onclick=()=>carRestart(true);
   $('cY').onclick=()=>carKnow('y');$('cN').onclick=()=>carKnow('n');
   const rv=$('cRev');if(rv)rv.onclick=()=>{CAR.rev=true;const was=CAR.play;if(was){CAR.tok++;stopAudio();try{speechSynthesis.cancel()}catch(e){}}draw();if(was)carPlay(true)};
   carMark();carMedia()}
