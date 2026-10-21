@@ -856,11 +856,13 @@ var AUDT=0;
 function playFile(kind,text,rate){AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
   const pre=PRE.get(kind+h);
   return new Promise(res=>{let i=pre?-1:AU.base,timer=null;
-    const fin=ok=>{if(AU.end!==done)return;AU.end=null;clearTimeout(timer);a.onended=a.onerror=a.onplaying=null;res(ok)};
+    const fin=ok=>{if(AU.end!==done)return;AU.end=null;clearTimeout(timer);a.onended=a.onerror=a.onplaying=a.onpause=null;res(ok)};
     const done=ok=>fin(ok);AU.end=done;
     const next=()=>{if(i>=AUD_BASES.length){fin(false);return}
       a.onerror=()=>{if(AU.end!==done)return;if(i===-1){i=AU.base;next();return}if(i===0&&!AU.ok0&&++AU.miss0>=2)AU.base=1;i++;next()};
       a.onplaying=()=>{if(i===0)AU.ok0=true};a.onended=()=>fin(true);
+      /* iPhone sometimes pauses the recording by itself (another sound starting): play on instead of stalling */
+      a.onpause=()=>{if(AU.end!==done||a.ended)return;setTimeout(()=>{if(AU.end===done&&a.paused&&!a.ended){const p=a.play();p&&p.catch(()=>fin(a.currentTime>0))}},500)};
       clearTimeout(timer);timer=setTimeout(()=>fin(a.currentTime>0),20000);
       a.src=i===-1?pre:AUD_BASES[i]+kind+'/'+h+'.mp3';try{a.defaultPlaybackRate=a.playbackRate=rate||1;a.preservesPitch=true}catch(e){}
       const p=a.play();p&&p.catch(e=>{if(AU.end!==done)return;if(e&&e.name==='NotAllowedError')fin(false)})};
@@ -1577,7 +1579,9 @@ function carPlay(inTap){if(!CAR)return;CAR.play=true;CAR.wait=false;const tk=++C
   try{if(navigator.wakeLock&&!V.lock)navigator.wakeLock.request('screen').then(l=>V.lock=l).catch(()=>{})}catch(e){}
   prefetchWords(CAR.i,4,CAR.deck);carMedia();
   /* iOS: the device voice must speak once inside a tap before it may speak by itself (only the first time; never right after cancel) */
-  if(inTap&&TTS&&!CAR.unl){CAR.unl=true;sayNow('מתחילים','he-IL',()=>{})}
+  /* the word starts only after "מתחילים" has finished: on iPhone the device voice and the recorded word must not start together,
+     or the recording is cut after a moment and the reading stalls */
+  if(inTap&&TTS&&!CAR.unl){CAR.unl=true;sayNow('מתחילים','he-IL',()=>setTimeout(()=>{if(CAR&&CAR.play&&CAR.tok===tk)carLoop(tk)},300));return}
   carLoop(tk)}
 async function carLoop(tk){const alive=()=>CAR&&CAR.play&&CAR.tok===tk&&S.screen==='car';
   while(alive()&&CAR.i<CAR.deck.length){const w=CAR.deck[CAR.i],x=EXTRA[w.xid||w.id]||{};prefetchWords(CAR.i,4,CAR.deck);
