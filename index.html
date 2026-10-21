@@ -990,6 +990,11 @@ function catUpdate(key,ws,f){const ss=SESS[key];if(!ss)return;const byId={get:id
   Object.assign(ss,{ids:all.map(o=>o.id),i:ni,st,base:(ss.base||0)+gone,mist:(ss.mist||[]).filter(id=>all.some(o=>o.id===id)),t:Date.now()});
   ss.marks=Object.fromEntries(Object.entries(marks).filter(([id])=>all.some(o=>o.id===id)));saveSess()}
 function bindQuizPanel(key,ws,name,from){
+  /* the 🚗 מצב רכב switch of this panel: turning it on starts the car mode at once (and the voice), on these words – from where it stopped if there is a saved place */
+  const ct=$('carTog');if(ct&&!ct.dataset.bound){ct.dataset.bound='1';ct.onclick=()=>{
+    if(CARON){CARON=false;LS.set('dictCar','0');draw();return}
+    CARON=true;LS.set('dictCar','1');const cs=SESS['C'+key];
+    if(cs&&cs.kind==='car'&&cs.ids&&cs.ids.length)startCar(objs(cs.ids),cs.name||name,from,key,cs.i);else startCar(pickList(ws),name,from,key)}}
   const cn=app.querySelector(`[data-carnew="${key}"]`);if(cn)cn.onclick=()=>startCar(pickList(ws),name,from,key);
   const cr=app.querySelector(`[data-carres="${key}"]`);if(cr)cr.onclick=()=>{const cs=SESS['C'+key];startCar(objs(cs.ids),cs.name||name,from,key,cs.i)};
   const st=app.querySelector(`[data-start="${key}"]`);if(st)st.onclick=()=>startQuiz(pickList(ws),name,from,key);
