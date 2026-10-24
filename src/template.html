@@ -39,6 +39,7 @@ h2{font-size:1.4rem;font-weight:700}
 .today .td-num{font-size:1.05rem}.today .td-num b{font-size:1.5rem}.today.done{background:var(--ok-soft)}.today.done .bar2 i,.days li.done .bar2 i{background:var(--ok)}
 .days{list-style:none;margin:0;padding:0}.days li{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--line)}.days .bar2{grid-column:1/-1;display:block;background:var(--surface)}.today .bar2{display:block}.days .dn{font-weight:700}.days li.done .dn{color:var(--ok)}
 .totop{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;z-index:20;width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:var(--bg);font-size:1.4rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}.totop[hidden]{display:none}
+.reload{position:fixed;top:50%;inset-inline-end:4px;z-index:20;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--accent);font-size:1.25rem;line-height:1;opacity:.7;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer;padding:0}.reload.spin{animation:rspin .8s linear infinite;opacity:1}@keyframes rspin{to{transform:rotate(360deg)}}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 /* calm look: lighter weights, hairline borders, softer shadows */
 .btn{font-weight:600;border-radius:12px;box-shadow:none}
@@ -684,6 +685,10 @@ function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign
 const toTop=document.createElement('button');toTop.className='totop';toTop.setAttribute('aria-label','חזרה לראש הדף');toTop.textContent='↑';toTop.hidden=true;
 toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});document.body.appendChild(toTop);
 window.addEventListener('scroll',()=>{toTop.hidden=window.scrollY<500},{passive:true});
+/* ⟳ on every screen: save, then reload the newest version of the site (cache-busting address), instead of leaving and coming back */
+const reBtn=document.createElement('button');reBtn.className='reload';reBtn.setAttribute('aria-label','רענון האתר ועדכון לגרסה החדשה');reBtn.textContent='⟳';
+reBtn.onclick=async()=>{reBtn.classList.add('spin');try{saveScroll()}catch(e){}try{if(SYNC.timer)await Promise.race([push(),wait(2000)])}catch(e){}
+  const u=location.pathname+'?v='+Date.now()+location.hash;location.replace(u)};document.body.appendChild(reBtn);
 /* shrink the font of an English word that does not fit on its line, instead of splitting it */
 const FITSEL='.word .w,.card .w,.words .e,.si-e,.mist .e';
 function fitWords(root){(root||document).querySelectorAll(FITSEL).forEach(el=>{
