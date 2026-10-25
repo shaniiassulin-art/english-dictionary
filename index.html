@@ -360,6 +360,8 @@ input,textarea,select{font-size:max(16px,1em)}
 .sent-item{border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
 .sent-item.done{border-color:var(--ok);background:var(--ok-soft)}
 .si-top{display:flex;align-items:center;gap:10px}
+.sent-sort{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:6px 0 10px;font-size:.88rem}.sent-sort .seg{flex:1;min-width:240px}.sent-sort .seg button{font-size:.85rem;padding:6px 8px}
+.sst{font-size:.72rem;font-weight:700;padding:1px 7px;border-radius:999px;white-space:nowrap}.sst.ok{background:var(--ok-soft);color:var(--ok)}.sst.bad{background:var(--bad-soft);color:var(--bad)}
 .si-idea{margin:0 0 4px}.si-idea .link{min-height:32px;padding:2px 4px}.idea-list{margin:4px 0 2px;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}.idea-list li{background:var(--accent-soft);border-radius:10px;padding:8px 12px;font-size:.98rem;line-height:1.4}.idea-hint{margin:2px 0 0;font-size:.8rem;color:var(--muted)}
 .si-chk .link{min-height:32px;padding:2px 4px}.chk-list{margin:4px 0 0;padding:0 18px 0 0;display:flex;flex-direction:column;gap:6px;font-size:.92rem}.chk-list li.warn{color:var(--bad)}
 .chk-bad{color:var(--bad);text-decoration:line-through;font-family:var(--en)}.chk-fix{border:1.5px solid var(--ok);background:var(--ok-soft);color:var(--ok);border-radius:8px;padding:2px 8px;font:inherit;font-family:var(--en);font-weight:700;cursor:pointer}
@@ -1354,8 +1356,9 @@ function sentScreen(){const L=sentList();
     <div id="expBox"></div><div id="aiBox"></div>
     <button class="btn secondary trgo" id="trOpen">🌐 תרגום מילה או משפט</button>
     <p class="hint center">${GKEY()?'🧠 בדיקה חכמה פעילה (גם משמעות) · <button class="link small-link" data-aiset="1">הגדרה</button>':'<button class="link small-link" data-aiset="1">🧠 להפעלת בדיקה חכמה שבודקת גם משמעות</button>'}</p>
-    <ol class="sent-list">${L.w.map(([e,h],i)=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
-      <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
+    <div class="sent-sort"><span>סדר:</span><div class="seg"><button data-ssort="0" aria-pressed="${!SSORT}">לפי הרשימה</button><button data-ssort="1" aria-pressed="${SSORT}">קודם מה שצריך תיקון</button></div>${SSORT?'<button class="link small-link" id="sResort">🔃 למיין שוב</button>':''}</div>
+    <ol class="sent-list">${sentOrder(L).map(([e,h,i])=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
+      <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><span class="si-st" data-sst="${esc(id)}">${sentStHtml(id)}</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
       <div class="si-idea"><button class="link" data-ideas="${esc(id)}" data-w="${esc(e)}">💡 רעיונות למשפט</button><div id="idea-${esc(id)}">${IDEAS[id]&&!IDEAS[id].pend?ideasHtml(id):''}</div></div>
       <textarea class="si-en" dir="ltr" rows="1" data-id="${esc(id)}" data-f="en" placeholder="המשפט שלי באנגלית" aria-label="משפט באנגלית עם ${esc(e)}" autocapitalize="sentences" autocomplete="off" autocorrect="on" spellcheck="true" lang="en">${esc(sv(id,'en'))}</textarea>
       <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 ${GKEY()?'בדיקת המשפט (כולל משמעות)':'בדיקת המשפט'}</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]?chkHtml(id,e):''}</div></div>
@@ -1367,12 +1370,22 @@ function sentScreen(){const L=sentList();
       if(t.dataset.f==='en'&&CHK[id]){const li=t.closest('li.sent-item');paintChk(id,li?li.querySelector('[data-w]').dataset.w:'')}}});
   app.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>sayWord(b.dataset.sw,b));
   app.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>checkSentence(b.dataset.chk,b.dataset.w));bindIdeas(app);
+  app.querySelectorAll('[data-ssort]').forEach(b=>b.onclick=()=>{SSORT=b.dataset.ssort==='1';LS.set('dictSentSort',SSORT?'1':'0');draw();window.scrollTo(0,0)});const rs=$('sResort');if(rs)rs.onclick=()=>{draw();window.scrollTo(0,0)};
   $('expBtn').onclick=()=>{EXP=!EXP;sentRefresh();if(EXP)$('expBox').scrollIntoView({block:'nearest',behavior:'smooth'})};
   sentRefresh()}
 /* counter, bar, ✓ marks, export box and texts that changed on another device; the field being typed in is left alone */
+/* sort: sentences not checked yet / changed since the check / checked with mistakes first, then the ones checked and correct.
+   The order is set when the page is drawn (or "למיין שוב"), so a sentence doesn't jump away while she works on it */
+let SSORT=LS.get('dictSentSort')==='1';
+function sentSt(id){const c=CHK[id],t=sv(id,'en').trim();if(!t||!c||!c.ai||c.t.trim()!==t)return '';const j=c.ai;
+  return !(j.mistakes||[]).length&&j.word_present!==false&&j.word_used_correctly!==false?'ok':'bad'}
+function sentStHtml(id){const st=sentSt(id);return st==='ok'?'<span class="sst ok">✓ נבדק ותקין</span>':st==='bad'?'<span class="sst bad">צריך תיקון</span>':''}
+function sentOrder(L){const a=L.w.map(([e,h],i)=>[e,h,i]);if(!SSORT)return a;
+  return a.map(x=>[x,sentSt(sentId(L,x[0]))==='ok'?1:0]).sort((p,q)=>p[1]-q[1]||p[0][2]-q[0][2]).map(x=>x[0])}
 function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentList(),N=L.w.length,n=sentDone(L);
   setHtml($('shCount'),`<b>${n}</b> מתוך ${N}${n===N?' · הכול כתוב ✓':''}`);const bw=(N?n/N*100:0)+'%';if($('shBar').style.width!==bw)$('shBar').style.width=bw;
   app.querySelectorAll('.sent-item').forEach(li=>{const d=!!sv(li.dataset.sid,'en').trim();if(li.classList.contains('done')!==d)li.classList.toggle('done',d)});
+  app.querySelectorAll('[data-sst]').forEach(x=>setHtml(x,sentStHtml(x.dataset.sst)));
   app.querySelectorAll('.sent-item textarea').forEach(t=>{const v=sv(t.dataset.id,t.dataset.f);if(t!==document.activeElement&&t.value!==v){t.value=v;autoGrow(t)}});
   const eb=$('expBtn');if(eb.getAttribute('aria-expanded')!==String(EXP))eb.setAttribute('aria-expanded',EXP);setTxt(eb,EXP?'סגירת הייצוא':'ייצוא המשפטים');
   const box=$('expBox');setHtml(box,EXP?expHtml(L):'');
