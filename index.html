@@ -354,7 +354,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .sh-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .sh-count{font-size:1.05rem}.sh-count b{font-size:1.4rem}
 .btn.small{width:auto;min-height:40px;padding:6px 14px;font-size:.95rem}
-.sent-head .bar2{display:block;background:var(--surface)}
+.sent-head .bar2{display:block;background:var(--surface);margin-top:10px}
 .sent-head .sync-state{margin:0;font-size:.8rem;min-height:1.2em}
 .sent-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
 .sent-item{border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
@@ -1857,10 +1857,22 @@ const SCR={restoring:true,t:null};
 function saveScroll(){if(SCR.restoring)return;LS.set('dictScroll',JSON.stringify({k:scrKey(),y:Math.round(window.scrollY)}))}
 window.addEventListener('scroll',()=>{clearTimeout(SCR.t);SCR.t=setTimeout(saveScroll,150)},{passive:true});
 window.addEventListener('pagehide',saveScroll);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveScroll()});
+/* sentences page: the text cursor is remembered (which box + where in it) and put back after leaving / reloading */
+const CARET_K='dictCaret';
+function saveCaret(t){if(!t||!t.dataset||!t.dataset.id)return;try{LS.set(CARET_K,JSON.stringify({id:t.dataset.id,f:t.dataset.f,a:t.selectionStart,b:t.selectionEnd}))}catch(e){}}
+function restoreCaret(){if(S.screen!=='sent')return;let c=null;try{c=JSON.parse(LS.get(CARET_K)||'null')}catch(e){}if(!c)return;
+  const t=app.querySelector(`.sent-item textarea[data-id="${CSS.escape(c.id)}"][data-f="${c.f}"]`);if(!t||document.activeElement===t)return;
+  const n=t.value.length,a=Math.min(c.a??n,n),b=Math.min(c.b??a,n);
+  try{t.focus({preventScroll:true});t.setSelectionRange(a,b)}catch(e){}
+  const r=t.getBoundingClientRect();if(r.top<90||r.bottom>innerHeight-20)t.scrollIntoView({block:'center'})}
+document.addEventListener('selectionchange',()=>{const t=document.activeElement;if(t&&t.matches&&t.matches('.sent-item textarea'))saveCaret(t)});
+document.addEventListener('input',e=>{if(e.target.matches&&e.target.matches('.sent-item textarea'))saveCaret(e.target)},true);
+document.addEventListener('focusin',e=>{if(e.target.matches&&e.target.matches('.sent-item textarea'))saveCaret(e.target)});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(restoreCaret,300)});
 function restoreScroll(){let v=null;try{v=JSON.parse(LS.get('dictScroll')||'null')}catch(e){}
-  const done=()=>{SCR.restoring=false};if(!v||v.k!==scrKey()||!v.y){done();return}
+  const done=()=>{SCR.restoring=false};if(!v||v.k!==scrKey()||!v.y){done();setTimeout(restoreCaret,300);return}
   const to=()=>{app.querySelectorAll('.sent-item textarea').forEach(autoGrow);window.scrollTo(0,v.y)};
-  to();requestAnimationFrame(to);setTimeout(to,150);setTimeout(()=>{to();done()},600);
+  to();requestAnimationFrame(to);setTimeout(to,150);setTimeout(()=>{to();done();restoreCaret()},600);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(SCR.restoring)to()})}
 (function boot(){
   if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
