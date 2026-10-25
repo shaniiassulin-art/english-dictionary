@@ -50,7 +50,8 @@ h2{font-size:1.4rem;font-weight:700}
 .today .td-num{font-size:1.05rem}.today .td-num b{font-size:1.5rem}.today.done{background:var(--ok-soft)}.today.done .bar2 i,.days li.done .bar2 i{background:var(--ok)}
 .days{list-style:none;margin:0;padding:0}.days li{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--line)}.days .bar2{grid-column:1/-1;display:block;background:var(--surface)}.today .bar2{display:block}.days .dn{font-weight:700}.days li.done .dn{color:var(--ok)}
 .totop{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;z-index:20;width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:var(--bg);font-size:1.4rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}.totop[hidden]{display:none}
-.reload{position:fixed;top:50%;inset-inline-end:4px;z-index:20;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--accent);font-size:1.25rem;line-height:1;opacity:.7;box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer;padding:0}.reload.spin{animation:rspin .8s linear infinite;opacity:1}@keyframes rspin{to{transform:rotate(360deg)}}
+.reload{position:fixed;bottom:calc(140px + env(safe-area-inset-bottom,0px));inset-inline-start:20px;z-index:20;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);font-size:1.3rem;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer;padding:0}.reload[hidden]{display:none}.reload.spin,.reload-top.spin{animation:rspin .8s linear infinite}
+.reload-top{font-size:1.25rem;color:var(--accent)}.nav .reload-top{margin-inline-start:auto}.sh-re{margin-inline-start:auto;margin-inline-end:8px}.home-top{min-height:0;margin-bottom:-44px;position:relative;z-index:1}.nav .reload-top+.home-btn{margin-inline-start:0}@keyframes rspin{to{transform:rotate(360deg)}}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
 /* calm look: lighter weights, hairline borders, softer shadows */
 .btn{font-weight:600;border-radius:12px;box-shadow:none}
@@ -931,9 +932,12 @@ const toTop=document.createElement('button');toTop.className='totop';toTop.setAt
 toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});document.body.appendChild(toTop);
 window.addEventListener('scroll',()=>{toTop.hidden=window.scrollY<500},{passive:true});
 /* ⟳ on every screen: save, then reload the newest version of the site (cache-busting address), instead of leaving and coming back */
-const reBtn=document.createElement('button');reBtn.className='reload';reBtn.setAttribute('aria-label','רענון האתר ועדכון לגרסה החדשה');reBtn.textContent='⟳';
-reBtn.onclick=async()=>{reBtn.classList.add('spin');try{saveScroll()}catch(e){}try{if(SYNC.timer)await Promise.race([push(),wait(2000)])}catch(e){}
-  const u=location.pathname+'?v='+Date.now()+location.hash;location.replace(u)};document.body.appendChild(reBtn);
+const reBtn=document.createElement('button');reBtn.className='reload';reBtn.dataset.reload='1';reBtn.hidden=true;reBtn.setAttribute('aria-label','רענון האתר ועדכון לגרסה החדשה');reBtn.textContent='⟳';document.body.appendChild(reBtn);
+async function doReload(b){document.querySelectorAll('[data-reload]').forEach(x=>x.classList.add('spin'));try{saveScroll()}catch(e){}try{if(SYNC.timer)await Promise.race([push(),wait(2000)])}catch(e){}
+  location.replace(location.pathname+'?v='+Date.now()+location.hash)}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-reload]');if(b)doReload(b)});
+/* the floating ⟳ shows only when the top bar has scrolled away (with ↑), on screens without a sticky top bar */
+window.addEventListener('scroll',()=>{reBtn.hidden=window.scrollY<500||['quiz','cards','car','sent'].includes(S.screen)},{passive:true});
 /* shrink the font of an English word that does not fit on its line, instead of splitting it */
 const FITSEL='.word .w,.card .w,.words .e,.si-e,.mist .e';
 function fitWords(root){(root||document).querySelectorAll(FITSEL).forEach(el=>{
@@ -1068,6 +1072,7 @@ function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(
 function home(){
   const k=DW.filter(known).length;
   app.innerHTML=`<div class="screen">
+    <div class="nav home-top"><button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה">⟳</button></div>
     <div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים לתרגול · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
@@ -1113,7 +1118,7 @@ function level(){
 
 const gkey=()=>S.l===PL?'GP'+PWK+'-'+(PRIV.lists[S.g]||{}).n:'G'+S.l+'-'+S.g;
 const lkey=l=>l===PL?'LP'+PWK:'L'+l;
-const HOME='<button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
+const HOME='<button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה">⟳</button><button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
 /* search by English word or Hebrew meaning */
 const snorm=s=>String(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').replace(/[-־'"״׳.,;:()\/]/g,' ').replace(/\s+/g,' ').trim();
 function searchHits(ws,q){q=snorm(q);if(!q)return null;
@@ -1400,7 +1405,7 @@ function sentScreen(){const L=sentList();
     <div class="nav"><button class="back" id="bk">שיעור פרטי</button>${HOME}</div>
     <div><h2>כתיבת משפטים · רשימה ${esc(LN(L))}</h2><p class="sub">לכל מילה כתבי משפט באנגלית. הפירוש בעברית לא חובה. הכול נשמר אוטומטית בחשבון שלך.</p></div>
     <div class="sent-head" id="sentHead">
-      <div class="sh-row"><span class="sh-count" id="shCount"></span><button class="btn small" id="expBtn" aria-expanded="${EXP}">ייצוא המשפטים</button></div>
+      <div class="sh-row"><span class="sh-count" id="shCount"></span><button class="home-btn reload-top sh-re" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה">⟳</button><button class="btn small" id="expBtn" aria-expanded="${EXP}">ייצוא המשפטים</button></div>
       <div class="bar2"><i id="shBar"></i></div>
       <p class="sync-state ${SYNC.state}" id="sentSync">${sentSyncLabel()}</p>
     </div>
