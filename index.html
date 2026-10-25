@@ -387,7 +387,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .si-w{flex:1;display:flex;flex-direction:column;min-width:0}
 .si-e{font-family:var(--en);font-size:1.25rem;font-weight:600;text-align:right;unicode-bidi:isolate}
 .si-h{color:var(--muted);font-size:.95rem}
-.si-ok{color:var(--ok);font-weight:800;visibility:hidden}.sent-item.done .si-ok{visibility:visible}
+.si-ok{color:var(--ok);font-weight:800;visibility:hidden}.sent-item.done .si-ok{visibility:visible}.sent-item.done .si-ok:has(+.si-st .sst){display:none}
 .spk.playing{background:var(--accent);color:var(--accent-ink)}
 .sync-state{min-height:1.4em}.sent-item textarea{width:100%;resize:none;overflow:hidden;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--ink);font-family:var(--he);line-height:1.45;min-height:46px;display:block;touch-action:auto;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .sent-item textarea.si-en{font-family:var(--en);text-align:left}
@@ -1185,8 +1185,15 @@ async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);i
   if(!GKEY()){box.innerHTML='<p class="chk-msg bad">אין מפתח לבדיקה. <button class="link small-link" data-aiset="1">להגדרת המפתח</button></p>';return}
   const run=Date.now();CHK[id]={t:sv(id,'en'),word:e,run,ai:null,aiErr:null,aiPend:true};paintChk(id,e);
   const r=await aiRun(e,t,st=>{if(CHK[id]&&CHK[id].run===run){CHK[id].steps={...st};paintChk(id,e)}});if(!CHK[id]||CHK[id].run!==run)return;
-  Object.assign(CHK[id],r.j?{ai:r.j,aiPend:false,sec:Math.round((Date.now()-run)/1000),mdl:r.mdl}:{aiErr:r.why,aiPend:false});saveChk();paintChk(id,e)}
-function paintChk(id,e){const b=$('chk-'+id);if(b)setHtml(b,chkHtml(id,e))}
+  Object.assign(CHK[id],r.j?{ai:r.j,aiPend:false,sec:Math.round((Date.now()-run)/1000),mdl:r.mdl}:{aiErr:r.why,aiPend:false});saveChk();paintChk(id,e);
+  /* the word is missing / in the wrong context but no similar sentence came back: ask for one */
+  const j=r.j;if(j&&(j.word_present===false||j.word_used_correctly===false)&&!(j.suggestion||'').trim()){CHK[id].sugPend=true;paintChk(id,e);
+    const L=sentList(),row=L.w.find(x=>x[0]===e)||[e,''];
+    const q=await aiRun(e,t,null,{prompt:`A student wrote this English sentence for the word "${e}" (meaning in Hebrew: "${row[1]}"): «${t}». The word is missing or not used in that meaning/context.
+Write ONE sentence as similar as possible to hers (same topic, people and structure) that uses "${e}" (or a form of it) correctly and naturally in the meaning "${row[1]}". Simple English for a beginner.
+Answer ONLY with JSON: {"suggestion":"the sentence","suggestion_hebrew":"its Hebrew translation, regular Hebrew letters only"}`});
+    if(!CHK[id]||CHK[id].run!==run)return;CHK[id].sugPend=false;if(q.j&&q.j.suggestion){j.suggestion=q.j.suggestion;j.suggestion_hebrew=q.j.suggestion_hebrew||''}saveChk();paintChk(id,e)}}
+function paintChk(id,e){const b=$('chk-'+id);if(b)setHtml(b,chkHtml(id,e));const st=document.querySelector(`[data-sst="${CSS.escape(id)}"]`);if(st)setHtml(st,sentStHtml(id))}
 
 function chkHtml(id,e){const c=CHK[id];if(!c)return '';
   const chg=c.t!==sv(id,'en')?'<p class="chk-msg">✏️ שינית את המשפט מאז הבדיקה – לחצי שוב על "בדיקת המשפט" כדי לבדוק את הגרסה החדשה.</p>':'';
@@ -1242,7 +1249,7 @@ async function aiRun(e,t,onStep,opt){const L=sentList(),row=L.w.find(x=>x[0]===e
 Student's sentence: «${t}»
 Check: 1) spelling, grammar, punctuation; 2) is "${e}" (or a form of it) in the sentence; 3) is it used in the meaning "${row[1]}" and in a natural context; 4) does the whole sentence make sense.
 If the word is missing, or used in a wrong meaning or an unnatural context, write a suggestion: a simple, natural sentence that uses "${e}" correctly in the meaning "${row[1]}", staying as close as possible to the student's idea (if the idea cannot fit the word, write a new short everyday sentence).
-Answer ONLY with JSON: {"word_present":true or false,"word_used_correctly":true or false,"context_problem":"if the word is missing or used wrongly: short explanation in simple Hebrew of what is wrong and how the word is really used; else empty","mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","type":"one of: spelling, grammar, punctuation, word, order, capital, other","why":"1–2 simple Hebrew sentences: what exactly is wrong here and why the fix is right (teach her, do not just repeat the fix)","rule":"a short general rule in simple Hebrew she can remember for next time (may quote short English examples), or empty"}],"meaning":"one short sentence in simple Hebrew about the meaning of the word in this sentence","corrected":"the student's sentence with only the spelling/grammar mistakes fixed","hebrew":"Hebrew translation of the corrected sentence","suggestion":"only if the word is missing or used wrongly: a correct sentence with ${e} in the right meaning and context; else empty","suggestion_hebrew":"Hebrew translation of the suggestion, or empty"}
+Answer ONLY with JSON: {"word_present":true or false,"word_used_correctly":true or false,"context_problem":"if the word is missing or used wrongly: short explanation in simple Hebrew of what is wrong and how the word is really used; else empty","mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","type":"one of: spelling, grammar, punctuation, word, order, capital, other","why":"1–2 simple Hebrew sentences: what exactly is wrong here and why the fix is right (teach her, do not just repeat the fix)","rule":"a short general rule in simple Hebrew she can remember for next time (may quote short English examples), or empty"}],"meaning":"one short sentence in simple Hebrew about the meaning of the word in this sentence","corrected":"the student's sentence with only the spelling/grammar mistakes fixed","hebrew":"Hebrew translation of the corrected sentence","suggestion":"REQUIRED whenever word_present or word_used_correctly is false: a sentence as similar as possible to the student's sentence (same topic, people and structure) that uses ${e} correctly in the meaning ${row[1]}; else empty","suggestion_hebrew":"Hebrew translation of the suggestion, or empty"}
 Write all explanations in simple, everyday Hebrew, using only regular Hebrew letters (א–ת) – never Arabic, Yiddish or other scripts mixed into Hebrew words. Do not mark style preferences as mistakes. Be brief.`;
   /* speed: thinking off, short answer, and "hedged" requests – the first model is asked at once, another one joins every 1.5 s
      (or right away when one fails), the first good answer wins and the rest are cancelled; everything stops after 25 s.
@@ -1312,15 +1319,16 @@ function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[],
       ${m.why?`<p class="ck-why"><b>למה?</b> ${bdiEsc(m.why)}</p>`:''}${m.rule?`<p class="ck-rule">📘 <b>כלל לזכור:</b> ${bdiEsc(m.rule)}</p>`:''}</li>`}).join('')}</ol>
     <p class="ck-note">לחיצה על התיקון הירוק מחליפה אותו במשפט שלך.</p></div>`;
   /* 3. the list word */
-  if(w&&(wordBad||j.meaning||j.context_problem))h+=`<div class="ck-sec ck-word ${wordBad?'bad':''}"><p class="ck-h">🎯 המילה <bdi dir="ltr">${esc(w)}</bdi></p>
-    <p class="ck-st">${j.word_present===false?'✗ המילה לא מופיעה במשפט – היא חייבת להיות בו.':j.word_used_correctly===false?'✗ המילה לא משמשת במשמעות או בהקשר הנכון.':'✓ המילה משמשת נכון.'}</p>
+  if(w&&(wordBad||j.meaning||j.context_problem))h+=`<div class="ck-sec ck-word ${wordBad?'bad':''}"><p class="ck-h">🎯 ${wordBad?'':'המשמעות של '}המילה <bdi dir="ltr">${esc(w)}</bdi></p>
+    ${wordBad?`<p class="ck-st">${j.word_present===false?'✗ המילה לא מופיעה במשפט – היא חייבת להיות בו.':'✗ המילה לא משמשת במשמעות או בהקשר הנכון.'}</p>`:''}
     ${j.context_problem?`<p class="ck-why">${bdiEsc(j.context_problem)}</p>`:''}${j.meaning?`<p class="ck-why">💬 ${bdiEsc(j.meaning)}</p>`:''}</div>`;
   /* 4. corrected sentence */
   if(j.corrected&&j.corrected.trim()!==c.t.trim())h+=`<div class="ck-sec ck-corr"><p class="ck-h">✅ ${wordBad?'המשפט שלך אחרי תיקון כתיב ודקדוק':'המשפט המתוקן'}</p>
     <p class="ck-sent" dir="ltr">${esc(j.corrected)}</p>${j.hebrew?`<p class="ck-he">בעברית: ${esc(j.hebrew)}</p>`:''}<button class="chk-fix ck-all" data-aiall="${esc(id)}">להחליף את כל המשפט</button></div>`;
   else if(j.hebrew)h+=`<p class="ck-he">בעברית: ${esc(j.hebrew)}</p>`;
   /* 5. a sentence that uses the word right */
-  if(j.suggestion&&wordBad)h+=`<div class="ck-sec chk-sug"><p class="ck-h">💡 הצעה למשפט עם <bdi dir="ltr">${esc(w)}</bdi> בהקשר הנכון</p>
+  if(c.sugPend&&!j.suggestion)h+=`<p class="chk-msg">⏳ מכינה משפט דומה עם המילה בהקשר הנכון…</p>`;
+  if(j.suggestion&&(wordBad||j.context_problem))h+=`<div class="ck-sec chk-sug"><p class="ck-h">💡 משפט דומה לשלך עם <bdi dir="ltr">${esc(w)}</bdi> בהקשר הנכון</p>
     <p class="ck-sent" dir="ltr">${esc(j.suggestion)}</p>${j.suggestion_hebrew?`<p class="ck-he">בעברית: ${esc(j.suggestion_hebrew)}</p>`:''}<button class="chk-fix ck-all" data-aisug="${esc(id)}">להחליף במשפט הזה</button></div>`;
   if(c.sec!==undefined)h+=`<p class="chk-en">${c.sec} שנ׳ · ${esc(c.mdl||'')}</p>`;
   return h}
@@ -1379,7 +1387,7 @@ function sentScreen(){const L=sentList();
 let SSORT=LS.get('dictSentSort')==='1';
 function sentSt(id){const c=CHK[id],t=sv(id,'en').trim();if(!t||!c||!c.ai||c.t.trim()!==t)return '';const j=c.ai;
   return !(j.mistakes||[]).length&&j.word_present!==false&&j.word_used_correctly!==false?'ok':'bad'}
-function sentStHtml(id){const st=sentSt(id);return st==='ok'?'<span class="sst ok">✓ נבדק ותקין</span>':st==='bad'?'<span class="sst bad">צריך תיקון</span>':''}
+function sentStHtml(id){const st=sentSt(id);return st==='ok'?'<span class="sst ok">נבדק ותקין</span>':st==='bad'?'<span class="sst bad">צריך תיקון</span>':''}
 function sentOrder(L){const a=L.w.map(([e,h],i)=>[e,h,i]);if(!SSORT)return a;
   return a.map(x=>[x,sentSt(sentId(L,x[0]))==='ok'?1:0]).sort((p,q)=>p[1]-q[1]||p[0][2]-q[0][2]).map(x=>x[0])}
 function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentList(),N=L.w.length,n=sentDone(L);
