@@ -370,6 +370,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .ck-why{margin:6px 0 0;font-size:.92rem;line-height:1.5}.ck-rule{margin:6px 0 0;font-size:.88rem;line-height:1.45;background:var(--accent-soft);border-radius:8px;padding:6px 10px}
 .ck-note{margin:8px 0 0;font-size:.78rem;color:var(--muted)}.ck-word .ck-st{margin:0;font-weight:700;color:var(--ok)}.ck-word.bad .ck-st{color:var(--bad)}.ck-word.bad{border-color:var(--bad)}
 .ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:6px;font-family:inherit;font-size:.8rem;padding:2px 10px;font-weight:600}
+.ck-rev{display:flex;align-items:center;gap:8px;margin:6px 2px 0;font-size:.9rem;font-weight:600;cursor:pointer}.ck-rev input{width:20px;height:20px;accent-color:var(--ok)}.sst.rev{background:var(--accent-soft);color:var(--accent)}
 .ck-tog{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;font:inherit;font-weight:800;text-align:right;cursor:pointer}.ck-more{font-size:.78rem;font-weight:600;white-space:nowrap;opacity:.85}.ck-body[hidden]{display:none}
 .ck-alt{margin-top:8px;padding-top:6px;border-top:1px dotted var(--line)}.ck-altl{margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--ok)}.ck-altbtn{margin-top:4px;font-size:.82rem}
 .chk-all{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}.chk-allst{font-size:.85rem;color:var(--muted)}.sort-ok{font-size:.82rem;font-weight:700;color:var(--ok);opacity:0;transition:opacity .3s}.sort-ok.on{opacity:1}
@@ -1099,7 +1100,7 @@ function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[],
   /* 1. summary */
   const op=CKOPEN.has(id);
   h+=`<button class="ck-sum ck-tog ${!ms.length&&!wordBad?'ok':'bad'}" data-cktog="${esc(id)}" aria-expanded="${op}"><span>${!ms.length&&!wordBad?'✓ המשפט נכון! אין טעויות.'
-    :`${ms.length?`נמצאו ${ms.length===1?'טעות אחת':ms.length+' טעויות'} לתיקון`:'אין טעויות כתיב ודקדוק'}${wordBad?` · ${j.word_present===false?'המילה חסרה במשפט':'המילה לא בהקשר הנכון'}`:''}`}</span><span class="ck-more">${op?'סגירה ▴':'פירוט ▾'}</span></button><div class="ck-body"${op?'':' hidden'}>`;
+    :`${ms.length?`נמצאו ${ms.length===1?'טעות אחת':ms.length+' טעויות'} לתיקון`:'אין טעויות כתיב ודקדוק'}${wordBad?` · ${j.word_present===false?'המילה חסרה במשפט':'המילה לא בהקשר הנכון'}`:''}`}</span><span class="ck-more">${op?'סגירה ▴':'פירוט ▾'}</span></button>${ms.length||wordBad?`<label class="ck-rev"><input type="checkbox" data-ckrev="${esc(id)}"${c.rev?' checked':''}> עברתי על הטעויות</label>`:''}<div class="ck-body"${op?'':' hidden'}>`;
   /* 2. mistakes */
   if(ms.length)h+=`<div class="ck-sec"><p class="ck-h">✍️ הטעויות שלך</p><ol class="ck-ms">${ms.map((m,k)=>{const ty=MTYPE[m.type]||m.type||'';
       return `<li class="ck-m"><div class="ck-mtop"><span class="ck-n">${k+1}</span>${ty?`<span class="ck-type">${esc(ty)}</span>`:''}</div>
@@ -1141,6 +1142,8 @@ document.addEventListener('click',e=>{
   const ar=e.target.closest('[data-altreq]');if(ar){altFix(ar.dataset.altreq,+ar.dataset.k);return}
   const rc=e.target.closest('[data-rechk]');if(rc){const li=rc.closest('li.sent-item');checkSentence(rc.dataset.rechk,li?li.querySelector('[data-w]').dataset.w:'');return}
   const s=e.target.closest('[data-aiset]');if(s){AISET=!AISET;sentAiBox()}});
+/* ☑ "עברתי על הטעויות": saved with the check (a new check starts unticked); in the sort it goes after the ones still needing a fix, before the correct ones */
+document.addEventListener('change',e=>{const b=e.target.closest&&e.target.closest('[data-ckrev]');if(!b)return;const id=b.dataset.ckrev,c=CHK[id];if(!c)return;c.rev=b.checked;saveChk();paintChk(id,'')});
 let AISET=false;
 function sentAiBox(){const b=$('aiBox');if(!b)return;b.innerHTML=AISET?`<section class="panel aiset"><h3>🧠 בדיקה חכמה (גם משמעות)</h3>
   <p class="hint">הבדיקה החכמה משתמשת ב־Gemini של גוגל: בודקת איות ודקדוק, וגם אם המילה משמשת במשמעות הנכונה ואם המשפט הגיוני – עם הסבר בעברית. צריך מפתח חינמי (פעם אחת):</p>
@@ -1189,10 +1192,10 @@ function sentScreen(){const L=sentList();
    The order is set when the page is drawn (or "למיין שוב"), so a sentence doesn't jump away while she works on it */
 let SSORT=LS.get('dictSentSort')==='1';
 function sentSt(id){const c=CHK[id],t=sv(id,'en').trim();if(!t||!c||!c.ai||c.t.trim()!==t)return '';const j=c.ai;
-  return !(j.mistakes||[]).length&&j.word_present!==false&&j.word_used_correctly!==false?'ok':'bad'}
-function sentStHtml(id){const st=sentSt(id);return st==='ok'?'<span class="sst ok">נבדק ותקין</span>':st==='bad'?'<span class="sst bad">צריך תיקון</span>':''}
+  return !(j.mistakes||[]).length&&j.word_present!==false&&j.word_used_correctly!==false?'ok':c.rev?'rev':'bad'}
+function sentStHtml(id){const st=sentSt(id);return st==='ok'?'<span class="sst ok">נבדק ותקין</span>':st==='bad'?'<span class="sst bad">צריך תיקון</span>':st==='rev'?'<span class="sst rev">עברתי על הטעויות</span>':''}
 function sentOrder(L){const a=L.w.map(([e,h],i)=>[e,h,i]);if(!SSORT)return a;
-  return a.map(x=>{const st=sentSt(sentId(L,x[0]));return [x,st==='ok'?2:st==='bad'?1:0]}).sort((p,q)=>p[1]-q[1]||p[0][2]-q[0][2]).map(x=>x[0])}
+  return a.map(x=>{const st=sentSt(sentId(L,x[0]));return [x,st==='ok'?3:st==='rev'?2:st==='bad'?1:0]}).sort((p,q)=>p[1]-q[1]||p[0][2]-q[0][2]).map(x=>x[0])}
 /* re-check every written sentence, one after another (gentle on the free quota); results stay folded, the label shows the outcome */
 const CHKALL={run:false,stop:false,msg:''};
 function chkAllPaint(){const b=$('chkAll'),st=$('chkAllSt');if(b)setTxt(b,CHKALL.run?'⏹ עצירת הבדיקה':'🔍 בדיקה חוזרת לכל המשפטים');if(st)setTxt(st,CHKALL.msg||'')}
