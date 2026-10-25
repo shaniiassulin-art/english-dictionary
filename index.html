@@ -380,7 +380,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .ck-fixrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;font-size:1.05rem}.ck-fixrow .chk-bad{text-decoration-thickness:2px}.ck-arr{color:var(--muted);font-weight:700}
 .ck-why{margin:6px 0 0;font-size:.92rem;line-height:1.5}.ck-rule{margin:6px 0 0;font-size:.88rem;line-height:1.45;background:var(--accent-soft);border-radius:8px;padding:6px 10px}
 .ck-note{margin:8px 0 0;font-size:.78rem;color:var(--muted)}.ck-word .ck-st{margin:0;font-weight:700;color:var(--ok)}.ck-word.bad .ck-st{color:var(--bad)}.ck-word.bad{border-color:var(--bad)}
-.ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:8px;font-family:inherit}
+.ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:6px;font-family:inherit;font-size:.8rem;padding:2px 10px;font-weight:600}
 .chk-en{display:block;font-size:.78rem;color:var(--muted);text-align:left;font-family:var(--en)}.chk-msg{margin:4px 0 0;font-size:.85rem;color:var(--muted)}.chk-msg.ok{color:var(--ok);font-weight:700}.chk-msg.bad{color:var(--bad)}
 .si-n{flex:none;min-width:30px;height:30px;border-radius:50%;background:var(--surface);display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
 .sent-item.done .si-n{background:var(--ok);color:var(--bg)}
@@ -1180,11 +1180,16 @@ const saveChk=()=>{try{LS.set('dictChk',JSON.stringify(CHK))}catch(e){}};
 try{Object.assign(CHK,JSON.parse(LS.get('dictChk')||'{}'));for(const k in CHK){const c=CHK[k];if(!c.ai&&!c.aiErr&&!c.aiPend){delete CHK[k];continue}if(c.aiPend){c.aiPend=false;if(!c.ai)c.aiErr='interrupted'}c.auto=0;if(c.ltPend)c.ltPend=false}}catch(e){}
 /* both checks start at once: the quick spelling & grammar check shows in about a second, the smart check (meaning) replaces it when it arrives */
 /* smart check only (Gemini): spelling, grammar and meaning, explained in Hebrew */
+/* is the list word (or a close form: -s/-ed/-ing/-ion…, same stem) in the sentence? */
+function hasWordForm(t,e){const st=w=>w.toLowerCase().replace(/[^a-z]/g,'').replace(/(ations?|ions?|ments?|ness|ities|ity|ingly|ing|edly|ed|ers?|ies|es|s|ly|y|e)$/,'');
+  const ws=String(e).split(/\s+/).map(st).filter(Boolean);if(!ws.length)return false;const toks=String(t).split(/[^A-Za-z']+/).map(st);
+  return ws.every(w=>toks.some(x=>x&&(x===w||(w.length>=4&&x.startsWith(w.slice(0,Math.max(4,w.length-1))))||(x.length>=4&&w.startsWith(x)))))}
 async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);if(!box)return;
   if(!t){box.innerHTML='<p class="chk-msg">קודם כתבי משפט באנגלית.</p>';return}
   if(!GKEY()){box.innerHTML='<p class="chk-msg bad">אין מפתח לבדיקה. <button class="link small-link" data-aiset="1">להגדרת המפתח</button></p>';return}
   const run=Date.now();CHK[id]={t:sv(id,'en'),word:e,run,ai:null,aiErr:null,aiPend:true};paintChk(id,e);
   const r=await aiRun(e,t,st=>{if(CHK[id]&&CHK[id].run===run){CHK[id].steps={...st};paintChk(id,e)}});if(!CHK[id]||CHK[id].run!==run)return;
+  if(r.j&&r.j.word_present===false&&hasWordForm(t,e))r.j.word_present=true;
   Object.assign(CHK[id],r.j?{ai:r.j,aiPend:false,sec:Math.round((Date.now()-run)/1000),mdl:r.mdl}:{aiErr:r.why,aiPend:false});saveChk();paintChk(id,e);
   /* the word is missing / in the wrong context but no similar sentence came back: ask for one */
   const j=r.j;if(j&&(j.word_present===false||j.word_used_correctly===false)&&!(j.suggestion||'').trim()){CHK[id].sugPend=true;paintChk(id,e);
@@ -1245,7 +1250,7 @@ function setGKey(v){LS.set('dictGemKey',v);LS.set('dictGemKeyT',JSON.stringify([
 (function(){const m=location.hash.match(/^#gk=(.+)$/);if(m){try{setGKey(decodeURIComponent(m[1]).trim())}catch(e){}history.replaceState(null,'',location.pathname+location.search);setTimeout(()=>{try{alertKey()}catch(e){}},500)}})();
 function alertKey(){const d=document.createElement('div');d.className='toast';d.textContent='✓ הבדיקה החכמה הופעלה (גם בשאר המכשירים שלך)';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)}
 async function aiRun(e,t,onStep,opt){const L=sentList(),row=L.w.find(x=>x[0]===e)||[e,''];
-  const prompt=opt&&opt.prompt?opt.prompt:`You are an English teacher for a Hebrew-speaking student (beginner to intermediate). The task: write one English sentence that MUST use the word "${e}" in the meaning "${row[1]}" (Hebrew). The sentence is only correct if it contains "${e}" (or a grammatical form of it, like plural / past / -ing) used in exactly that meaning.
+  const prompt=opt&&opt.prompt?opt.prompt:`You are an English teacher for a Hebrew-speaking student (beginner to intermediate). The task: write one English sentence that MUST use the word "${e}" in the meaning "${row[1]}" (Hebrew). The sentence is only correct if it contains "${e}" (or a grammatical form of it, like plural / past / -ing) used in exactly that meaning. IMPORTANT: any form of the word counts as the word and is NOT a mistake – plural, -s, past, -ed, -ing, a different tense, or a close form of the same word family with the same meaning (e.g. conduct/conducted/conducting, accuse/accusation, threaten/threat). Never set word_present to false and never list a mistake only because the form differs from "${e}"; correct the form only if it is grammatically wrong in her sentence.
 Student's sentence: «${t}»
 Check: 1) spelling, grammar, punctuation; 2) is "${e}" (or a form of it) in the sentence; 3) is it used in the meaning "${row[1]}" and in a natural context; 4) does the whole sentence make sense.
 If the word is missing, or used in a wrong meaning or an unnatural context, write a suggestion: a simple, natural sentence that uses "${e}" correctly in the meaning "${row[1]}", staying as close as possible to the student's idea (if the idea cannot fit the word, write a new short everyday sentence).
