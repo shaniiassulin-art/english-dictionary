@@ -1395,7 +1395,7 @@ function sentSt(id){const c=CHK[id],t=sv(id,'en').trim();if(!t||!c||!c.ai||c.t.t
   return !(j.mistakes||[]).length&&j.word_present!==false&&j.word_used_correctly!==false?'ok':'bad'}
 function sentStHtml(id){const st=sentSt(id);return st==='ok'?'<span class="sst ok">נבדק ותקין</span>':st==='bad'?'<span class="sst bad">צריך תיקון</span>':''}
 function sentOrder(L){const a=L.w.map(([e,h],i)=>[e,h,i]);if(!SSORT)return a;
-  return a.map(x=>[x,sentSt(sentId(L,x[0]))==='ok'?1:0]).sort((p,q)=>p[1]-q[1]||p[0][2]-q[0][2]).map(x=>x[0])}
+  return a.map(x=>{const st=sentSt(sentId(L,x[0]));return [x,st==='ok'?2:st==='bad'?1:0]}).sort((p,q)=>p[1]-q[1]||p[0][2]-q[0][2]).map(x=>x[0])}
 function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentList(),N=L.w.length,n=sentDone(L);
   setHtml($('shCount'),`<b>${n}</b> מתוך ${N}${n===N?' · הכול כתוב ✓':''}`);const bw=(N?n/N*100:0)+'%';if($('shBar').style.width!==bw)$('shBar').style.width=bw;
   app.querySelectorAll('.sent-item').forEach(li=>{const d=!!sv(li.dataset.sid,'en').trim();if(li.classList.contains('done')!==d)li.classList.toggle('done',d)});
