@@ -359,6 +359,15 @@ input,textarea,select{font-size:max(16px,1em)}
 .tr-alts,.tr-dict{margin-top:12px}.tr-alts p,.tr-dict li{margin:4px 0}.tr-alts .lbl,.tr-dict .lbl{font-weight:700;margin:0 0 4px}.tr-dict ul{margin:0;padding-right:18px}.tr-e{font-family:var(--en);font-weight:700}.tr-dict .d{color:var(--muted);font-size:.85rem}
 .chk-head{margin:4px 0 0;font-size:.85rem;font-weight:700;color:var(--muted)}.chk-head.ok{color:var(--accent)}.chk-head.bad{color:var(--bad)}
 .chk-sug{margin-top:8px;border:1.5px solid var(--ok);background:var(--ok-soft);border-radius:12px;padding:8px 10px}.chk-sug .lbl{margin:0 0 4px;font-weight:700;font-size:.9rem}.chk-sug p{margin:2px 0}.chk-sug bdi{font-family:var(--en);font-weight:700}.chk-mean.bad{background:var(--bad-soft)}
+.ck-sum{margin:6px 0;padding:8px 12px;border-radius:10px;font-weight:800;font-size:.98rem}.ck-sum.ok{background:var(--ok-soft);color:var(--ok);border:1.5px solid var(--ok)}.ck-sum.bad{background:var(--bad-soft);color:var(--bad);border:1.5px solid var(--bad)}
+.ck-sec{margin:8px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}.ck-h{margin:0 0 6px;font-weight:800;font-size:.95rem}
+.ck-ms{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}.ck-m{padding:0 0 10px;border-bottom:1px dashed var(--line)}.ck-m:last-child{border-bottom:0;padding-bottom:0}
+.ck-mtop{display:flex;align-items:center;gap:8px;margin-bottom:6px}.ck-n{width:22px;height:22px;border-radius:50%;background:var(--bad);color:#fff;font-size:.78rem;font-weight:800;display:inline-flex;align-items:center;justify-content:center}
+.ck-type{font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--surface);color:var(--muted)}
+.ck-fixrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:8px;font-size:1.05rem}.ck-fixrow .chk-bad{text-decoration-thickness:2px}.ck-arr{color:var(--muted);font-weight:700}
+.ck-why{margin:6px 0 0;font-size:.92rem;line-height:1.5}.ck-rule{margin:6px 0 0;font-size:.88rem;line-height:1.45;background:var(--accent-soft);border-radius:8px;padding:6px 10px}
+.ck-note{margin:8px 0 0;font-size:.78rem;color:var(--muted)}.ck-word .ck-st{margin:0;font-weight:700;color:var(--ok)}.ck-word.bad .ck-st{color:var(--bad)}.ck-word.bad{border-color:var(--bad)}
+.ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:8px;font-family:inherit}
 .chk-en{display:block;font-size:.78rem;color:var(--muted);text-align:left;font-family:var(--en)}.chk-msg{margin:4px 0 0;font-size:.85rem;color:var(--muted)}.chk-msg.ok{color:var(--ok);font-weight:700}.chk-msg.bad{color:var(--bad)}
 .si-n{flex:none;min-width:30px;height:30px;border-radius:50%;background:var(--surface);display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
 .sent-item.done .si-n{background:var(--ok);color:var(--bg)}
@@ -1008,7 +1017,7 @@ async function aiRun(e,t,onStep,opt){const L=sentList(),row=L.w.find(x=>x[0]===e
 Student's sentence: «${t}»
 Check: 1) spelling, grammar, punctuation; 2) is "${e}" (or a form of it) in the sentence; 3) is it used in the meaning "${row[1]}" and in a natural context; 4) does the whole sentence make sense.
 If the word is missing, or used in a wrong meaning or an unnatural context, write a suggestion: a simple, natural sentence that uses "${e}" correctly in the meaning "${row[1]}", staying as close as possible to the student's idea (if the idea cannot fit the word, write a new short everyday sentence).
-Answer ONLY with JSON: {"word_present":true or false,"word_used_correctly":true or false,"context_problem":"if the word is missing or used wrongly: short explanation in simple Hebrew of what is wrong and how the word is really used; else empty","mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","why":"short explanation in simple Hebrew"}],"meaning":"one short sentence in simple Hebrew about the meaning of the word in this sentence","corrected":"the student's sentence with only the spelling/grammar mistakes fixed","hebrew":"Hebrew translation of the corrected sentence","suggestion":"only if the word is missing or used wrongly: a correct sentence with ${e} in the right meaning and context; else empty","suggestion_hebrew":"Hebrew translation of the suggestion, or empty"}
+Answer ONLY with JSON: {"word_present":true or false,"word_used_correctly":true or false,"context_problem":"if the word is missing or used wrongly: short explanation in simple Hebrew of what is wrong and how the word is really used; else empty","mistakes":[{"wrong":"exact part copied from the sentence","fix":"corrected part","type":"one of: spelling, grammar, punctuation, word, order, capital, other","why":"1–2 simple Hebrew sentences: what exactly is wrong here and why the fix is right (teach her, do not just repeat the fix)","rule":"a short general rule in simple Hebrew she can remember for next time (may quote short English examples), or empty"}],"meaning":"one short sentence in simple Hebrew about the meaning of the word in this sentence","corrected":"the student's sentence with only the spelling/grammar mistakes fixed","hebrew":"Hebrew translation of the corrected sentence","suggestion":"only if the word is missing or used wrongly: a correct sentence with ${e} in the right meaning and context; else empty","suggestion_hebrew":"Hebrew translation of the suggestion, or empty"}
 Write all explanations in simple, everyday Hebrew, using only regular Hebrew letters (א–ת) – never Arabic, Yiddish or other scripts mixed into Hebrew words. Do not mark style preferences as mistakes. Be brief.`;
   /* speed: thinking off, short answer, and "hedged" requests – the first model is asked at once, another one joins every 1.5 s
      (or right away when one fails), the first good answer wins and the rest are cancelled; everything stops after 25 s.
@@ -1017,7 +1026,7 @@ Write all explanations in simple, everyday Hebrew, using only regular Hebrew let
   /* models Google no longer offers to this key (404) are remembered and not asked again */
   const gone=new Set(JSON.parse(LS.get('dictGemGone')||'[]'));
   const MODELS=(good&&all.includes(good)?[good,...all.filter(x=>x!==good)]:all).filter(m=>!gone.has(m));let why='';const noThink=new Set(JSON.parse(LS.get('dictGemNoThink')||'[]'));
-  const call=async(mdl,signal)=>{const gc={responseMimeType:'application/json',temperature:opt&&opt.temp!=null?opt.temp:.2,maxOutputTokens:900};
+  const call=async(mdl,signal)=>{const gc={responseMimeType:'application/json',temperature:opt&&opt.temp!=null?opt.temp:.2,maxOutputTokens:1400};
     if(!noThink.has(mdl)){if(/2\.5/.test(mdl))gc.thinkingConfig={thinkingBudget:0};else if(/latest/.test(mdl))gc.thinkingConfig={thinkingLevel:'minimal'}}
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+mdl+':generateContent',{method:'POST',signal,headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
       body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:gc})});
@@ -1064,17 +1073,30 @@ Use only regular Hebrew letters (א–ת). Answer ONLY with JSON: {"ideas":["...
   const ideas=r.j&&Array.isArray(r.j.ideas)?r.j.ideas.map(x=>String(x).replace(/^["'«]|["'»]$/g,'').trim()).filter(Boolean).slice(0,2):[];
   IDEAS[id]=ideas.length?{w:e,ideas,seen:old,t:Date.now()}:{w:e,seen:old,err:r.why==='quota'?'נגמרה המכסה החינמית של ג׳מיני לעכשיו – נסי שוב בעוד דקה.':r.why==='key'?'יש בעיה במפתח של ג׳מיני.':'לא הצלחתי לקבל רעיונות ('+(r.why||'שגיאה')+').'};
   saveIdeas();paintIdeas(id)}
-function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[];
-  h+=ms.length?`<ul class="chk-list">${ms.map((m,k)=>`<li><bdi class="chk-bad">${esc(m.wrong||'')}</bdi> ← <button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}"><bdi>${esc(m.fix||'(למחוק)')}</bdi></button><span class="chk-why">${esc(m.why||'')}</span></li>`).join('')}</ul>`
-    :`<p class="chk-msg ok">✓ ${j.word_used_correctly===false?'אין טעויות כתיב ודקדוק':'המשפט נכון'}</p>`;
-  const w=(c.word||'').trim();
-  if(j.word_present===false)h+=`<p class="chk-msg bad">⚠️ המילה <bdi>${esc(w)}</bdi> לא מופיעה במשפט – היא חייבת להיות בו.</p>`;
-  else if(j.word_used_correctly===false)h+=`<p class="chk-msg bad">⚠️ המילה <bdi>${esc(w)}</bdi> לא משמשת במשמעות או בהקשר הנכון.</p>`;
-  if(j.context_problem)h+=`<p class="chk-mean bad">${esc(j.context_problem)}</p>`;
-  if(j.meaning)h+=`<p class="chk-mean">💬 ${esc(j.meaning)}</p>`;
-  if(j.corrected&&j.corrected.trim()!==c.t.trim())h+=`<p class="chk-corr"><span>${j.word_used_correctly===false||j.word_present===false?'תיקון כתיב ודקדוק בלבד:':'משפט מתוקן:'}</span> <bdi dir="ltr">${esc(j.corrected)}</bdi> <button class="chk-fix" data-aiall="${esc(id)}">להחליף</button></p>`;
-  if(j.hebrew)h+=`<p class="chk-msg">בעברית: ${esc(j.hebrew)}</p>`;
-  if(j.suggestion&&(j.word_present===false||j.word_used_correctly===false))h+=`<div class="chk-sug"><p class="lbl">💡 משפט מתאים עם המילה <bdi>${esc(w)}</bdi> בהקשר הנכון:</p><p><bdi dir="ltr">${esc(j.suggestion)}</bdi> <button class="chk-fix" data-aisug="${esc(id)}">להחליף</button></p>${j.suggestion_hebrew?`<p class="chk-msg">בעברית: ${esc(j.suggestion_hebrew)}</p>`:''}</div>`;
+/* the check result, laid out as a short lesson: summary → each mistake (type, wrong ← fix, why, rule to remember) → the word → corrected sentence → suggestion */
+const MTYPE={spelling:'כתיב',grammar:'דקדוק',punctuation:'פיסוק',word:'בחירת מילה',order:'סדר מילים',capital:'אות גדולה',other:'אחר'};
+function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[],w=(c.word||'').trim();
+  const wordBad=j.word_present===false||j.word_used_correctly===false;
+  /* 1. summary */
+  h+=!ms.length&&!wordBad?`<div class="ck-sum ok">✓ המשפט נכון! אין טעויות.</div>`
+    :`<div class="ck-sum bad">${ms.length?`נמצאו ${ms.length===1?'טעות אחת':ms.length+' טעויות'} לתיקון`:'אין טעויות כתיב ודקדוק'}${wordBad?` · ${j.word_present===false?'המילה חסרה במשפט':'המילה לא בהקשר הנכון'}`:''}</div>`;
+  /* 2. mistakes */
+  if(ms.length)h+=`<div class="ck-sec"><p class="ck-h">✍️ הטעויות שלך</p><ol class="ck-ms">${ms.map((m,k)=>{const ty=MTYPE[m.type]||m.type||'';
+      return `<li class="ck-m"><div class="ck-mtop"><span class="ck-n">${k+1}</span>${ty?`<span class="ck-type">${esc(ty)}</span>`:''}</div>
+      <div class="ck-fixrow" dir="ltr"><bdi class="chk-bad">${esc(m.wrong||'')}</bdi><span class="ck-arr">→</span><button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}" title="להחליף במשפט"><bdi>${esc(m.fix||'(למחוק)')}</bdi></button></div>
+      ${m.why?`<p class="ck-why"><b>למה?</b> ${bdiEsc(m.why)}</p>`:''}${m.rule?`<p class="ck-rule">📘 <b>כלל לזכור:</b> ${bdiEsc(m.rule)}</p>`:''}</li>`}).join('')}</ol>
+    <p class="ck-note">לחיצה על התיקון הירוק מחליפה אותו במשפט שלך.</p></div>`;
+  /* 3. the list word */
+  if(w&&(wordBad||j.meaning||j.context_problem))h+=`<div class="ck-sec ck-word ${wordBad?'bad':''}"><p class="ck-h">🎯 המילה <bdi dir="ltr">${esc(w)}</bdi></p>
+    <p class="ck-st">${j.word_present===false?'✗ המילה לא מופיעה במשפט – היא חייבת להיות בו.':j.word_used_correctly===false?'✗ המילה לא משמשת במשמעות או בהקשר הנכון.':'✓ המילה משמשת נכון.'}</p>
+    ${j.context_problem?`<p class="ck-why">${bdiEsc(j.context_problem)}</p>`:''}${j.meaning?`<p class="ck-why">💬 ${bdiEsc(j.meaning)}</p>`:''}</div>`;
+  /* 4. corrected sentence */
+  if(j.corrected&&j.corrected.trim()!==c.t.trim())h+=`<div class="ck-sec ck-corr"><p class="ck-h">✅ ${wordBad?'המשפט שלך אחרי תיקון כתיב ודקדוק':'המשפט המתוקן'}</p>
+    <p class="ck-sent" dir="ltr">${esc(j.corrected)}</p>${j.hebrew?`<p class="ck-he">בעברית: ${esc(j.hebrew)}</p>`:''}<button class="chk-fix ck-all" data-aiall="${esc(id)}">להחליף את כל המשפט</button></div>`;
+  else if(j.hebrew)h+=`<p class="ck-he">בעברית: ${esc(j.hebrew)}</p>`;
+  /* 5. a sentence that uses the word right */
+  if(j.suggestion&&wordBad)h+=`<div class="ck-sec chk-sug"><p class="ck-h">💡 הצעה למשפט עם <bdi dir="ltr">${esc(w)}</bdi> בהקשר הנכון</p>
+    <p class="ck-sent" dir="ltr">${esc(j.suggestion)}</p>${j.suggestion_hebrew?`<p class="ck-he">בעברית: ${esc(j.suggestion_hebrew)}</p>`:''}<button class="chk-fix ck-all" data-aisug="${esc(id)}">להחליף במשפט הזה</button></div>`;
   if(c.sec!==undefined)h+=`<p class="chk-en">${c.sec} שנ׳ · ${esc(c.mdl||'')}</p>`;
   return h}
 function setSentText(id,nt){const o=SENT[id]=SENT[id]||{};o.en=[nt,Date.now()];saveSent();
