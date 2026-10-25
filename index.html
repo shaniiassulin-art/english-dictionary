@@ -382,6 +382,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .ck-note{margin:8px 0 0;font-size:.78rem;color:var(--muted)}.ck-word .ck-st{margin:0;font-weight:700;color:var(--ok)}.ck-word.bad .ck-st{color:var(--bad)}.ck-word.bad{border-color:var(--bad)}
 .ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:6px;font-family:inherit;font-size:.8rem;padding:2px 10px;font-weight:600}
 .ck-rev{display:flex;align-items:center;gap:8px;margin:6px 2px 0;font-size:.9rem;font-weight:600;cursor:pointer}.ck-rev input{width:20px;height:20px;accent-color:var(--ok)}.sst.rev{background:var(--accent-soft);color:var(--accent)}
+.ck-close{display:block;margin:8px auto 0;font-size:.9rem}
 .ck-revbox{margin:10px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
 .ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-title{margin:0 0 6px;font-weight:800}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
 .ck-tog{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;font:inherit;font-weight:800;text-align:right;cursor:pointer;background:none;border:0;color:inherit;padding:0}.ck-head .ck-rev{margin:0;padding-top:6px;border-top:1px solid currentColor;border-top-color:rgba(0,0,0,.12);color:var(--ink)}.ck-more{font-size:.78rem;font-weight:600;white-space:nowrap;opacity:.85}.ck-body[hidden]{display:none}
@@ -1097,15 +1098,16 @@ function level(){
     ${S.l===PL?sentBtn():''}
     ${searchBox()}
     ${quizPanel(lkey(S.l),ws,S.l===PL?'בוחן על כל המילים':'בוחן על כל הרמה',lvName(S.l),'level')}
-    ${catPanel(lkey(S.l),ws)}
+    ${catPanel(lkey(S.l),ws)||`<p class="hint center">אחרי שתסמני מילים (ידעתי / לא ידעתי) תוכלי לעשות כאן בוחן רק על המילים שלא ידעת, שידעת או שעוד לא סומנו.</p>`}
     <button class="btn secondary" id="list">${S.l===PL?'כל המילים':'רשימת המילים ברמה'} · סימון ✓ / ✗</button>
+    ${cardsBtn(lkey(S.l),ws)}
     <p class="lbl">${S.l===PL?'או תרגול לפי רשימה':'או תרגול לפי קבוצות של 50 מילים'}</p>
     <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
       return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">${gName(S.l,g)}</span><br><span class="d">${S.l===PL?gw.length+' מילים · ':''}${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
   bindSettings();bindQuizPanel(lkey(S.l),ws,lvName(S.l),'level');bindCatPanel(lkey(S.l),ws,lvName(S.l),'level');const sb=$('sentGo');if(sb)sb.onclick=()=>go({screen:'sent'});
-  $('list').onclick=()=>go({screen:'words',filter:'all',wl:'level'});bindSearch(ws);
+  $('list').onclick=()=>go({screen:'words',filter:'all',wl:'level'});bindSearch(ws);bindCards(lkey(S.l),ws);
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
 
@@ -1131,6 +1133,12 @@ function bindRows(){fitWords(app);
   app.querySelectorAll('[data-say]').forEach(b=>b.onclick=()=>speak(b.dataset.say));
   app.querySelectorAll('.yn-b').forEach(b=>b.onclick=()=>{const id=b.dataset.k,v=b.dataset.v;setKnow(id,kst(W[id])===v?null:v);const y=window.scrollY||0;draw();window.scrollTo(0,y)});
 }
+/* flash cards for a group or a whole level: progress under 'F'+key (car mode keeps its own under 'C'+key);
+   an old cards session saved under 'C'+key is still picked up */
+const cardSess=key=>{const f=SESS['F'+key];if(f&&f.kind==='cards')return['F'+key,f];const c=SESS['C'+key];return c&&c.kind==='cards'?['C'+key,c]:['F'+key,null]};
+const cardsBtn=(key,ws)=>{const [,ss]=cardSess(key);return `<button class="btn secondary" id="fc">${ss?`המשך כרטיסיות · ${ss.i+1} מתוך ${ss.ids.length}`:'תרגול בכרטיסיות'}</button>`};
+function bindCards(key,ws){const b=$('fc');if(b)b.onclick=()=>{const [k,ss]=cardSess(key);
+  const from=S.screen;C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false,from}:{key:k,deck:shuffle(ws),i:0,open:false,from};saveC();S.active=k;go({screen:'cards'});if(AUTO&&C.deck[C.i])speak(C.deck[C.i].e)}}
 function groupScreen(){
   const ws=group(S.l,S.g),nw=ws.filter(isN),un=ws.filter(w=>!kst(w)).length;
   const name=`${gName(S.l,S.g)} · ${lvName(S.l)}`;
@@ -1139,17 +1147,16 @@ function groupScreen(){
     <div><h2>${gName(S.l,S.g)}</h2><p class="sub">${lvFull(S.l)}</p>
       <p class="known-line">${countLine(ws)}</p></div>
     ${searchBox()}
-    <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
     ${quizPanel(gkey(),ws,'בוחן על כל הקבוצה',name,'group')}
     ${catPanel(gkey(),ws)||`<p class="hint center">אחרי שתסמני מילים (ידעתי / לא ידעתי) תוכלי לעשות כאן בוחן רק על המילים שלא ידעת, שידעת או שעוד לא סומנו.</p>`}
-    <button class="btn secondary" id="fc">${SESS['C'+gkey()]?`המשך כרטיסיות · ${SESS['C'+gkey()].i+1} מתוך ${ws.length}`:'תרגול בכרטיסיות'}</button>
+    <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
+    ${cardsBtn(gkey(),ws)}
   </div>`;
   $('bk').onclick=()=>go({screen:'level'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'group'});bindSearch(ws);
   bindSettings();bindQuizPanel(gkey(),ws,name,'group');
   bindCatPanel(gkey(),ws,name,'group');
-  $('fc').onclick=()=>{const k='C'+gkey(),ss=SESS[k];
-    C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false}:{key:k,deck:shuffle(ws),i:0,open:false};saveC();S.active=k;go({screen:'cards'});if(AUTO&&C.deck[C.i])speak(C.deck[C.i].e)};
+  bindCards(gkey(),ws);
 }
 function wordsScreen(){
   const lv=S.wl==='level',ws=lv?byLv(S.l):group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
@@ -1354,7 +1361,7 @@ function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[],
     <p class="ck-sent" dir="ltr">${esc(j.suggestion)}</p>${j.suggestion_hebrew?`<p class="ck-he">בעברית: ${esc(j.suggestion_hebrew)}</p>`:''}<button class="chk-fix ck-all" data-aisug="${esc(id)}">להחליף במשפט הזה</button></div>`;
   if(ms.length||wordBad)h+=`<label class="ck-rev ck-revbox"><input type="checkbox" data-ckrev="${esc(id)}"${c.rev?' checked':''}> עברתי על הטעויות</label>`;
   if(c.sec!==undefined)h+=`<p class="chk-en">${c.sec} שנ׳ · ${esc(c.mdl||'')}</p>`;
-  return h+'</div>'}
+  return h+`<button class="link ck-close" data-cktog="${esc(id)}">סגירת ההערות ▴</button></div>`}
 /* one more way to fix a mistake, as close as possible to what she wrote; added under the first fix, never instead of it */
 async function altFix(id,k){const c=CHK[id],m=c&&c.ai&&c.ai.mistakes[k];if(!m||m.altPend)return;m.altPend=true;m.altErr='';paintChk(id,'');
   const had=[m.fix,...(m.alts||[]).map(x=>x.fix)].filter(x=>x!=null);
@@ -1925,12 +1932,12 @@ function trScreen(){
   $('trGo').onclick=()=>{clearTimeout(tm);doTranslate()};
   $('trClr').onclick=()=>{TR.q='';TR.res=null;LS.set('dictTrQ','');draw();$('trQ').focus()};
   trPaint();if(TR.q&&!TR.res)doTranslate()}
-function saveC(){if(!C)return;if(C.i>=C.deck.length){(SDEL[C.key]=Date.now(),delete SESS[C.key])}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g}}saveSess()}
+function saveC(){if(!C)return;if(C.i>=C.deck.length){(SDEL[C.key]=Date.now(),delete SESS[C.key])}else{SESS[C.key]={kind:'cards',t:Date.now(),ids:ids(C.deck),i:C.i,l:S.l,g:S.g,from:C.from}}saveSess()}
 function cardScreen(){
   const n=C.deck.length;
   if(C.i>=n){saveC();S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">✓</div><h2 style="margin-top:14px">סיימת את כל ${n} הכרטיסיות</h2></div><button class="btn" id="q">עכשיו לבוחן</button><button class="btn secondary" id="b">חזרה לקבוצה</button></div>`;
-    $('q').onclick=()=>{go({screen:'group'});const b=app.querySelector('[data-start],[data-resume]');b&&b.click()};
-    $('b').onclick=()=>go({screen:'group'});return}
+    $('q').onclick=()=>{go({screen:C.from||'group'});const b=app.querySelector('[data-start],[data-resume]');b&&b.click()};
+    $('b').onclick=()=>go({screen:C.from||'group'});return}
   const w=C.deck[C.i];
   app.innerHTML=`<div class="screen full">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button>${HOME}<div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span>${AUTOBTN()}</div>
@@ -1939,7 +1946,7 @@ function cardScreen(){
     <div class="sticky"><div class="row2"><button class="btn secondary" id="say">${SPK} מילה</button><button class="btn secondary" id="saySent">${SPK} משפט</button></div>
     <div class="row2"><button class="btn secondary" id="prev" ${C.i?'':'disabled'}>הקודם</button><button class="btn" id="nxt">הבא</button></div></div>
   </div>`;
-  $('exit').onclick=()=>{saveC();S.active=null;go({screen:'group'})};
+  $('exit').onclick=()=>{saveC();S.active=null;go({screen:C.from||'group'})};
   $('card').onclick=()=>{C.open=!C.open;draw()};
   $('say').onclick=()=>speak(w.e);
   $('saySent').onclick=()=>speak(w.s,.9);
@@ -1979,7 +1986,7 @@ function restoreScroll(){let v=null;try{v=JSON.parse(LS.get('dictScroll')||'null
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(SCR.restoring)to()})}
 (function boot(){
   if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
-  if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false}}else S.screen='group'}
+  if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false,from:ss.from}}else S.screen='group'}
   if(S.screen==='car'){const cs=S.active&&SESS['C'+S.active];if(cs&&cs.kind==='car'){CAR={key:S.active,deck:objs(cs.ids),i:cs.i,name:cs.name,from:cs.from,play:false,tok:0,step:'',needTap:true}}else S.screen=S.active&&S.active.startsWith('L')?'level':'group'}
   draw();restoreScroll();
   syncNow(false);
