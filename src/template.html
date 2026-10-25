@@ -372,7 +372,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:6px;font-family:inherit;font-size:.8rem;padding:2px 10px;font-weight:600}
 .ck-rev{display:flex;align-items:center;gap:8px;margin:6px 2px 0;font-size:.9rem;font-weight:600;cursor:pointer}.ck-rev input{width:20px;height:20px;accent-color:var(--ok)}.sst.rev{background:var(--accent-soft);color:var(--accent)}
 .ck-revbox{margin:10px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
-.ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
+.ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-title{margin:0 0 6px;font-weight:800}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
 .ck-tog{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;font:inherit;font-weight:800;text-align:right;cursor:pointer;background:none;border:0;color:inherit;padding:0}.ck-head .ck-rev{margin:0;padding-top:6px;border-top:1px solid currentColor;border-top-color:rgba(0,0,0,.12);color:var(--ink)}.ck-more{font-size:.78rem;font-weight:600;white-space:nowrap;opacity:.85}.ck-body[hidden]{display:none}
 .ck-alt{margin-top:8px;padding-top:6px;border-top:1px dotted var(--line)}.ck-altl{margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--ok)}.ck-altbtn{margin-top:4px;font-size:.82rem}
 .chk-all{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}.chk-allst{font-size:.85rem;color:var(--muted)}.sort-ok{font-size:.82rem;font-weight:700;color:var(--ok);opacity:0;transition:opacity .3s}.sort-ok.on{opacity:1}
@@ -511,6 +511,8 @@ const RAW=D.map(r=>({e:r[0],h:r[1],l:r[2],s:r[3],uid:(r[4]&&r[4].id)||r[0],src:r
    They are this week's own copies: card id "pw<week>|<list>|<english>", so their ✓/✗ marks are separate from the
    dictionary words and start fresh every week. Extras stay keyed "p<list>|<english>" (xid). */
 const PRIV=__PRIVATE__,PL=11,PWK=PRIV.week||'';
+/* the number shown for a list (`d`) can differ from its internal number `n`, which stays in card ids, marks and sentences */
+const LN=L=>L?(L.d||L.n):'';
 PRIV.lists.forEach(L=>L.w.forEach(([e,h,s])=>RAW.push({e,h:[h],l:PL,s,uid:'pw'+PWK+'|'+L.n+'|'+e,xid:'p'+L.n+'|'+e,list:L.n})));
 const words=[];
 for(let l=1;l<=10;l++){const prim=RAW.filter(r=>r.l===l),Np=prim.length||1,items=[];
@@ -566,7 +568,7 @@ const nGroups=l=>l===PL?PRIV.lists.length:Math.ceil(byLv(l).length/SET);
 const PNAME='מילים לשיעור פרטי';
 const lvName=l=>l===PL?PNAME:`רמה ${l}`;
 const lvFull=l=>l===PL?PNAME:`רמה ${l} · ${LVN[l-1]}`;
-const gName=(l,g)=>l===PL?`רשימה ${(PRIV.lists[g]||{}).n}`:`קבוצה ${g+1}`;
+const gName=(l,g)=>l===PL?`רשימה ${LN(PRIV.lists[g])}`:`קבוצה ${g+1}`;
 let prog={};try{prog=JSON.parse(localStorage.getItem('dictProg')||'{}')}catch(e){}
 // migrate old keys "word|unit"
 for(const k of Object.keys(prog)){if(k.includes('|')){const e=k.split('|')[0];if(prog[k]>=1)prog[e]=1;delete prog[k]}}
@@ -846,7 +848,7 @@ function home(){
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     ${todayCard()}
     ${searchBox()}
-    ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+L.n).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
+    ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+LN(L)).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
       return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}${(()=>{const mk=ws.filter(x=>kst(x)).length;return mk&&mk<ws.length?` · לא סומנו ${ws.length-mk}`:''})()}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
@@ -950,7 +952,7 @@ const sentId=(L,e)=>'p'+L.n+'|'+e;
 const sv=(id,f)=>((SENT[id]||{})[f]||[''])[0]||'';
 const sentDone=L=>L.w.filter(([e])=>sv(sentId(L,e),'en').trim()).length;
 function sentBtn(){const L=sentList();if(!L)return '';
-  return `<button class="btn sentgo" id="sentGo">✍ כתיבת משפטים · רשימה ${L.n} · ${sentDone(L)}/${L.w.length}</button>`}
+  return `<button class="btn sentgo" id="sentGo">✍ כתיבת משפטים · רשימה ${LN(L)} · ${sentDone(L)}/${L.w.length}</button>`}
 let EXP=false;
 /* ---------- sentence check (Gemini smart check only) ---------- */
 const CHK={},CKOPEN=new Set();
@@ -1164,7 +1166,7 @@ function autoGrow(t){t.style.height='auto';t.style.height=t.scrollHeight+2+'px'}
 function sentScreen(){const L=sentList();
   app.innerHTML=`<div class="screen sentscr">
     <div class="nav"><button class="back" id="bk">שיעור פרטי</button>${HOME}</div>
-    <div><h2>כתיבת משפטים · רשימה ${esc(L.n)}</h2><p class="sub">לכל מילה כתבי משפט באנגלית. הפירוש בעברית לא חובה. הכול נשמר אוטומטית בחשבון שלך.</p></div>
+    <div><h2>כתיבת משפטים · רשימה ${esc(LN(L))}</h2><p class="sub">לכל מילה כתבי משפט באנגלית. הפירוש בעברית לא חובה. הכול נשמר אוטומטית בחשבון שלך.</p></div>
     <div class="sent-head" id="sentHead">
       <div class="sh-row"><span class="sh-count" id="shCount"></span><button class="btn small" id="expBtn" aria-expanded="${EXP}">ייצוא המשפטים</button></div>
       <div class="bar2"><i id="shBar"></i></div>
@@ -1222,14 +1224,16 @@ function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentLi
 function expRows(L){const rows=[],miss=[];L.w.forEach(([e],i)=>{const t=sv(sentId(L,e),'en').trim().replace(/\s+/g,' ');if(t)rows.push(`${t} (${e})`);else miss.push(i+1)});return{rows,miss}}
 const expText=L=>expRows(L).rows.join('\n');
 function expHtml(L){const {rows,miss}=expRows(L);
-  return `<section class="panel exp"><h3>המשפטים שלי · רשימה ${esc(L.n)}</h3>
+  return `<section class="panel exp"><h3>המשפטים שלי · רשימה ${esc(LN(L))}</h3>
     ${rows.length?`<ul class="exp-list" dir="ltr">${rows.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:'<p class="hint">עוד לא נכתבו משפטים.</p>'}
     <p class="exp-miss ${miss.length?'':'ok'}">${miss.length?`חסרים ${miss.length===1?'משפט אחד':miss.length+' משפטים'} (${miss.length===1?'מילה':'מילים'} ${miss.join(', ')})`:'כל המשפטים כתובים ✓'}</p>
     <div class="row2"><button class="btn" id="expCopy" ${rows.length?'':'disabled'}>העתקת המשפטים</button><button class="btn secondary" id="expClose">סגירה</button></div>
-    <h3 class="exp-h2">רשימת המילים · רשימה ${esc(L.n)}</h3>
+    <h3 class="exp-h2">רשימת המילים · רשימה ${esc(LN(L))}</h3>
+    <p class="exp-title">${esc(expWordsHead(L))}</p>
     <ul class="exp-list exp-words" dir="ltr">${L.w.map(([e,h])=>`<li><span class="ew">${esc(e)}</span> - <bdi>${esc(h)}</bdi></li>`).join('')}</ul>
     <div class="row2"><button class="btn" id="expWords">העתקה עם פירושים</button><button class="btn secondary" id="expWordsEn">רק באנגלית</button></div></section>`}
-const expWordsText=(L,en)=>L.w.map(([e,h])=>en?e:`${e} - ${h}`).join('\n');
+const expWordsHead=L=>'מילים לאמירנט #'+LN(L);
+const expWordsText=(L,en)=>expWordsHead(L)+'\n'+L.w.map(([e,h])=>en?e:`${e} - ${h}`).join('\n');
 function copyText(t,btn){const ok=()=>{btn.textContent='הועתק ✓';setTimeout(()=>{if(btn.isConnected)btn.textContent='העתקת הרשימה'},2000)};
   const old=()=>{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;opacity:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);try{document.execCommand('copy');ok()}catch(e){}ta.remove()};
   try{navigator.clipboard.writeText(t).then(ok,old)}catch(e){old()}}
