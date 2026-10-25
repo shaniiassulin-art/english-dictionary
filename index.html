@@ -382,7 +382,8 @@ input,textarea,select{font-size:max(16px,1em)}
 .ck-note{margin:8px 0 0;font-size:.78rem;color:var(--muted)}.ck-word .ck-st{margin:0;font-weight:700;color:var(--ok)}.ck-word.bad .ck-st{color:var(--bad)}.ck-word.bad{border-color:var(--bad)}
 .ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:6px;font-family:inherit;font-size:.8rem;padding:2px 10px;font-weight:600}
 .ck-rev{display:flex;align-items:center;gap:8px;margin:6px 2px 0;font-size:.9rem;font-weight:600;cursor:pointer}.ck-rev input{width:20px;height:20px;accent-color:var(--ok)}.sst.rev{background:var(--accent-soft);color:var(--accent)}
-.ck-head{display:flex;flex-direction:column;gap:6px}.ck-tog{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;font:inherit;font-weight:800;text-align:right;cursor:pointer;background:none;border:0;color:inherit;padding:0}.ck-head .ck-rev{margin:0;padding-top:6px;border-top:1px solid currentColor;border-top-color:rgba(0,0,0,.12);color:var(--ink)}.ck-more{font-size:.78rem;font-weight:600;white-space:nowrap;opacity:.85}.ck-body[hidden]{display:none}
+.ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-words li{direction:rtl;text-align:right}.exp-words .ew{font-family:var(--en);font-weight:700}
+.ck-tog{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;font:inherit;font-weight:800;text-align:right;cursor:pointer;background:none;border:0;color:inherit;padding:0}.ck-head .ck-rev{margin:0;padding-top:6px;border-top:1px solid currentColor;border-top-color:rgba(0,0,0,.12);color:var(--ink)}.ck-more{font-size:.78rem;font-weight:600;white-space:nowrap;opacity:.85}.ck-body[hidden]{display:none}
 .ck-alt{margin-top:8px;padding-top:6px;border-top:1px dotted var(--line)}.ck-altl{margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--ok)}.ck-altbtn{margin-top:4px;font-size:.82rem}
 .chk-all{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}.chk-allst{font-size:.85rem;color:var(--muted)}.sort-ok{font-size:.82rem;font-weight:700;color:var(--ok);opacity:0;transition:opacity .3s}.sort-ok.on{opacity:1}
 .chk-en{display:block;font-size:.78rem;color:var(--muted);text-align:left;font-family:var(--en)}.chk-msg{margin:4px 0 0;font-size:.85rem;color:var(--muted)}.chk-msg.ok{color:var(--ok);font-weight:700}.chk-msg.bad{color:var(--bad)}
@@ -1438,14 +1439,18 @@ function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentLi
   app.querySelectorAll('.sent-item textarea').forEach(t=>{const v=sv(t.dataset.id,t.dataset.f);if(t!==document.activeElement&&t.value!==v){t.value=v;autoGrow(t)}});
   const eb=$('expBtn');if(eb.getAttribute('aria-expanded')!==String(EXP))eb.setAttribute('aria-expanded',EXP);setTxt(eb,EXP?'סגירת הייצוא':'ייצוא המשפטים');
   const box=$('expBox');setHtml(box,EXP?expHtml(L):'');
-  if(EXP){$('expCopy').onclick=()=>copyText(expText(L),$('expCopy'));$('expClose').onclick=()=>{EXP=false;sentRefresh()}}}
+  if(EXP){$('expCopy').onclick=()=>copyText(expText(L),$('expCopy'));$('expWords').onclick=()=>copyText(expWordsText(L),$('expWords'));$('expWordsEn').onclick=()=>copyText(expWordsText(L,1),$('expWordsEn'));$('expClose').onclick=()=>{EXP=false;sentRefresh()}}}
 function expRows(L){const rows=[],miss=[];L.w.forEach(([e],i)=>{const t=sv(sentId(L,e),'en').trim().replace(/\s+/g,' ');if(t)rows.push(`${t} (${e})`);else miss.push(i+1)});return{rows,miss}}
 const expText=L=>expRows(L).rows.join('\n');
 function expHtml(L){const {rows,miss}=expRows(L);
   return `<section class="panel exp"><h3>המשפטים שלי · רשימה ${esc(L.n)}</h3>
     ${rows.length?`<ul class="exp-list" dir="ltr">${rows.map(r=>`<li>${esc(r)}</li>`).join('')}</ul>`:'<p class="hint">עוד לא נכתבו משפטים.</p>'}
     <p class="exp-miss ${miss.length?'':'ok'}">${miss.length?`חסרים ${miss.length===1?'משפט אחד':miss.length+' משפטים'} (${miss.length===1?'מילה':'מילים'} ${miss.join(', ')})`:'כל המשפטים כתובים ✓'}</p>
-    <div class="row2"><button class="btn" id="expCopy" ${rows.length?'':'disabled'}>העתקת הרשימה</button><button class="btn secondary" id="expClose">סגירה</button></div></section>`}
+    <div class="row2"><button class="btn" id="expCopy" ${rows.length?'':'disabled'}>העתקת המשפטים</button><button class="btn secondary" id="expClose">סגירה</button></div>
+    <h3 class="exp-h2">רשימת המילים · רשימה ${esc(L.n)}</h3>
+    <ul class="exp-list exp-words">${L.w.map(([e,h])=>`<li><bdi dir="ltr" class="ew">${esc(e)}</bdi> – ${esc(h)}</li>`).join('')}</ul>
+    <div class="row2"><button class="btn" id="expWords">העתקה עם פירושים</button><button class="btn secondary" id="expWordsEn">רק באנגלית</button></div></section>`}
+const expWordsText=(L,en)=>L.w.map(([e,h])=>en?e:`${e} – ${h}`).join('\n');
 function copyText(t,btn){const ok=()=>{btn.textContent='הועתק ✓';setTimeout(()=>{if(btn.isConnected)btn.textContent='העתקת הרשימה'},2000)};
   const old=()=>{const ta=document.createElement('textarea');ta.value=t;ta.setAttribute('readonly','');ta.style.cssText='position:fixed;top:0;opacity:0';document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,t.length);try{document.execCommand('copy');ok()}catch(e){}ta.remove()};
   try{navigator.clipboard.writeText(t).then(ok,old)}catch(e){old()}}
