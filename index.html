@@ -1904,14 +1904,20 @@ window.addEventListener('pagehide',saveScroll);document.addEventListener('visibi
 const CARET_K='dictCaret';
 function saveCaret(t){if(!t||!t.dataset||!t.dataset.id)return;try{LS.set(CARET_K,JSON.stringify({id:t.dataset.id,f:t.dataset.f,a:t.selectionStart,b:t.selectionEnd}))}catch(e){}}
 function restoreCaret(){if(S.screen!=='sent')return;let c=null;try{c=JSON.parse(LS.get(CARET_K)||'null')}catch(e){}if(!c)return;
-  const t=app.querySelector(`.sent-item textarea[data-id="${CSS.escape(c.id)}"][data-f="${c.f}"]`);if(!t||document.activeElement===t)return;
+  if(!c.live)return;const t=app.querySelector(`.sent-item textarea[data-id="${CSS.escape(c.id)}"][data-f="${c.f}"]`);if(!t||document.activeElement===t)return;
   const n=t.value.length,a=Math.min(c.a??n,n),b=Math.min(c.b??a,n);
   try{t.focus({preventScroll:true});t.setSelectionRange(a,b)}catch(e){}
   const r=t.getBoundingClientRect();if(r.top<90||r.bottom>innerHeight-20)t.scrollIntoView({block:'center'})}
 document.addEventListener('selectionchange',()=>{const t=document.activeElement;if(t&&t.matches&&t.matches('.sent-item textarea'))saveCaret(t)});
 document.addEventListener('input',e=>{if(e.target.matches&&e.target.matches('.sent-item textarea'))saveCaret(e.target)},true);
 document.addEventListener('focusin',e=>{if(e.target.matches&&e.target.matches('.sent-item textarea'))saveCaret(e.target)});
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(restoreCaret,300)});
+/* only when she left the site while typing in a box: finishing a box (keyboard closed / tapped elsewhere) forgets it */
+document.addEventListener('visibilitychange',()=>{const a=document.activeElement;
+  if(document.visibilityState==='hidden'){if(a&&a.matches&&a.matches('.sent-item textarea')){saveCaret(a);try{const c=JSON.parse(LS.get(CARET_K));c.live=true;LS.set(CARET_K,JSON.stringify(c))}catch(e){}}}
+  else setTimeout(()=>{restoreCaret();try{const c=JSON.parse(LS.get(CARET_K)||'null');if(c&&c.live){c.live=false;LS.set(CARET_K,JSON.stringify(c))}}catch(e){}},300)});
+document.addEventListener('focusout',e=>{if(!(e.target.matches&&e.target.matches('.sent-item textarea')))return;
+  setTimeout(()=>{if(document.visibilityState==='visible'&&!(document.activeElement&&document.activeElement.matches&&document.activeElement.matches('.sent-item textarea')))LS.set(CARET_K,'null')},400)});
+window.addEventListener('pagehide',()=>{const a=document.activeElement;if(a&&a.matches&&a.matches('.sent-item textarea')){saveCaret(a);try{const c=JSON.parse(LS.get(CARET_K));c.live=true;LS.set(CARET_K,JSON.stringify(c))}catch(e){}}});
 function restoreScroll(){let v=null;try{v=JSON.parse(LS.get('dictScroll')||'null')}catch(e){}
   const done=()=>{SCR.restoring=false};if(!v||v.k!==scrKey()||!v.y){done();setTimeout(restoreCaret,300);return}
   const to=()=>{app.querySelectorAll('.sent-item textarea').forEach(autoGrow);window.scrollTo(0,v.y)};
