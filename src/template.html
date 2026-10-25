@@ -370,6 +370,9 @@ input,textarea,select{font-size:max(16px,1em)}
 .ck-why{margin:6px 0 0;font-size:.92rem;line-height:1.5}.ck-rule{margin:6px 0 0;font-size:.88rem;line-height:1.45;background:var(--accent-soft);border-radius:8px;padding:6px 10px}
 .ck-note{margin:8px 0 0;font-size:.78rem;color:var(--muted)}.ck-word .ck-st{margin:0;font-weight:700;color:var(--ok)}.ck-word.bad .ck-st{color:var(--bad)}.ck-word.bad{border-color:var(--bad)}
 .ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:6px;font-family:inherit;font-size:.8rem;padding:2px 10px;font-weight:600}
+.ck-tog{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;font:inherit;font-weight:800;text-align:right;cursor:pointer}.ck-more{font-size:.78rem;font-weight:600;white-space:nowrap;opacity:.85}.ck-body[hidden]{display:none}
+.ck-alt{margin-top:8px;padding-top:6px;border-top:1px dotted var(--line)}.ck-altl{margin:0 0 4px;font-size:.78rem;font-weight:700;color:var(--ok)}.ck-altbtn{margin-top:4px;font-size:.82rem}
+.chk-all{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 10px}.chk-allst{font-size:.85rem;color:var(--muted)}.sort-ok{font-size:.82rem;font-weight:700;color:var(--ok);opacity:0;transition:opacity .3s}.sort-ok.on{opacity:1}
 .chk-en{display:block;font-size:.78rem;color:var(--muted);text-align:left;font-family:var(--en)}.chk-msg{margin:4px 0 0;font-size:.85rem;color:var(--muted)}.chk-msg.ok{color:var(--ok);font-weight:700}.chk-msg.bad{color:var(--bad)}
 .si-n{flex:none;min-width:30px;height:30px;border-radius:50%;background:var(--surface);display:inline-grid;place-items:center;font-weight:700;font-size:.9rem}
 .sent-item.done .si-n{background:var(--ok);color:var(--bg)}
@@ -947,7 +950,7 @@ function sentBtn(){const L=sentList();if(!L)return '';
   return `<button class="btn sentgo" id="sentGo">✍ כתיבת משפטים · רשימה ${L.n} · ${sentDone(L)}/${L.w.length}</button>`}
 let EXP=false;
 /* ---------- sentence check (Gemini smart check only) ---------- */
-const CHK={};
+const CHK={},CKOPEN=new Set();
 const CATHE={TYPOS:'שגיאת כתיב',GRAMMAR:'דקדוק',PUNCTUATION:'פיסוק',CASING:'אות גדולה / קטנה',TYPOGRAPHY:'כתיב / רווחים',CONFUSED_WORDS:'מילה מבולבלת',STYLE:'סגנון',REDUNDANCY:'מילה מיותרת',SEMANTICS:'משמעות',COLLOCATIONS:'צירוף מילים',COMPOUNDING:'מילה מחוברת / נפרדת',MISC:'הערה',NONSTANDARD_PHRASES:'ביטוי לא תקני',AMERICAN_ENGLISH_STYLE:'סגנון',BRITISH_ENGLISH:'אנגלית בריטית',REPETITIONS_STYLE:'חזרה על מילה'};
 /* does the sentence use the list word (or a form of it: plural, -ed, -ing, …)? */
 function hasWord(t,e){const words=String(e).toLowerCase().replace(/\(.*?\)/g,'').match(/[a-z]+/g)||[];const low=' '+t.toLowerCase().replace(/[^a-z' ]/g,' ')+' ';
@@ -961,12 +964,13 @@ try{Object.assign(CHK,JSON.parse(LS.get('dictChk')||'{}'));for(const k in CHK){c
 function hasWordForm(t,e){const st=w=>w.toLowerCase().replace(/[^a-z]/g,'').replace(/(ations?|ions?|ments?|ness|ities|ity|ingly|ing|edly|ed|ers?|ies|es|s|ly|y|e)$/,'');
   const ws=String(e).split(/\s+/).map(st).filter(Boolean);if(!ws.length)return false;const toks=String(t).split(/[^A-Za-z']+/).map(st);
   return ws.every(w=>toks.some(x=>x&&(x===w||(w.length>=4&&x.startsWith(w.slice(0,Math.max(4,w.length-1))))||(x.length>=4&&w.startsWith(x)))))}
-async function checkSentence(id,e){const t=sv(id,'en').trim(),box=$('chk-'+id);if(!box)return;
+async function checkSentence(id,e,quiet){const t=sv(id,'en').trim(),box=$('chk-'+id);if(!box)return;
   if(!t){box.innerHTML='<p class="chk-msg">קודם כתבי משפט באנגלית.</p>';return}
   if(!GKEY()){box.innerHTML='<p class="chk-msg bad">אין מפתח לבדיקה. <button class="link small-link" data-aiset="1">להגדרת המפתח</button></p>';return}
   const run=Date.now();CHK[id]={t:sv(id,'en'),word:e,run,ai:null,aiErr:null,aiPend:true};paintChk(id,e);
   const r=await aiRun(e,t,st=>{if(CHK[id]&&CHK[id].run===run){CHK[id].steps={...st};paintChk(id,e)}});if(!CHK[id]||CHK[id].run!==run)return;
   if(r.j&&r.j.word_present===false&&hasWordForm(t,e))r.j.word_present=true;
+  if(r.j&&!quiet)CKOPEN.add(id);
   Object.assign(CHK[id],r.j?{ai:r.j,aiPend:false,sec:Math.round((Date.now()-run)/1000),mdl:r.mdl}:{aiErr:r.why,aiPend:false});saveChk();paintChk(id,e);
   /* the word is missing / in the wrong context but no similar sentence came back: ask for one */
   const j=r.j;if(j&&(j.word_present===false||j.word_used_correctly===false)&&!(j.suggestion||'').trim()){CHK[id].sugPend=true;paintChk(id,e);
@@ -1093,13 +1097,16 @@ const MTYPE={spelling:'כתיב',grammar:'דקדוק',punctuation:'פיסוק',w
 function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[],w=(c.word||'').trim();
   const wordBad=j.word_present===false||j.word_used_correctly===false;
   /* 1. summary */
-  h+=!ms.length&&!wordBad?`<div class="ck-sum ok">✓ המשפט נכון! אין טעויות.</div>`
-    :`<div class="ck-sum bad">${ms.length?`נמצאו ${ms.length===1?'טעות אחת':ms.length+' טעויות'} לתיקון`:'אין טעויות כתיב ודקדוק'}${wordBad?` · ${j.word_present===false?'המילה חסרה במשפט':'המילה לא בהקשר הנכון'}`:''}</div>`;
+  const op=CKOPEN.has(id);
+  h+=`<button class="ck-sum ck-tog ${!ms.length&&!wordBad?'ok':'bad'}" data-cktog="${esc(id)}" aria-expanded="${op}"><span>${!ms.length&&!wordBad?'✓ המשפט נכון! אין טעויות.'
+    :`${ms.length?`נמצאו ${ms.length===1?'טעות אחת':ms.length+' טעויות'} לתיקון`:'אין טעויות כתיב ודקדוק'}${wordBad?` · ${j.word_present===false?'המילה חסרה במשפט':'המילה לא בהקשר הנכון'}`:''}`}</span><span class="ck-more">${op?'סגירה ▴':'פירוט ▾'}</span></button><div class="ck-body"${op?'':' hidden'}>`;
   /* 2. mistakes */
   if(ms.length)h+=`<div class="ck-sec"><p class="ck-h">✍️ הטעויות שלך</p><ol class="ck-ms">${ms.map((m,k)=>{const ty=MTYPE[m.type]||m.type||'';
       return `<li class="ck-m"><div class="ck-mtop"><span class="ck-n">${k+1}</span>${ty?`<span class="ck-type">${esc(ty)}</span>`:''}</div>
       <div class="ck-fixrow" dir="ltr"><bdi class="chk-bad">${esc(m.wrong||'')}</bdi><span class="ck-arr">→</span><button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}" title="להחליף במשפט"><bdi>${esc(m.fix||'(למחוק)')}</bdi></button></div>
-      ${m.why?`<p class="ck-why"><b>למה?</b> ${bdiEsc(m.why)}</p>`:''}${m.rule?`<p class="ck-rule">📘 <b>כלל לזכור:</b> ${bdiEsc(m.rule)}</p>`:''}</li>`}).join('')}</ol>
+      ${m.why?`<p class="ck-why"><b>למה?</b> ${bdiEsc(m.why)}</p>`:''}${m.rule?`<p class="ck-rule">📘 <b>כלל לזכור:</b> ${bdiEsc(m.rule)}</p>`:''}
+      ${(m.alts||[]).map((x,i)=>`<div class="ck-alt"><p class="ck-altl">אפשרות נוספת לתיקון:</p><div class="ck-fixrow" dir="ltr"><bdi class="chk-bad">${esc(m.wrong||'')}</bdi><span class="ck-arr">→</span><button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}" data-alt="${i}" title="להחליף במשפט"><bdi>${esc(x.fix||'(למחוק)')}</bdi></button></div>${x.why?`<p class="ck-why">${bdiEsc(x.why)}</p>`:''}</div>`).join('')}
+      ${m.altPend?'<p class="chk-msg">⏳ מחפשת עוד דרך לתקן…</p>':m.altErr?`<p class="chk-msg bad">${esc(m.altErr)}</p>`:''}<button class="link small-link ck-altbtn" data-altreq="${esc(id)}" data-k="${k}"${m.altPend?' disabled':''}>➕ עוד אפשרות לתיקון</button></li>`}).join('')}</ol>
     <p class="ck-note">לחיצה על התיקון הירוק מחליפה אותו במשפט שלך.</p></div>`;
   /* 3. the list word */
   if(w&&(wordBad||j.meaning||j.context_problem))h+=`<div class="ck-sec ck-word ${wordBad?'bad':''}"><p class="ck-h">🎯 ${wordBad?'':'המשמעות של '}המילה <bdi dir="ltr">${esc(w)}</bdi></p>
@@ -1114,13 +1121,24 @@ function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[],
   if(j.suggestion&&(wordBad||j.context_problem))h+=`<div class="ck-sec chk-sug"><p class="ck-h">💡 משפט דומה לשלך עם <bdi dir="ltr">${esc(w)}</bdi> בהקשר הנכון</p>
     <p class="ck-sent" dir="ltr">${esc(j.suggestion)}</p>${j.suggestion_hebrew?`<p class="ck-he">בעברית: ${esc(j.suggestion_hebrew)}</p>`:''}<button class="chk-fix ck-all" data-aisug="${esc(id)}">להחליף במשפט הזה</button></div>`;
   if(c.sec!==undefined)h+=`<p class="chk-en">${c.sec} שנ׳ · ${esc(c.mdl||'')}</p>`;
-  return h}
+  return h+'</div>'}
+/* one more way to fix a mistake, as close as possible to what she wrote; added under the first fix, never instead of it */
+async function altFix(id,k){const c=CHK[id],m=c&&c.ai&&c.ai.mistakes[k];if(!m||m.altPend)return;m.altPend=true;m.altErr='';paintChk(id,'');
+  const had=[m.fix,...(m.alts||[]).map(x=>x.fix)].filter(x=>x!=null);
+  const r=await aiRun(c.word||'',c.t,null,{temp:.8,prompt:`A Hebrew-speaking student wrote: «${c.t}». In it, the part «${m.wrong}» is a mistake. Fixes already offered: ${had.map(x=>'«'+x+'»').join(', ')}.
+Give ONE other correct way to fix «${m.wrong}» – different from the fixes above, but staying as close as possible to what she wrote (change as little as possible). It replaces exactly «${m.wrong}» in her sentence.
+Answer ONLY with JSON: {"fix":"the replacement text","why":"1–2 simple Hebrew sentences: why this also works and how it differs from the first fix (regular Hebrew letters only)"}`});
+  m.altPend=false;const f=r.j&&typeof r.j.fix==='string'?r.j.fix.trim():'';
+  if(f&&!had.includes(f))(m.alts=m.alts||[]).push({fix:f,why:r.j.why||''});else m.altErr=f?'לא נמצאה דרך אחרת לתקן את זה.':'לא הצלחתי לקבל עוד אפשרות – נסי שוב.';
+  saveChk();paintChk(id,'')}
 function setSentText(id,nt){const o=SENT[id]=SENT[id]||{};o.en=[nt,Date.now()];saveSent();
   const ta=app.querySelector(`textarea.si-en[data-id="${CSS.escape(id)}"]`);if(ta){ta.value=nt;autoGrow(ta)}sentRefresh()}
 document.addEventListener('click',e=>{
-  const a=e.target.closest('[data-aifix]');if(a){const id=a.dataset.aifix,c=CHK[id],m=c&&c.ai&&c.ai.mistakes[+a.dataset.k],cur=sv(id,'en');if(m&&m.wrong&&cur.includes(m.wrong)){c.t=cur.replace(m.wrong,m.fix||'');c.ai.mistakes.splice(+a.dataset.k,1);setSentText(id,c.t);saveChk();paintChk(id,'')}return}
+  const a=e.target.closest('[data-aifix]');if(a){const id=a.dataset.aifix,c=CHK[id],m=c&&c.ai&&c.ai.mistakes[+a.dataset.k],cur=sv(id,'en');const fx=m&&a.dataset.alt!==undefined?((m.alts||[])[+a.dataset.alt]||{}).fix:m&&m.fix;if(m&&m.wrong&&cur.includes(m.wrong)){c.t=cur.replace(m.wrong,fx||'');c.ai.mistakes.splice(+a.dataset.k,1);setSentText(id,c.t);saveChk();paintChk(id,'')}return}
   const sg=e.target.closest('[data-aisug]');if(sg){const id=sg.dataset.aisug,c=CHK[id];if(c&&c.ai&&c.ai.suggestion){c.t=c.ai.suggestion;c.ai={word_present:true,word_used_correctly:true,mistakes:[],meaning:c.ai.meaning,corrected:c.ai.suggestion,hebrew:c.ai.suggestion_hebrew||''};setSentText(id,c.t);saveChk();paintChk(id,'')}return}
   const al=e.target.closest('[data-aiall]');if(al){const id=al.dataset.aiall,c=CHK[id];if(c&&c.ai){c.t=c.ai.corrected;c.ai.mistakes=[];setSentText(id,c.t);saveChk();paintChk(id,'')}return}
+  const tg=e.target.closest('[data-cktog]');if(tg){const id=tg.dataset.cktog;CKOPEN.has(id)?CKOPEN.delete(id):CKOPEN.add(id);paintChk(id,'');return}
+  const ar=e.target.closest('[data-altreq]');if(ar){altFix(ar.dataset.altreq,+ar.dataset.k);return}
   const rc=e.target.closest('[data-rechk]');if(rc){const li=rc.closest('li.sent-item');checkSentence(rc.dataset.rechk,li?li.querySelector('[data-w]').dataset.w:'');return}
   const s=e.target.closest('[data-aiset]');if(s){AISET=!AISET;sentAiBox()}});
 let AISET=false;
@@ -1147,7 +1165,8 @@ function sentScreen(){const L=sentList();
     <div id="expBox"></div><div id="aiBox"></div>
     <button class="btn secondary trgo" id="trOpen">🌐 תרגום מילה או משפט</button>
     <p class="hint center">${GKEY()?'🧠 בדיקה חכמה פעילה (גם משמעות) · <button class="link small-link" data-aiset="1">הגדרה</button>':'<button class="link small-link" data-aiset="1">🧠 להפעלת בדיקה חכמה שבודקת גם משמעות</button>'}</p>
-    <div class="sent-sort"><span>סדר:</span><div class="seg"><button data-ssort="0" aria-pressed="${!SSORT}">לפי הרשימה</button><button data-ssort="1" aria-pressed="${SSORT}">קודם מה שצריך תיקון</button></div>${SSORT?'<button class="link small-link" id="sResort">🔃 למיין שוב</button>':''}</div>
+    <div class="sent-sort"><span>סדר:</span><div class="seg"><button data-ssort="0" aria-pressed="${!SSORT}">לפי הרשימה</button><button data-ssort="1" aria-pressed="${SSORT}">קודם מה שצריך תיקון</button></div>${SSORT?'<button class="link small-link" id="sResort">🔃 למיין שוב</button><span class="sort-ok" id="sortOk"></span>':''}</div>
+    ${GKEY()?`<div class="chk-all"><button class="btn secondary small" id="chkAll">${CHKALL.run?'⏹ עצירת הבדיקה':'🔍 בדיקה חוזרת לכל המשפטים'}</button><span class="chk-allst" id="chkAllSt">${esc(CHKALL.msg||'')}</span></div>`:''}
     <ol class="sent-list">${sentOrder(L).map(([e,h,i])=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
       <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><span class="si-st" data-sst="${esc(id)}">${sentStHtml(id)}</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
       <div class="si-idea"><button class="link" data-ideas="${esc(id)}" data-w="${esc(e)}">💡 רעיונות למשפט</button><div id="idea-${esc(id)}">${IDEAS[id]&&!IDEAS[id].pend?ideasHtml(id):''}</div></div>
@@ -1161,7 +1180,8 @@ function sentScreen(){const L=sentList();
       if(t.dataset.f==='en'&&CHK[id]){const li=t.closest('li.sent-item');paintChk(id,li?li.querySelector('[data-w]').dataset.w:'')}}});
   app.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>sayWord(b.dataset.sw,b));
   app.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>checkSentence(b.dataset.chk,b.dataset.w));bindIdeas(app);
-  app.querySelectorAll('[data-ssort]').forEach(b=>b.onclick=()=>{SSORT=b.dataset.ssort==='1';LS.set('dictSentSort',SSORT?'1':'0');draw();window.scrollTo(0,0)});const rs=$('sResort');if(rs)rs.onclick=()=>{draw();window.scrollTo(0,0)};
+  app.querySelectorAll('[data-ssort]').forEach(b=>b.onclick=()=>{SSORT=b.dataset.ssort==='1';LS.set('dictSentSort',SSORT?'1':'0');draw();window.scrollTo(0,0)});const rs=$('sResort');if(rs)rs.onclick=()=>{draw();window.scrollTo(0,0);const ok=$('sortOk');if(ok){ok.textContent='✓ המיון עודכן';ok.classList.add('on');setTimeout(()=>{const o=$('sortOk');if(o){o.classList.remove('on');o.textContent=''}},2500)}};
+  const ca=$('chkAll');if(ca)ca.onclick=()=>{if(CHKALL.run){CHKALL.stop=true;CHKALL.msg='עוצרת אחרי המשפט הנוכחי…';chkAllPaint()}else checkAll()};
   $('expBtn').onclick=()=>{EXP=!EXP;sentRefresh();if(EXP)$('expBox').scrollIntoView({block:'nearest',behavior:'smooth'})};
   sentRefresh()}
 /* counter, bar, ✓ marks, export box and texts that changed on another device; the field being typed in is left alone */
@@ -1173,6 +1193,16 @@ function sentSt(id){const c=CHK[id],t=sv(id,'en').trim();if(!t||!c||!c.ai||c.t.t
 function sentStHtml(id){const st=sentSt(id);return st==='ok'?'<span class="sst ok">נבדק ותקין</span>':st==='bad'?'<span class="sst bad">צריך תיקון</span>':''}
 function sentOrder(L){const a=L.w.map(([e,h],i)=>[e,h,i]);if(!SSORT)return a;
   return a.map(x=>{const st=sentSt(sentId(L,x[0]));return [x,st==='ok'?2:st==='bad'?1:0]}).sort((p,q)=>p[1]-q[1]||p[0][2]-q[0][2]).map(x=>x[0])}
+/* re-check every written sentence, one after another (gentle on the free quota); results stay folded, the label shows the outcome */
+const CHKALL={run:false,stop:false,msg:''};
+function chkAllPaint(){const b=$('chkAll'),st=$('chkAllSt');if(b)setTxt(b,CHKALL.run?'⏹ עצירת הבדיקה':'🔍 בדיקה חוזרת לכל המשפטים');if(st)setTxt(st,CHKALL.msg||'')}
+async function checkAll(){const L=sentList(),todo=L.w.filter(([e])=>sv(sentId(L,e),'en').trim());if(!todo.length){CHKALL.msg='אין עדיין משפטים לבדוק.';chkAllPaint();return}
+  CHKALL.run=true;CHKALL.stop=false;let n=0,bad=0,fail=0;
+  for(const [e] of todo){if(CHKALL.stop||S.screen!=='sent')break;const id=sentId(L,e);n++;CHKALL.msg=`בודקת ${n} מתוך ${todo.length}…`;chkAllPaint();
+    await checkSentence(id,e,true);const c=CHK[id];if(c&&c.aiErr)fail++;else if(sentSt(id)==='bad')bad++;
+    if(c&&c.aiErr==='quota'){CHKALL.msg=`נעצר: נגמרה המכסה החינמית לעכשיו (נבדקו ${n-1} מתוך ${todo.length}). נסי שוב בעוד דקה.`;CHKALL.run=false;chkAllPaint();return}
+    await wait(600)}
+  CHKALL.run=false;CHKALL.msg=(CHKALL.stop?`נעצר אחרי ${n} מתוך ${todo.length}. `:`✓ נבדקו ${n} משפטים. `)+(bad?(bad===1?'משפט אחד צריך תיקון':`${bad} צריכים תיקון`):'כולם תקינים')+(fail?` · ${fail} לא נבדקו`:'');chkAllPaint()}
 function sentRefresh(){if(S.screen!=='sent'||!$('shCount'))return;const L=sentList(),N=L.w.length,n=sentDone(L);
   setHtml($('shCount'),`<b>${n}</b> מתוך ${N}${n===N?' · הכול כתוב ✓':''}`);const bw=(N?n/N*100:0)+'%';if($('shBar').style.width!==bw)$('shBar').style.width=bw;
   app.querySelectorAll('.sent-item').forEach(li=>{const d=!!sv(li.dataset.sid,'en').trim();if(li.classList.contains('done')!==d)li.classList.toggle('done',d)});
