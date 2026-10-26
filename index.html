@@ -387,6 +387,8 @@ input,textarea,select{font-size:max(16px,1em)}
 .qz .word.listen{justify-content:center;gap:10px;padding:8px 8px 4px}.qz .word.listen .lreveal{font-size:1.15rem;white-space:nowrap}
 .qz .lsent{display:flex;justify-content:center;align-items:center;gap:6px}.qz .lsent .spk.sm{width:34px;height:34px}.qz .lsent .spk.sm svg{width:17px;height:17px}
 .small-link,.hint .link,.sub .link,.chk-msg .link{text-decoration:underline;text-underline-offset:3px}
+/* even spacing between the blocks of every page: only the screen's gap counts, no extra margins, empty blocks take no space */
+.screen:not(.qz):not(.car)>*{margin-top:0!important;margin-bottom:0!important}.screen>#srchRes:empty,.screen>:empty:not(button):not(input):not(textarea){display:none}
 .ck-close{display:block;margin:8px auto 0;font-size:.9rem}
 .ck-revbox{margin:10px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
 .ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-title{margin:0 0 6px;font-weight:800}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
@@ -977,7 +979,7 @@ function settings(allLabel){
         <button data-mode="read" aria-pressed="${S.mode==='read'}">קריאה</button>
         <button data-mode="listen" aria-pressed="${S.mode==='listen'}">שמיעה</button>
       </div>
-      <p class="hint">${S.mode==='read'?'רואים את המילה כתובה, כותבים פירוש ובוחרים תשובה.':'שומעים את המילה, כותבים פירוש, ואז רואים אותה ובוחרים תשובה.'} בתוך הבוחן, כפתור המיקרופון מפעיל מצב קולי: עונים בדיבור בלי לגעת במסך.</p></div>`}
+      <p class="hint">${S.mode==='read'?'רואים את המילה כתובה, כותבים פירוש ובוחרים תשובה.':'שומעים את המילה, כותבים פירוש, ואז רואים אותה ובוחרים תשובה.'}</p></div>`}
   </div>`;
 }
 function bindSettings(){
@@ -1406,7 +1408,7 @@ function sentAiBox(){const b=$('aiBox');if(!b)return;b.innerHTML=AISET?`<section
 function autoGrow(t){t.style.height='auto';t.style.height=t.scrollHeight+2+'px'}
 function sentScreen(){const L=sentList();
   app.innerHTML=`<div class="screen sentscr">
-    <div class="nav"><button class="back" id="bk">שיעור פרטי</button>${HOME}</div>
+    <div class="nav"><button class="back" id="bk">שיעור פרטי</button>${HOMEONLY}</div>
     <div><h2>כתיבת משפטים · רשימה ${esc(LN(L))}</h2><p class="sub">לכל מילה כתבי משפט באנגלית. הפירוש בעברית לא חובה. הכול נשמר אוטומטית בחשבון שלך.</p></div>
     <div class="sent-head" id="sentHead">
       <div class="sh-row"><span class="sh-count" id="shCount"></span><button class="home-btn reload-top sh-re" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button><button class="btn small" id="expBtn" aria-expanded="${EXP}">ייצוא המשפטים</button></div>
