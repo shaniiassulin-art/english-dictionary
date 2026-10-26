@@ -380,6 +380,8 @@ input,textarea,select{font-size:max(16px,1em)}
 .small-link,.hint .link,.sub .link,.chk-msg .link{text-decoration:underline;text-underline-offset:3px}
 /* even spacing between the blocks of every page: only the screen's gap counts, no extra margins, empty blocks take no space */
 .screen:not(.qz):not(.car)>*{margin-top:0!important;margin-bottom:0!important}.screen>#srchRes:empty,.screen>:empty:not(button):not(input):not(textarea){display:none}
+/* quiz panels: one even gap between the title and everything under it */
+.panel,.panel .set-box,.cat-panel,.qtype{gap:14px!important}.qtype{display:flex;flex-direction:column}.qtype>*{margin:0!important}.panel>*,.panel .set-box>*{margin-top:0!important;margin-bottom:0!important}
 .ck-close{display:block;margin:8px auto 0;font-size:.9rem}
 .ck-revbox{margin:10px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
 .ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-title{margin:0 0 6px;font-weight:800}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
@@ -751,7 +753,7 @@ function carToggle(){return `<button class="cartog${CARON?' on':''}" id="carTog"
 function settings(allLabel){
   return `<div class="set-box">
     ${carToggle()}
-    ${CARON?'':`<div><p class="lbl">סוג הבוחן</p>
+    ${CARON?'':`<div class="qtype"><p class="lbl">סוג הבוחן</p>
       <div class="seg" role="group" aria-label="סוג הבוחן">
         <button data-mode="read" aria-pressed="${S.mode==='read'}">קריאה</button>
         <button data-mode="listen" aria-pressed="${S.mode==='listen'}">שמיעה</button>
@@ -790,7 +792,7 @@ function quizPanel(key,ws,title,name,from,noSet,cls){
       <div class="bar2"><i style="width:${ss.i/n*100}%"></i></div>
       <button class="btn" data-resume="${key}">המשך ${ss.mode==='listen'?'🎧 בוחן שמיעה':'📖 בוחן קריאה'} · מהמילה ${at}</button>
       <button class="link" data-restart="${key}">התחלה מחדש</button></section>`}
-  return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}<button class="btn" data-start="${key}">${noSet?'בוחן על המילים שאני לא יודעת':'התחלת בוחן'} · ${ws.length} מילים</button></section>`;
+  return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}<button class="btn" data-start="${key}">${noSet?'בוחן על המילים שאני לא יודעת':'כל המילים'} · ${ws.length} מילים</button></section>`;
 }
 /* quizzes on one marking category: ✗ don't know, ✓ know, unmarked. base = group/level key; 'N'+base keeps older saved sessions */
 const CATS=[['N','✗ לא ידעתי',isN,'לא יודעת'],['U','לא סומנו',w=>!kst(w),'לא סומנו'],['Y','✓ ידעתי',isY,'יודעת']];
