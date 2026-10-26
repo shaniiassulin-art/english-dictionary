@@ -92,7 +92,7 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display
 
 /* segmented control */
 .seg{display:flex;background:var(--surface);border-radius:12px;padding:4px;gap:4px}
-.seg button{flex:1;border:0;background:none;border-radius:9px;min-height:44px;cursor:pointer;font-weight:600;color:var(--muted)}
+.seg button{flex:1;border:0;background:none;border-radius:9px;min-height:44px;cursor:pointer;font-weight:600;color:var(--muted);white-space:nowrap}
 .seg button[aria-pressed="true"]{background:var(--bg);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
 
 /* word list in a group */
@@ -161,8 +161,10 @@ button,.item,.opt{touch-action:manipulation;-webkit-tap-highlight-color:transpar
 .mist li{flex-wrap:wrap}
 .mist .h{text-align:right;flex-basis:100%}
 @media (max-width:420px){
-  body{font-size:17px}
-  .app{padding-inline:16px;padding-block:12px 24px}
+  body{font-size:16px}
+  .app{padding-inline:14px;padding-block:12px 24px}
+  .panel{padding:14px;gap:12px}.cartog{padding:8px 10px;gap:10px}.cartog .ci{font-size:1.4rem}
+  .seg button{font-size:.9rem;padding-inline:4px}
   h1{font-size:1.6rem} h2{font-size:1.35rem}
   .item{padding:14px 16px}
   .card{min-height:220px}
@@ -970,7 +972,7 @@ function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
   document.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
     if(dx<-70&&Math.abs(dx)>2*Math.abs(dy)&&Date.now()-t0<800&&S.screen!=='home'){const b=$('bk')||$('exit')||$('back');b&&b.click()}},{passive:true})})();
 
-function carToggle(){return `<button class="cartog${CARON?' on':''}" id="carTog" aria-pressed="${CARON}"><span class="ci">🚗</span><span class="ct"><b>מצב רכב</b><span>${CARON?'פועל: מקריא ברצף מילה, משפט, תרגום וטיפ – בלי לגעת במסך':'כבוי · לחצי כדי להאזין למילים ברצף בזמן נסיעה'}</span></span><span class="sw" aria-hidden="true"><i></i></span></button>`}
+function carToggle(){return `<button class="cartog${CARON?' on':''}" id="carTog" aria-pressed="${CARON}"><span class="ci">🚗</span><span class="ct"><b>מצב רכב</b><span>${CARON?'פועל · מקריא ברצף':'כבוי · האזנה ברצף בנסיעה'}</span></span><span class="sw" aria-hidden="true"><i></i></span></button>`}
 function settings(allLabel){
   return `<div class="set-box">
     ${carToggle()}
@@ -979,7 +981,7 @@ function settings(allLabel){
         <button data-mode="read" aria-pressed="${S.mode==='read'}">קריאה</button>
         <button data-mode="listen" aria-pressed="${S.mode==='listen'}">שמיעה</button>
       </div>
-      <p class="hint">${S.mode==='read'?'רואים את המילה כתובה, כותבים פירוש ובוחרים תשובה.':'שומעים את המילה, כותבים פירוש, ואז רואים אותה ובוחרים תשובה.'}</p></div>`}
+      <p class="hint">${S.mode==='read'?'רואים את המילה, כותבים פירוש ובוחרים.':'שומעים את המילה, כותבים פירוש ובוחרים.'}</p></div>`}
   </div>`;
 }
 function bindSettings(){
@@ -1108,7 +1110,7 @@ function level(){
     ${S.l===PL?sentBtn():''}
     ${searchBox()}
     ${quizPanel(lkey(S.l),ws,S.l===PL?'בוחן על כל המילים':'בוחן על כל הרמה',lvName(S.l),'level')}
-    ${catPanel(lkey(S.l),ws)||`<p class="hint center">אחרי שתסמני מילים (ידעתי / לא ידעתי) תוכלי לעשות כאן בוחן רק על המילים שלא ידעת, שידעת או שעוד לא סומנו.</p>`}
+    ${catPanel(lkey(S.l),ws)||`<p class="hint center">אחרי סימון ✓ / ✗ יופיעו כאן בחנים לפי הסימון.</p>`}
     <button class="btn secondary" id="list">${S.l===PL?'כל המילים':'רשימת המילים ברמה'} · סימון ✓ / ✗</button>
     ${cardsBtn(lkey(S.l),ws)}
     <p class="lbl">${S.l===PL?'או תרגול לפי רשימה':'או תרגול לפי קבוצות של 50 מילים'}</p>
@@ -1159,7 +1161,7 @@ function groupScreen(){
       <p class="known-line">${countLine(ws)}</p></div>
     ${searchBox()}
     ${quizPanel(gkey(),ws,'בוחן על כל הקבוצה',name,'group')}
-    ${catPanel(gkey(),ws)||`<p class="hint center">אחרי שתסמני מילים (ידעתי / לא ידעתי) תוכלי לעשות כאן בוחן רק על המילים שלא ידעת, שידעת או שעוד לא סומנו.</p>`}
+    ${catPanel(gkey(),ws)||`<p class="hint center">אחרי סימון ✓ / ✗ יופיעו כאן בחנים לפי הסימון.</p>`}
     <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
     ${cardsBtn(gkey(),ws)}
   </div>`;
@@ -1176,7 +1178,7 @@ function wordsScreen(){
     return list.length?`<ul class="words">${list.map(wordRow).join('')}</ul>`:`<p class="hint center">${hits?'לא נמצאו מילים.':'אין מילים כאן.'}</p>`};
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">${lv?(S.l===PL?'שיעור פרטי':lvName(S.l)):gName(S.l,S.g)}</button>${HOME}</div>
-    <div><h2>${lv?(S.l===PL?'כל המילים לשיעור הפרטי':`כל המילים ברמה ${S.l}`):(S.l===PL?`המילים ב${gName(S.l,S.g)}`:`המילים בקבוצה ${S.g+1}`)}</h2><p class="sub">${lv?'':`${lvName(S.l)} · `}סמני ✓ אם את יודעת, ✗ אם לא. לחיצה נוספת מבטלת.</p></div>
+    <div><h2>${lv?(S.l===PL?'כל המילים לשיעור הפרטי':`כל המילים ברמה ${S.l}`):(S.l===PL?`המילים ב${gName(S.l,S.g)}`:`המילים בקבוצה ${S.g+1}`)}</h2><p class="sub">${lv?'':`${lvName(S.l)} · `}✓ יודעת · ✗ לא יודעת</p></div>
     <div class="sbox"><input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><button class="sclear" id="sclear" aria-label="מחיקת החיפוש" ${S.q?'':'hidden'}>✕</button></div>
     <div class="seg seg4" role="group" aria-label="סינון">${[['all','הכל'],['y','יודעת'],['n','לא יודעת'],['u','לא סומנו']].map(([k,t])=>`<button data-f="${k}" aria-pressed="${f===k}">${t} (${F[k].length})</button>`).join('')}</div>
     <div id="wlist">${rows()}</div>
@@ -1417,7 +1419,7 @@ function sentScreen(){const L=sentList();
     </div>
     <div id="expBox"></div><div id="aiBox"></div>
     <button class="btn secondary trgo" id="trOpen">🌐 תרגום מילה או משפט</button>
-    <p class="hint center">${GKEY()?'🧠 בדיקה חכמה פעילה (גם משמעות) · <button class="link small-link" data-aiset="1">הגדרה</button>':'<button class="link small-link" data-aiset="1">🧠 להפעלת בדיקה חכמה שבודקת גם משמעות</button>'}</p>
+    <p class="hint center">${GKEY()?'🧠 בדיקה חכמה פעילה · <button class="link small-link" data-aiset="1">הגדרה</button>':'<button class="link small-link" data-aiset="1">🧠 להפעלת בדיקה חכמה שבודקת גם משמעות</button>'}</p>
     <div class="sent-sort"><span>סדר:</span><div class="seg"><button data-ssort="0" aria-pressed="${!SSORT}">לפי הרשימה</button><button data-ssort="1" aria-pressed="${SSORT}">קודם מה שצריך תיקון</button></div>${SSORT?'<button class="link small-link" id="sResort">🔃 למיין שוב</button><span class="sort-ok" id="sortOk"></span>':''}</div>
     ${GKEY()?`<div class="chk-all"><button class="btn secondary small" id="chkAll">${CHKALL.run?'⏹ עצירת הבדיקה':'🔍 בדיקה חוזרת לכל המשפטים'}</button><span class="chk-allst" id="chkAllSt">${esc(CHKALL.msg||'')}</span></div>`:''}
     <ol class="sent-list">${sentOrder(L).map(([e,h,i])=>{const id=sentId(L,e);return `<li class="sent-item" data-sid="${esc(id)}">
