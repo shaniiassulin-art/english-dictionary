@@ -382,7 +382,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .screen:not(.qz):not(.car)>*{margin-top:0!important;margin-bottom:0!important}.screen>#srchRes:empty,.screen>:empty:not(button):not(input):not(textarea){display:none}
 /* quiz panels: one even gap between the title and everything under it */
 .panel,.panel .set-box,.cat-panel,.qtype{gap:14px!important}.qtype{display:flex;flex-direction:column}.qtype>*{margin:0!important}.panel>*,.panel .set-box>*{margin-top:0!important;margin-bottom:0!important}
-.cards-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cards-row .btn{width:100%}
+.cards-row{display:flex;flex-direction:column;align-items:center;gap:20px}.cards-row .link,.cat-links .link,.panel>.link{min-height:0;padding:0 4px}.cat-row{gap:14px!important}.cards-row .btn{width:100%}
 .ck-close{display:block;margin:8px auto 0;font-size:.9rem}
 .ck-revbox{margin:10px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
 .ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-title{margin:0 0 6px;font-weight:800}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
@@ -751,15 +751,17 @@ function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
     if(dx<-70&&Math.abs(dx)>2*Math.abs(dy)&&Date.now()-t0<800&&S.screen!=='home'){const b=$('bk')||$('exit')||$('back');b&&b.click()}},{passive:true})})();
 
 function carToggle(){return `<button class="cartog${CARON?' on':''}" id="carTog" aria-pressed="${CARON}"><span class="ci">🚗</span><span class="ct"><b>מצב רכב</b><span>${CARON?'פועל · מקריא ברצף':'כבוי · האזנה ברצף בנסיעה'}</span></span><span class="sw" aria-hidden="true"><i></i></span></button>`}
-function settings(allLabel){
-  return `<div class="set-box">
-    ${carToggle()}
-    ${CARON?'':`<div class="qtype"><p class="lbl">סוג הבוחן</p>
+/* reading / listening switch – also shown on an unfinished quiz, which then goes on in the chosen mode */
+const modeSeg=()=>`<div class="qtype"><p class="lbl">סוג הבוחן</p>
       <div class="seg" role="group" aria-label="סוג הבוחן">
         <button data-mode="read" aria-pressed="${S.mode==='read'}">קריאה</button>
         <button data-mode="listen" aria-pressed="${S.mode==='listen'}">שמיעה</button>
       </div>
-      <p class="hint">${S.mode==='read'?'רואים את המילה, כותבים פירוש ובוחרים.':'שומעים את המילה, כותבים פירוש ובוחרים.'}</p></div>`}
+      <p class="hint">${S.mode==='read'?'רואים את המילה, כותבים פירוש ובוחרים.':'שומעים את המילה, כותבים פירוש ובוחרים.'}</p></div>`;
+function settings(allLabel){
+  return `<div class="set-box">
+    ${carToggle()}
+    ${CARON?'':modeSeg()}
   </div>`;
 }
 function bindSettings(){
@@ -788,10 +790,10 @@ function quizPanel(key,ws,title,name,from,noSet,cls){
   if(SESS[key]&&SESS[key].kind==='quiz'&&SESS[key].v!==2)(SDEL[key]=Date.now(),delete SESS[key]);
   const ss=SESS[key];
   if(ss){const n=ss.ids.length,at=Math.min(ss.i+1,n);
-    return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':carToggle()}
-      <p class="resume-info">עצרת ב${ss.mode==='listen'?'בוחן שמיעה':'בוחן קריאה'} במילה <b>${at} מתוך ${n}</b> · ידעת ${ss.score} עד עכשיו</p>
+    return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':carToggle()+(CARON?'':modeSeg())}
+      <p class="resume-info">עצרת במילה <b>${at} מתוך ${n}</b> · ידעת ${ss.score} עד עכשיו</p>
       <div class="bar2"><i style="width:${ss.i/n*100}%"></i></div>
-      <button class="btn" data-resume="${key}">המשך ${ss.mode==='listen'?'🎧 בוחן שמיעה':'📖 בוחן קריאה'} · מהמילה ${at}</button>
+      <button class="btn" data-resume="${key}">המשך מהמילה ${at}</button>
       <button class="link" data-restart="${key}">התחלה מחדש</button></section>`}
   return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}<button class="btn" data-start="${key}">${noSet?'בוחן על המילים שאני לא יודעת':'כל המילים'} · ${ws.length} מילים</button></section>`;
 }
@@ -807,7 +809,7 @@ function catPanel(base,ws){if(!ws.some(w=>kst(w))&&!CATS.some(c=>SESS[c[0]+base]
     if(!n&&ss){SDEL[k]=Date.now();delete SESS[k];saveSess();return ''}
     if(ss&&ss.kind==='quiz'&&ss.v===2){const at=Math.min(ss.i+1,ss.ids.length);
       const ch=catDiff(ss,ws,f),upd=ch.out+ch.add?`<button class="link" data-catupd="${k}">עדכון (${[ch.out?ch.out+' עברו קטגוריה':'',ch.add?ch.add+' חדשות':''].filter(Boolean).join(', ')})</button>`:'';
-      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><div class="cat-links">${upd}<button class="link" data-restart="${k}">התחלה מחדש</button></div></div>`}
+      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך · ${lbl} · ${at}/${ss.ids.length}</button><div class="cat-links">${upd}<button class="link" data-restart="${k}">התחלה מחדש</button></div></div>`}
     return n?`<div class="cat-row"><button class="btn cat-${p}" data-start="${k}">${lbl} · ${n===1?'מילה אחת':n+' מילים'}</button></div>`:''}).join('');
   return rows?`<section class="panel cat-panel"><h3>בוחן לפי סימון</h3>${rows}</section>`:''}
 function bindCatPanel(base,ws,name,from){CATS.forEach(([p,,f,nm])=>{bindQuizPanel(p+base,ws.filter(f),nm+' · '+name,from);
@@ -1290,7 +1292,7 @@ function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return fal
   const w=Q.list[Q.i];if(w&&Q.opts){const right=Q.opts.filter(o=>o[1]).map(o=>o[0]),M=meanings(w);
     if(right.length!==M.length||right.some(r=>!M.includes(r))){Object.assign(Q,blankQ(),{mine:Q.mine})}}
   return Q.i<Q.list.length}
-function resumeQuiz(key){if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)autoSay()}
+function resumeQuiz(key){if(SESS[key]&&SESS[key].kind==='quiz')SESS[key].mode=S.mode;if(!loadQ(key)){(SDEL[key]=Date.now(),delete SESS[key]);saveSess();draw();return}S.l=Q.l;S.g=Q.g;S.active=key;go({screen:'quiz'});if(!Q.checked)autoSay()}
 /* the correct meanings plus ONE wrong meaning that looks or sounds close, to make it confusing */
 const bigr=t=>{t=String(t).toLowerCase().replace(/\([^)]*\)/g,'').replace(/[^a-zא-ת]/g,'');const b=new Set();for(let i=0;i<t.length-1;i++)b.add(t.slice(i,i+2));return b};
 const jac=(a,b)=>{if(!a.size||!b.size)return 0;let n=0;a.forEach(x=>{if(b.has(x))n++});return n/(a.size+b.size-n)};
