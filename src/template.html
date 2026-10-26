@@ -382,6 +382,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .screen:not(.qz):not(.car)>*{margin-top:0!important;margin-bottom:0!important}.screen>#srchRes:empty,.screen>:empty:not(button):not(input):not(textarea){display:none}
 /* quiz panels: one even gap between the title and everything under it */
 .panel,.panel .set-box,.cat-panel,.qtype{gap:14px!important}.qtype{display:flex;flex-direction:column}.qtype>*{margin:0!important}.panel>*,.panel .set-box>*{margin-top:0!important;margin-bottom:0!important}
+.cards-row{display:flex;flex-direction:column;align-items:center;gap:2px}.cards-row .btn{width:100%}
 .ck-close{display:block;margin:8px auto 0;font-size:.9rem}
 .ck-revbox{margin:10px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
 .ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-title{margin:0 0 6px;font-weight:800}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
@@ -926,8 +927,10 @@ function bindRows(){fitWords(app);
 /* flash cards for a group or a whole level: progress under 'F'+key (car mode keeps its own under 'C'+key);
    an old cards session saved under 'C'+key is still picked up */
 const cardSess=key=>{const f=SESS['F'+key];if(f&&f.kind==='cards')return['F'+key,f];const c=SESS['C'+key];return c&&c.kind==='cards'?['C'+key,c]:['F'+key,null]};
-const cardsBtn=(key,ws)=>{const [,ss]=cardSess(key);return `<button class="btn secondary" id="fc">${ss?`המשך כרטיסיות · ${ss.i+1} מתוך ${ss.ids.length}`:'תרגול בכרטיסיות'}</button>`};
-function bindCards(key,ws){const b=$('fc');if(b)b.onclick=()=>{const [k,ss]=cardSess(key);
+const cardsBtn=(key,ws)=>{const [,ss]=cardSess(key);const b=`<button class="btn secondary" id="fc">${ss?`המשך כרטיסיות · ${ss.i+1} מתוך ${ss.ids.length}`:'תרגול בכרטיסיות'}</button>`;
+  return ss?`<div class="cards-row">${b}<button class="link" id="fcNew">התחלה מחדש של הכרטיסיות</button></div>`:b};
+function bindCards(key,ws){const nb=$('fcNew');if(nb)nb.onclick=()=>{const [k,ss]=cardSess(key);if(ss){SDEL[k]=Date.now();delete SESS[k];saveSess()}$('fc').click()};
+  const b=$('fc');if(b)b.onclick=()=>{const [k,ss]=cardSess(key);
   const from=S.screen;C=ss?{key:k,deck:objs(ss.ids),i:ss.i,open:false,from}:{key:k,deck:shuffle(ws),i:0,open:false,from};saveC();S.active=k;go({screen:'cards'});if(AUTO&&C.deck[C.i])speak(C.deck[C.i].e)}}
 function groupScreen(){
   const ws=group(S.l,S.g),nw=ws.filter(isN),un=ws.filter(w=>!kst(w)).length;
