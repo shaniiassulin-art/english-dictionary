@@ -784,7 +784,7 @@ function quizPanel(key,ws,title,name,from,noSet,cls){
     return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':carToggle()}
       <p class="resume-info">עצרת ב${ss.mode==='listen'?'בוחן שמיעה':'בוחן קריאה'} במילה <b>${at} מתוך ${n}</b> · ידעת ${ss.score} עד עכשיו</p>
       <div class="bar2"><i style="width:${ss.i/n*100}%"></i></div>
-      <button class="btn" data-resume="${key}">המשך מהמילה ${at}</button>
+      <button class="btn" data-resume="${key}">המשך ${ss.mode==='listen'?'🎧 בוחן שמיעה':'📖 בוחן קריאה'} · מהמילה ${at}</button>
       <button class="link" data-restart="${key}">התחלה מחדש</button></section>`}
   return `<section class="panel ${cls||''}"><h3>${title}</h3>${noSet?'':settings()}<button class="btn" data-start="${key}">${noSet?'בוחן על המילים שאני לא יודעת':'התחלת בוחן'} · ${ws.length} מילים</button></section>`;
 }
@@ -800,7 +800,7 @@ function catPanel(base,ws){if(!ws.some(w=>kst(w))&&!CATS.some(c=>SESS[c[0]+base]
     if(!n&&ss){SDEL[k]=Date.now();delete SESS[k];saveSess();return ''}
     if(ss&&ss.kind==='quiz'&&ss.v===2){const at=Math.min(ss.i+1,ss.ids.length);
       const ch=catDiff(ss,ws,f),upd=ch.out+ch.add?`<button class="link" data-catupd="${k}">עדכון (${[ch.out?ch.out+' עברו קטגוריה':'',ch.add?ch.add+' חדשות':''].filter(Boolean).join(', ')})</button>`:'';
-      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><div class="cat-links">${upd}<button class="link" data-restart="${k}">התחלה מחדש</button></div></div>`}
+      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך ${ss.mode==='listen'?'🎧 שמיעה':'📖 קריאה'} · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><div class="cat-links">${upd}<button class="link" data-restart="${k}">התחלה מחדש</button></div></div>`}
     return n?`<div class="cat-row"><button class="btn cat-${p}" data-start="${k}">${lbl} · ${n===1?'מילה אחת':n+' מילים'}</button></div>`:''}).join('');
   return rows?`<section class="panel cat-panel"><h3>בוחן לפי סימון</h3>${rows}</section>`:''}
 function bindCatPanel(base,ws,name,from){CATS.forEach(([p,,f,nm])=>{bindQuizPanel(p+base,ws.filter(f),nm+' · '+name,from);
