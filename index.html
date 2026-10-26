@@ -1025,7 +1025,7 @@ function catPanel(base,ws){if(!ws.some(w=>kst(w))&&!CATS.some(c=>SESS[c[0]+base]
     if(!n&&ss){SDEL[k]=Date.now();delete SESS[k];saveSess();return ''}
     if(ss&&ss.kind==='quiz'&&ss.v===2){const at=Math.min(ss.i+1,ss.ids.length);
       const ch=catDiff(ss,ws,f),upd=ch.out+ch.add?`<button class="link" data-catupd="${k}">עדכון (${[ch.out?ch.out+' עברו קטגוריה':'',ch.add?ch.add+' חדשות':''].filter(Boolean).join(', ')})</button>`:'';
-      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך ${ss.mode==='listen'?'🎧 שמיעה':'📖 קריאה'} · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><div class="cat-links">${upd}<button class="link" data-restart="${k}">התחלה מחדש</button></div></div>`}
+      return `<div class="cat-row"><button class="btn cat-${p}" data-resume="${k}">המשך · ${lbl} · מילה ${at} מתוך ${ss.ids.length}</button><div class="cat-links">${upd}<button class="link" data-restart="${k}">התחלה מחדש</button></div></div>`}
     return n?`<div class="cat-row"><button class="btn cat-${p}" data-start="${k}">${lbl} · ${n===1?'מילה אחת':n+' מילים'}</button></div>`:''}).join('');
   return rows?`<section class="panel cat-panel"><h3>בוחן לפי סימון</h3>${rows}</section>`:''}
 function bindCatPanel(base,ws,name,from){CATS.forEach(([p,,f,nm])=>{bindQuizPanel(p+base,ws.filter(f),nm+' · '+name,from);
