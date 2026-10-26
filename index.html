@@ -71,7 +71,7 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display
 .xbox ol.num{margin:0;padding:0;list-style:none;counter-reset:n;display:flex;flex-direction:column;gap:8px}.xbox ol.num li{counter-increment:n;padding-inline-start:30px}.xbox ol.num li::before{content:counter(n);top:.15em;width:21px;height:21px;border-radius:50%;background:var(--accent);color:#fff;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--he)}
 .trans{display:block;margin-top:6px;color:var(--ink);font-family:var(--he);font-size:1rem;direction:rtl;text-align:center;background:var(--accent-soft);border-radius:10px;padding:8px 12px}
 .scol{flex:1;min-width:0}.xfull{display:flex;flex-direction:column;gap:10px;margin:4px 0 8px}.cardx{display:flex;flex-direction:column;gap:8px}.words .xtras{justify-content:flex-start;margin-top:6px}
-.trbtn{border:0;background:none;color:var(--accent);font-size:.95rem;font-weight:700;padding:4px 0 0;cursor:pointer;display:block;margin:2px auto 0;text-align:center}
+.trbtn{border:0;background:none;color:var(--accent);font-family:var(--he);font-size:.88rem;font-weight:600;padding:4px 0 0;cursor:pointer;display:block;margin:2px auto 0;text-align:center}
 #srchRes .words{margin-bottom:8px}
 .back{border:0;background:none;color:var(--accent);font-weight:700;padding:10px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .back::before{content:"→";font-size:1.2em}
@@ -184,7 +184,7 @@ button,.item,.opt{touch-action:manipulation;-webkit-tap-highlight-color:transpar
 .set-box{display:flex;flex-direction:column;gap:14px}
 .set-box .lbl{margin-bottom:8px}
 .hint{color:var(--muted);font-size:.9rem;margin:8px 0 0}
-.link{border:0;background:none;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px;padding:10px 4px;cursor:pointer;min-height:44px;align-self:center}
+.link{border:0;background:none;color:var(--accent);font-weight:700;text-decoration:none;padding:10px 4px;cursor:pointer;min-height:44px;align-self:center}
 .sentence{display:flex;align-items:flex-start;gap:10px;background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-family:var(--en);font-size:1.08rem;line-height:1.45}
 .sentence{position:relative}.sentence>.spk{position:absolute;inset-inline-start:10px;top:50%;transform:translateY(-50%)}.sentence .scol{text-align:center;padding:0 40px}.sentence span{display:block;text-align:center}.sentence .trans{text-align:center}
 mark{background:none;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
@@ -383,6 +383,13 @@ input,textarea,select{font-size:max(16px,1em)}
 .ck-note{margin:8px 0 0;font-size:.78rem;color:var(--muted)}.ck-word .ck-st{margin:0;font-weight:700;color:var(--ok)}.ck-word.bad .ck-st{color:var(--bad)}.ck-word.bad{border-color:var(--bad)}
 .ck-sent{margin:0;font-family:var(--en);font-size:1.02rem;text-align:left;background:var(--surface);border-radius:8px;padding:6px 10px}.ck-he{margin:6px 0 0;font-size:.88rem;color:var(--muted)}.ck-all{margin-top:6px;font-family:inherit;font-size:.8rem;padding:2px 10px;font-weight:600}
 .ck-rev{display:flex;align-items:center;gap:8px;margin:6px 2px 0;font-size:.9rem;font-weight:600;cursor:pointer}.ck-rev input{width:20px;height:20px;accent-color:var(--ok)}.sst.rev{background:var(--accent-soft);color:var(--accent)}
+/* listening quiz: one family of pill buttons for hearing / showing the word and the sentence */
+.lrow{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0}
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 18px;border-radius:999px;border:1.5px solid var(--accent);background:var(--accent-soft);color:var(--accent);font:inherit;font-weight:700;font-size:.95rem;cursor:pointer}
+.pill svg{width:20px;height:20px}.pill.main{background:var(--accent);color:var(--accent-ink);padding:10px 22px;font-size:1rem}.pill.main svg{width:22px;height:22px}
+.pill.ghost{background:none;border-color:var(--line);color:var(--ink)}
+.wnav .lword{flex:1;margin:0}
+.small-link,.hint .link,.sub .link,.chk-msg .link{text-decoration:underline;text-underline-offset:3px}
 .ck-close{display:block;margin:8px auto 0;font-size:.9rem}
 .ck-revbox{margin:10px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
 .ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-title{margin:0 0 6px;font-weight:800}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
@@ -1117,7 +1124,8 @@ function level(){
 
 const gkey=()=>S.l===PL?'GP'+PWK+'-'+(PRIV.lists[S.g]||{}).n:'G'+S.l+'-'+S.g;
 const lkey=l=>l===PL?'LP'+PWK:'L'+l;
-const HOME='<button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button><button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
+const RELOADBTN='<button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button>',HOMEONLY='<button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
+const HOME=RELOADBTN+HOMEONLY;
 /* search by English word or Hebrew meaning */
 const snorm=s=>String(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').replace(/[-־'"״׳.,;:()\/]/g,' ').replace(/\s+/g,' ').trim();
 function searchHits(ws,q){q=snorm(q);if(!q)return null;
@@ -1671,9 +1679,10 @@ function quizScreen(){
   /* listening quiz: the written word stays hidden until בדיקה (or הצגת המילה כתובה) */
   const showWord=!listen||Q.shown||Q.checked;
   const rv=Q.checked||!!(Q.marks||{})[w.id];
-  const sentence=Q.sent?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span>${trPart(w,rv)}</div></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
+  const lsn=listen&&!Q.sent&&w.s?`<div class="lrow"><button class="pill" id="saySent" aria-label="השמעת המשפט לדוגמה">${SPK}<span>השמעת המשפט</span></button><button class="pill ghost" id="showSent">הצגת המשפט</button></div>`:'';
+  const sentence=lsn?lsn:Q.sent?`<div class="sentence"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${showWord?highlight(w.s,w.e):esc(w.s)}</span>${trPart(w,rv)}</div></div>`:`<button class="link" id="showSent">הצגת משפט לדוגמה</button>`;
   const wordBox=showWord?`<div class="word"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>`
-    :`<div class="word listen"><button class="play" id="say" aria-label="השמעת המילה שוב">${SPK}<span>השמעה חוזרת</span></button><button class="link" id="reveal">הצגת המילה כתובה</button></div>`;
+    :`<div class="lrow lword"><button class="pill main" id="say" aria-label="השמעת המילה שוב">${SPK}<span>השמעת המילה</span></button><button class="pill ghost" id="reveal">הצגת המילה</button></div>`;
   let body='';
   if(Q.stage==='write'){
     body=`
@@ -1699,7 +1708,7 @@ function quizScreen(){
         <div class="row2 quick"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>`}</div>`;
   }
   app.innerHTML=`<div class="screen qz">
-    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOME}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span>${AUTOBTN()}<button class="mic${V.on?' on':''}" id="voiceBtn" aria-pressed="${V.on}" aria-label="${V.on?'עצירת מצב קולי':'מצב קולי'}">${MIC}</button></div>
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOMEONLY}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span>${AUTOBTN()}${RELOADBTN}</div>
     <p class="vmsg" id="vmsg" hidden></p>
     <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)} · <span class="${dayCount(dayKey())>=GOAL?'kn':''}">היום ${dayCount(dayKey())}/${GOAL}</span></p>
     <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${Q.i>0?'':'disabled'}>→</button>${wordBox}<button class="arr" id="navNext" aria-label="למילה הבאה" ${Q.i<n-1?'':'disabled'}>←</button></div>
@@ -1707,7 +1716,7 @@ function quizScreen(){
     ${body}
     ${V.on?`<div class="vbar" role="status" aria-live="polite"><span class="dot" aria-hidden="true"></span><span id="vbarTxt">${esc(V.status||'מצב קולי פעיל')}</span><button class="vstop" id="vstop">עצירה</button></div>`:''}
   </div>`;
-  $('voiceBtn').onclick=()=>{if(V.on)stopVoice();else startVoice()};bindAuto(w.e);
+  bindAuto(w.e);
   /* arrows: move between words; each word stays as it was left (an unanswered word stays unanswered) */
   $('navPrev').onclick=()=>{keepInput();stopVoice(true);goTo(Q.i-1)};
   $('navNext').onclick=()=>{keepInput();stopVoice(true);goTo(Q.i+1)};
@@ -1944,7 +1953,7 @@ function cardScreen(){
     $('b').onclick=()=>go({screen:C.from||'group'});return}
   const w=C.deck[C.i];
   app.innerHTML=`<div class="screen full">
-    <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button>${HOME}<div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span>${AUTOBTN()}</div>
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה">✕</button>${HOMEONLY}<div class="prog"><i style="width:${C.i/n*100}%"></i></div><span class="count">${C.i+1} / ${n}</span>${AUTOBTN()}${RELOADBTN}</div>
     <button class="card" id="card" aria-label="הפיכת הכרטיס"><span class="w">${esc(w.e)}</span>${C.open?`<span class="a">${w.h.map(esc).join('<br>')}</span>${w.others.length?`<span class="oth">פירושים נוספים: ${esc(numText(w.others))}</span>`:''}<span class="ex" dir="ltr">${highlight(w.s,w.e)}</span>`:`<span class="hint">הקישי כדי לראות פירוש ומשפט</span>`}</button>
     ${C.open?`<div class="cardx">${trPart(w,true)}${xtras(w,true)}</div>`:''}
     <div class="sticky"><div class="row2"><button class="btn secondary" id="say">${SPK} מילה</button><button class="btn secondary" id="saySent">${SPK} משפט</button></div>
