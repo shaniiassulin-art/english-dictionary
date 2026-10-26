@@ -38,7 +38,7 @@ h2{font-size:1.4rem;font-weight:700}
 .today .td-top{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--muted)}.today .td-hist{color:var(--accent);font-weight:700}
 .today .td-num{font-size:1.05rem}.today .td-num b{font-size:1.5rem}.today.done{background:var(--ok-soft)}.today.done .bar2 i,.days li.done .bar2 i{background:var(--ok)}
 .days{list-style:none;margin:0;padding:0}.days li{display:grid;grid-template-columns:1fr auto;gap:4px 10px;padding:12px 0;border-bottom:1px solid var(--line)}.days .bar2{grid-column:1/-1;display:block;background:var(--surface)}.today .bar2{display:block}.days .dn{font-weight:700}.days li.done .dn{color:var(--ok)}
-.totop{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;z-index:20;width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:var(--bg);font-size:1.4rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}.totop[hidden]{display:none}
+.totop{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));inset-inline-start:16px;z-index:20;width:48px;height:48px;border-radius:50%;border:0;background:var(--accent);color:var(--bg);font-size:1.4rem;font-weight:700;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer}.totop[hidden]{display:none}.totop{display:flex;align-items:center;justify-content:center;padding:0}.ai{display:block;flex:none}.btn .ai{display:inline-block;vertical-align:middle}.carnav .btn .ai{display:block;margin:0 auto}.ck-arr{display:inline-flex;align-items:center}
 .reload{position:fixed;bottom:calc(140px + env(safe-area-inset-bottom,0px));inset-inline-start:20px;z-index:20;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);font-size:1.3rem;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.2);cursor:pointer;padding:0}.reload[hidden]{display:none}.re-ic{width:20px;height:20px;display:block;transform-origin:50% 50%}.spin .re-ic{animation:rspin .9s cubic-bezier(.45,.05,.55,.95) infinite}.reload,.reload-top{display:inline-grid;place-items:center}
 .reload-top{font-size:1.25rem;color:var(--accent)}.nav .reload-top{margin-inline-start:auto}.sh-re{margin-inline-start:auto;margin-inline-end:8px}.home-top{display:flex;align-items:flex-start;gap:8px}.home-top .ht-s{flex:1;min-width:0}.home-top .reload-top{margin-top:6px}.nav .reload-top+.home-btn{margin-inline-start:0}@keyframes rspin{to{transform:rotate(360deg)}}
 input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
@@ -63,7 +63,7 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display
 .trbtn{border:0;background:none;color:var(--accent);font-family:var(--he);font-size:.88rem;font-weight:600;padding:4px 0 0;cursor:pointer;display:block;margin:2px auto 0;text-align:center}
 #srchRes .words{margin-bottom:8px}
 .back{border:0;background:none;color:var(--accent);font-weight:700;padding:10px 4px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.back::before{content:"→";font-size:1.2em}
+.back::before{content:"";width:18px;height:18px;flex:none;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12h14'/%3E%3Cpath d='M13 6l6 6-6 6'/%3E%3C/svg%3E") center/contain no-repeat}
 
 /* primary actions */
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:56px;border-radius:14px;border:0;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1.1rem;cursor:pointer;padding:12px 18px}
@@ -75,7 +75,7 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display
 .item{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:right;background:var(--surface);border:0;border-radius:14px;padding:16px 18px;min-height:64px;cursor:pointer}
 .item .t{font-weight:700;font-size:1.1rem}
 .item .d{color:var(--muted);font-size:.95rem}
-.item .chev{color:var(--muted);font-size:1.3rem}
+.item .chev{color:var(--muted);display:inline-flex;align-items:center;justify-content:center}
 .item.done .d{color:var(--ok);font-weight:600}
 .lbl{font-size:.95rem;color:var(--muted);font-weight:600;margin:0}
 
@@ -707,7 +707,7 @@ function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
 /* ↑ button: back to the top of long pages */
-const toTop=document.createElement('button');toTop.className='totop';toTop.setAttribute('aria-label','חזרה לראש הדף');toTop.textContent='↑';toTop.hidden=true;
+const toTop=document.createElement('button');toTop.className='totop';toTop.setAttribute('aria-label','חזרה לראש הדף');toTop.innerHTML='<svg class="ai" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg>';toTop.hidden=true;
 toTop.onclick=()=>window.scrollTo({top:0,behavior:'smooth'});document.body.appendChild(toTop);
 window.addEventListener('scroll',()=>{toTop.hidden=window.scrollY<500},{passive:true});
 /* ⟳ on every screen: save, then reload the newest version of the site (cache-busting address), instead of leaving and coming back */
@@ -855,12 +855,12 @@ function home(){
     <div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים לתרגול · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
-      return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
+      return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
     ${todayCard()}
-    ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+LN(L)).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button>`})()}
+    ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+LN(L)).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
-      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}${(()=>{const mk=ws.filter(x=>kst(x)).length;return mk&&mk<ws.length?` · לא סומנו ${ws.length-mk}`:''})()}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+      return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d">${ws.length} מילים · ${nGroups(i+1)} קבוצות${kk?` · <b class="kn">יודעת ${kk}</b>`:''}${(()=>{const mk=ws.filter(x=>kst(x)).length;return mk&&mk<ws.length?` · לא סומנו ${ws.length-mk}`:''})()}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button></li>`}).join('')}</ul>
     ${quizPanel('ALL',DW,'בוחן על כל המילים','כל המילים','home')}
     ${catPanel('ALL',DW)}
   </div>`;
@@ -886,7 +886,7 @@ function level(){
     ${cardsBtn(lkey(S.l),ws)}
     <p class="lbl">${S.l===PL?'או תרגול לפי רשימה':'או תרגול לפי קבוצות של 50 מילים'}</p>
     <ul class="list">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
-      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">${gName(S.l,g)}</span><br><span class="d">${S.l===PL?gw.length+' מילים · ':''}${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true">‹</span></button></li>`}).join('')}</ul>
+      return `<li><button class="item${done?' done':''}" data-g="${g}"><span class="grow"><span class="t">${gName(S.l,g)}</span><br><span class="d">${S.l===PL?gw.length+' מילים · ':''}${done?'יודעת את כל המילים ✓':countLine(gw)}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
   bindSettings();bindQuizPanel(lkey(S.l),ws,lvName(S.l),'level');bindCatPanel(lkey(S.l),ws,lvName(S.l),'level');const sb=$('sentGo');if(sb)sb.onclick=()=>go({screen:'sent'});
@@ -1126,9 +1126,9 @@ function aiHtml(id){const c=CHK[id],j=c.ai||{};let h='';const ms=j.mistakes||[],
   /* 2. mistakes */
   if(ms.length)h+=`<div class="ck-sec"><p class="ck-h">✍️ הטעויות שלך</p><ol class="ck-ms">${ms.map((m,k)=>{const ty=MTYPE[m.type]||m.type||'';
       return `<li class="ck-m"><div class="ck-mtop"><span class="ck-n">${k+1}</span>${ty?`<span class="ck-type">${esc(ty)}</span>`:''}</div>
-      <div class="ck-fixrow" dir="ltr"><bdi class="chk-bad">${esc(m.wrong||'')}</bdi><span class="ck-arr">→</span><button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}" title="להחליף במשפט"><bdi>${esc(m.fix||'(למחוק)')}</bdi></button></div>
+      <div class="ck-fixrow" dir="ltr"><bdi class="chk-bad">${esc(m.wrong||'')}</bdi><span class="ck-arr"><svg class="ai" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span><button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}" title="להחליף במשפט"><bdi>${esc(m.fix||'(למחוק)')}</bdi></button></div>
       ${m.why?`<p class="ck-why"><b>למה?</b> ${bdiEsc(m.why)}</p>`:''}${m.rule?`<p class="ck-rule">📘 <b>כלל לזכור:</b> ${bdiEsc(m.rule)}</p>`:''}
-      ${(m.alts||[]).map((x,i)=>`<div class="ck-alt"><p class="ck-altl">אפשרות נוספת לתיקון:</p><div class="ck-fixrow" dir="ltr"><bdi class="chk-bad">${esc(m.wrong||'')}</bdi><span class="ck-arr">→</span><button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}" data-alt="${i}" title="להחליף במשפט"><bdi>${esc(x.fix||'(למחוק)')}</bdi></button></div>${x.why?`<p class="ck-why">${bdiEsc(x.why)}</p>`:''}</div>`).join('')}
+      ${(m.alts||[]).map((x,i)=>`<div class="ck-alt"><p class="ck-altl">אפשרות נוספת לתיקון:</p><div class="ck-fixrow" dir="ltr"><bdi class="chk-bad">${esc(m.wrong||'')}</bdi><span class="ck-arr"><svg class="ai" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></span><button class="chk-fix" data-aifix="${esc(id)}" data-k="${k}" data-alt="${i}" title="להחליף במשפט"><bdi>${esc(x.fix||'(למחוק)')}</bdi></button></div>${x.why?`<p class="ck-why">${bdiEsc(x.why)}</p>`:''}</div>`).join('')}
       ${m.altPend?'<p class="chk-msg">⏳ מחפשת עוד דרך לתקן…</p>':m.altErr?`<p class="chk-msg bad">${esc(m.altErr)}</p>`:''}<button class="link small-link ck-altbtn" data-altreq="${esc(id)}" data-k="${k}"${m.altPend?' disabled':''}>➕ עוד אפשרות לתיקון</button></li>`}).join('')}</ol>
     <p class="ck-note">לחיצה על התיקון הירוק מחליפה אותו במשפט שלך.</p></div>`;
   /* 3. the list word */
@@ -1474,7 +1474,7 @@ function quizScreen(){
         return `<button class="opt${c}" data-k="${k}" ${Q.checked?'disabled':''} aria-pressed="${on}">${pre}${esc(t)}${c===' missed'?'<span class="rtag">התשובה הנכונה</span>':''}</button>`}).join('')}</div>
       ${fb}
       ${Q.checked?xfull(w):''}
-      <div class="sticky">${Q.checked?`${(Q.marks||{})[w.id]?`<p class="rv-now">סימנת: <b class="${Q.marks[w.id]==='y'?'kn':'unk'}">${Q.marks[w.id]==='y'?'✓ ידעתי':'✗ לא ידעתי'}</b></p>`:''}<div class="row2"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>${(Q.marks||{})[w.id]?`<button class="btn secondary" id="qnext">למילה הבאה ←</button>`:''}`
+      <div class="sticky">${Q.checked?`${(Q.marks||{})[w.id]?`<p class="rv-now">סימנת: <b class="${Q.marks[w.id]==='y'?'kn':'unk'}">${Q.marks[w.id]==='y'?'✓ ידעתי':'✗ לא ידעתי'}</b></p>`:''}<div class="row2"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>${(Q.marks||{})[w.id]?`<button class="btn secondary" id="qnext">למילה הבאה <svg class="ai" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg></button>`:''}`
         :`<button class="btn" id="check" ${Q.sel.length?'':'disabled'}>בדיקה</button>
         <div class="row2 quick"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>`}</div>`;
   }
@@ -1655,7 +1655,7 @@ function carScreen(){const n=CAR.deck.length;
     <div class="sticky carbar">
       ${CAR.wait?'<p class="carwait">סמני אם ידעת את המילה – ואז עוברים למילה הבאה</p>':''}
       <div class="carrow"><button class="btn knowno" id="cN" aria-pressed="${kst(w)==='n'}">✗ לא ידעתי<small>ועוברים למילה הבאה</small></button><button class="btn knowyes" id="cY" aria-pressed="${kst(w)==='y'}">✓ ידעתי<small>ועוברים למילה הבאה</small></button></div>
-      <div class="carnav"><button class="btn secondary" id="cPrev"${CAR.i>0?'':' disabled'}>→<small>מילה קודמת</small></button><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירת ההקראה</small>':'▶<small>'+(CAR.wait?'להקריא שוב את המילה':'המשך ההקראה')+'</small>'}</button><button class="btn secondary" id="cNext"${CAR.i<CAR.deck.length-1?'':' disabled'}>←<small>מילה הבאה</small></button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">${CAR.set?'✕<small>סגירת ההגדרות</small>':'⚙<small>קול ומהירות</small>'}</button></div>
+      <div class="carnav"><button class="btn secondary" id="cPrev"${CAR.i>0?'':' disabled'}><svg class="ai" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg><small>מילה קודמת</small></button><button class="btn secondary" id="cPlay">${CAR.play&&!CAR.wait?'⏸<small>עצירת ההקראה</small>':'▶<small>'+(CAR.wait?'להקריא שוב את המילה':'המשך ההקראה')+'</small>'}</button><button class="btn secondary" id="cNext"${CAR.i<CAR.deck.length-1?'':' disabled'}><svg class="ai" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg><small>מילה הבאה</small></button><button class="btn secondary" id="cSet" aria-expanded="${!!CAR.set}">${CAR.set?'✕<small>סגירת ההגדרות</small>':'⚙<small>קול ומהירות</small>'}</button></div>
 
 </div>
   </div>`;
