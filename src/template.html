@@ -383,6 +383,7 @@ input,textarea,select{font-size:max(16px,1em)}
 /* quiz panels: one even gap between the title and everything under it */
 .panel,.panel .set-box,.cat-panel,.qtype{gap:14px!important}.qtype{display:flex;flex-direction:column}.qtype>*{margin:0!important}.panel>*,.panel .set-box>*{margin-top:0!important;margin-bottom:0!important}
 .cards-row{display:flex;flex-direction:column;align-items:center;gap:20px}.cards-row .link,.cat-links .link,.panel>.link{min-height:0;padding:0 4px}.cat-row{gap:14px!important}.cards-row .btn{width:100%}
+.qcount{flex:1;text-align:center}
 .ck-close{display:block;margin:8px auto 0;font-size:.9rem}
 .ck-revbox{margin:10px 0 0;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg)}
 .ck-head{display:flex;flex-direction:column;gap:6px}.exp-h2{margin:18px 0 8px;padding-top:14px;border-top:1px solid var(--line)}.exp-title{margin:0 0 6px;font-weight:800}.exp-words li{direction:ltr;text-align:left}.exp-words .ew{font-family:var(--en);font-weight:700}
@@ -1490,7 +1491,7 @@ function quizScreen(){
         <div class="row2 quick"><button class="btn knowno" id="markN" aria-pressed="${(Q.marks||{})[w.id]==='n'}">✗ לא ידעתי</button><button class="btn knowyes" id="markY" aria-pressed="${(Q.marks||{})[w.id]==='y'}">✓ ידעתי</button></div>`}</div>`;
   }
   app.innerHTML=`<div class="screen qz">
-    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOMEONLY}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span>${AUTOBTN()}${RELOADBTN}</div>
+    <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOMEONLY}<span class="count qcount">${Q.i+1} / ${n}</span>${AUTOBTN()}${RELOADBTN}</div>
     <p class="vmsg" id="vmsg" hidden></p>
     <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)} · <span class="${dayCount(dayKey())>=GOAL?'kn':''}">היום ${dayCount(dayKey())}/${GOAL}</span></p>
     <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${Q.i>0?'':'disabled'}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>${wordBox}<button class="arr" id="navNext" aria-label="למילה הבאה" ${Q.i<n-1?'':'disabled'}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg></button></div>
