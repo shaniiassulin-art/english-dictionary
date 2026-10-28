@@ -34,6 +34,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--he);font-size:18px;
 .app{max-width:560px;margin:0 auto;padding-inline:20px;padding-block:20px 48px;min-height:100%}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+/* typing fields: just the colored border when focused, no second ring */
+input:focus,input:focus-visible,textarea:focus,textarea:focus-visible,select:focus,select:focus-visible{outline:none!important;box-shadow:none}input:focus,textarea:focus{border-color:var(--accent)}
 h1,h2{margin:0;line-height:1.2;text-wrap:balance}
 h1{font-size:1.7rem;font-weight:700;letter-spacing:-.01em}
 h2{font-size:1.4rem;font-weight:700}
@@ -415,7 +417,7 @@ input,textarea,select{font-size:max(16px,1em)}
 .sync-state{min-height:1.4em}.sent-item textarea{width:100%;resize:none;overflow:hidden;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);color:var(--ink);font-family:var(--he);line-height:1.45;min-height:46px;display:block;touch-action:auto;-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .sent-item textarea.si-en{font-family:var(--en);text-align:left}
 .sent-item textarea::placeholder{color:var(--muted);opacity:.8;font-family:var(--he);direction:rtl;text-align:right}
-.sent-item textarea:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.sent-item textarea:focus{border-color:var(--accent)}
 .exp-list{list-style:none;margin:0;padding:12px;background:var(--surface);border-radius:12px;font-family:var(--en);text-align:left;line-height:1.5;user-select:text;-webkit-user-select:text}
 .exp-list li{margin:3px 0}
 .exp-miss{margin:8px 0;color:var(--bad);font-weight:600}.exp-miss.ok{color:var(--ok)}
