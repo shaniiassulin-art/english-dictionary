@@ -2,6 +2,7 @@
 
 `index.html` is generated. Edit files in `src/`, then run `python3 build.py`, commit and push to `main` (Netlify deploys from it).
 
+- `src/head.html` – the page head; the app icon (apple-touch-icon 180px + 64px favicon, inlined PNGs: two tilted cards "A" white / "א" light blue on the dark blue accent gradient).
 - `src/template.html` – the app (HTML/CSS/JS); `__DATA__` is replaced with `src/words.json`.
 - Words: `[english, [hebrew…], level 1–10, example sentence]`; for a word with several meanings the sentence is a list, one sentence per meaning (same order). In the app each meaning becomes its own card (id `word#k` when a word has several meanings, else `word`) that asks that meaning and shows the others; sibling cards are spread about one group apart. Groups are 50 cards per level.
 - Each entry in the Hebrew list is one meaning. A line from the original dictionary stays as written (commas kept) unless it mixes completely different meanings, which are split; separate dictionary lines with the same meaning are joined with " / ". A ";" inside a dictionary line separates meanings (split), commas stay. A dictionary line naming several English words (e.g. "know, knew", "leaf (leaves)") becomes one entry per English word, about one group apart; such entries carry a 5th field `{id, src}` (stable id "line|word", old card ids for marks).
