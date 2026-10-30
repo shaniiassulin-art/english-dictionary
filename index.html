@@ -2165,6 +2165,30 @@ function wMaster(w){w.st=WMAST;w.due=0;
   const d=dictFind(w.e);if(d)d.cards.forEach(c=>{if(!isY(c))setKnow(c.id,'y')})}
 /* the dictionary card behind a workshop word (for its tip, notes, sentence and translation) */
 function wCard(w){if(w.src&&w.src.startsWith('dict:'))return W[w.src.slice(5)]||null;const d=dictFind(w.e);if(!d)return null;return d.cards.find(c=>heMatch(c.h[0],w.h||''))||d.cards[0]}
+/* 🧭 tips from the methods, for words where they really apply */
+function wMethodTips(w){const out=[],e=String(w.e||'').toLowerCase().trim(),P=AMD&&AMD.px,L=AMD&&AMD.lists;if(!e)return out;
+  for(const [he,k,ws,tip] of CONN)if(ws.includes(e)){out.push(['🔗','מילת קישור – '+he,tip+' בהשלמת משפטים ובניסוח מחדש מילה כזו היא בדרך כלל הרמז לתשובה.']);break}
+  if(L&&L.conf){const it=L.conf.find(x=>x.e.toLowerCase()===e);if(it){const sib=L.conf.filter(x=>x.g===it.g&&x!==it);if(sib.length)out.push(['⚠️','מילים שקל לבלבל איתה',sib.map(x=>`<bdi>${esc(x.e)}</bdi> = ${esc(x.h)}`).join(' · ')+'. לתת לכל אחת אסוציאציה משלה.'])}}
+  const pv=L&&(L.pv||[]).find(x=>x.e.toLowerCase()===e);
+  if(pv||/^[a-z]+ (up|out|off|down|in|on|over|away|back|into|through|after|for|with|about|across|along|around|apart|forward)$/.test(e))out.push(['🧩','פועל מורכב','פועל + מילת יחס = יחידת משמעות אחת, ולפעמים שונה לגמרי מהחלקים. לא לתרגם מילה־מילה – לזכור את הצירוף כמילה אחת.']);
+  else if(L&&(L.id||[]).some(x=>x.e.toLowerCase()===e))out.push(['💬','ביטוי','המשמעות של כל הצירוף יחד שונה מהמילים לחוד – לזכור אותו כיחידה אחת.']);
+  if(P&&!e.includes(' ')){const PX=wPxMap();
+    const base=b=>{for(const c of [b,b+'e',b.replace(/i$/,'y'),/(.)\1$/.test(b)?b.slice(0,-1):''])if(c&&c.length>=3&&DIX[c])return {e:c,h:[...new Set(DIX[c].map(x=>x.h[0]))].slice(0,2).join(' / ')};return null};
+    let pre=null;for(const [t,h] of PX.pre){if(e.startsWith(t)&&e.length-t.length>=3){const b=base(e.slice(t.length));if(b&&b.e!==e){pre=`<bdi>${t}-</bdi> = ${esc(h)} &nbsp;+&nbsp; <bdi>${b.e}</bdi> = ${esc(b.h)}`;break}}}
+    if(!pre)for(const E of P.pre)if(E.ex.some(([x])=>x.toLowerCase()===e)){pre=`מתחילה ב־<bdi>${esc(E.p)}-</bdi> = ${esc(wPxH(E.h))}`;break}
+    if(pre)out.push(['🧬','פירוק המילה (תחילית)',pre+'. כך אפשר לנחש גם מילים שלא ראית.']);
+    let suf=null;for(const [t,h] of PX.suf){if(e.endsWith(t)&&e.length-t.length>=3){const b=base(e.slice(0,-t.length));if(b&&b.e!==e){suf=`<bdi>${b.e}</bdi> = ${esc(b.h)} &nbsp;+&nbsp; <bdi>-${t}</bdi> = ${esc(h)}`;break}}}
+    if(suf)out.push(['🧬','פירוק המילה (סופית)',suf+'.'])}
+  const ai=AMAI['as|'+wK(w)];if(ai&&ai.method_tip)out.push(['🧭','טיפ מהשיטה',bdiEsc(ai.method_tip)]);
+  return out}
+/* prefixes / suffixes from the PDF (+ a few very common ones it lacks), longest first, meanings of a repeated one joined */
+const wPxH=h=>String(h).replace(/\(.*$|\).*$/,'').replace(/\s+/g,' ').trim().replace(/[,;]$/,'');
+let WPX=null;function wPxMap(){if(WPX)return WPX;const P=AMD.px,m={pre:{},suf:{}};
+  const add=(k,t,h)=>{h=wPxH(h);if(!h)return;const o=m[k][t]=m[k][t]||[];if(!o.includes(h))o.push(h)};
+  ['pre','suf'].forEach(k=>P[k].forEach(E=>E.p.toLowerCase().split(/[^a-z]+/).filter(t=>t.length>=2).forEach(t=>add(k,t,E.h))));
+  add('pre','un','לא, ההיפך');add('suf','ful','מלא ב־');add('suf','ment','הופך פועל לשם עצם');add('suf','ness','הופך תואר לשם עצם');add('suf','ly','באופן…');
+  const L=k=>Object.entries(m[k]).map(([t,h])=>[t,h.slice(0,2).join(' / ')]).sort((a,b)=>b[0].length-a[0].length);return WPX={pre:L('pre'),suf:L('suf')}}
+function wMethodBox(w){const T=wMethodTips(w);return T.length?`<div class="am-box am-mtip"><h4>🧭 טיפ מהשיטה</h4>${T.map(([i,t,d])=>`<div class="am-rec"><span>${i}</span><div><b>${t}</b><p>${d}</p></div></div>`).join('')}</div>`:''}
 /* Hebrew answer check: does what she typed match one of the meanings? */
 const heNorm=t=>String(t).replace(/[\u0591-\u05C7]/g,'').replace(/[^\u05D0-\u05EA ]/g,' ').replace(/\s+/g,' ').trim();
 function heMatch(typed,h){const a=heNorm(typed);if(a.length<2)return false;const ms=String(h).split(/[·;,/()]| או /).map(heNorm).filter(x=>x.length>1);
@@ -2201,7 +2225,8 @@ Give at most 5 words. ${AIHE}`}
 function promptAssoc(w,old){return `Create memory associations (mnemonics) for a Hebrew-speaking student who does not know English, for the English word "${w.e}" meaning "${w.h}" (Hebrew).
 Use the keyword method: take a Hebrew word, name, loanword common in spoken Hebrew, or famous brand that SOUNDS like the English word or its first syllables, and build a vivid, specific, slightly absurd or emotional mini-scene (1-2 sentences, present tense, talking to her as "את") in which that sound-alike is directly connected to the meaning. It must be unique and surprising, easy to picture, and the meaning must be impossible to miss. No other English words.
 ${old&&old.length?'Do NOT repeat these earlier ideas: '+old.join(' | '):''}
-JSON: {"ideas":[{"sound":"the sound-alike in Hebrew letters and which part of the English word it matches, e.g. 'אבנדון ← abandon'","scene":"the scene in Hebrew","link":"one short line: «${w.e}» נשמע כמו ... ← ..."},{...},{...}]} – exactly 3 different ideas. ${AIHE}`}
+Also, ONLY if it truly applies to this word, add "method_tip": one short Hebrew line based on English word structure or the psychometric course methods – e.g. a known prefix/suffix/root that explains the meaning, a family word she may know, a connector type (contrast/cause…), a common confusion with a similar-looking word, or a typical exam context. Otherwise "".
+JSON: {"method_tip":"","ideas":[{"sound":"the sound-alike in Hebrew letters and which part of the English word it matches, e.g. 'אבנדון ← abandon'","scene":"the scene in Hebrew","link":"one short line: «${w.e}» נשמע כמו ... ← ..."},{...},{...}]} – exactly 3 different ideas. ${AIHE}`}
 function promptSent(w,t){return `A Hebrew-speaking English learner wrote a sentence to practise the word "${w.e}" (meaning: ${w.h}).
 Sentence: «${t}»
 Check grammar and spelling, and whether "${w.e}" (any grammatical form counts) is used correctly in that meaning, in a natural context.
@@ -2384,7 +2409,7 @@ body:has(.am-cta) .totop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */
-const AMHK={start:'overview',home:'dict',am:'daily',amqh:'questions',amu:'questions',amq:'flow',amx:'mistakes',amls:'lessons',amw:'words',amwl:'learn',amwm:'mywords',amwd:'mywords',amh:'context',amwp:'parts',amrd:'reader',aml:'basics',amm:'methods',ammt:'methods',amp:'progress'};
+const AMHK={start:'overview',home:'dict',am:'daily',amqh:'questions',amu:'questions',amq:'flow',amx:'mistakes',amls:'lessons',amw:'words',amwl:'learn',amwm:'mywords',amwd:'mywords',amh:'context',amrd:'reader',aml:'basics',amm:'methods',ammt:'methods',amp:'progress'};
 const INFOB=k=>`<button class="home-btn am-info" data-help="${k||AMHK[S.screen]||''}" aria-label="מידע והסברים">i</button>`;
 let AMEX=LS.get('dictAmEx')!=='0';
 /* what a button does, where it leads, and what is inside */
@@ -2446,7 +2471,7 @@ function amHub(){if(!AMD)return amLoading();
 
     <div class="am-gates">
       ${gate('g-q','✏️','שאלות','תרגול לפי השיטה','amqh','',EX('כל שאלות המבחן מהספרים, שאלה אחרי שאלה לפי השיטה.','בחירת סוג: השלמת משפטים, ניסוח מחדש, הבנת הנקרא, סימולציה, יסודות'))}
-      ${gate('g-w','🧠','מילים','ללמוד ולזכור',  'amw',due?due+' לחזרה':'',EX('כל הלמידה של המילים: חזרות, מילים חדשות וניהול המילים שלך.','חזרה פעילה, מילים חדשות, המילים שלי, ניחוש מהקשר, פירוק מילים, מקראה'))}
+      ${gate('g-w','🧠','מילים','ללמוד ולזכור',  'amw',due?due+' לחזרה':'',EX('כל הלמידה של המילים: חזרות, מילים חדשות וניהול המילים שלך.','חזרה פעילה, מילים חדשות, המילים שלי, ניחוש מהקשר, מקראה'))}
       ${gate('g-m','🩹','טעויות ולקחים','לחקור וללמוד','amx',mistAll||'',EX('כל השאלות שטעית בהן, וניסיון חוזר עליהן בזמן הנכון.','ניסיון חוזר, הלקחים שלי, הטעויות הנפוצות שלך'))}
       ${gate('g-s','🧭','שיטות','איך פותרים','amm','',EX('השיטות מהספרים – איך פותרים כל סוג שאלה.','רשימת נושאים, כל נושא בעמוד משלו'))}
     </div>
@@ -2865,11 +2890,10 @@ function amWords(){if(!AMD)return amLoading();
     ${card('wMine','g-w','📒','המילים שלי',`${learn} בלמידה · ${mast} נלמדו${hard?' · '+hard+' קשות':''}${wait?' · '+wait+' מחכות':''}`,'','',EX('כל המילים שאת לומדת, מסוננות: לחזרה, בלמידה, קשות, נלמדו, מחכות. לחיצה על מילה מראה מתי החזרה הבאה, יומן של כל הצלחה וטעות, והמלצה איך ללמוד אותה.','רשימת המילים שלך ← עמוד לכל מילה'))}
     <p class="lbl">עוד דרכים לזכור</p>
     ${card('wCtx','g-s','🧩','ניחוש מהקשר','משפט בעברית עם חור – משלימים מילה שמתאימה','','',EX('מתרגלים את הצעד הראשון בהשלמת משפטים: להבין מההקשר מה חסר. אחר כך רואים את המשפט באנגלית, את המילה ואסוציאציה לזכור אותה.','משפט אחרי משפט'))}
-    ${card('wParts','g-s','🧬','פירוק מילים','מבינים מילה לפי התחילית או הסופית שלה','','',EX('מילה עם תחילית מסומנת (למשל un-, anti-) – בוחרים את הפירוש מבין 4. אחר כך רואים עוד מילים עם אותה תחילית.','תרגיל בחירה'))}
-    ${card('wRead','g-s','📗','מקראה','80 קטעים קצרים עם תרגום והשמעה','','',EX('קריאה רגועה בלי שאלות: 🔊 ליד כל פסקה, לחיצה על מילה = פירוש והוספה ללמידה, והתרגום לעברית בסוף.','רשימת קטעים ← קטע'))}
+        ${card('wRead','g-s','📗','מקראה','80 קטעים קצרים עם תרגום והשמעה','','',EX('קריאה רגועה בלי שאלות: 🔊 ליד כל פסקה, לחיצה על מילה = פירוש והוספה ללמידה, והתרגום לעברית בסוף.','רשימת קטעים ← קטע'))}
   </div>`;
   amBindNav();$('wRev').onclick=()=>{if(due)wStart('rev');else amToast('אין עכשיו מילים לחזרה – הן יופיעו כשיגיע זמנן')};$('wNew').onclick=()=>{if(newLeft)wStart('new');else amToast('סיימת את המילים החדשות של היום. אפשר להגדיל את הכמות ב"המילים שלי".')};$('wMine').onclick=()=>go({screen:'amwm'});
-  $('wCtx').onclick=()=>go({screen:'amh'});$('wParts').onclick=()=>go({screen:'amwp'});$('wRead').onclick=()=>{S.amrd=0;go({screen:'amrd'})}}
+  $('wCtx').onclick=()=>go({screen:'amh'});$('wRead').onclick=()=>{S.amrd=0;go({screen:'amrd'})}}
 /* ---------- the words she studies: management, history and advice ---------- */
 const wAcc=w=>{const L=(w.log||[]).filter(r=>['he2en','cloze','en2he','write','first'].includes(r[1]));if(!L.length)return null;return L.reduce((a,r)=>a+r[2],0)/L.length};
 const wHard=w=>w.st>0&&w.st<WMAST&&((w.bad||0)>=3||((w.bad||0)>=2&&(wAcc(w)??1)<.6));
@@ -2915,6 +2939,7 @@ function amWordPage(){if(!AMD)return amLoading();const w=AMS.w[S.wk];if(!w){go({
     <div class="am-box"><h4>🎯 ההמלצה שלי בשבילך</h4>${wRec(w).map(([i,t,dd])=>`<div class="am-rec"><span>${i}</span><div><b>${t}</b><p>${dd}</p></div></div>`).join('')}</div>
     <div class="am-cta" style="position:static"><button class="btn" id="wdGo">${w.st===0?'🌱 ללמוד עכשיו':'🧠 תרגול עכשיו'}</button></div>
     ${EXB(w.st===0?'מתחיל את הלמידה של המילה: אסוציאציה, משפט שלך ושליפה.':'שליפה אחת עכשיו מהזיכרון, מחוץ לתור. הצלחה בלי רמז מקדמת את המילה שלב.')}
+    ${wMethodBox(w)}
     <div class="am-box"><h4>💡 האסוציאציה שלי</h4>${w.as?`<p>${bdiEsc(w.as)}</p>`:'<p class="hint" style="margin:0">אין עדיין.</p>'}${x.tip&&x.tip!==w.as?`<p class="hint">מהמילון: ${bdiEsc(x.tip)}</p>`:''}<button class="btn secondary" id="wdAs">✨ להחליף אסוציאציה</button>${EXB('פותח את מסך האסוציאציות: לבחור אחרת מהמילון, לבקש 3 חדשות מג׳מיני, או לכתוב לבד.')}</div>
     <div class="am-box"><h4>✍️ משפט משלי (לא חובה)</h4>${(w.mys||(w.my?[w.my]:[])).map(t=>`<p dir="ltr" style="text-align:left;font-family:var(--en)">${SAYB(t,'sm inl')}${esc(t)}</p>`).join('')}<button class="btn secondary" id="wdSent">${(w.mys||[]).length||w.my?'➕ עוד משפט':'✍️ לכתוב משפט עם המילה'}</button>${EXB('לא חובה. משפט אישי עוזר במיוחד למילים קשות. ג׳מיני בודק אותו, והוא ישמש בתרגילי ההשלמה.')}</div>
     ${w.c?`<div class="am-box"><h4>📍 איפה פגשתי אותה</h4><p dir="ltr" style="text-align:left;font-family:var(--en)">${SAYB(w.c,'sm inl')}${esc(w.c)}</p></div>`:''}
@@ -2959,6 +2984,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
       ${x.tip?`<button class="am-idea${w.as===x.tip?' on':''}" data-as="${esc(x.tip)}"><small>💡 מהמילון</small>${bdiEsc(x.tip)}</button>`:''}
       ${wIdeas(w)}
       <textarea class="am-in" id="wAs" placeholder="האסוציאציה שלי…">${esc(w.as&&w.as!==x.tip&&!(((AMAI['as|'+wK(w)]||{}).ideas)||[]).some(i=>i.scene===w.as)?w.as:'')}</textarea></div>
+      ${wMethodBox(w)}
       ${x.use?`<details class="am-box"><summary style="font-weight:800;cursor:pointer">📌 דגשים על המילה (לא חובה)</summary>${xuse(x.use)}</details>`:''}
       <div class="am-cta"><button class="btn" id="wNext" ${w.as?'':'disabled'}>${WS.assocOnly?'שמירה ✓':'המשך ← לשלוף מהזיכרון'}</button></div>
       ${WS.assocOnly?'':'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>'}
@@ -2989,6 +3015,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
     else{
       h+=`<p class="am-fb ${res.ok?'ok':'bad'}">${res.ok?(res.near?'כמעט מושלם ✓':'נכון! ✓'):res.self?'':'עוד לא – הנה התשובה:'}</p>
         <div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>${res.typed?`<p class="hint center" style="margin:0">כתבת: <bdi>${esc(res.typed)}</bdi></p>`:''}${w.as?`<div class="am-hint">💡 ${bdiEsc(w.as)}</div>`:''}${w.my?`<div class="ctx">${SAYB(w.my,'sm inl')}✍️ ${esc(w.my)}</div>`:''}</div>`;
+      if(!res.ok)h+=wMethodBox(w);
       if(res.self)h+=`<p class="center" style="margin:0">הפירוש שכתבת נכון?</p><div class="am-nav"><button class="btn" id="wSelfY">✓ כן, התכוונתי לזה</button><button class="btn secondary" id="wSelfN">✗ לא</button></div>`;
       else if(!res.ok&&!res.copied)h+=`<div class="am-step-box"><h4>כתבי את המילה פעם אחת כדי לחזק</h4><input class="am-in en" id="wCopy" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(w.e)}"></div>`;
       else{if(step==='first')h+=`<div class="am-box good"><h4>מה יקרה עכשיו עם המילה?</h4><p>✓ היא נכנסה ללמידה. תפגשי אותה שוב:</p><div class="am-next"><span>בסוף הסבב</span><span>בעוד 20 דק׳</span><span>מחר</span><span>3 ימים</span><span>שבוע</span><span>שבועיים</span><span>חודש</span><span>🏆</span></div><p class="hint" style="margin:0">בכל פעם תרגיל קצר אחר. טעות מחזירה אותה קצת אחורה, כדי שתחזור מוקדם יותר.</p></div>`;
@@ -3118,7 +3145,7 @@ function amMethod(){const k=S.amTab||'gen',M=AMM[k];if(!M)return go({screen:'amm
     ${nx?`<button class="am-card2 g-s" data-tab="${nx}"><span class="gi">${AMMI[nx]||'📘'}</span><span class="grow"><small>הנושא הבא</small><b>${AMM[nx][0]}</b></span></button>`:''}
   </div>`;amBindNav();app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{go({screen:'ammt',amTab:b.dataset.tab})})}
 function amPxTables(){const P=AMD.px||{pre:[],suf:[]};const tb=(L,t)=>`<h4 style="margin-top:12px">${t} (${L.length})</h4><table><tr><th>${t==='תחיליות'?'תחילית':'סופית'}</th><th>פירוש</th><th>דוגמה</th></tr>${L.map(e=>`<tr><td class="en"><b>${esc(e.p)}</b></td><td>${esc(e.h)}</td><td>${e.ex.map(([en,he])=>`<span dir="ltr" style="font-family:var(--en)">${esc(en)}</span> – ${esc(he)}`).join('<br>')}</td></tr>`).join('')}</table>`;
-  return `<p class="hint">מהקובץ "תחיליות וסופיות באנגלית". יש גם תרגיל: מילים ← 🧬 פירוק מילים.</p>`+tb(P.pre,'תחיליות')+tb(P.suf,'סופיות')}
+  return `<p class="hint">מהקובץ "תחיליות וסופיות באנגלית". במילים שבנויות מתחילית או סופית מוכרת, הפירוק מופיע כ"טיפ מהשיטה" ליד האסוציאציה.</p>`+tb(P.pre,'תחיליות')+tb(P.suf,'סופיות')}
 
 /* ================= ⓘ help: one topic per page ================= */
 const AMHELP={
@@ -3143,7 +3170,7 @@ const AMHELP={
   <p>"הטעויות הנפוצות שלך" נבנות ממה שאת מסמנת בחקירת הטעות – ולצדן עצה מה לעשות.</p>`],
  lessons:['📝','הלקחים שלי','אמירנט',`<p>בכל חקירת טעות אפשר לשמור משפט אחד – <b>הלקח</b>. כאן כל הלקחים מקובצים לפי סוג הטעות.</p><p>טיפ: לקרוא אותם לפני כל סימולציה.</p>`],
  words:['🧠','למידת מילים','אמירנט',`<p>כאן לא מסמנים "ידעתי". כל מילה נלמדת לעומק ונשלפת מהזיכרון בכתיבה:</p>
-  <ul><li><b>🔁 חזרה פעילה</b> – המילים שהגיע זמנן.</li><li><b>🌱 מילים חדשות</b> – קודם מילים שהוספת מהשאלות, אחר כך מילים שסימנת ✗ במילון, ואז מילים שלא סימנת.</li><li><b>📒 המילים שלי</b> – כל מילה עם היומן וההמלצה שלה.</li><li><b>🧩 ניחוש מהקשר</b>, <b>🧬 פירוק מילים</b>, <b>📗 מקראה</b> – עוד דרכים לזכור.</li></ul>`],
+  <ul><li><b>🔁 חזרה פעילה</b> – המילים שהגיע זמנן.</li><li><b>🌱 מילים חדשות</b> – קודם מילים שהוספת מהשאלות, אחר כך מילים שסימנת ✗ במילון, ואז מילים שלא סימנת.</li><li><b>📒 המילים שלי</b> – כל מילה עם היומן וההמלצה שלה.</li><li><b>🧩 ניחוש מהקשר</b>, <b>📗 מקראה</b> – עוד דרכים לזכור.</li><li><b>🧭 טיפ מהשיטה</b> – למילים מתאימות, ליד האסוציאציה: פירוק לתחילית / סופית, מילת קישור, מילים שקל לבלבל, פועל מורכב.</li></ul>`],
  learn:['🌱','איך לומדים מילה חדשה','אמירנט',`<p>כל מילה חדשה עוברת 3 שלבים קצרים – כ־2 דקות למילה:</p>
   <ol><li><b>הכרות</b> – רואים את המילה, <b>פירוש אחד בלבד</b>, ומשפט לדוגמה (🔊 להשמעה). בוחרים <b>אסוציאציה</b>: מהמילון, אחת מ־3 שג׳מיני ממציא (✨), או כותבים לבד.</li>
   <li><b>שליפה</b> – רואים רק את הפירוש בעברית וכותבים את המילה באנגלית.</li>
@@ -3161,7 +3188,6 @@ const AMHELP={
   <p>לחיצה על מילה פותחת את העמוד שלה: מסלול החזרות ומתי הבאה, <b>היומן</b> (כל תרגול: מתי, איזה תרגיל, הצלחה / טעות / עם רמז), אחוז הצלחה, <b>המלצה אישית</b>, האסוציאציה (אפשר להחליף), משפט משלך (לא חובה), איפה פגשת אותה, ו"תרגול עכשיו".</p>
   <p>למטה בעמוד הרשימה: כמה מילים חדשות ביום.</p>`],
  context:['🧩','ניחוש מהקשר','אמירנט',`<p>משפט בעברית (מתרגום שאלות השלמת משפטים) עם חור. כותבים מילה שמתאימה לדעתך – זה בדיוק שלב 1 בשיטה. אחר כך רואים את המשפט באנגלית, את המילה ואסוציאציה לזכור אותה.</p>`],
- parts:['🧬','פירוק מילים','אמירנט',`<p>מילה עם תחילית או סופית מסומנת – בוחרים את הפירוש. הרמז: מה אומרת התחילית. כך לומדים להבין מילים שלא ראית אף פעם. הטבלה המלאה: שיטות ← תחיליות וסופיות.</p>`],
  reader:['📗','מקראה','אמירנט',`<p>80 קטעים קצרים מהספר "יסודות אנגלית", בלי שאלות. קוראים, שומעים (🔊 ליד כל פסקה), לוחצים על מילה לפירוש ומוסיפים ללמידה. התרגום בסוף.</p>`],
  basics:['🧱','יסודות','אמירנט',`<p>תרגילים מהספר "יסודות אנגלית" עם התשובות מהספר, ורשימות מילים (מילים מבלבלות, פעלים מורכבים, ביטויים…) שאפשר להוסיף ללמידה בלחיצה.</p>`],
  methods:['🧭','שיטות','אמירנט',`<p>השיטות מהספרים שלך, כל נושא בעמוד משלו: מבנה המבחן, עקרונות, איך פותרים כל סוג, מילות קישור, תחיליות וסופיות, וטכניקות זיכרון.</p>`],
@@ -3171,7 +3197,7 @@ const AMHELP={
   <li><b>כרטיסיות</b> – מעבר מהיר על מילים.</li><li><b>🚗 מצב רכב</b> – הקראה ברצף להאזנה בנסיעה, סימון בכפתורי ההגה.</li>
   <li><b>מצב רץ</b> – כל מילה מוקראת כשעוברים אליה.</li><li><b>✍️ מילים לשיעור פרטי</b> – הרשימות השבועיות, וכתיבת משפטים עם בדיקה חכמה.</li>
   <li><b>היעד היומי</b> – 240 סימונים ביום.</li></ul>`]};
-const PAGEHELP={start:[],home:['dict'],am:['daily'],amqh:['questions'],amu:['questions','flow'],amx:['mistakes'],amls:['lessons'],amw:['words','learn','journey'],amwm:['mywords'],amwd:['mywords'],amh:['context'],amwp:['parts'],amrd:['reader'],aml:['basics'],amm:['methods'],ammt:['methods'],amp:['progress']};
+const PAGEHELP={start:[],home:['dict'],am:['daily'],amqh:['questions'],amu:['questions','flow'],amx:['mistakes'],amls:['lessons'],amw:['words','learn','journey'],amwm:['mywords'],amwd:['mywords'],amh:['context'],amrd:['reader'],aml:['basics'],amm:['methods'],ammt:['methods'],amp:['progress']};
 function amPageHelp(){if(S.screen==='amu'){const t=S.amt;return t==='yb'?['basics']:t==='ex'?['questions']:['questions','flow']}return PAGEHELP[S.screen]||[]}
 /* after drawing: the page's explanation boxes right under its title (💬 hides them) */
 function amInjectHelp(){if(!AMEX)return;const ks=amPageHelp().filter(k=>AMHELP[k]);if(!ks.length)return;
@@ -3187,7 +3213,7 @@ function amHelp(){const k=S.hk,H=AMHELP[k];
   if(k==='all'){app.innerHTML=`<div class="screen am-scr am-m"><div class="nav"><button class="back" id="bk">חזרה</button>${HOME}</div>
       <div class="am-title"><span class="gi g-p">📖</span><div><h2>כל ההסברים</h2><p>הסברים כלליים. ההסבר של כל מסך מופיע בראש המסך עצמו.</p></div></div>
       ${(()=>{const used=new Set(Object.values(PAGEHELP).flat().concat('basics','flow'));const gen=Object.keys(AMHELP).filter(k=>!used.has(k));
-        const where={dict:'מילון ← המסך הראשי',daily:'אמירנט ← המסך הראשי',questions:'אמירנט ← שאלות',flow:'אמירנט ← שאלות ← סוג שאלה',mistakes:'טעויות ולקחים',lessons:'טעויות ולקחים ← הלקחים שלי',words:'מילים',learn:'מילים',journey:'מילים',mywords:'מילים ← המילים שלי',context:'מילים ← ניחוש מהקשר',parts:'מילים ← פירוק מילים',reader:'מילים ← מקראה',basics:'שאלות ← יסודות',methods:'שיטות',progress:'ההתקדמות שלי'};
+        const where={dict:'מילון ← המסך הראשי',daily:'אמירנט ← המסך הראשי',questions:'אמירנט ← שאלות',flow:'אמירנט ← שאלות ← סוג שאלה',mistakes:'טעויות ולקחים',lessons:'טעויות ולקחים ← הלקחים שלי',words:'מילים',learn:'מילים',journey:'מילים',mywords:'מילים ← המילים שלי',context:'מילים ← ניחוש מהקשר',reader:'מילים ← מקראה',basics:'שאלות ← יסודות',methods:'שיטות',progress:'ההתקדמות שלי'};
         return gen.map(k=>{const [i,t,,b]=AMHELP[k];return `<div class="am-box am-help"><h4>${i} ${t}</h4>${b}</div>`}).join('')})()}</div>`;
     app.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{S.hk=b.dataset.hk;persist();draw();window.scrollTo(0,0)});
     $('bk').onclick=back;return}
