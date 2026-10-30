@@ -714,10 +714,10 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 
 /* state */
 let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm'].includes(S.screen))S.screen='start'}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml'].includes(S.screen))S.screen='start'}catch(e){}
 /* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
 try{if(!sessionStorage.getItem('dictOpen')){sessionStorage.setItem('dictOpen','1');if(!['quiz','car'].includes(S.screen))S.screen='start'}}catch(e){}
-function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab}))}catch(e){}}
+function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
 /* ↑ button: back to the top of long pages */
@@ -741,7 +741,7 @@ window.addEventListener('resize',()=>{clearTimeout(window._fw);window._fw=setTim
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitWords());
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods})[S.screen]();
+  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -1216,7 +1216,7 @@ function sentScreen(){const L=sentList();
       <div class="si-top"><span class="si-n">${i+1}</span><div class="si-w"><span class="si-e" dir="ltr">${esc(e)}</span><span class="si-h">${esc(h)}</span></div><span class="si-ok" aria-label="הושלם">✓</span><span class="si-st" data-sst="${esc(id)}">${sentStHtml(id)}</span><button class="spk" data-sw="${esc(e)}" aria-label="השמעת ${esc(e)}">${SPK}</button></div>
       <div class="si-idea"><button class="link" data-ideas="${esc(id)}" data-w="${esc(e)}">💡 רעיונות למשפט</button><div id="idea-${esc(id)}">${IDEAS[id]&&!IDEAS[id].pend?ideasHtml(id):''}</div></div>
       <textarea class="si-en" dir="ltr" rows="1" data-id="${esc(id)}" data-f="en" placeholder="המשפט שלי באנגלית" aria-label="משפט באנגלית עם ${esc(e)}" autocapitalize="sentences" autocomplete="off" autocorrect="on" spellcheck="true" lang="en">${esc(sv(id,'en'))}</textarea>
-      <div class="si-chk"><button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 ${GKEY()?'בדיקת המשפט (כולל משמעות)':'בדיקת המשפט'}</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]?chkHtml(id,e):''}</div></div>
+      <div class="si-chk"><button class="link" data-ssay="${esc(id)}">🔊 השמעת המשפט</button> <button class="link" data-chk="${esc(id)}" data-w="${esc(e)}">🔍 ${GKEY()?'בדיקת המשפט (כולל משמעות)':'בדיקת המשפט'}</button><div class="chk-res" id="chk-${esc(id)}">${CHK[id]?chkHtml(id,e):''}</div></div>
       <textarea class="si-he" dir="rtl" rows="1" data-id="${esc(id)}" data-f="he" placeholder="הפירוש שלי בעברית (לא חובה)" aria-label="הפירוש שלי בעברית, לא חובה" autocomplete="off" autocorrect="on" spellcheck="true" lang="he">${esc(sv(id,'he'))}</textarea></li>`}).join('')}</ol>
   </div>`;
   $('bk').onclick=()=>go({screen:'level',l:PL});$('trOpen').onclick=()=>go({screen:'tr'});
@@ -1224,6 +1224,7 @@ function sentScreen(){const L=sentList();
     t.oninput=()=>{autoGrow(t);const id=t.dataset.id,o=SENT[id]=SENT[id]||{};o[t.dataset.f]=[t.value,Date.now()];saveSent();sentRefresh();
       if(t.dataset.f==='en'&&CHK[id]){const li=t.closest('li.sent-item');paintChk(id,li?li.querySelector('[data-w]').dataset.w:'')}}});
   app.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>sayWord(b.dataset.sw,b));
+  app.querySelectorAll('[data-ssay]').forEach(b=>b.onclick=()=>{const ta=app.querySelector(`textarea.si-en[data-id="${CSS.escape(b.dataset.ssay)}"]`);if(ta&&ta.value.trim())amSay(ta.value)});
   app.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>checkSentence(b.dataset.chk,b.dataset.w));bindIdeas(app);
   app.querySelectorAll('[data-ssort]').forEach(b=>b.onclick=()=>{SSORT=b.dataset.ssort==='1';LS.set('dictSentSort',SSORT?'1':'0');draw();window.scrollTo(0,0)});const rs=$('sResort');if(rs)rs.onclick=()=>{draw();window.scrollTo(0,0);const ok=$('sortOk');if(ok){ok.textContent='✓ המיון עודכן';ok.classList.add('on');setTimeout(()=>{const o=$('sortOk');if(o){o.classList.remove('on');o.textContent=''}},2500)}};
   const ca=$('chkAll');if(ca)ca.onclick=()=>{if(CHKALL.run){CHKALL.stop=true;CHKALL.msg='עוצרת אחרי המשפט הנוכחי…';chkAllPaint()}else checkAll()};
