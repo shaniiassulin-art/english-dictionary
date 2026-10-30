@@ -446,7 +446,7 @@ let SENT={};try{SENT=JSON.parse(localStorage.getItem('dictSent')||'{}')}catch(e)
 function saveSent(){LS.set('dictSent',JSON.stringify(SENT));dirty()}
 function saveDays(){LS.set('dictDays',JSON.stringify(DAYS));dirty()}
 function logDay(id){const k=dayKey();const a=DAYS[k]=DAYS[k]||[];if(!a.includes(id)){a.push(id);saveDays()}}
-function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}'),sent:JSON.parse(LS.get('dictSent')||'{}'),gk:JSON.parse(LS.get('dictGemKeyT')||'null')})}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}'),sent:JSON.parse(LS.get('dictSent')||'{}'),gk:JSON.parse(LS.get('dictGemKeyT')||'null'),am:JSON.parse(LS.get('dictAm')||'{}')})}
 /* push: read the account copy, merge it with this device, and write back only if the account did not change in
    between (updateTime precondition); otherwise read again. So two open devices never overwrite each other. */
 async function push(){
@@ -472,7 +472,7 @@ async function pull(){
   const j=await r.json();const f=j.fields||{};return{data:JSON.parse(f.data?.stringValue||'{}'),updated:+(f.updated?.integerValue||0),ut:j.updateTime||''};
 }
 /* comparable form of the saved data */
-function normD(o){return JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},sent:o.sent||{},gk:o.gk||null,days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))})}
+function normD(o){return JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},sent:o.sent||{},gk:o.gk||null,am:o.am||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))})}
 function mergeData(a,b){
   const prog={...(a.prog||{})};for(const k in (b.prog||{}))prog[k]=Math.max(prog[k]||0,b.prog[k]||0);
   const sdel={...(a.sdel||{})};for(const k in (b.sdel||{}))sdel[k]=Math.max(sdel[k]||0,b.sdel[k]||0);
@@ -487,13 +487,15 @@ function mergeData(a,b){
     for(const f of ['en','he'])if(x[k]&&x[k][f]&&(!o[f]||(x[k][f][1]||0)>(o[f][1]||0)))o[f]=x[k][f]}
   /* smart-check key: the newer one wins */
   const ga=a.gk,gb=b.gk,gk=!ga?gb||null:!gb?ga:(gb[1]||0)>(ga[1]||0)?gb:ga;
-  return{prog,sess,sdel,know,days,notes,sent,gk};
+  /* אמירנט: attempts, mistakes and the word workshop */
+  const am=amMerge(a.am,b.am);
+  return{prog,sess,sdel,know,days,notes,sent,gk,am};
 }
 function applyRemote(d,t){
   SYNC.applying=true;
-  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));if(d.gk){LS.set('dictGemKeyT',JSON.stringify(d.gk));LS.set('dictGemKey',d.gk[0]||'')}save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));if(d.gk){LS.set('dictGemKeyT',JSON.stringify(d.gk));LS.set('dictGemKey',d.gk[0]||'')}if(d.am)amApply(d.am);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   /* the sentences page is updated in place (never redrawn while typing); other pages keep their scroll position */
-  if(S.screen==='sent')sentRefresh();else if(!['quiz','cards'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
+  if(S.screen==='sent')sentRefresh();else if(!['quiz','cards','amq','amwl'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
 }
 async function syncNow(quiet){
   if(SYNC.pushing)return;
@@ -712,8 +714,8 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 
 /* state */
 let S={screen:'home',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr'].includes(S.screen))S.screen='home'}catch(e){}
-function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active}))}catch(e){}}
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','am','amu','amq','amx','amw','amwl','amm'].includes(S.screen))S.screen='home'}catch(e){}
+function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
 /* ↑ button: back to the top of long pages */
@@ -736,7 +738,8 @@ function fitWords(root){(root||document).querySelectorAll(FITSEL).forEach(el=>{
 window.addEventListener('resize',()=>{clearTimeout(window._fw);window._fw=setTimeout(()=>fitWords(),150)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitWords());
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen})[S.screen]();
+  if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
+  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -868,6 +871,7 @@ function home(){
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
     ${todayCard()}
+    ${amHomeCard()}
     ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+LN(L)).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
@@ -877,7 +881,7 @@ function home(){
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
-  $('today').onclick=()=>go({screen:'days'});
+  $('today').onclick=()=>go({screen:'days'});$('amGo').onclick=()=>go({screen:'am'});
   bindSearch(DW);bindSettings();bindQuizPanel('ALL',DW,'כל המילים','home');bindCatPanel('ALL',DW,'כל המילים','home');
 }
 
@@ -1787,6 +1791,7 @@ function restoreScroll(){let v=null;try{v=JSON.parse(LS.get('dictScroll')||'null
   const to=()=>{app.querySelectorAll('.sent-item textarea').forEach(autoGrow);window.scrollTo(0,v.y)};
   to();requestAnimationFrame(to);setTimeout(to,150);setTimeout(()=>{to();done();restoreCaret()},600);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(SCR.restoring)to()})}
+/*__AMIRAM_JS__*/
 (function boot(){
   if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
   if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false,from:ss.from}}else S.screen='group'}
