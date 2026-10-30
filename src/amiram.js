@@ -1166,8 +1166,7 @@ function amHelp(){const k=S.hk,H=AMHELP[k];
       <div class="am-title"><span class="gi g-p">📖</span><div><h2>כל ההסברים</h2><p>הסברים כלליים. ההסבר של כל מסך מופיע בראש המסך עצמו.</p></div></div>
       ${(()=>{const used=new Set(Object.values(PAGEHELP).flat().concat('basics','flow'));const gen=Object.keys(AMHELP).filter(k=>!used.has(k));
         const where={dict:'מילון ← המסך הראשי',daily:'אמירנט ← המסך הראשי',questions:'אמירנט ← שאלות',flow:'אמירנט ← שאלות ← סוג שאלה',mistakes:'טעויות ולקחים',lessons:'טעויות ולקחים ← הלקחים שלי',words:'מילים',learn:'מילים',journey:'מילים',mywords:'מילים ← המילים שלי',context:'מילים ← ניחוש מהקשר',parts:'מילים ← פירוק מילים',reader:'מילים ← מקראה',basics:'שאלות ← יסודות',methods:'שיטות',progress:'ההתקדמות שלי'};
-        return gen.map(k=>{const [i,t,,b]=AMHELP[k];return `<div class="am-box am-help"><h4>${i} ${t}</h4>${b}</div>`}).join('')+
-          `<div class="am-box"><h4>📍 ההסברים של כל מסך – מופיעים בראש המסך עצמו</h4><p class="hint" style="margin:0">לחיצה פותחת את ההסבר כאן.</p>${Object.keys(where).filter(k=>AMHELP[k]).map(k=>`<button class="am-hrow" data-hk="${k}"><span>${AMHELP[k][0]} ${AMHELP[k][1]}</span><small>${where[k]}</small></button>`).join('')}</div>`})()}</div>`;
+        return gen.map(k=>{const [i,t,,b]=AMHELP[k];return `<div class="am-box am-help"><h4>${i} ${t}</h4>${b}</div>`}).join('')})()}</div>`;
     app.querySelectorAll('[data-hk]').forEach(b=>b.onclick=()=>{S.hk=b.dataset.hk;persist();draw();window.scrollTo(0,0)});
     $('bk').onclick=back;return}
   if(!H){const grp={};Object.entries(AMHELP).forEach(([kk,[i,t,g]])=>(grp[g]=grp[g]||[]).push([kk,i,t]));
