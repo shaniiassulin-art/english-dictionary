@@ -110,7 +110,7 @@ const WHY=[['vocabQ','לא הכרתי מילה במשפט'],['vocabA','לא הכ
 const BOXD=[1,3,7];
 function amAtt(id){return AMS.a[id]}
 function amLast(id){const a=AMS.a[id];return a&&a.h&&a.h.length?a.h[a.h.length-1]:null}
-function amRecord(id,choice,ms){const q=AMD.q[id],ok=amIsOk(q,choice),a=AMS.a[id]=AMS.a[id]||{h:[]};const now=amNow();
+function amRecord(id,choice,ms){if(AQ&&AQ.jr)jrCount(AQ.jr);const q=AMD.q[id],ok=amIsOk(q,choice),a=AMS.a[id]=AMS.a[id]||{h:[]};const now=amNow();
   const wasMist=amIsMist(id);a.h.push([choice,ok?1:0,Math.round(ms||0),now]);
   if(!ok){a.box=0;a.due=now+DAY;a.fixed=0}
   else if(wasMist){a.box=(a.box||0)+1;if(a.box>=BOXD.length){a.fixed=now;a.due=0}else a.due=now+BOXD[a.box]*DAY}
@@ -139,14 +139,15 @@ const NAUTO={90:13,180:16};
 function wNPer(k=dayKey()){return AMS.na===0?(AMS.n||8):NAUTO[jrGoal(k)]}
 function wNewToday(){return AMS.nd[dayKey()]||0}
 /* the queue of words to learn: words she added from questions first, then dictionary cards marked ✗, then unmarked ones (easier levels first) */
+function wKnownDict(w){if(!w.src||!w.src.startsWith('dict:'))return false;const c=W[w.src.slice(5)];return !!(c&&isY(c))}
 function wQueue(n){const out=[],seen=new Set(Object.keys(AMS.w).filter(k=>AMS.w[k].st>0));
-  Object.values(AMS.w).filter(w=>w.st===0).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
+  Object.values(AMS.w).filter(w=>w.st===0&&!wKnownDict(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
   for(const f of [isN,w=>!kst(w)]){if(out.length>=n)break;
     for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||AMS.w[wKey(w.e)]||!f(w))continue;seen.add(k);
       /* one card = one meaning: each meaning of a word is learned on its own */
       out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}}
   return out}
-function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w.st===0).length;
+function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w.st===0&&!wKnownDict(w)).length;
   return n+DW.filter(w=>!isY(w)&&!k.has('c:'+w.id)&&!k.has(wKey(w.e))).length}
 function wMaster(w){w.st=WMAST;w.due=0;
   if(w.src&&w.src.startsWith('dict:')){const c=W[w.src.slice(5)];if(c&&!isY(c))setKnow(c.id,'y');return}
@@ -388,6 +389,21 @@ body:has(.am-cta) .totop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .am-plan2 li.on{background:color-mix(in srgb,var(--cw) 13%,transparent)}.am-plan2 li.on .pi{background:var(--cw);color:#fff}.am-plan2 li.done{opacity:.6}.am-plan2 li.done .pi{background:var(--cs);color:#fff}
 .am-day{display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}.am-day small{grid-column:1/-1;color:var(--muted)}.am-day.ok b{color:var(--ok)}.am-day.bad b{color:var(--bad)}
 .am-stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:8px}.am-stat3 b{display:block;font-size:22px}.am-stat3 small{color:var(--muted)}
+.nav-ic{margin-inline-start:auto;display:flex;align-items:center;gap:8px}.nav-ic>*{margin:0!important}
+:root{--cq:var(--accent);--cw:var(--accent);--cp:var(--accent);--cs:var(--ok);--cm:var(--bad);--card:var(--bg);--sh:none}
+.am-scr .am-box,.am-card2,.am-gate,.am-resume,.am-topic,.am-wl button,.am-wordhead{background:var(--bg);border:1.5px solid var(--line);box-shadow:none;border-radius:16px}
+.am-scr .am-box.good{background:var(--ok-soft,var(--bg));border-color:color-mix(in srgb,var(--ok) 35%,var(--line))}.am-scr .am-box.bad,.am-scr .am-box.why{background:var(--bad-soft,var(--bg));border-color:color-mix(in srgb,var(--bad) 35%,var(--line))}
+.am-pill,.am-tabs button{background:var(--surface);box-shadow:none;border:0;border-radius:12px;color:var(--ink)}.am-tabs button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.am-hero2{background:var(--accent-soft);color:var(--ink);box-shadow:none;border-radius:16px;border:0}.am-hero2 h2,.hr-top h2{color:var(--ink)}.hr-k{color:var(--muted);opacity:1}.hr-d{opacity:1;color:var(--muted)}
+.am-ring .bg{stroke:color-mix(in srgb,var(--accent) 18%,transparent)}.am-ring .fg{stroke:var(--accent)}.am-ring text{fill:var(--ink)}
+.am-go{background:var(--accent);color:var(--accent-ink);border-radius:14px;box-shadow:none}.am-hero2 .btn{min-height:52px}
+.gi,.g-q .gi,.gi.g-q,.g-w .gi,.gi.g-w,.g-m .gi,.gi.g-m,.g-s .gi,.gi.g-s,.g-p .gi,.gi.g-p{background:var(--surface);color:var(--ink);font-family:inherit;font-style:normal;border-radius:12px}
+.am-mini.big{height:10px;background:color-mix(in srgb,var(--accent) 15%,transparent)}.am-mini i{background:var(--accent)}
+.am-plan2 li.on{background:var(--accent-soft)}.am-plan2 li.on .pi{background:var(--accent);color:var(--accent-ink)}
+details.am-exb{padding:6px 12px;border-radius:12px;background:var(--surface);font-size:.86rem;line-height:1.5}details.am-exb summary{cursor:pointer;color:var(--accent);font-weight:700;list-style:none}details.am-exb summary::-webkit-details-marker{display:none}details.am-exb[open] summary{margin-bottom:4px}
+.am-exbox{background:var(--surface)}.am-pghelp summary{color:var(--accent)}
+.st-screen .st-app,.st-dict,.st-am{background:var(--bg)!important;color:var(--ink)!important;border:1.5px solid var(--line);box-shadow:none!important;border-radius:18px!important;min-height:0!important}
+.st-screen .st-app::after{display:none}.st-screen .st-app .st-d,.st-screen .st-app .st-x{color:var(--muted);opacity:1}.st-screen .st-app .st-t{color:var(--accent)}
 .am-gap{display:inline-block;min-width:3.5em;border-bottom:3px solid var(--cw);color:var(--cw);font-weight:800;text-align:center}
 .am-path{display:flex;gap:4px}.am-path span{flex:1;text-align:center;padding:6px 2px;border-radius:999px;background:var(--surface);font-size:.78rem;font-weight:700;color:var(--muted)}.am-path .on{background:var(--cw);color:#fff}.am-path .done{background:color-mix(in srgb,var(--cs) 18%,transparent);color:var(--ok)}
 .am-next{display:flex;flex-wrap:wrap;gap:4px}.am-next span{padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--cw) 14%,var(--card));font-size:.8rem;font-weight:700}
@@ -405,12 +421,12 @@ body:has(.am-cta) .totop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 /* ---------- shared UI pieces ---------- */
 const AMHK={start:'overview',home:'dict',am:'daily',amqh:'questions',amu:'questions',amq:'flow',amx:'mistakes',amls:'lessons',amw:'words',amwl:'learn',amwm:'mywords',amwd:'mywords',amh:'context',amrd:'reader',aml:'basics',amm:'methods',ammt:'methods',amp:'progress'};
 const INFOB=k=>`<button class="home-btn am-info" data-help="${k||AMHK[S.screen]||''}" aria-label="מידע והסברים">i</button>`;
-let AMEX=LS.get('dictAmEx')!=='0';
+let AMEX=true;
 /* what a button does, where it leads, and what is inside */
 const EX=(does,to,fx)=>AMEX?`<span class="am-ex"><span>${does}</span>${fx&&fx.length?`<span class="fx">${fx.map(f=>`<span>• ${f}</span>`).join('')}</span>`:''}</span>`:'';
-const EXB=(t)=>AMEX?`<p class="am-exb">💬 ${t}</p>`:'';
-const EXTOG=()=>`<button class="home-btn am-extog${AMEX?' on':''}" data-extog="1" aria-label="${AMEX?'הסתרת ההסברים':'הצגת הסברים ליד כל כפתור'}">💬</button>`;
-const amNav=(back,label)=>`<div class="nav"><button class="back" id="bk" data-go="${back}">${label}</button>${HOME}${EXTOG()}${INFOB()}</div>`;
+const EXB=(t)=>`<details class="am-exb"><summary>💬 הסבר</summary><div>${t}</div></details>`;
+const EXTOG=()=>'';const EXTOG_OLD=()=>`<button class="home-btn am-extog${AMEX?' on':''}" data-extog="1" aria-label="${AMEX?'הסתרת ההסברים':'הצגת הסברים ליד כל כפתור'}">💬</button>`;
+const amNav=(back,label)=>`<div class="nav"><button class="back" id="bk" data-go="${back}">${label}</button><span class="nav-ic">${HOME}${INFOB()}</span></div>`;
 document.addEventListener('click',e=>{const t=e.target.closest('[data-extog]');if(!t)return;e.preventDefault();AMEX=!AMEX;LS.set('dictAmEx',AMEX?'1':'0');
   const y=window.scrollY;draw();window.scrollTo(0,y);const d=document.createElement('div');d.className='toast';d.textContent=AMEX?'💬 ההסברים מוצגים ליד כל כפתור':'ההסברים הוסתרו · 💬 כדי להחזיר';document.body.appendChild(d);setTimeout(()=>d.remove(),2200)});
 document.addEventListener('click',e=>{const h=e.target.closest('[data-help]');if(!h)return;e.preventDefault();
@@ -451,7 +467,7 @@ const JB={
     ['קודם מילים שאספת מהשאלות, אחר כך מילים שסימנת ✗','בחירת אסוציאציה (מהמילון / ✨ ג׳מיני / שלך) – דמייני אותה 5 שניות','🧭 טיפ מהשיטה כשיש (תחילית, מילת קישור, מילה שקל לבלבל)']],
   q:['✏️','תרגול שאלות לפי השיטה','שאלה אחרי שאלה במסלול',
     'עכשיו מיישמים: שאלות מהמבחן, כל אחת במסלול – לחשוב לפני התשובות, לחקור כל טעות מיד, להבין איך פותרים לפי השיטה, ולאסוף מילים מהמאגר.',
-    ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הבלוק נגמר כשהזמן שלו עבר – עד אז ממשיכים ליחידה הבאה']],
+    ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הצעד נגמר אחרי מספר השאלות שלו – עד אז ממשיכים ליחידה הבאה']],
   rev2:['⏱','חזרה קצרה','המילים של היום – אחרי 20 דקות',
     'המילים שלמדת היום כבר חזרו לתור. חזרה קצרה אחרי זמן קצר היא הצעד שמעביר אותן מזיכרון קצר לזיכרון של מחר.',
     ['בדרך כלל משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית','רק מה שהגיע זמנו – אם אין, הבלוק מסתיים מיד']],
@@ -464,64 +480,86 @@ const JB={
   brk:['☕','הפסקה','10 דקות',
     'ביום ארוך הפסקה קצרה באמצע משפרת ריכוז וזיכרון. זמן ההפסקה לא נספר בשעות הלימוד.',
     ['קומי, שתי מים, תנוחי מהמסך','לחצי "חזרתי" כשאת מוכנה להמשיך']]};
-function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return P;const long=jrGoal(k)===180;let n=0;const B=(kk,m)=>({id:kk+(n++),k:kk,m,done:0,used:0});
-  const b=long?[B('rev',20),B('new',25),B('q',45),B('brk',10),B('rev2',10),B('q',45),B('sim',25),B('meth',10)]:[B('rev',15),B('new',20),B('q',40),B('rev2',10),B('meth',5)];
-  P=AMS.jp[k]={b,t:amNow()};amSave();return P}
+/* the plans follow each other: a day that was not finished stays the current plan (the next day goes on from the same step).
+   AMS.js = the first day of the journey. Each block has a count target n and done count d (words / questions). */
+const kAdd=(k,n)=>dayKey(dayDate(k).getTime()+n*DAY+6*36e5);
+const kDiff=(a,b)=>Math.round((dayDate(b)-dayDate(a))/DAY);
+function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return P;const long=jrGoal(k)===180;let n=0;
+  const B=(kk,m,c)=>({id:k+'|'+kk+(n++),k:kk,m,n:c,d:0,done:0,used:0});const nw=wNPer(k);
+  const b=long?[B('rev',20),B('new',25,nw),B('q',45,22),B('brk',10),B('rev2',10),B('q',45,22),B('sim',25,22),B('meth',10,1)]:[B('rev',15),B('new',20,nw),B('q',40,20),B('rev2',10),B('meth',5,1)];
+  if(!AMS.js||k<AMS.js)AMS.js=k;P=AMS.jp[k]={b,t:amNow()};amSave();return P}
+const jrDone=P=>P.b.every(x=>x.done);
+function jrBlock(id){if(!id)return null;const P=(AMS.jp||{})[String(id).split('|')[0]];return P?P.b.find(x=>x.id===id):null}
+/* the plan she works on now: the first unfinished one from the start of the journey up to today, or one she opened ahead */
+function jrCurKey(){const T=dayKey();if(!AMS.js)jrPlan(T);for(let k=AMS.js,g=0;k<=T&&g<800;k=kAdd(k,1),g++)jrPlan(k);let k=AMS.js;
+  for(let g=0;g<800;g++){if(k<=T)jrPlan(k);const P=(AMS.jp||{})[k];if(!P)return null;if(!jrDone(P))return k;k=kAdd(k,1)}return null}
 const jrCur=P=>P.b.find(x=>!x.done);
-function jrFinish(id,force){const P=jrPlan(),x=P.b.find(y=>y.id===id);if(!x||x.done)return;
-  /* a questions block goes on until its time is used; the others end when their task ends */
-  if(x.k==='q'&&!force&&x.used<x.m*6e4){P.t=amNow();amSave();return}
+/* what is left behind: plans of days before today that are not finished */
+function jrGap(){const T=dayKey(),o={days:0,words:0,q:0};if(!AMS.js)return o;for(let k=AMS.js;k<T;k=kAdd(k,1)){const P=(AMS.jp||{})[k];if(!P||jrDone(P))continue;o.days++;
+  P.b.forEach(x=>{if(x.done)return;if(x.k==='new')o.words+=Math.max(0,x.n-x.d);if(x.k==='q'||x.k==='sim')o.q+=Math.max(0,x.n-x.d)})}
+  let ahead=0;for(let k=kAdd(T,1);(AMS.jp||{})[k];k=kAdd(k,1))if(jrDone(AMS.jp[k]))ahead++;o.ahead=jrDone(jrPlan(T))?ahead:0;return o}
+function jrFinish(id,force){const x=jrBlock(id);if(!x||x.done)return;const P=AMS.jp[id.split('|')[0]];
+  if((x.k==='q')&&!force&&x.d<x.n){P.t=amNow();amSave();return}
   if((x.k==='rev'||x.k==='rev2')&&!force&&wDue().length){P.t=amNow();amSave();return}
+  if(x.k==='new'&&!force&&x.d<x.n&&wQueueCount()>0){P.t=amNow();amSave();return}
   x.done=amNow();P.t=amNow();amSave();amToast('✓ '+JB[x.k][1]+' – הושלם')}
+const jrCount=id=>{const x=jrBlock(id);if(x){x.d=(x.d||0)+1;AMS.jp[id.split('|')[0]].t=amNow()}};
+/* what a block holds right now, in words / questions */
+function jrWhat(x){if(x.k==='rev'||x.k==='rev2'){const n=wDue().length;return x.done?'':n?n+' מילים מחכות לחזרה':'אין מילים לחזרה כרגע'}
+  if(x.k==='new')return `${x.d}/${x.n} מילים חדשות`;if(x.k==='q')return `${Math.min(x.d,x.n)}/${x.n} שאלות`;if(x.k==='sim')return '22 שאלות ב־20 דקות';if(x.k==='meth')return 'נושא אחד מהשיטה';return '10 דקות'}
 /* study time: counted every 15 s while the page is visible, on an אמירנט screen, and she did something in the last 2 minutes */
 let JACT=Date.now(),JTICK=0;['pointerdown','keydown','scroll','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{JACT=Date.now()},{passive:true,capture:true}));
-setInterval(()=>{if(document.visibilityState!=='visible'||!/^am|^amq|^amwl/.test(S.screen)||S.screen==='amhelp'||Date.now()-JACT>120e3)return;
-  const k=dayKey();AMS.tm=AMS.tm||{};AMS.tm[k]=(AMS.tm[k]||0)+15e3;const P=jrPlan(k),cur=jrCur(P);
+setInterval(()=>{if(document.visibilityState!=='visible'||!/^am/.test(S.screen)||S.screen==='amhelp'||Date.now()-JACT>120e3)return;
+  const k=dayKey();AMS.tm=AMS.tm||{};AMS.tm[k]=(AMS.tm[k]||0)+15e3;const ck=jrCurKey(),P=ck&&AMS.jp[ck],cur=P&&jrCur(P);
   if(cur&&cur.k!=='brk'){const act=(S.screen==='amq'&&AQ&&AQ.jr===cur.id)||(S.screen==='amwl'&&WS&&WS.jr===cur.id)||S.screen==='amjb';if(act)cur.used=(cur.used||0)+15e3}
-  LS.set('dictAm',JSON.stringify(AMS));if(++JTICK%8===0){P.t=amNow();amSave()}},15e3);
+  LS.set('dictAm',JSON.stringify(AMS));if(++JTICK%8===0){AMS.t=amNow();amSave()}},15e3);
 const jrMin=k=>Math.round(((AMS.tm||{})[k]||0)/6e4);
-/* start the current block */
-function jrRun(x){JRGO=x.id;
-  if(x.k==='rev'||x.k==='rev2'){if(!wDue().length){JRGO=null;jrFinish(x.id,1);go({screen:'am'});return}wStart('rev')}
-  else if(x.k==='new'){if(Math.max(0,wNPer()-wNewToday())<=0){JRGO=null;jrFinish(x.id,1);go({screen:'am'});return}wStart('new')}
-  else if(x.k==='q'){const nx=amNextSet();if(!nx){JRGO=null;jrFinish(x.id,1);go({screen:'am'});return}amStart(nx.ids,AMTN[nx.t]+' · יחידה '+nx.u,'learn','am',nx.t)}
-  else if(x.k==='sim'){const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
-    if(!u){JRGO=null;jrFinish(x.id,1);go({screen:'am'});return}amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}
-  else{JRGO=null;go({screen:'amjb',jb:x.id,jgo:1})}}
-/* the day: ring of minutes, the next block, the plan */
+/* start (or go on with) a block */
+function jrRun(x){
+  if(x.k==='rev'||x.k==='rev2'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});if(!wDue().length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;wStart('rev')}
+  else if(x.k==='new'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const n=Math.max(0,x.n-x.d);if(!n||!wQueueCount()){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;wStart('new',null,n)}
+  else if(x.k==='q'||x.k==='sim'){if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
+    if(x.k==='q'){const nx=amNextSet();if(!nx){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(nx.ids,AMTN[nx.t]+' · יחידה '+nx.u,'learn','am',nx.t)}
+    else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
+      if(!u){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}}
+  else go({screen:'amjb',jb:x.id})}
+const jrOpen=x=>(WS&&WS.jr===x.id&&WS.i<WS.list.length)||(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin);
+/* the journey: today's minutes, the plan she is on, the next step */
 function amHub(){if(!AMD)return amLoading();
-  const k=dayKey(),P=jrPlan(k),cur=jrCur(P),goal=jrGoal(k),mins=jrMin(k),long=goal===180;
+  const T=dayKey(),ck=jrCurKey(),goal=jrGoal(T),mins=jrMin(T),gap=jrGap();
   const r=34,c=2*Math.PI*r,f=Math.min(1,mins/goal);
-  if(!cur&&mins<goal){const n=P.b.length;P.b.push({id:'q'+n,k:'q',m:Math.min(45,goal-mins),done:0,used:0});P.t=amNow();amSave();return amHub()}
-  const nb=jrCur(P);
+  const P=ck?AMS.jp[ck]:jrPlan(T),nb=ck?jrCur(P):null;
+  const lbl=ck===T?'התוכנית של היום':ck&&ck<T?'התוכנית של '+fmtD(ck,{weekday:'long',day:'numeric',month:'numeric'}):ck?'התוכנית של '+(kDiff(T,ck)===1?'מחר':fmtD(ck,{weekday:'long',day:'numeric',month:'numeric'})):'התוכנית של היום';
+  const {c:cc,endK}=schPlan();
   app.innerHTML=`<div class="screen am-scr">
     ${amNav('start','בחירת אפליקציה')}
-    ${AQ&&AQ.ids&&AQ.i<AQ.ids.length&&!AQ.fin?`<button class="am-resume" id="amRes"><span>⏸</span><span class="grow"><b>להמשיך מאיפה שעצרת</b><small>${esc(AQ.name)} · שאלה ${AQ.i+1}/${AQ.ids.length}</small></span></button>`:''}
     <section class="am-hero2">
       <div class="hr-top"><svg class="am-ring" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="${r}" class="bg"/><circle cx="40" cy="40" r="${r}" class="fg" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}"/><text x="40" y="38" text-anchor="middle" style="font-size:15px">${mins}</text><text x="40" y="54" text-anchor="middle" style="font-size:10px;font-weight:600">מתוך ${goal} דק׳</text></svg>
-        <div><p class="hr-k">המסע של היום · ${long?'יום ארוך – 3 שעות':'שעה וחצי'}</p><h2>${nb?JB[nb.k][0]+' '+JB[nb.k][1]:'סיימת את היום! 🎉'}</h2><p class="hr-d">${nb?JB[nb.k][2]+(nb.k==='q'?` · עוד כ־${Math.max(1,Math.round(nb.m-(nb.used||0)/6e4))} דק׳`:''):`למדת ${mins} דקות היום`}</p></div></div>
-      ${nb?`<button class="am-go" id="jrGo">▶ ${nb.used||(nb.k==='q'&&AQ&&AQ.jr===nb.id)?'להמשיך':'להתחיל'}</button>`:''}
+        <div><p class="hr-k">${lbl}${ck&&ck<T?' · ממשיכה מאיפה שעצרת':''}</p><h2>${nb?JB[nb.k][0]+' '+JB[nb.k][1]:'סיימת את התוכנית של היום 🎉'}</h2><p class="hr-d">${nb?jrWhat(nb):`למדת היום ${mins} דקות${mins<goal?` · היעד ${goal}`:' ✓'}`}</p></div></div>
+      ${nb?`<button class="btn" id="jrGo">▶ ${jrOpen(nb)||nb.d||nb.used?'להמשיך':'להתחיל'}</button>`:`<button class="btn" id="jrNext">▶ להמשיך לתוכנית של מחר</button>`}
     </section>
-    <div class="am-box"><h4>התוכנית של היום</h4><ol class="am-plan2">${P.b.map(x=>`<li class="${x.done?'done':x===nb?'on':''}"><span class="pi">${x.done?'✓':JB[x.k][0]}</span><span class="pt"><b>${JB[x.k][1]}</b><small>${x.m} דק׳${x.k==='q'&&x.used&&!x.done?' · עברו '+Math.round(x.used/6e4):''}</small></span></li>`).join('')}</ol>
-      ${EXB('המערכת בונה לך כל יום תוכנית קבועה ומעבירה אותך בה צעד אחרי צעד. <b>▶</b> פותח את הצעד הבא עם הסבר למה הוא עכשיו. זמן לימוד נספר רק כשאת פעילה באפליקציה; הפסקות לא נספרות. אם נשאר זמן אחרי התוכנית – נוסף עוד תרגול שאלות.')}</div>
+    ${gap.days?`<div class="am-box bad"><h4>⏳ פער: ${gap.days} ${gap.days===1?'יום':'ימים'}</h4><p>${[gap.words?gap.words+' מילים חדשות':'',gap.q?gap.q+' שאלות':''].filter(Boolean).join(' · ')||'צעדים קצרים'} מימים קודמים. ממשיכים מאיפה שעצרת – הפער ייסגר כשתגיעי לתוכנית של היום.</p></div>`:gap.ahead?`<div class="am-box good"><p>💪 את מקדימה את לוח הזמנים ב־${gap.ahead} ${gap.ahead===1?'יום':'ימים'}</p></div>`:''}
+    <div class="am-box"><h4>${lbl}</h4><ol class="am-plan2">${P.b.map(x=>`<li class="${x.done?'done':x===nb?'on':''}"><span class="pi">${x.done?'✓':JB[x.k][0]}</span><span class="pt"><b>${JB[x.k][1]}</b><small>${x.done?'הושלם':jrWhat(x)} · ${x.m} דק׳</small></span></li>`).join('')}</ol>
+      ${EXB('המערכת בונה לך כל יום תוכנית קבועה ומעבירה אותך בה צעד אחרי צעד. <b>▶</b> פותח את הצעד הבא עם הסבר למה הוא עכשיו. אם עצרת באמצע – ממשיכים מאותו צעד, גם למחרת. זמן לימוד נספר רק כשאת פעילה; הפסקות לא נספרות.')}</div>
+    <button class="am-card2" data-go="amp"><span class="gi">📊</span><span class="grow"><b>התקדמות ולוח זמנים</b><small>${cc.left?`כל המילים עד ${fmtD(endK)} · עוד ${cc.left} פירושים`:'כל המילים התחילו 🎉'}</small></span></button>
     <details class="am-box"><summary style="font-weight:800;cursor:pointer">🧰 תרגול חופשי (לא חלק מהמסע)</summary>
       <div class="am-row2" style="margin-top:8px"><button class="am-pill" data-go="amqh">✏️ שאלות</button><button class="am-pill" data-go="amw">🧠 מילים</button><button class="am-pill" data-go="amm">🧭 שיטות</button></div></details>
-    ${(()=>{const {c,endK}=schPlan();return c.left?`<button class="am-card2 g-p" data-go="amsch"><span class="gi">📅</span><span class="grow"><b>לוח זמנים: כל המילים עד ${fmtD(endK)}</b><small>עוד ${c.left} פירושים · 13–16 מילים חדשות ביום</small></span></button>`:''})()}
-    <div class="am-row2"><button class="am-pill" data-go="amp">📊 התקדמות והיסטוריה</button><button class="am-pill" data-help="all">📖 כל ההסברים</button></div>
+    <div class="am-row2"><button class="am-pill" data-help="all">📖 כל ההסברים</button></div>
   </div>`;
-  amBindNav();const rs=$('amRes');if(rs)rs.onclick=amResume;
-  const g=$('jrGo');if(g)g.onclick=()=>{if(nb.k==='q'&&AQ&&AQ.jr===nb.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();go({screen:'amjb',jb:nb.id})};
+  amBindNav();
+  const g=$('jrGo');if(g)g.onclick=()=>{if(jrOpen(nb))return jrRun(nb);go({screen:'amjb',jb:nb.id})};
+  const nx=$('jrNext');if(nx)nx.onclick=()=>{let k=kAdd(T,1);while(AMS.jp&&AMS.jp[k]&&jrDone(AMS.jp[k]))k=kAdd(k,1);jrPlan(k);draw()};
   app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go})})}
 /* the intro page of a block: why now, what happens, then start */
-function amBlock(){if(!AMD)return amLoading();const P=jrPlan(),x=P.b.find(y=>y.id===S.jb);if(!x)return go({screen:'am'});const [i,t,sub,why,fx]=JB[x.k];
+function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return go({screen:'am'});const [i,t,sub,why,fx]=JB[x.k];
   let body='';
-  if(x.k==='meth'){const keys=Object.keys(AMM),mk=keys[(new Date().getDate())%keys.length],ls=Object.values(AMS.ls||{});
+  if(x.k==='meth'){const keys=Object.keys(AMM),mk=keys[(dayDate(x.id.split('|')[0]).getDate())%keys.length],ls=Object.values(AMS.ls||{});
     body=`<div class="am-box am-m"><h4>${AMMI[mk]||'📘'} ${AMM[mk][0]}</h4>${AMM[mk][1]}${mk==='pre'?amPxTables():''}</div>${ls.length?`<div class="am-box"><h4>📝 הלקחים שלך</h4>${ls.slice(-12).map(l=>`<p>📌 ${bdiEsc(l.r)}</p>`).join('')}</div>`:''}`}
   if(x.k==='brk')body=`<div class="am-box"><p class="am-big">☕</p><p class="center">10 דקות. הזמן הזה לא נספר.</p></div>`;
   const inPlace=x.k==='meth'||x.k==='brk';
   app.innerHTML=`<div class="screen am-scr">
-    ${amNav('am','המסע של היום')}
-    <div class="am-title"><span class="gi g-w">${i}</span><div><h2>${t}</h2><p>${sub} · ${x.m} דק׳</p></div></div>
+    ${amNav('am','המסע')}
+    <div class="am-title"><span class="gi">${i}</span><div><h2>${t}</h2><p>${jrWhat(x)} · כ־${x.m} דק׳</p></div></div>
     <div class="am-box good"><h4>למה עכשיו?</h4><p>${why}</p></div>
     <div class="am-box"><h4>מה עושים כאן</h4><ul>${fx.map(f=>`<li>${f}</li>`).join('')}</ul></div>
     ${body}
@@ -529,46 +567,40 @@ function amBlock(){if(!AMD)return amLoading();const P=jrPlan(),x=P.b.find(y=>y.i
   </div>`;
   amBindNav();$('jbGo').onclick=()=>{if(inPlace){jrFinish(x.id,1);go({screen:'am'})}else jrRun(x)}}
 
-
 /* ================= 📅 schedule: when will all the dictionary meanings be learned =================
-   left = meanings still to start (her added words + ✗ cards + unmarked cards; ✓ cards count as known).
-   Each day of the plan starts wNPer(day) new meanings (13 / 16); a meaning is "learned" ~55 days after it starts
-   (20 min, 1, 3, 7, 14, 30 days). AMS.sch = the first plan {t, left, end} to compare against. */
+   left = meanings still to start (her added words + ✗ cards + unmarked cards; ✓ cards – also ones she marks in the dictionary – count as known).
+   Plan days give wNPer(day) new meanings (13 / 16); behind = the plan days she still owes are added on. A meaning is "learned" ~55 days after it starts. */
 const WLEARN=55;
 function schCounts(){const all=DW.length,y=DW.filter(isY).length,n=DW.filter(isN).length,W=Object.values(AMS.w);
   const inW=W.filter(w=>w.st>=1&&w.st<WMAST).length,done=W.filter(w=>w.st>=WMAST).length;return {all,y,n,u:all-y-n,left:wQueueCount(),inW,done}}
-function schSim(left,from=Date.now()){/* day by day from today (today counts what is still left of it) */
-  const days=[];let r=left,t=from,i=0;while(r>0&&i<2000){const k=dayKey(t);const cap=i?wNPer(k):Math.max(0,wNPer(k)-wNewToday());const x=Math.min(r,cap);r-=x;days.push({k,x,r});t+=DAY;i++}
+function schSim(left){/* plan days from the plan she is on (behind → later, ahead → it already counts) */
+  const T=dayKey(),ck=jrCurKey()||kAdd(T,1),days=[];let r=left,k=ck,i=0;const cur=AMS.jp&&AMS.jp[ck],nb=cur&&cur.b.find(x=>x.k==='new');
+  const shift=ck<T?kDiff(ck,T):0;
+  while(r>0&&i<2000){const cap=i===0&&nb?Math.max(0,nb.n-nb.d):wNPer(k);const x=Math.min(r,cap);r-=x;days.push({k:kAdd(k,shift),pk:k,x,r});k=kAdd(k,1);i++}
   return days}
 function schPlan(){const c=schCounts(),d=schSim(c.left),endK=d.length?d[d.length-1].k:dayKey();
   if(!AMS.sch&&c.left){AMS.sch={t:amNow(),k:dayKey(),left:c.left,end:endK};amSave()}return {c,d,endK}}
 const fmtD=(k,o)=>dayDate(k).toLocaleDateString('he-IL',o||{day:'numeric',month:'long',year:'numeric'});
-function amSchedule(){if(!AMD)return amLoading();const {c,d,endK}=schPlan(),learnK=dayKey(dayDate(endK).getTime()+WLEARN*DAY);
-  const wk=Math.ceil(d.length/7),per=7*13+2*3;
-  /* months */const M={};let acc=0;d.forEach(x=>{const m=x.k.slice(0,7);acc+=x.x;M[m]={m,n:(M[m]?M[m].n:0)+x.x,acc}});
-  const base=AMS.sch;let track='';
-  if(base){const since=Object.entries(AMS.nd||{}).filter(([k])=>k>=base.k).reduce((a,[,v])=>a+v,0);
-    let exp=0;for(let t=dayDate(base.k).getTime();dayKey(t)<dayKey();t+=DAY)exp+=wNPer(dayKey(t));
-    const diff=since-exp;track=`<div class="am-box ${diff>=0?'good':'bad'}"><h4>${diff>=0?'✓ את בזמן':'⏳ קצת מאחור'}</h4><p>מאז ${fmtD(base.k,{day:'numeric',month:'numeric'})} התחלת ${since} מילים חדשות${exp?` (לפי התוכנית: ${exp})`:''}. ${diff<0?`חסרות ${-diff} – הסיום זז ל־${fmtD(endK)}. אפשר להשלים עם עוד סבב "מילים חדשות" מהתרגול החופשי.`:diff>0?`הקדמת ב־${diff} מילים 💪`:''}</p><p class="hint" style="margin:0">התוכנית המקורית: סיום ב־${fmtD(base.end)}</p></div>`}
-  app.innerHTML=`<div class="screen am-scr">
-    ${amNav('am','המסע של היום')}
-    <div class="am-title"><span class="gi g-p">📅</span><div><h2>לוח הזמנים</h2><p>כל המילים במילון – עד מתי</p></div></div>
-    <section class="am-hero2"><p class="hr-k">${c.left?'מתחילה את המילה האחרונה':'אין עוד מילים להתחיל 🎉'}</p><h2>${c.left?fmtD(endK):'סיימת!'}</h2>
-      <p class="hr-d">${c.left?`עוד ${c.left} פירושים · כ־${wk} שבועות · כל המילים נלמדות עד הסוף (אחרי החזרה של 30 יום) בערך ב־${fmtD(learnK)}`:''}</p></section>
-    ${track}
+/* the schedule part of the progress page */
+function schHtml(){const {c,d,endK}=schPlan(),learnK=kAdd(endK,WLEARN),gap=jrGap(),wk=Math.ceil(d.length/7);
+  const M={};let acc=0;d.forEach(x=>{const m=x.k.slice(0,7);acc+=x.x;M[m]={m,n:(M[m]?M[m].n:0)+x.x,acc}});
+  const base=AMS.sch,known=c.y,pc=Math.round(known/c.all*100);
+  let markY=0;if(base)DW.forEach(w=>{const k=KNOW[w.id];if(k&&k[0]==='y'&&k[1]>=base.t&&!AMS.w['c:'+w.id])markY++});
+  return `<section class="am-hero2"><p class="hr-k">${c.left?'המילה האחרונה תתחיל ב־':'כל המילים התחילו 🎉'}</p><h2>${c.left?fmtD(endK):'סיימת!'}</h2>
+      <p class="hr-d">${c.left?`עוד ${c.left} פירושים · כ־${wk} שבועות · הכל נלמד עד הסוף (אחרי החזרה של 30 יום) בערך ב־${fmtD(learnK)}`:''}</p>
+      <div><span class="am-mini big"><i style="width:${pc}%"></i></span><p class="hr-d">יודעת ${known.toLocaleString()} מתוך ${c.all.toLocaleString()} פירושים (${pc}%)</p></div></section>
+    ${gap.days?`<div class="am-box bad"><h4>⏳ פער של ${gap.days} ${gap.days===1?'יום':'ימים'} מלוח הזמנים</h4><p>${[gap.words?gap.words+' מילים חדשות':'',gap.q?gap.q+' שאלות':''].filter(Boolean).join(' · ')} שעוד לא נעשו. הפער ייעלם כשתשלימי אותם ותגיעי לתוכנית של היום – עד אז התאריך זז ב־${gap.days} ${gap.days===1?'יום':'ימים'}.</p></div>`
+      :gap.ahead?`<div class="am-box good"><h4>💪 מקדימה ב־${gap.ahead} ${gap.ahead===1?'יום':'ימים'}</h4></div>`:`<div class="am-box good"><h4>✓ את בקצב של לוח הזמנים</h4></div>`}
     <div class="am-box"><h4>מאיפה המספר הזה</h4>
-      <div class="am-stat3"><div><b>${c.all}</b><small>פירושים במילון</small></div><div><b>${c.y}</b><small>✓ כבר יודעת</small></div><div><b>${c.left}</b><small>לפניך</small></div></div>
-      <p>${c.n} סימנת ✗ · ${c.u} עוד לא סימנת · ${c.inW} בלמידה עכשיו · ${c.done} נלמדו.</p>
-      ${EXB(`מילים שסימנת ✓ במילון נחשבות ידועות ולא נכנסות ללמידה. כל יום במסע נכנסות <b>13 מילים חדשות</b> (ביום ארוך – <b>16</b>), כ־${per} בשבוע. כל מילה עוברת 6 חזרות במשך כ־55 יום עד שהיא "נלמדה".`)}</div>
-    <div class="am-box good"><h4>💡 איך לסיים מהר יותר</h4><ul>
-      <li><b>${c.u} מילים עוד לא סומנו.</b> חלק מהן את בטח כבר יודעת. מבחן מהיר במילון על "לא סומנו" (כ־10 שניות למילה) – כל ✓ מוריד מילה מהרשימה ומקרב את התאריך.</li>
-      <li>מילים מהשאלות נכנסות ראשונות – הן החשובות ביותר למבחן.</li></ul></div>
-    <div class="am-box"><h4>חודש אחרי חודש</h4><div class="am-mon">${Object.values(M).map(x=>`<div class="am-day"><span>${dayDate(x.m+'-15').toLocaleDateString('he-IL',{month:'long',year:'numeric'})}</span><span class="am-mini"><i style="width:${Math.round(x.acc/c.left*100)}%"></i></span><b>${x.acc}</b><small>${x.n} מילים חדשות בחודש · ${Math.round(x.acc/c.left*100)}% מהדרך</small></div>`).join('')}</div></div>
-    <div class="am-box"><h4>השבוע הקרוב</h4>${d.slice(0,7).map(x=>`<div class="am-day"><span>${fmtD(x.k,{weekday:'long',day:'numeric',month:'numeric'})}</span><span></span><b>${x.x}</b><small>${jrGoal(x.k)===180?'יום ארוך · 3 שעות':'שעה וחצי'} · ${x.x} מילים חדשות</small></div>`).join('')}</div>
-    ${AMS.na===0?`<div class="am-box bad"><p>בחרת ידנית ${AMS.n||8} מילים ביום, ולכן התאריך מחושב לפי זה. <button class="am-pill" id="schAuto">לחזור לאוטומטי</button></p></div>`:''}
-  </div>`;
-  amBindNav();const a=$('schAuto');if(a)a.onclick=()=>{AMS.na=1;amSave();draw()}}
-
+      <div class="am-stat3"><div><b>${c.all}</b><small>פירושים במילון</small></div><div><b>${c.y}</b><small>✓ יודעת</small></div><div><b>${c.left}</b><small>לפנייך</small></div></div>
+      <p>${c.n} סימנת ✗ · ${c.u} עוד לא סימנת · ${c.inW} בלמידה עכשיו · ${c.done} נלמדו כאן.</p>
+      ${markY?`<p>✓ מאז תחילת התוכנית סימנת במילון ${markY} מילים שאת יודעת – זה קירב את הסיום בכ־${Math.round(markY/97*7)} ימים.</p>`:''}
+      ${base?`<p class="hint" style="margin:0">התוכנית המקורית (${fmtD(base.k,{day:'numeric',month:'numeric'})}): סיום ב־${fmtD(base.end)}</p>`:''}
+      ${EXB('כל מילה שאת מסמנת ✓ במילון נחשבת ידועה – היא יורדת מהרשימה והתאריך מתקרב. כל יום במסע נכנסות 13 מילים חדשות (ביום ארוך 16), כ־97 בשבוע. כל מילה עוברת 6 חזרות במשך כ־55 יום עד שהיא "נלמדה".')}</div>
+    ${c.u?`<div class="am-box good"><h4>💡 איך לסיים מהר יותר</h4><p><b>${c.u} מילים עוד לא סומנו.</b> חלק מהן את בטח כבר יודעת. מבחן מהיר במילון על "לא סומנו" – כל ✓ מוריד מילה מהרשימה ומקרב את התאריך.</p></div>`:''}
+    <details class="am-box"><summary style="font-weight:800;cursor:pointer">חודש אחרי חודש</summary><div class="am-mon">${Object.values(M).map(x=>`<div class="am-day"><span>${dayDate(x.m+'-15').toLocaleDateString('he-IL',{month:'long',year:'numeric'})}</span><span class="am-mini"><i style="width:${Math.round(x.acc/c.left*100)}%"></i></span><b>${x.acc}</b><small>${x.n} מילים חדשות בחודש · ${Math.round(x.acc/c.left*100)}% מהדרך</small></div>`).join('')}</div></details>
+    ${AMS.na===0?`<div class="am-box bad"><p>בחרת ידנית ${AMS.n||8} מילים ביום, ולכן התאריך מחושב לפי זה. <button class="am-pill" id="schAuto">לחזור לאוטומטי</button></p></div>`:''}`}
+function amSchedule(){return go({screen:'amp'})}
 /* ================= hub ================= */
 function amPlan(){const due=wDue().length,newLeft=Math.max(0,wNPer()-wNewToday()),mist=Object.keys(AMD.q).filter(amMistDue).length;
   const next=amNextSet();return {due,newLeft,mist,next}}
@@ -739,7 +771,7 @@ function amReader(){if(!AMD)return amLoading();const R=AMD.rd||[],read=AMS.rd||{
   amBindNav();app.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{S.amrd=+b.dataset.n;persist();draw();window.scrollTo(0,0)})}
 function amReadText(T){const read=AMS.rd||{};
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">כל הקטעים</button>${HOME}${EXTOG()}${INFOB()}</div>
+    <div class="nav"><button class="back" id="bk">כל הקטעים</button><span class="nav-ic">${HOME}${INFOB()}</span></div>
     <div><h2>📗 קטע ${T.n}</h2><p class="sub">🔊 ליד כל פסקה · לחיצה על מילה = פירוש והוספה לסדנה</p></div>
     <div class="am-pass big" data-ctx="" data-src="rd${T.n}">${T.en.map(p=>`<p>${SAYB(p,'sm inl')}${tapEn(p)}</p>`).join('')}</div>
     <details class="am-box"><summary style="font-weight:800;cursor:pointer">התרגום לעברית</summary>${T.he.map(p=>`<p>${esc(p)}</p>`).join('')}</details>
@@ -765,7 +797,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   const id=AQ.ids[AQ.i],q=AMD.q[id],st=aqSt(),exam=AQ.mode==='exam';AQ.cur=id;
   const T=q.x?AMD.x[q.x]:null;
   let h=`<div class="screen qz am-scr">
-    <div class="nav"><button class="back" id="bk">${exam?'עצירה':'יציאה'}</button>${HOME}${EXTOG()}${INFOB()}</div>
+    <div class="nav"><button class="back" id="bk">${exam?'עצירה':'יציאה'}</button><span class="nav-ic">${HOME}${INFOB()}</span></div>
     <div class="am-bar"><span class="am-chip t">${AMTI[q.t]} ${AMTN[q.t]}</span><span>${esc(AQ.name)}</span><span>· ${AQ.i+1}/${AQ.ids.length}</span><span class="am-timer" id="amTm"></span></div>
     <div class="am-prog"><i style="width:${(AQ.i)/AQ.ids.length*100}%"></i></div>`;
   /* passage */
@@ -925,11 +957,11 @@ function amResult(){const exam=AQ.mode==='exam';clearInterval(AMTICK);
     ${rows.some(r=>r.ans&&!r.ok)?`<p class="lbl">לחצי על שאלה כדי לראות את ההסבר ולנתח את הטעות</p>`:''}
     <ul class="am-res">${rows.map(r=>`<li class="${r.ok?'ok':r.ans?'bad':''}"><button data-ri="${r.i}"><span class="s">${r.ok?'✓':r.ans?'✗':'—'}</span><span class="tx">${esc(r.q.q)}</span><small dir="rtl" style="font-family:var(--he)">${r.s.ms?Math.round(r.s.ms/1e3)+' שנ׳':''}</small></button></li>`).join('')}</ul>
     ${(()=>{const L=(AQ.added||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);return L.length?`<div class="am-box good"><h4>📚 אספת ${L.length} מילים חדשות בתרגול</h4><p style="margin:0">הכי טוב ללמוד אותן עכשיו, כשההקשר עוד טרי: אסוציאציה, משפט שלך ושליפה – ואז סיבוב שני מהיר. הן יחזרו אלייך אחרי 20 דקות, מחר, ועוד.</p><button class="btn" id="amLearnAdded">🌱 ללמוד אותן עכשיו</button></div>`:''})()}
-    ${(()=>{if(!AQ.jr)return '';const x=jrPlan().b.find(y=>y.id===AQ.jr);return x&&x.k==='q'&&!x.done&&x.used<x.m*6e4?`<button class="btn" id="amJrNext">▶ ליחידה הבאה (נשארו כ־${Math.max(1,Math.round(x.m-x.used/6e4))} דק׳ בבלוק)</button>`:''})()}
+    ${(()=>{if(!AQ.jr)return '';const x=jrBlock(AQ.jr);return x&&x.k==='q'&&!x.done&&x.d<x.n?`<button class="btn" id="amJrNext">▶ ליחידה הבאה (עוד ${x.n-x.d} שאלות בצעד הזה)</button>`:''})()}
     <button class="btn ${(AQ.added||[]).some(k=>AMS.w[k]&&AMS.w[k].st===0)?'secondary':''}" id="amAgain">${AQ.jr?'חזרה למסע של היום ←':'סיום'}</button>
   </div>`;
   amBindNav();$('amAgain').onclick=()=>{if(AQ.jr)jrFinish(AQ.jr);go({screen:AQ.jr?'am':AQ.from||'am'})};
-  const jn=$('amJrNext');if(jn)jn.onclick=()=>{const x=jrPlan().b.find(y=>y.id===AQ.jr);if(x)jrRun(x)};const la=$('amLearnAdded');if(la)la.onclick=()=>{JRGO=AQ.jr||null;wStart('collect',AQ.added)};
+  const jn=$('amJrNext');if(jn)jn.onclick=()=>{const x=jrBlock(AQ.jr);if(x)jrRun(x)};const la=$('amLearnAdded');if(la)la.onclick=()=>{JRGO=AQ.jr||null;wStart('collect',AQ.added)};
   app.querySelectorAll('[data-ri]').forEach(b=>b.onclick=()=>{const i=+b.dataset.ri,s=aqSt(i);if(!s.done){s.done=!!s.sel;}AQ.mode='learn';AQ.i=i;amSaveQ();draw();window.scrollTo(0,0)})}
 
 /* ================= mistakes notebook ================= */
@@ -973,16 +1005,16 @@ function amProgress(){if(!AMD)return amLoading();
   const mx=Math.max(1,...fc),stN=['מחכות','20 דק׳','יום','3 ימים','שבוע','שבועיים','חודש','נלמדו'];
   app.innerHTML=`<div class="screen am-scr">
     ${amNav('am','אמירנט')}
-    <div class="am-title"><span class="gi g-p">📊</span><div><h2>ההתקדמות שלי</h2><p>${streak?`🔥 ${streak} ימים ברצף`:'עוד לא תרגלת היום'} · ${days.size} ימי תרגול</p></div></div>
-    ${EXB('העמוד הזה רק מציג – אין בו כפתורים. הוא מתעדכן לבד מכל מה שאת עושה.')}
+    <div class="am-title"><span class="gi g-p">📊</span><div><h2>התקדמות ולוח זמנים</h2><p>${streak?`🔥 ${streak} ימים ברצף`:'עוד לא תרגלת היום'} · ${days.size} ימי תרגול</p></div></div>
+    ${schHtml()}
     <div class="am-box"><h4>📅 היסטוריית ימים</h4>${EXB('כמה דקות למדת בכל יום מול היעד (3 שעות בשני ורביעי, שעה וחצי בשאר הימים).')}${(()=>{const out=[];for(let d=0;d<21;d++){const k=dayKey(now-d*DAY),m=jrMin(k),g=jrGoal(k),P=(AMS.jp||{})[k];if(!m&&!P&&d)continue;
-        out.push(`<div class="am-day ${m>=g?'ok':d?'bad':''}"><span>${d?dayDate(k).toLocaleDateString('he-IL',{weekday:'short',day:'numeric',month:'numeric'}):'היום'}</span><span class="am-mini"><i style="width:${Math.min(100,m/g*100)}%"></i></span><b>${m}/${g}</b><small>${m>=g?'✓ הושלם':d?'✗ לא הושלם':'בתהליך'}${P?' · '+P.b.filter(x=>x.done).length+'/'+P.b.length+' צעדים':''}</small></div>`)}return out.join('')})()}</div>
+        out.push(`<div class="am-day ${m>=g?'ok':d?'bad':''}"><span>${d?dayDate(k).toLocaleDateString('he-IL',{weekday:'short',day:'numeric',month:'numeric'}):'היום'}</span><span class="am-mini"><i style="width:${Math.min(100,m/g*100)}%"></i></span><b>${m}/${g}</b><small>${m>=g?'✓ הזמן הושלם':d?'✗ הזמן לא הושלם':'בתהליך'}${P?' · צעדים '+P.b.filter(x=>x.done).length+'/'+P.b.length+(jrDone(P)?' ✓':''):''}</small></div>`)}return out.join('')})()}</div>
     <div class="am-box"><h4>שאלות</h4>${EXB('הפס = אחוז התשובות הנכונות. הזמן = ממוצע לשאלה מול היעד במבחן.')}${types.filter(x=>x.n).map(x=>`<div class="am-stat"><span>${AMTI[x.t]} ${AMTN[x.t]}</span><span class="am-mini"><i style="width:${x.ok/x.n*100}%"></i></span><b>${Math.round(x.ok/x.n*100)}%</b><small>${x.n} ניסיונות · ${Math.round(x.ms/1e3)} שנ׳ (יעד ${AMTARGET[x.t]})</small></div>`).join('')||'<p class="hint" style="margin:0">עוד לא פתרת שאלות.</p>'}</div>
     <div class="am-box"><h4>מילים לפי שלב</h4><div class="am-bars">${st.map((n,i)=>`<div><span style="height:${Math.max(4,n/Math.max(1,...st)*80)}px" class="${i===7?'ok':''}"></span><b>${n}</b><small>${stN[i]}</small></div>`).join('')}</div></div>
     <div class="am-box"><h4>חזרות בשבוע הקרוב</h4>${EXB('כמה מילים יחכו לחזרה פעילה בכל יום. מעט היום = אפשר ללמוד יותר מילים חדשות.')}<div class="am-bars">${fc.map((n,d)=>`<div><span style="height:${Math.max(4,n/mx*80)}px"></span><b>${n}</b><small>${d?['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'][new Date(now+d*DAY).getDay()]:'היום'}</small></div>`).join('')}</div></div>
     ${top.length?`<div class="am-box why"><h4>למה אני טועה</h4>${top.map(([k,n])=>`<p>${(WHY.find(w=>w[0]===k)||[,k])[1]} – ${n}</p>`).join('')}<p class="hint" style="margin:0">💡 ${amAdvice(top[0][0])}</p></div>`:''}
     ${AMS.ex&&Object.keys(AMS.ex).length?`<div class="am-box"><h4>סימולציות</h4>${Object.entries(AMS.ex).map(([k,r])=>`<p>${k[0]==='b'?'ניהול זמנים פרק '+k.slice(1):'סימולציה '+k}: <b>${r.ok}/22</b> · ${Math.round(r.ms/6e4)} דק׳</p>`).join('')}</div>`:''}
-  </div>`;amBindNav()}
+  </div>`;const sa=$('schAuto');if(sa)sa.onclick=()=>{AMS.na=1;amSave();draw()};amBindNav()}
 /* ---------- 🧬 word parts drill (prefixes / suffixes) ---------- */
 let WP=null;
 function wpNext(){const P=AMD.px||{pre:[],suf:[]},all=[];['pre','suf'].forEach(k=>P[k].forEach((e,i)=>e.ex.forEach(([en,he])=>{if(en.length>3&&he)all.push({k,i,en,he})})));
@@ -1082,10 +1114,10 @@ function amWordPage(){if(!AMD)return amLoading();const w=AMS.w[S.wk];if(!w){go({
   const kn=$('wdKnow');if(kn)kn.onclick=()=>{wLog(w,'known',1,0);wMaster(w);w.t=amNow();amSave();draw()}}
 function wSave(){try{LS.set('dictAmWs',JSON.stringify(WS))}catch(e){}}
 try{WS=JSON.parse(LS.get('dictAmWs')||'null')}catch(e){}
-function wStart(mode,keys){
+function wStart(mode,keys,cnt){
   if(mode==='collect'){const L=(keys||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);if(!L.length)return;WS={mode:'new',list:L,i:0,step:'meet',hint:0,from:S.screen,ok:0,bad:0,collect:1};if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}wSave();go({screen:'amwl'});return}
   if(mode==='rev'){const d=wDue();if(!d.length)return;WS={mode,list:d.slice(0,30).map(w=>wK(w)),i:0,step:'recall',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
-  else{const n=Math.max(0,wNPer()-wNewToday());if(!n)return;const q=wQueue(n);if(!q.length)return;
+  else{const n=cnt||Math.max(0,wNPer()-wNewToday());if(!n)return;const q=wQueue(n);if(!q.length)return;
     q.forEach(w=>{if(w.fresh){const x=wAdd(w.e,w.h,w.c,w.src,w.k);}});WS={mode,list:q.map(w=>wK(w)),i:0,step:'meet',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
   if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}
   wSave();go({screen:'amwl'})}
@@ -1130,7 +1162,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   const card=wCard(w),x=card?EXTRA[card.xid||card.id]||{}:{},ex=card?card.s:'';
   const ctx=w.c||ex||'';
   let h=`<div class="screen qz am-scr">
-    <div class="nav"><button class="back" id="bk">יציאה</button>${HOME}${EXTOG()}${INFOB()}</div>
+    <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${HOME}${INFOB()}</span></div>
     <div class="am-bar"><span class="am-chip t">${WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'?'🔁 שלב 3 – בחירה במשפט':(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span>${w.st?`<span class="am-timer">${wStageDots(w)}</span>`:''}</div>
     <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>`;
   const step=WS.step;
@@ -1242,7 +1274,7 @@ function wNextWord(){WS.i++;WS.step=WS.mode==='new'?'meet':'recall';WS.hint=0;WS
 function wAfter(w,ok){
   if(WS.mode==='r2'){/* second round of the new words, same session: practice only */wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   if(WS.step==='first'){/* the first recall right after learning */
-    wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
+    wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();if(!(WS.counted&&WS.counted.includes(wK(w)))&&WS.jr)jrCount(WS.jr);AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
     if(!ok){WS.again=(WS.again||[]).filter(k=>k!==wK(w)).concat(wK(w))}amSave();return}
   wGrade(w,ok,WS.hint||0)}
 function wGrade(w,ok,hint){const k=wK(w),task=wTask(w);
@@ -1362,13 +1394,13 @@ const AMHELP={
   <li><b>כרטיסיות</b> – מעבר מהיר על מילים.</li><li><b>🚗 מצב רכב</b> – הקראה ברצף להאזנה בנסיעה, סימון בכפתורי ההגה.</li>
   <li><b>מצב רץ</b> – כל מילה מוקראת כשעוברים אליה.</li><li><b>✍️ מילים לשיעור פרטי</b> – הרשימות השבועיות, וכתיבת משפטים עם בדיקה חכמה.</li>
   <li><b>היעד היומי</b> – 240 סימונים ביום.</li></ul>`]};
-const PAGEHELP={start:[],home:['dict'],am:['daily'],amqh:['questions','flow'],amu:['flow'],amls:['lessons'],amw:['words','journey','learn'],amwm:['mywords'],amwd:['mywords'],amm:['methods'],ammt:['methods'],amp:['progress'],amsch:['schedule']};
+const PAGEHELP={start:[],home:['dict'],am:['daily'],amqh:['questions','flow'],amu:['flow'],amls:['lessons'],amw:['words','journey','learn'],amwm:['mywords'],amwd:['mywords'],amm:['methods'],ammt:['methods'],amp:['progress','schedule']};
 function amPageHelp(){if(S.screen==='amu')return S.amt==='ex'?['questions']:['flow'];return PAGEHELP[S.screen]||[]}
 /* after drawing: the page's explanation boxes right under its title (💬 hides them) */
 function amInjectHelp(){if(!AMEX)return;const ks=amPageHelp().filter(k=>AMHELP[k]);if(!ks.length)return;
   const at=app.querySelector('.am-title')||app.querySelector('.am-hero2')||app.querySelector('.home-head')||app.querySelector('.nav');if(!at)return;
   const box=document.createElement('div');box.className='am-pghelp';
-  box.innerHTML=ks.map((k,j)=>{const [i,t,,b]=AMHELP[k];return `<details class="am-box am-help"${j===0&&!amHelpSeen(k)?' open':''} data-hseen="${k}"><summary>💬 ${i} ${t}</summary>${b}</details>`}).join('');
+  box.innerHTML=ks.map((k,j)=>{const [i,t,,b]=AMHELP[k];return `<details class="am-box am-help"data-hseen="${k}"><summary>💬 ${i} ${t}</summary>${b}</details>`}).join('');
   at.after(box);box.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{if(!d.open)amHelpMark(d.dataset.hseen)}))}
 /* an explanation she closed stays closed next time */
 function amHelpSeen(k){try{return (JSON.parse(LS.get('dictHelpSeen')||'{}'))[k]}catch(e){return false}}
@@ -1401,7 +1433,7 @@ function startScreen(){const k=DW.filter(known).length,td=dayCount(dayKey()),due
     <div class="home-head"><div><h1>מה לומדים היום? 👋</h1><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>${RELOADBTN}${EXTOG()}${INFOB('overview')}</div>
     <button class="st-app st-dict" id="stDict"><span class="st-i">📚</span><span class="st-t">מילון אנגלית</span><span class="st-d">${DW.length.toLocaleString()} פירושים · יודעת ${k.toLocaleString()} · היום ${td}/${GOAL}</span>${AMEX?'<span class="st-x">כל 4,000+ המילים לפי רמות: בחנים, כרטיסיות, מצב רכב, סימון ✓/✗, ומילים לשיעור הפרטי עם כתיבת משפטים.</span>':''}</button>
     <button class="st-app st-am" id="stAm"><span class="st-i">🎯</span><span class="st-t">הכנה לאמירנט</span><span class="st-d">${[due?due+' מילים לחזרה':'',nl?nl+' מילים חדשות':'',mi?mi+' טעויות לתיקון':''].filter(Boolean).join(' · ')||'תרגול שאלות לפי השיטה'}</span>${AMEX?'<span class="st-x">הכנה למבחן: שאלות מהספרים לפי השיטה, חקירת כל טעות, ולמידת מילים פעילה עם חזרות בזמן הנכון.</span>':''}</button>
-    ${EXB('<b>i</b> למעלה = מדריך מלא לשתי האפליקציות. <b>💬</b> = הצגה / הסתרה של ההסברים הקטנים ליד כל כפתור (כמו זה).')}
+    ${EXB('<b>i</b> למעלה = מדריך מלא לשתי האפליקציות. "💬 הסבר" בכל עמוד נפתח בלחיצה.')}
   </div>`;
   $('stDict').onclick=()=>go({screen:'home'});$('stAm').onclick=()=>go({screen:'am'})}
 function amHomeCard(){const due=wDue().length,nl=Math.max(0,wNPer()-wNewToday());
