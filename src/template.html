@@ -746,7 +746,7 @@ function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
     sc.addEventListener('mousedown',e=>e.preventDefault());sc.onclick=()=>{si.value='';si.dispatchEvent(new Event('input'));sc.hidden=true;si.focus()}}
-  const h=$('home');if(h)h.onclick=goHome;fitWords(app)}
+  const h=$('home');if(h)h.onclick=goHome;try{amInjectHelp()}catch(e){}fitWords(app)}
 /* small house button: leave (a quiz or cards are saved as usual) and open the main screen */
 function goHome(){if(/^am/.test(S.screen)){amGoHome();return}const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
   if(S.screen==='car')carStop();if(S.screen==='quiz'||S.screen==='cards'||S.screen==='car'){saveQ&&Q&&S.screen==='quiz'&&saveQ();S.active=null}go({screen:'home'})}
