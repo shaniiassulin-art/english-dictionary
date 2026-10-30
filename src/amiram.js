@@ -252,14 +252,20 @@ textarea.am-in{resize:vertical;min-height:70px}
 .am-res li.ok .s{color:var(--ok)}.am-res li.bad .s{color:var(--bad)}
 .am-big{font-size:2.2rem;font-weight:800;text-align:center}
 .am-load{padding:40px 0;text-align:center;color:var(--muted)}
+.st-screen{min-height:calc(100dvh - 60px)}.st-screen h1{font-size:1.6rem}
+.st-app{width:100%;border:0;border-radius:22px;padding:26px 22px;min-height:170px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;gap:6px;text-align:right;cursor:pointer;font:inherit;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.st-app:active{transform:scale(.985)}.st-i{font-size:2.4rem;line-height:1}.st-t{font-size:1.5rem;font-weight:800}.st-d{font-size:.95rem;opacity:.92;line-height:1.4}
+.st-dict{background:linear-gradient(135deg,#24548a,#163659)}.st-am{background:linear-gradient(135deg,#a4482f,#6d2b1b)}
 @media (max-width:420px){.am-units{grid-template-columns:repeat(4,1fr);gap:6px}.am-q{font-size:1.08rem;padding:12px}.am-opt{font-size:1rem;padding:10px 12px}.am-grid{gap:8px}.am-tile{padding:12px}}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */
 const amNav=(back,label)=>`<div class="nav"><button class="back" id="bk" data-go="${back}">${label}</button>${HOME}</div>`;
-function amBindNav(){const b=$('bk');if(b)b.onclick=()=>{const g=b.dataset.go;if(g==='home')go({screen:'home'});else go({screen:g})}}
-function amLoading(){app.innerHTML=`<div class="screen">${amNav('home','מסך ראשי')}<p class="am-load">⏳ טוען את שאלות האמירנט…</p></div>`;amBindNav();
-  amLoad().then(()=>draw()).catch(()=>{app.innerHTML=`<div class="screen">${amNav('home','מסך ראשי')}<p class="am-load">לא הצלחתי לטעון את השאלות – בדקי את החיבור ונסי שוב.</p><button class="btn" id="amRe">לנסות שוב</button></div>`;amBindNav();$('amRe').onclick=()=>draw()})}
+function amBindNav(){const b=$('bk');if(b)b.onclick=()=>go({screen:b.dataset.go})}
+/* the house inside the אמירנט section: back to its own main screen (from there, to the app chooser) */
+function amGoHome(){if(S.screen==='amq'&&AQ){if(AQ.mode==='exam'&&AQ.i<AQ.ids.length)AQ.paused=amNow();amSaveQ();clearInterval(AMTICK)}if(S.screen==='amwl')wSave();go({screen:S.screen==='am'?'start':'am'})}
+function amLoading(){app.innerHTML=`<div class="screen">${amNav('start','בחירת אפליקציה')}<p class="am-load">⏳ טוען את שאלות האמירנט…</p></div>`;amBindNav();
+  amLoad().then(()=>draw()).catch(()=>{app.innerHTML=`<div class="screen">${amNav('start','בחירת אפליקציה')}<p class="am-load">לא הצלחתי לטעון את השאלות – בדקי את החיבור ונסי שוב.</p><button class="btn" id="amRe">לנסות שוב</button></div>`;amBindNav();$('amRe').onclick=()=>draw()})}
 /* tap any English word → its meaning + add to the workshop */
 let AMPOP=null;
 function amPop(e,ctx,src){AMPOP={e,ctx,src,h:null};amPopDraw();amTrans(e).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
@@ -288,7 +294,7 @@ function amHub(){if(!AMD)return amLoading();
   const mistAll=Object.keys(AMD.q).filter(amIsMist).length;
   const step=(n,on,t,s,act)=>`<button class="am-step${on?'':' done'}" data-act="${act}"><span class="n">${on?n:'✓'}</span><span class="tx"><b>${t}</b><small>${s}</small></span></button>`;
   app.innerHTML=`<div class="screen">
-    ${amNav('home','מסך ראשי')}
+    ${amNav('start','בחירת אפליקציה')}
     ${AQ&&AQ.ids&&AQ.i<AQ.ids.length&&!AQ.fin?`<button class="resume-card" id="amRes"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(AQ.name)} · שאלה ${AQ.i+1} מתוך ${AQ.ids.length}</span></span></button>`:''}
     <div class="am-hero"><h2>🎯 הכנה לאמירנט</h2><p>כל יום סבב קצר: קודם שליפה פעילה של מילים, אחר כך מילים חדשות עם אסוציאציה ומשפט משלך, ואז שאלות לפי השיטה.</p>
       <div class="am-plan">
@@ -674,7 +680,14 @@ function amMethods(){const tab=S.amTab||'gen';
     <div><h2>📘 שיטות הפתרון</h2><p class="sub">מתוך הספר שצירפת, בקצרה.</p></div>
     ${Object.entries(AMM).map(([k,[t,b]])=>`<details ${k===tab?'open':''}><summary>${t}</summary>${b}</details>`).join('')}
   </div>`;amBindNav()}
-/* main screen: the entry to the section, with what is waiting today */
+/* opening screen: choose the dictionary or the אמירנט app */
+function startScreen(){const k=DW.filter(known).length,td=dayCount(dayKey()),due=wDue().length,nl=Math.max(0,(AMS.n||8)-wNewToday()),mi=AMD?Object.keys(AMD.q).filter(amMistDue).length:0;
+  app.innerHTML=`<div class="screen st-screen">
+    <div class="home-head"><div><h1>שלום! מה לומדים היום?</h1><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>${RELOADBTN}</div>
+    <button class="st-app st-dict" id="stDict"><span class="st-i">📚</span><span class="st-t">מילון אנגלית</span><span class="st-d">${DW.length.toLocaleString()} פירושים · יודעת ${k.toLocaleString()} · היום ${td}/${GOAL}</span></button>
+    <button class="st-app st-am" id="stAm"><span class="st-i">🎯</span><span class="st-t">הכנה לאמירנט</span><span class="st-d">${[due?due+' מילים לחזרה':'',nl?nl+' מילים חדשות':'',mi?mi+' טעויות לתיקון':''].filter(Boolean).join(' · ')||'תרגול שאלות לפי השיטה'}</span></button>
+  </div>`;
+  $('stDict').onclick=()=>go({screen:'home'});$('stAm').onclick=()=>go({screen:'am'})}
 function amHomeCard(){const due=wDue().length,nl=Math.max(0,(AMS.n||8)-wNewToday());
   const d=[due?due+' מילים לחזרה':'',nl?nl+' מילים חדשות':'אין מילים חדשות היום ✓'].filter(Boolean).join(' · ');
   return `<button class="item am-home" id="amGo"><span class="num">🎯</span><span class="grow"><span class="t">הכנה לאמירנט</span><br><span class="d">${d} · תרגול שאלות לפי השיטה</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`}

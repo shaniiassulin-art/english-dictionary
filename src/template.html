@@ -713,8 +713,10 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
     out=out.replace(new RegExp('\\b('+stem.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'[a-z]*)','i'),'<mark>$1</mark>')});return out}
 
 /* state */
-let S={screen:'home',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','am','amu','amq','amx','amw','amwl','amm'].includes(S.screen))S.screen='home'}catch(e){}
+let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm'].includes(S.screen))S.screen='start'}catch(e){}
+/* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
+try{if(!sessionStorage.getItem('dictOpen')){sessionStorage.setItem('dictOpen','1');if(!['quiz','car'].includes(S.screen))S.screen='start'}}catch(e){}
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
@@ -739,20 +741,20 @@ window.addEventListener('resize',()=>{clearTimeout(window._fw);window._fw=setTim
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitWords());
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods})[S.screen]();
+  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods})[S.screen]();
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
     sc.addEventListener('mousedown',e=>e.preventDefault());sc.onclick=()=>{si.value='';si.dispatchEvent(new Event('input'));sc.hidden=true;si.focus()}}
   const h=$('home');if(h)h.onclick=goHome;fitWords(app)}
 /* small house button: leave (a quiz or cards are saved as usual) and open the main screen */
-function goHome(){const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
+function goHome(){if(/^am/.test(S.screen)){amGoHome();return}const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
   if(S.screen==='car')carStop();if(S.screen==='quiz'||S.screen==='cards'||S.screen==='car'){saveQ&&Q&&S.screen==='quiz'&&saveQ();S.active=null}go({screen:'home'})}
 /* swipe from right to left = back to the previous screen */
 (function(){let x0=null,y0=0,t0=0;
   document.addEventListener('touchstart',e=>{const t=e.touches[0];if(e.touches.length>1||e.target.closest('input,textarea')){x0=null;return}x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
   document.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
-    if(dx<-70&&Math.abs(dx)>2*Math.abs(dy)&&Date.now()-t0<800&&S.screen!=='home'){const b=$('bk')||$('exit')||$('back');b&&b.click()}},{passive:true})})();
+    if(dx<-70&&Math.abs(dx)>2*Math.abs(dy)&&Date.now()-t0<800&&S.screen!=='home'){const b=$('bk')||$('exit')||$('back')||$('toStart');b&&b.click()}},{passive:true})})();
 
 function carToggle(){return `<button class="cartog${CARON?' on':''}" id="carTog" aria-pressed="${CARON}"><span class="ci">🚗</span><span class="ct"><b>מצב רכב</b><span>${CARON?'פועל · מקריא ברצף':'כבוי · האזנה ברצף בנסיעה'}</span></span><span class="sw" aria-hidden="true"><i></i></span></button>`}
 /* reading / listening switch – also shown on an unfinished quiz, which then goes on in the chosen mode */
@@ -865,13 +867,13 @@ function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(
 function home(){
   const k=DW.filter(known).length;
   app.innerHTML=`<div class="screen">
+    <div class="nav" style="min-height:0"><button class="back" id="toStart">בחירת אפליקציה</button></div>
     <div class="home-head"><div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים לתרגול · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div><button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button></div>
     <div class="home-top"><div class="ht-s">${searchBox()}</div></div>
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
     ${todayCard()}
-    ${amHomeCard()}
     ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+LN(L)).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
@@ -881,7 +883,7 @@ function home(){
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
-  $('today').onclick=()=>go({screen:'days'});$('amGo').onclick=()=>go({screen:'am'});
+  $('today').onclick=()=>go({screen:'days'});$('toStart').onclick=()=>go({screen:'start'});
   bindSearch(DW);bindSettings();bindQuizPanel('ALL',DW,'כל המילים','home');bindCatPanel('ALL',DW,'כל המילים','home');
 }
 
