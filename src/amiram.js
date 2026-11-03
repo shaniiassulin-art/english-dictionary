@@ -139,15 +139,16 @@ const NAUTO={90:13,180:16};
 function wNPer(k=dayKey()){return AMS.na===0?(AMS.n||8):NAUTO[jrGoal(k)]}
 function wNewToday(){return AMS.nd[dayKey()]||0}
 /* the queue of words to learn: words she added from questions first, then dictionary cards marked ✗, then unmarked ones (easier levels first) */
-function wKnownDict(w){if(!w.src||!w.src.startsWith('dict:'))return false;const c=W[w.src.slice(5)];return !!(c&&isY(c))}
+function wKnownCard(w){if(!w.src||!w.src.startsWith('dict:'))return false;const c=W[w.src.slice(5)];return !!(c&&isY(c))}
 function wQueue(n){const out=[],seen=new Set(Object.keys(AMS.w).filter(k=>AMS.w[k].st>0));
-  Object.values(AMS.w).filter(w=>w.st===0&&!wKnownDict(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
+  Object.values(AMS.w).filter(w=>w.st===0&&!wKnownCard(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
   for(const f of [isN,w=>!kst(w)]){if(out.length>=n)break;
     for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||AMS.w[wKey(w.e)]||!f(w))continue;seen.add(k);
       /* one card = one meaning: each meaning of a word is learned on its own */
       out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}}
+  if(out.length<n)for(const f of [isN,w=>!isY(w)])for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||!f(w))continue;seen.add(k);out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}
   return out}
-function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w.st===0&&!wKnownDict(w)).length;
+function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w.st===0&&!wKnownCard(w)).length;
   return n+DW.filter(w=>!isY(w)&&!k.has('c:'+w.id)&&!k.has(wKey(w.e))).length}
 function wMaster(w){w.st=WMAST;w.due=0;
   if(w.src&&w.src.startsWith('dict:')){const c=W[w.src.slice(5)];if(c&&!isY(c))setKnow(c.id,'y');return}
@@ -532,7 +533,13 @@ const jrMin=k=>Math.floor(((AMS.tm||{})[k]||0)/6e4);
 /* start (or go on with) a block */
 function jrRun(x){
   if(x.k==='rev'||x.k==='rev2'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const ah=x.k==='rev2'&&!x.go?18e5:0;if(!wDue(ah).length){x.done=amNow();x.skip=1;amSave();go({screen:'am'});return}JRGO=x.id;x.go=1;wStart('rev',null,ah)}
-  else if(x.k==='new'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const n=Math.max(0,x.n-x.d);if(!n||!wQueueCount()){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;wStart('new',null,n);if(S.screen!=='amwl'){JRGO=null;amToast('לא נמצאו מילים חדשות ללמידה');jrFinish(x.id,1);go({screen:'am'})}}
+  else if(x.k==='new'){
+    if(WS&&WS.jr===x.id&&WS.list&&WS.i<WS.list.length&&WS.list.slice(WS.i).some(k=>AMS.w[k]))return go({screen:'amwl'});
+    if(WS&&WS.jr===x.id){WS=null;wSave()}
+    if(x.d>=x.n){jrFinish(x.id,1);go({screen:'am'});return}
+    JRGO=x.id;wStart('new',null,x.n-x.d);
+    if(S.screen!=='amwl'){JRGO=null;const y=DW.filter(isY).length,nn=DW.filter(isN).length;
+      amToast(`לא נמצאו מילים חדשות: במילון ${DW.length} פירושים – ${y} סימנת ✓, ${nn} ✗, ${DW.length-y-nn} לא סומנו`);go({screen:'am'})}}
   else if(x.k==='q'||x.k==='sim'){if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
     if(x.k==='q'){const nx=amNextSet();if(!nx){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(nx.ids,AMTN[nx.t]+' · יחידה '+nx.u,'learn','am',nx.t)}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
@@ -1171,7 +1178,7 @@ function wStart(mode,keys,cnt){
   if(mode==='collect'){const L=(keys||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);if(!L.length)return;WS={mode:'new',list:L,i:0,step:'meet',hint:0,from:S.screen,ok:0,bad:0,collect:1};if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}wSave();go({screen:'amwl'});return}
   if(mode==='rev'){const d=wDue(cnt||0);if(!d.length)return;WS={mode,list:d.slice(0,30).map(w=>wK(w)),i:0,step:'recall',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
   else{const n=cnt||Math.max(0,wNPer()-wNewToday());if(!n)return;const q=wQueue(n);if(!q.length)return;
-    q.forEach(w=>{if(w.fresh){const x=wAdd(w.e,w.h,w.c,w.src,w.k);}});WS={mode,list:q.map(w=>wK(w)),i:0,step:'meet',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
+    q.forEach(w=>{if(w.fresh){const x=wAdd(w.e,w.h,w.c,w.src,w.k);}});q.splice(0,q.length,...q.filter(w=>AMS.w[wK(w)]));if(!q.length)return;WS={mode,list:q.map(w=>wK(w)),i:0,step:'meet',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
   if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}
   wSave();go({screen:'amwl'})}
 /* which active task a review of stage st gets */
