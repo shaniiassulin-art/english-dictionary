@@ -2562,7 +2562,7 @@ const JB={
 const kAdd=(k,n)=>dayKey(dayDate(k).getTime()+n*DAY+6*36e5);
 const kDiff=(a,b)=>Math.round((dayDate(b)-dayDate(a))/DAY);
 /* plans made by an older version: ids without the day, no counts – bring them up to date */
-function jrNorm(k,P){let ch=false;P.b.forEach((x,i)=>{if(!String(x.id).includes('|')){x.id=k+'|'+x.k+i;ch=true}
+function jrNorm(k,P){let ch=false;if(!Array.isArray(P.b)){P.b=[];ch=true}{let seen=0;const nb=P.b.filter(x=>{if(!x||!x.k||!JB[x.k]){ch=true;return false}if(x.x&&!x.done&&!x.d){if(seen++){ch=true;return false}}return true});P.b=nb}P.b.forEach((x,i)=>{if(!String(x.id).includes('|')){x.id=k+'|'+x.k+i;ch=true}
   if(x.n==null){x.n=x.k==='new'?wNPer(k):x.k==='q'?(x.m>=45?22:20):x.k==='sim'?22:x.k==='meth'?1:0;ch=true}if(x.d==null){x.d=0;ch=true}});if(ch){P.t=amNow();amSave()}return P}
 /* a review step with no words due is skipped (shown greyed, not "done"), so the day starts with what there is */
 function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==='rev'||x.k==='rev2')&&!x.go&&!wDue(x.k==='rev2'?18e5:0).length&&!(WS&&WS.jr===x.id&&WS.i<WS.list.length)){x.done=amNow();x.skip=1;ch=true;continue}break}if(ch){P.t=amNow();amSave()}return P}
@@ -2573,7 +2573,7 @@ function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return jrNorm
 const jrDone=P=>P.b.every(x=>x.done);
 function jrBlock(id){if(!id)return null;const P=(AMS.jp||{})[String(id).split('|')[0]];return P?P.b.find(x=>x.id===id):null}
 /* the plan she works on now: the first unfinished one from the start of the journey up to today, or one she opened ahead */
-function jrCurKey(){const T=dayKey();if(!AMS.js)jrPlan(T);for(let k=AMS.js,g=0;k<=T&&g<800;k=kAdd(k,1),g++)jrPlan(k);let k=AMS.js;
+function jrCurKey(){const T=dayKey();if(!AMS.js){const ks=Object.keys(AMS.jp||{}).filter(k=>/^\d{4}-\d\d-\d\d$/.test(k)).sort();AMS.js=ks[0]&&ks[0]<=T?ks[0]:T;amSave()}for(let k=AMS.js,g=0;k<=T&&g<800;k=kAdd(k,1),g++)jrPlan(k);let k=AMS.js;
   for(let g=0;g<800;g++){if(k<=T)jrPlan(k);const P=(AMS.jp||{})[k];if(!P)return null;jrNorm(k,P);jrSkip(P);if(!jrDone(P))return k;k=kAdd(k,1)}return null}
 const jrCur=P=>P.b.find(x=>!x.done);
 /* what is left behind: plans of days before today that are not finished */
