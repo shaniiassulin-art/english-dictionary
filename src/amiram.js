@@ -141,16 +141,19 @@ const NAUTO={90:13,180:16};
 function wNPer(k=dayKey()){return AMS.na===0?(AMS.n||8):NAUTO[jrGoal(k)]}
 function wNewToday(){return AMS.nd[dayKey()]||0}
 /* the queue of words to learn: words she added from questions first, then dictionary cards marked ✗, then unmarked ones (easier levels first) */
+/* a waiting word may start only if it is a dictionary meaning marked ✗ or not marked (never ✓, never outside the dictionary) */
+function wNewOk(w){if(!w||typeof w.e!=='string'||!w.e)return false;if(w.src&&String(w.src).startsWith('dict:')){const c=W[String(w.src).slice(5)];return !!c&&!isY(c)}
+  const d=dictFind(w.e);return !!d&&d.cards.some(c=>!isY(c))}
 function wKnownCard(w){if(!w.src||!w.src.startsWith('dict:'))return false;const c=W[w.src.slice(5)];return !!(c&&isY(c))}
 function wQueue(n){const out=[],seen=new Set(Object.keys(AMS.w).filter(k=>AMS.w[k].st>0));
-  Object.values(AMS.w).filter(w=>w&&w.st===0&&typeof w.e==='string'&&w.e&&!wKnownCard(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
+  Object.values(AMS.w).filter(w=>w&&w.st===0&&wNewOk(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
   for(const f of [isN,w=>!kst(w)]){if(out.length>=n)break;
     for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||AMS.w[wKey(w.e)]||!f(w))continue;seen.add(k);
       /* one card = one meaning: each meaning of a word is learned on its own */
       out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}}
   if(out.length<n)for(const f of [isN,w=>!isY(w)])for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||!f(w))continue;seen.add(k);out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}
   return out}
-function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w&&w.st===0&&typeof w.e==='string'&&w.e&&!wKnownCard(w)).length;
+function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w&&w.st===0&&wNewOk(w)).length;
   return n+DW.filter(w=>!isY(w)&&!k.has('c:'+w.id)&&!k.has(wKey(w.e))).length}
 function wMaster(w){w.st=WMAST;w.due=0;
   if(w.src&&w.src.startsWith('dict:')){const c=W[w.src.slice(5)];if(c&&!isY(c))setKnow(c.id,'y');return}
@@ -477,7 +480,7 @@ const JB={
     ['כל מילה מקבלת את התרגיל של השלב שלה: משפט בעברית, כתיבה, משפט חדש, פירוש','💡 רמז אם נתקעת – האסוציאציה, אחר כך האות הראשונה','טעות = כותבים את המילה פעם אחת, והיא חוזרת בסוף']],
   new:['🌱','מילים חדשות','הכרות ← שליפה ← בחירה במשפט',
     'אחרי החזרות יש מקום למילים חדשות. מעט מילים, לעומק: אסוציאציה שנבנית עכשיו + שליפה מיידית = המילה נכנסת למסלול. מחר היא כבר תחזור אלייך.',
-    ['קודם מילים שאספת מהשאלות, אחר כך מילים שסימנת ✗','בחירת אסוציאציה (מהמילון / ✨ ג׳מיני / שלך) – דמייני אותה 5 שניות','🧭 טיפ מהשיטה כשיש (תחילית, מילת קישור, מילה שקל לבלבל)']],
+    ['רק מילים מהמילון שסימנת ✗ או שעוד לא סימנת: קודם מה שאספת מהשאלות, אחר כך ✗, ואז מילים שלא סומנו','בחירת אסוציאציה (מהמילון או ✨ מג׳מיני) – דמייני אותה 5 שניות','🧭 טיפ מהשיטה כשיש (תחילית, מילת קישור, מילה שקל לבלבל)']],
   q:['✏️','תרגול שאלות לפי השיטה','שאלה אחרי שאלה במסלול',
     'עכשיו מיישמים: שאלות מהמבחן, כל אחת במסלול – לחשוב לפני התשובות, לחקור כל טעות מיד, להבין איך פותרים לפי השיטה, ולאסוף מילים מהמאגר.',
     ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הצעד נגמר אחרי מספר השאלות שלו – עד אז ממשיכים ליחידה הבאה']],
@@ -1138,7 +1141,7 @@ function amMyWords(){if(!AMD)return amLoading();const f=S.wf||'due',all=Object.v
 /* advice for one word, from its history */
 function wRec(w){const L=w.log||[],a=wAcc(w),bad=w.bad||0,hints=L.filter(r=>r[3]).length,out=[];
   const by=t=>{const x=L.filter(r=>r[1]===t);return x.length?x.reduce((s,r)=>s+r[2],0)/x.length:null};
-  if(w.st===0)return [['🌱','עוד לא התחלת','לחצי "ללמוד עכשיו": אסוציאציה, משפט משלך ושליפה. 3 דקות.']];
+  if(w.st===0)return [['🌱','עוד לא התחלת','לחצי "ללמוד עכשיו": אסוציאציה ושליפה. 3 דקות.']];
   if(w.st>=WMAST)return [['🏆','המילה נלמדה','עברה את כל החזרות. אם תפגשי אותה בשאלה ותתלבטי – החזירי אותה ללמידה.']];
   if(wHard(w)){out.push(['🧩','המילה קשה לך',`טעית בה ${bad} פעמים. הזיכרון לא "נאחז" – צריך עוגן חזק יותר.`]);
     out.push(['✨','אסוציאציה חדשה',w.as?'האסוציאציה הנוכחית לא עובדת. בקשי חדשה, מוזרה ומצחיקה יותר – ודמייני אותה 5 שניות.':'אין לה אסוציאציה עדיין – זה הדבר הראשון לעשות.']);
@@ -1234,13 +1237,13 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
     h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>
       ${others?`<p class="hint center" style="margin:0">לומדים עכשיו רק את הפירוש הזה. ${others===1?'לפירוש השני':'ל־'+others+' הפירושים האחרים'} של המילה יש כרטיס נפרד.</p>`:''}
       ${ctx?`<div class="ctx" data-ctx="${esc(ctx)}">${SAYB(ctx,'sm inl')}${tapEn(ctx)}</div>${x.tr&&ctx===ex?`<p class="hint" style="margin:0">${esc(x.tr)}</p>`:''}`:''}</div>
-      <div class="am-step-box"><h4>💡 בחרי אסוציאציה</h4><p>תמונה מוזרה וחיה בראש = זיכרון חזק. בחרי אחת, או כתבי משלך. דמייני אותה 5 שניות.</p>
+      <div class="am-step-box"><h4>💡 בחרי אסוציאציה</h4><p>תמונה מוזרה וחיה בראש = זיכרון חזק. בחרי אחת ודמייני אותה 5 שניות.</p>
       ${x.tip?`<button class="am-idea${w.as===x.tip?' on':''}" data-as="${esc(x.tip)}"><small>💡 מהמילון</small>${bdiEsc(x.tip)}</button>`:''}
       ${wIdeas(w)}
-      <textarea class="am-in" id="wAs" placeholder="האסוציאציה שלי…">${esc(w.as&&w.as!==x.tip&&!(((AMAI['as|'+wK(w)]||{}).ideas)||[]).some(i=>i.scene===w.as)?w.as:'')}</textarea></div>
+      </div>
       ${wMethodBox(w)}
       ${x.use?`<details class="am-box"><summary style="font-weight:800;cursor:pointer">📌 דגשים על המילה (לא חובה)</summary>${xuse(x.use)}</details>`:''}
-      <div class="am-cta"><button class="btn" id="wNext" ${w.as?'':'disabled'}>${WS.assocOnly?'שמירה ✓':'המשך ← לשלוף מהזיכרון'}</button></div>
+      <div class="am-cta"><button class="btn" id="wNext" ${w.as||!wHasAssoc(w,x)?'':'disabled'}>${WS.assocOnly?'שמירה ✓':'המשך ← לשלוף מהזיכרון'}</button></div>
       ${WS.assocOnly?'':'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>'}
       ${WS.assocOnly?'':EXB('אחרי שבוחרים אסוציאציה: <b>שלב 2</b> – רואים את הפירוש בעברית וכותבים את המילה באנגלית. <b>שלב 3</b> – בסוף הסבב, אחרי כל המילים החדשות, עוד שליפה קצרה של כולן (השלמה במשפט).')}`}
   else if(step==='write'||(step==='recall'&&wTask(w)==='write')){
@@ -1289,12 +1292,15 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   $('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};
   wBind(w,x)}
 function wStageDots(w){return [1,2,3,4,5,6].map(i=>w.st>i?'●':w.st===i?'◉':'○').join('')}
+/* is there anything to choose from (the dictionary tip or Gemini ideas, or Gemini still working on them) */
+function wHasAssoc(w,x){const ai=AMAI['as|'+wK(w)];return !!((x&&x.tip)||(ai&&ai.ideas&&ai.ideas.length)||AIP['as|'+wK(w)])}
 function wIdeas(w){const k='as|'+wK(w),ai=AMAI[k];let h='';
   if(ai&&ai.ideas)h+=ai.ideas.map(i=>`<button class="am-idea${w.as===i.scene?' on':''}" data-as="${esc(i.scene)}"><small>${esc(i.sound||'')}</small>${bdiEsc(i.scene)}${i.link?`<small>${bdiEsc(i.link)}</small>`:''}</button>`).join('');
   if(ai&&ai.err)h+=`<p class="hint">${esc(ai.err)}</p>`;
   h+=AIP[k]?'<p class="hint">⏳ ממציאה אסוציאציות…</p>':(GKEY()?`<button class="btn secondary" id="wGen">✨ ${ai&&ai.ideas?'עוד 3 אסוציאציות':'3 אסוציאציות ייחודיות'}</button>`:'');
   return h}
 function wBind(w,x){
+  if(WS&&WS.step==='meet'&&!(x&&x.tip)&&GKEY()){const k='as|'+wK(w);if(!AMAI[k]&&!AIP[k]){const p=aiCached(k,promptAssoc(w,[]),1);setTimeout(()=>{if(S.screen==='amwl')amRedrawKeep()},30);p.then(()=>{if(S.screen==='amwl')amRedrawKeep()})}}
   app.querySelectorAll('[data-as]').forEach(b=>b.onclick=()=>{w.as=b.dataset.as;w.t=amNow();amSave();amRedrawKeep()});
   const ta=$('wAs');if(ta)ta.oninput=()=>{w.as=ta.value.trim();w.t=amNow();clearTimeout(ta._t);ta._t=setTimeout(amSave,500);$('wNext').disabled=!w.as;app.querySelectorAll('.am-idea.on').forEach(e=>e.classList.remove('on'))};
   const gn=$('wGen');if(gn)gn.onclick=()=>{const k='as|'+wK(w),old=((AMAI[k]||{}).ideas||[]).map(i=>i.scene).concat(AMAI[k]&&AMAI[k].seen||[]).slice(-9);const seen=old;delete AMAI[k];
@@ -1302,7 +1308,7 @@ function wBind(w,x){
   const kw=$('wKnow');if(kw)kw.onclick=()=>{wLog(w,'known',1,0);wMaster(w);w.t=amNow();const nq=wQueue(1)[0];
     if(nq){if(nq.fresh)wAdd(nq.e,nq.h,nq.c,nq.src,nq.k);const k=wK(nq);if(!WS.list.includes(k))WS.list.push(k)}
     amSave();WS.i++;WS.step='meet';wSave();draw();window.scrollTo(0,0)};
-  const nx=$('wNext');if(nx)nx.onclick=()=>{if(!w.as)return;if(WS.assocOnly){w.t=amNow();amSave();WS=null;wSave();go({screen:'amwd'});return}if(!w.log||!w.log.length){wLog(w,'learn',1,0);amSave()}WS.step='first';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0)};
+  const nx=$('wNext');if(nx)nx.onclick=()=>{if(!w.as&&wHasAssoc(w,x))return;if(WS.assocOnly){w.t=amNow();amSave();WS=null;wSave();go({screen:'amwd'});return}if(!w.log||!w.log.length){wLog(w,'learn',1,0);amSave()}WS.step='first';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0)};
   const my=$('wMy');if(my){my.oninput=()=>{WS.draft=my.value;WS.chk=null;wSave()};if(!WS.draft)setTimeout(()=>{try{my.focus({preventScroll:true})}catch(e){}},50)}
   const ck=$('wChk');if(ck)ck.onclick=async()=>{const t=(WS.draft||'').trim();if(!t)return;if(!GKEY()){WS.chk={err:'צריך מפתח ג׳מיני כדי לבדוק. אפשר לשמור גם בלי בדיקה.'};return draw()}
     WS.busy=true;draw();const r=await aiRun('','',null,{prompt:promptSent(w,t),temp:.2});WS.busy=false;WS.chk=r&&r.j?r.j:{err:aiWhyText(r&&r.why)};wSave();if(S.screen==='amwl')amRedrawKeep()};
@@ -1432,7 +1438,7 @@ const AMHELP={
  words:['🧠','מילים','אמירנט',`<p>כאן אין סקשנים נפרדים – כל מילה עוברת <b>מסלול קבוע</b> (ראי "המסלול של מילה"). יש רק 3 כפתורים:</p>
   <ul><li><b>🔁 חזרה פעילה</b> – המילים שהגיע זמנן ממשיכות לשלב הבא במסלול.</li><li><b>🌱 מילים חדשות</b> – מילים חדשות מתחילות את המסלול. קודם מילים שהוספת מהשאלות, אחר כך מילים שסימנת ✗ במילון, ואז מילים שלא סימנת.</li><li><b>📒 המילים שלי</b> – איפה כל מילה במסלול, היומן שלה וההמלצה.</li></ul>`],
  learn:['🌱','איך לומדים מילה חדשה','אמירנט',`<p>3 שלבים, כ־2 דקות למילה:</p>
-  <ol><li><b>הכרות</b> – המילה, <b>פירוש אחד</b>, משפט לדוגמה (🔊), ו<b>אסוציאציה</b>: מהמילון, מג׳מיני (✨) או משלך. לפעמים גם 🧭 טיפ מהשיטה (תחילית, מילת קישור, מילה שקל לבלבל).</li>
+  <ol><li><b>הכרות</b> – המילה, <b>פירוש אחד</b>, משפט לדוגמה (🔊), ו<b>אסוציאציה</b>: מהמילון או מג׳מיני (✨). לפעמים גם 🧭 טיפ מהשיטה (תחילית, מילת קישור, מילה שקל לבלבל).</li>
   <li><b>שליפה</b> – רואים את הפירוש בעברית וכותבים את המילה באנגלית.</li>
   <li><b>בחירה במשפט</b> – בסוף הסבב, אחרי כל המילים החדשות: משפט עם מקום ריק, ובוחרים מבין 4 מילים (המילים מהסבב).</li></ol>
   <p><b>מילה עם כמה פירושים</b> – כל פירוש נלמד בנפרד. <b>רמזים</b> כשנתקעים: האסוציאציה ← האות הראשונה ← משפט עם חור.</p>`],

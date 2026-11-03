@@ -14,7 +14,7 @@ async def ws_drive(pg,limit=160,wrong=4,log=None):
     if await tap(pg,'#wBack'):break
     if await pg.locator('#wNext').count():
       if not await tap(pg,'[data-as]'):
-        if await pg.locator('#wAs').count():await pg.fill('#wAs','תמונה מצחיקה');await pg.wait_for_timeout(100)
+        await pg.wait_for_timeout(100)
       if await tap(pg,'#wNext'):continue
     if await pg.locator('#wMy').count():
       await pg.fill('#wMy','I like this word.');await pg.wait_for_timeout(80)
