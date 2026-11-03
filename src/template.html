@@ -194,6 +194,9 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .mist .h{text-align:right;flex-basis:auto}
 .btn svg{width:20px;height:20px}
 
+.fav-card{width:100%;display:flex;align-items:center;gap:12px;text-align:right;border:1.5px solid var(--accent);border-radius:16px;padding:14px 16px;cursor:pointer;background:var(--accent-soft);color:var(--ink);font:inherit}.fav-card .fi{font-size:1.5rem}.fav-card .grow{display:flex;flex-direction:column;gap:2px}.fav-card .t{font-weight:800;color:var(--accent)}.fav-card .d{font-size:.9rem;color:var(--muted)}.fav-card .chev{font-size:1.6rem;color:var(--accent)}
+.fav-btn{width:100%;display:flex;align-items:center;gap:10px;text-align:right;border:1.5px dashed var(--line);border-radius:14px;padding:10px 14px;background:var(--bg);color:var(--ink);font:inherit;cursor:pointer}.fav-btn>span:first-child{font-size:1.35rem}.fav-btn .grow{display:flex;flex-direction:column}.fav-btn small{color:var(--muted);font-size:.82rem}.fav-btn.on{border:1.5px solid var(--accent);background:var(--accent-soft)}.fav-btn.on b{color:var(--accent)}
+.fav-dlg{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:20px}.fav-box{background:var(--bg);color:var(--ink);border-radius:18px;padding:18px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:14px;line-height:1.55}.fav-box p{margin:0}.fav-box .row{display:flex;gap:10px}.fav-box .btn{flex:1;min-height:50px;font-size:1rem}
 .resume-card{width:100%;display:flex;align-items:center;gap:12px;text-align:right;border:0;border-radius:16px;padding:18px;min-height:72px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
 .resume-card .t{font-weight:800;font-size:1.15rem}
 .resume-card .d{opacity:.9;font-size:.95rem}
@@ -446,7 +449,7 @@ let SENT={};try{SENT=JSON.parse(localStorage.getItem('dictSent')||'{}')}catch(e)
 function saveSent(){LS.set('dictSent',JSON.stringify(SENT));dirty()}
 function saveDays(){LS.set('dictDays',JSON.stringify(DAYS));dirty()}
 function logDay(id){const k=dayKey();const a=DAYS[k]=DAYS[k]||[];if(!a.includes(id)){a.push(id);saveDays()}}
-function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}'),sent:JSON.parse(LS.get('dictSent')||'{}'),gk:JSON.parse(LS.get('dictGemKeyT')||'null'),am:JSON.parse(LS.get('dictAm')||'{}')})}
+function snapshot(){return JSON.stringify({prog:JSON.parse(LS.get('dictProg')||'{}'),sess:JSON.parse(LS.get('dictSess')||'{}'),sdel:JSON.parse(LS.get('dictSessDel')||'{}'),know:JSON.parse(LS.get('dictKnow')||'{}'),days:JSON.parse(LS.get('dictDays')||'{}'),notes:JSON.parse(LS.get('dictNotes')||'{}'),sent:JSON.parse(LS.get('dictSent')||'{}'),gk:JSON.parse(LS.get('dictGemKeyT')||'null'),fav:JSON.parse(LS.get('dictFav')||'null'),am:JSON.parse(LS.get('dictAm')||'{}')})}
 /* push: read the account copy, merge it with this device, and write back only if the account did not change in
    between (updateTime precondition); otherwise read again. So two open devices never overwrite each other. */
 async function push(){
@@ -472,7 +475,7 @@ async function pull(){
   const j=await r.json();const f=j.fields||{};return{data:JSON.parse(f.data?.stringValue||'{}'),updated:+(f.updated?.integerValue||0),ut:j.updateTime||''};
 }
 /* comparable form of the saved data */
-function normD(o){return JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},sent:o.sent||{},gk:o.gk||null,am:o.am||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))})}
+function normD(o){return JSON.stringify({prog:o.prog||{},sess:o.sess||{},sdel:o.sdel||{},know:o.know||{},notes:o.notes||{},sent:o.sent||{},gk:o.gk||null,fav:o.fav||null,am:o.am||{},days:Object.fromEntries(Object.keys(o.days||{}).sort().map(k=>[k,[...o.days[k]].sort()]))})}
 function mergeData(a,b){
   const prog={...(a.prog||{})};for(const k in (b.prog||{}))prog[k]=Math.max(prog[k]||0,b.prog[k]||0);
   const sdel={...(a.sdel||{})};for(const k in (b.sdel||{}))sdel[k]=Math.max(sdel[k]||0,b.sdel[k]||0);
@@ -488,12 +491,13 @@ function mergeData(a,b){
   /* smart-check key: the newer one wins */
   const ga=a.gk,gb=b.gk,gk=!ga?gb||null:!gb?ga:(gb[1]||0)>(ga[1]||0)?gb:ga;
   /* אמירנט: attempts, mistakes and the word workshop */
+  const fa=a.fav,fb=b.fav,fav=!fa?fb||null:!fb?fa:(fb[1]||0)>(fa[1]||0)?fb:fa;
   const am=amMerge(a.am,b.am);
-  return{prog,sess,sdel,know,days,notes,sent,gk,am};
+  return{prog,sess,sdel,know,days,notes,sent,gk,fav,am};
 }
 function applyRemote(d,t){
   SYNC.applying=true;
-  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));if(d.gk){LS.set('dictGemKeyT',JSON.stringify(d.gk));LS.set('dictGemKey',d.gk[0]||'')}if(d.am)amApply(d.am);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
+  try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));if(d.gk){LS.set('dictGemKeyT',JSON.stringify(d.gk));LS.set('dictGemKey',d.gk[0]||'')}if(d.fav){FAV=d.fav;LS.set('dictFav',JSON.stringify(d.fav))}if(d.am)amApply(d.am);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   /* the sentences page is updated in place (never redrawn while typing); other pages keep their scroll position */
   if(S.screen==='sent')sentRefresh();else if(!['quiz','cards','amq','amwl'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
 }
@@ -751,10 +755,13 @@ function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.
 function goHome(){if(/^am/.test(S.screen)){amGoHome();return}const ex=$('exit');if(ex&&ex.onclick)ex.onclick();
   if(S.screen==='car')carStop();if(S.screen==='quiz'||S.screen==='cards'||S.screen==='car'){saveQ&&Q&&S.screen==='quiz'&&saveQ();S.active=null}go({screen:'home'})}
 /* swipe from right to left = back to the previous screen */
-(function(){let x0=null,y0=0,t0=0;
-  document.addEventListener('touchstart',e=>{const t=e.touches[0];if(e.touches.length>1||e.target.closest('input,textarea')){x0=null;return}x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
-  document.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
-    if(dx<-70&&Math.abs(dx)>2*Math.abs(dy)&&Date.now()-t0<800&&S.screen!=='home'){const b=$('bk')||$('exit')||$('back')||$('toStart');b&&b.click()}},{passive:true})})();
+(function(){let x0=null,y0=0,t0=0,x1=0,y1=0;
+  const end=()=>{if(x0===null)return;const dx=x1-x0,dy=y1-y0;x0=null;
+    if(dx<-55&&Math.abs(dx)>1.5*Math.abs(dy)&&Date.now()-t0<1200&&!document.getElementById('favDlg')){const b=$('bk')||$('exit')||$('back')||$('toStart');b&&b.click()}};
+  document.addEventListener('touchstart',e=>{const t=e.touches[0];if(e.touches.length>1||e.target.closest('input,textarea,select,.am-tabs')){x0=null;return}x0=x1=t.clientX;y0=y1=t.clientY;t0=Date.now()},{passive:true});
+  document.addEventListener('touchmove',e=>{if(x0===null)return;const t=e.touches[0];x1=t.clientX;y1=t.clientY},{passive:true});
+  document.addEventListener('touchend',e=>{if(x0===null)return;const t=e.changedTouches[0];if(t){x1=t.clientX;y1=t.clientY}end()},{passive:true});
+  document.addEventListener('touchcancel',end,{passive:true})})();
 
 function carToggle(){return `<button class="cartog${CARON?' on':''}" id="carTog" aria-pressed="${CARON}"><span class="ci">🚗</span><span class="ct"><b>מצב רכב</b><span>${CARON?'פועל · מקריא ברצף':'כבוי · האזנה ברצף בנסיעה'}</span></span><span class="sw" aria-hidden="true"><i></i></span></button>`}
 /* reading / listening switch – also shown on an unfinished quiz, which then goes on in the chosen mode */
@@ -870,6 +877,7 @@ function home(){
     <div class="nav" style="min-height:0"><button class="back" id="toStart">בחירת אפליקציה</button></div>
     <div class="home-head"><div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים לתרגול · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>${INFOB('dict')}<button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button></div>
     <div class="home-top"><div class="ht-s">${searchBox()}</div></div>
+    ${favCard()}
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
@@ -883,7 +891,7 @@ function home(){
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
-  $('today').onclick=()=>go({screen:'days'});$('toStart').onclick=()=>go({screen:'start'});
+  $('today').onclick=()=>go({screen:'days'});$('toStart').onclick=()=>go({screen:'start'});favGoBind();
   bindSearch(DW);bindSettings();bindQuizPanel('ALL',DW,'כל המילים','home');bindCatPanel('ALL',DW,'כל המילים','home');
 }
 
@@ -896,6 +904,7 @@ function level(){
     <div class="nav"><button class="back" id="bk">${S.l===PL?'מסך ראשי':'כל הרמות'}</button>${HOME}</div>
     <div><h2>${lvFull(S.l)}</h2><p class="sub">${countLine(ws)}</p></div>
     ${S.l===PL?sentBtn():''}
+    ${favBtn(S.l)}
     ${searchBox()}
     ${quizPanel(lkey(S.l),ws,S.l===PL?'בוחן על כל המילים':'בוחן על כל הרמה',lvName(S.l),'level')}
     ${catPanel(lkey(S.l),ws)||`<p class="hint center">אחרי סימון ✓ / ✗ יופיעו כאן בחנים לפי הסימון.</p>`}
@@ -907,7 +916,7 @@ function level(){
   </div>`;
   $('bk').onclick=()=>go({screen:'home'});
   bindSettings();bindQuizPanel(lkey(S.l),ws,lvName(S.l),'level');bindCatPanel(lkey(S.l),ws,lvName(S.l),'level');const sb=$('sentGo');if(sb)sb.onclick=()=>go({screen:'sent'});
-  $('list').onclick=()=>go({screen:'words',filter:'all',wl:'level'});bindSearch(ws);bindCards(lkey(S.l),ws);
+  $('list').onclick=()=>go({screen:'words',filter:'all',wl:'level'});bindSearch(ws);bindCards(lkey(S.l),ws);favBind(S.l);
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
 
@@ -915,6 +924,30 @@ const gkey=()=>S.l===PL?'GP'+PWK+'-'+(PRIV.lists[S.g]||{}).n:'G'+S.l+'-'+S.g;
 const lkey=l=>l===PL?'LP'+PWK:'L'+l;
 const RELOADBTN='<button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button>',HOMEONLY='<button class="home-btn" id="home" aria-label="למסך הראשי"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></button>';
 const HOME=RELOADBTN+HOMEONLY;
+
+/* ⭐ one saved group – a whole level or one group – reachable from the dictionary home and the app chooser.
+   FAV = [{l, g?} | null, time] (localStorage dictFav, synced as field fav, newest wins). Saving another asks to replace it. */
+let FAV=(()=>{try{return JSON.parse(LS.get('dictFav')||'null')}catch(e){return null}})();
+const favCur=()=>FAV&&FAV[0]||null;
+const favName=f=>f.g==null?lvFull(f.l):`${gName(f.l,f.g)} · ${lvName(f.l)}`;
+const favWords=f=>f.g==null?byLv(f.l):group(f.l,f.g);
+const favIs=(l,g)=>{const f=favCur();return !!f&&f.l===l&&(f.g==null?g==null:f.g===g)};
+function favSet(f){FAV=[f,Date.now()];LS.set('dictFav',JSON.stringify(FAV));try{dirty()}catch(e){}}
+function favValid(f){if(!f)return false;if(f.l===PL)return f.g==null||!!PRIV.lists[f.g];if(!(f.l>=1&&f.l<=LVN.length))return false;return f.g==null||f.g<nGroups(f.l)}
+function favBtn(l,g){const on=favIs(l,g);return `<button class="fav-btn${on?' on':''}" id="favBtn"><span>${on?'⭐':'☆'}</span><span class="grow"><b>${on?'הקבוצה השמורה שלך':'לשמור כקבוצה שלי'}</b><small>${on?'מופיעה במסך הבית · לחיצה = להוציא מהשמירה':'כפתור ישיר אליה במסך הבית של המילון ובמסך הפתיחה'}</small></span></button>`}
+function favBind(l,g){const b=$('favBtn');if(!b)return;b.onclick=()=>{const cur=favCur();
+  if(favIs(l,g)){favDlg(`להוציא את "${favName(cur)}" מהשמירה?`,'כן, להוציא',()=>{favSet(null);draw()});return}
+  const nf=g==null?{l}:{l,g};
+  if(cur&&favValid(cur)){favDlg(`כבר שמורה לך קבוצה: <b>${esc(favName(cur))}</b>.<br>אפשר לשמור רק קבוצה אחת. להוציא אותה מהשמירה ולשמור במקומה את <b>${esc(favName(nf))}</b>?`,'כן, להחליף',()=>{favSet(nf);draw()});return}
+  favSet(nf);draw()}}
+function favDlg(html,yes,ok){const d=document.createElement('div');d.id='favDlg';d.className='fav-dlg';
+  d.innerHTML=`<div class="fav-box" role="dialog" aria-modal="true"><p>${html}</p><div class="row"><button class="btn" id="favYes">${yes}</button><button class="btn secondary" id="favNo">ביטול</button></div></div>`;
+  document.body.appendChild(d);const close=()=>d.remove();$('favNo').onclick=close;d.onclick=e=>{if(e.target===d)close()};$('favYes').onclick=()=>{close();ok()}}
+/* the card on the home screens */
+function favCard(){const f=favCur();if(!favValid(f))return '';const ws=favWords(f),k=ws.filter(known).length;
+  return `<button class="fav-card" id="favGo"><span class="fi">⭐</span><span class="grow"><span class="t">הקבוצה השמורה שלי</span><span class="d">${esc(favName(f))} · ${ws.length} מילים${k?` · יודעת ${k}`:''}</span></span><span class="chev" aria-hidden="true">‹</span></button>`}
+function favGoBind(){const b=$('favGo');if(!b)return;b.onclick=()=>{const f=favCur();if(f.g==null)go({screen:'level',l:f.l});else go({screen:'group',l:f.l,g:f.g})}}
+
 /* search by English word or Hebrew meaning */
 const snorm=s=>String(s||'').toLowerCase().replace(/[\u0591-\u05C7]/g,'').replace(/[-־'"״׳.,;:()\/]/g,' ').replace(/\s+/g,' ').trim();
 function searchHits(ws,q){q=snorm(q);if(!q)return null;
@@ -949,13 +982,14 @@ function groupScreen(){
     <div class="nav"><button class="back" id="bk">${S.l===PL?'שיעור פרטי':lvName(S.l)}</button>${HOME}</div>
     <div><h2>${gName(S.l,S.g)}</h2><p class="sub">${lvFull(S.l)}</p>
       <p class="known-line">${countLine(ws)}</p></div>
+    ${favBtn(S.l,S.g)}
     ${searchBox()}
     ${quizPanel(gkey(),ws,'בוחן על כל הקבוצה',name,'group')}
     ${catPanel(gkey(),ws)||`<p class="hint center">אחרי סימון ✓ / ✗ יופיעו כאן בחנים לפי הסימון.</p>`}
     <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
     ${cardsBtn(gkey(),ws)}
   </div>`;
-  $('bk').onclick=()=>go({screen:'level'});
+  favBind(S.l,S.g);$('bk').onclick=()=>go({screen:'level'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'group'});bindSearch(ws);
   bindSettings();bindQuizPanel(gkey(),ws,name,'group');
   bindCatPanel(gkey(),ws,name,'group');
