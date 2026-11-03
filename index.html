@@ -2078,6 +2078,7 @@ function amLoad(){if(AMD)return Promise.resolve(AMD);if(AMDP)return AMDP;
   AMDP=(async()=>{for(const u of AMSRC){try{const r=await fetch(u+(u==='amiram.json'?'?v='+AMV:''));if(r.ok){AMD=await r.json();return AMD}}catch(e){}}AMDP=null;throw 0})();return AMDP}
 const AMV='1';
 let AMS={a:{},w:{},n:8,nd:{},t:0};try{Object.assign(AMS,JSON.parse(LS.get('dictAm')||'{}'))}catch(e){}
+try{setTimeout(()=>{amFixW&&amFixW()},0)}catch(e){}
 function amSave(){AMS.t=Date.now();LS.set('dictAm',JSON.stringify(AMS));dirty()}
 let AMAI={};try{AMAI=JSON.parse(LS.get('dictAmAi')||'{}')}catch(e){}
 const amAiSave=()=>LS.set('dictAmAi',JSON.stringify(AMAI));
@@ -2098,7 +2099,8 @@ function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n
   for(const f of ['ls','hc','rd','ex']){o[f]={};for(const s of [a[f]||{},b[f]||{}])for(const k in s){const v=s[k],w=o[f][k],tv=Array.isArray(v)?v[1]:v&&v.t||v,tw=Array.isArray(w)?w[1]:w&&w.t||w;if(w===undefined||(tv||0)>(tw||0))o[f][k]=v}}
   if(o.ar)for(const k in o.ex)if((o.ex[k].t||0)<=o.ar)delete o.ex[k];
   return o}
-function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});LS.set('dictAm',JSON.stringify(AMS))}
+function amFixW(){const W=AMS.w||(AMS.w={});for(const k of Object.keys(W)){const w=W[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete W[k];continue}if(!w.k)w.k=k;if(typeof w.st!=='number')w.st=0}}
+function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});amFixW();LS.set('dictAm',JSON.stringify(AMS))}
 const DAY=864e5;
 const amNow=()=>Date.now();
 
@@ -2192,7 +2194,7 @@ const WTASKN={he2en:'עברית ← אנגלית',cloze:'השלמה במשפט',
 function amToast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
 function wLog(w,task,res,hint){(w.log=w.log||[]).push([amNow(),task,res,hint||0]);if(w.log.length>40)w.log.shift()}
 function wKey(e){return String(e).toLowerCase().trim()}
-const wK=w=>w.k||wK(w);
+const wK=w=>w.k||wKey(w.e);
 function wAdd(e,h,c,src,key){const k=key||wKey(e);if(!k)return;let w=AMS.w[k];if(!w&&S.screen==='amq'&&AQ){AQ.added=(AQ.added||[]).filter(x=>x!==k).concat(k);amSaveQ()}
   if(!w){const d=dictFind(e);w=AMS.w[k]={k,e:d?d.e:e,h:h||(d?d.h[0]:''),c:c||'',src:src||'',st:0,due:0,add:amNow(),ok:0,bad:0,t:amNow()}}
   else{if(h&&!w.h)w.h=h;if(c&&!w.c)w.c=c;w.t=amNow()}
