@@ -743,9 +743,17 @@ function fitWords(root){(root||document).querySelectorAll(FITSEL).forEach(el=>{
   while(el.scrollWidth>el.clientWidth+1&&fs>min){fs*=.93;el.style.fontSize=fs.toFixed(1)+'px'}})}
 window.addEventListener('resize',()=>{clearTimeout(window._fw);window._fw=setTimeout(()=>fitWords(),150)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitWords());
+/* a screen that fails to draw never leaves her stuck: a broken word in a learning round is skipped, anything else shows the error with a way back */
+let DRAWERR=0;
+function drawFail(err){const m=String(err&&(err.stack||err.message)||err).split('\n').slice(0,3).join(' | ');try{LS.set('dictLastErr',JSON.stringify([Date.now(),S.screen,m]))}catch(e){}
+  if(S.screen==='amwl'&&typeof WS!=='undefined'&&WS&&WS.list&&DRAWERR<20){DRAWERR++;WS.i++;try{wSave()}catch(e){}setTimeout(draw,0);return}
+  DRAWERR=0;app.innerHTML=`<div class="screen"><div class="nav"><button class="back" id="bk">חזרה</button>${HOME}</div>
+    <div class="panel"><h3 style="margin:0">משהו השתבש בעמוד הזה 😕</h3><p style="margin:0">אפשר לחזור ולנסות שוב. אם זה חוזר – צלמי את המסך הזה ושלחי לי.</p>
+    <p dir="ltr" style="margin:0;font-size:.78rem;color:var(--muted);word-break:break-all;text-align:left">${esc(S.screen)}: ${esc(m)}</p></div></div>`;
+  $('bk').onclick=()=>go({screen:/^am/.test(S.screen)?'am':'home'})}
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule})[S.screen]();
+  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule})[S.screen]();}catch(err){drawFail(err)}
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});

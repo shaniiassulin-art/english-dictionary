@@ -969,9 +969,17 @@ function fitWords(root){(root||document).querySelectorAll(FITSEL).forEach(el=>{
   while(el.scrollWidth>el.clientWidth+1&&fs>min){fs*=.93;el.style.fontSize=fs.toFixed(1)+'px'}})}
 window.addEventListener('resize',()=>{clearTimeout(window._fw);window._fw=setTimeout(()=>fitWords(),150)});
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitWords());
+/* a screen that fails to draw never leaves her stuck: a broken word in a learning round is skipped, anything else shows the error with a way back */
+let DRAWERR=0;
+function drawFail(err){const m=String(err&&(err.stack||err.message)||err).split('\n').slice(0,3).join(' | ');try{LS.set('dictLastErr',JSON.stringify([Date.now(),S.screen,m]))}catch(e){}
+  if(S.screen==='amwl'&&typeof WS!=='undefined'&&WS&&WS.list&&DRAWERR<20){DRAWERR++;WS.i++;try{wSave()}catch(e){}setTimeout(draw,0);return}
+  DRAWERR=0;app.innerHTML=`<div class="screen"><div class="nav"><button class="back" id="bk">חזרה</button>${HOME}</div>
+    <div class="panel"><h3 style="margin:0">משהו השתבש בעמוד הזה 😕</h3><p style="margin:0">אפשר לחזור ולנסות שוב. אם זה חוזר – צלמי את המסך הזה ושלחי לי.</p>
+    <p dir="ltr" style="margin:0;font-size:.78rem;color:var(--muted);word-break:break-all;text-align:left">${esc(S.screen)}: ${esc(m)}</p></div></div>`;
+  $('bk').onclick=()=>go({screen:/^am/.test(S.screen)?'am':'home'})}
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  ({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule})[S.screen]();
+  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule})[S.screen]();}catch(err){drawFail(err)}
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -2197,14 +2205,14 @@ function wNewToday(){return AMS.nd[dayKey()]||0}
 /* the queue of words to learn: words she added from questions first, then dictionary cards marked ✗, then unmarked ones (easier levels first) */
 function wKnownCard(w){if(!w.src||!w.src.startsWith('dict:'))return false;const c=W[w.src.slice(5)];return !!(c&&isY(c))}
 function wQueue(n){const out=[],seen=new Set(Object.keys(AMS.w).filter(k=>AMS.w[k].st>0));
-  Object.values(AMS.w).filter(w=>w.st===0&&!wKnownCard(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
+  Object.values(AMS.w).filter(w=>w&&w.st===0&&typeof w.e==='string'&&w.e&&!wKnownCard(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
   for(const f of [isN,w=>!kst(w)]){if(out.length>=n)break;
     for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||AMS.w[wKey(w.e)]||!f(w))continue;seen.add(k);
       /* one card = one meaning: each meaning of a word is learned on its own */
       out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}}
   if(out.length<n)for(const f of [isN,w=>!isY(w)])for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||!f(w))continue;seen.add(k);out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}
   return out}
-function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w.st===0&&!wKnownCard(w)).length;
+function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w&&w.st===0&&typeof w.e==='string'&&w.e&&!wKnownCard(w)).length;
   return n+DW.filter(w=>!isY(w)&&!k.has('c:'+w.id)&&!k.has(wKey(w.e))).length}
 function wMaster(w){w.st=WMAST;w.due=0;
   if(w.src&&w.src.startsWith('dict:')){const c=W[w.src.slice(5)];if(c&&!isY(c))setKnow(c.id,'y');return}
@@ -2629,7 +2637,7 @@ function amHub(){if(!AMD)return amLoading();
     
   </div>`;
   amBindNav();
-  const g=$('jrGo');if(g)g.onclick=()=>{if(jrOpen(nb))return jrRun(nb);go({screen:'amjb',jb:nb.id})};
+  const g=$('jrGo');if(g)g.onclick=()=>{try{if(jrOpen(nb))return jrRun(nb);go({screen:'amjb',jb:nb.id})}catch(err){drawFail(err)}};
   const nx=$('jrNext');if(nx)nx.onclick=()=>{let k=kAdd(T,1);while(AMS.jp&&AMS.jp[k]&&jrDone(AMS.jp[k]))k=kAdd(k,1);jrPlan(k);draw()};
   app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go})})}
 /* the intro page of a block: why now, what happens, then start */
@@ -2647,7 +2655,7 @@ function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return
     ${body}
     <div class="am-cta"><button class="btn" id="jbGo">${inPlace?(x.k==='brk'?'חזרתי ✓':'סיימתי ✓'):'▶ להתחיל'}</button></div>
   </div>`;
-  amBindNav();$('jbGo').onclick=()=>{if(inPlace){jrFinish(x.id,1);go({screen:'am'})}else jrRun(x)}}
+  amBindNav();$('jbGo').onclick=()=>{try{if(inPlace){jrFinish(x.id,1);go({screen:'am'})}else jrRun(x)}catch(err){drawFail(err)}}}
 
 /* ================= 📅 schedule: when will all the dictionary meanings be learned =================
    left = meanings still to start (her added words + ✗ cards + unmarked cards; ✓ cards – also ones she marks in the dictionary – count as known).

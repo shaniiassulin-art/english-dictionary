@@ -141,14 +141,14 @@ function wNewToday(){return AMS.nd[dayKey()]||0}
 /* the queue of words to learn: words she added from questions first, then dictionary cards marked ✗, then unmarked ones (easier levels first) */
 function wKnownCard(w){if(!w.src||!w.src.startsWith('dict:'))return false;const c=W[w.src.slice(5)];return !!(c&&isY(c))}
 function wQueue(n){const out=[],seen=new Set(Object.keys(AMS.w).filter(k=>AMS.w[k].st>0));
-  Object.values(AMS.w).filter(w=>w.st===0&&!wKnownCard(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
+  Object.values(AMS.w).filter(w=>w&&w.st===0&&typeof w.e==='string'&&w.e&&!wKnownCard(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
   for(const f of [isN,w=>!kst(w)]){if(out.length>=n)break;
     for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||AMS.w[wKey(w.e)]||!f(w))continue;seen.add(k);
       /* one card = one meaning: each meaning of a word is learned on its own */
       out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}}
   if(out.length<n)for(const f of [isN,w=>!isY(w)])for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||!f(w))continue;seen.add(k);out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}
   return out}
-function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w.st===0&&!wKnownCard(w)).length;
+function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w&&w.st===0&&typeof w.e==='string'&&w.e&&!wKnownCard(w)).length;
   return n+DW.filter(w=>!isY(w)&&!k.has('c:'+w.id)&&!k.has(wKey(w.e))).length}
 function wMaster(w){w.st=WMAST;w.due=0;
   if(w.src&&w.src.startsWith('dict:')){const c=W[w.src.slice(5)];if(c&&!isY(c))setKnow(c.id,'y');return}
@@ -573,7 +573,7 @@ function amHub(){if(!AMD)return amLoading();
     
   </div>`;
   amBindNav();
-  const g=$('jrGo');if(g)g.onclick=()=>{if(jrOpen(nb))return jrRun(nb);go({screen:'amjb',jb:nb.id})};
+  const g=$('jrGo');if(g)g.onclick=()=>{try{if(jrOpen(nb))return jrRun(nb);go({screen:'amjb',jb:nb.id})}catch(err){drawFail(err)}};
   const nx=$('jrNext');if(nx)nx.onclick=()=>{let k=kAdd(T,1);while(AMS.jp&&AMS.jp[k]&&jrDone(AMS.jp[k]))k=kAdd(k,1);jrPlan(k);draw()};
   app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go})})}
 /* the intro page of a block: why now, what happens, then start */
@@ -591,7 +591,7 @@ function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return
     ${body}
     <div class="am-cta"><button class="btn" id="jbGo">${inPlace?(x.k==='brk'?'חזרתי ✓':'סיימתי ✓'):'▶ להתחיל'}</button></div>
   </div>`;
-  amBindNav();$('jbGo').onclick=()=>{if(inPlace){jrFinish(x.id,1);go({screen:'am'})}else jrRun(x)}}
+  amBindNav();$('jbGo').onclick=()=>{try{if(inPlace){jrFinish(x.id,1);go({screen:'am'})}else jrRun(x)}catch(err){drawFail(err)}}}
 
 /* ================= 📅 schedule: when will all the dictionary meanings be learned =================
    left = meanings still to start (her added words + ✗ cards + unmarked cards; ✓ cards – also ones she marks in the dictionary – count as known).
