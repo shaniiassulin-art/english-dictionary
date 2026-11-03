@@ -2442,7 +2442,7 @@ body:has(.am-cta) .totop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .am-hrow{display:flex;justify-content:space-between;gap:8px;width:100%;border:0;border-top:1px solid var(--line);background:none;padding:9px 0;font:inherit;color:var(--ink);cursor:pointer;text-align:right}.am-hrow small{color:var(--muted)}
 .tw.db{text-decoration:underline dotted color-mix(in srgb,var(--cw) 70%,transparent);text-underline-offset:4px;text-decoration-thickness:2px}
 .am-plan2{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.am-plan2 li{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:14px}.am-plan2 .pi{width:32px;height:32px;border-radius:50%;background:var(--surface);display:inline-flex;align-items:center;justify-content:center;flex:none}.am-plan2 .pt{display:flex;flex-direction:column}.am-plan2 small{color:var(--muted)}
-.am-plan2 li.on{background:color-mix(in srgb,var(--cw) 13%,transparent)}.am-plan2 li.on .pi{background:var(--cw);color:#fff}.am-plan2 li.done{opacity:.6}.am-plan2 li.done .pi{background:var(--cs);color:#fff}
+.am-plan2 li.on{background:color-mix(in srgb,var(--cw) 13%,transparent)}.am-plan2 li.on .pi{background:var(--cw);color:#fff}.am-plan2 li.done{opacity:.6}.am-plan2 li.skip{opacity:.45}.am-plan2 li.skip b{text-decoration:line-through}.am-plan2 li.done .pi{background:var(--cs);color:#fff}
 .am-day{display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}.am-day small{grid-column:1/-1;color:var(--muted)}.am-day.ok b{color:var(--ok)}.am-day.bad b{color:var(--bad)}
 .am-stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:8px}.am-stat3 b{display:block;font-size:22px}.am-stat3 small{color:var(--muted)}
 .nav-ic{margin-inline-start:auto;display:flex;align-items:center;gap:8px}.nav-ic>*{margin:0!important}
@@ -2550,7 +2550,12 @@ const JB={
    AMS.js = the first day of the journey. Each block has a count target n and done count d (words / questions). */
 const kAdd=(k,n)=>dayKey(dayDate(k).getTime()+n*DAY+6*36e5);
 const kDiff=(a,b)=>Math.round((dayDate(b)-dayDate(a))/DAY);
-function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return P;const long=jrGoal(k)===180;let n=0;
+/* plans made by an older version: ids without the day, no counts – bring them up to date */
+function jrNorm(k,P){let ch=false;P.b.forEach((x,i)=>{if(!String(x.id).includes('|')){x.id=k+'|'+x.k+i;ch=true}
+  if(x.n==null){x.n=x.k==='new'?wNPer(k):x.k==='q'?(x.m>=45?22:20):x.k==='sim'?22:x.k==='meth'?1:0;ch=true}if(x.d==null){x.d=0;ch=true}});if(ch){P.t=amNow();amSave()}return P}
+/* a review step with no words due is skipped (shown greyed, not "done"), so the day starts with what there is */
+function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==='rev'||x.k==='rev2')&&!wDue().length&&!(WS&&WS.jr===x.id&&WS.i<WS.list.length)){x.done=amNow();x.skip=1;ch=true;continue}break}if(ch){P.t=amNow();amSave()}return P}
+function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return jrNorm(k,P);const long=jrGoal(k)===180;let n=0;
   const B=(kk,m,c)=>({id:k+'|'+kk+(n++),k:kk,m,n:c,d:0,done:0,used:0});const nw=wNPer(k);
   const b=long?[B('rev',20),B('new',25,nw),B('q',45,22),B('brk',10),B('rev2',10),B('q',45,22),B('sim',25,22),B('meth',10,1)]:[B('rev',15),B('new',20,nw),B('q',40,20),B('rev2',10),B('meth',5,1)];
   if(!AMS.js||k<AMS.js)AMS.js=k;P=AMS.jp[k]={b,t:amNow()};amSave();return P}
@@ -2558,7 +2563,7 @@ const jrDone=P=>P.b.every(x=>x.done);
 function jrBlock(id){if(!id)return null;const P=(AMS.jp||{})[String(id).split('|')[0]];return P?P.b.find(x=>x.id===id):null}
 /* the plan she works on now: the first unfinished one from the start of the journey up to today, or one she opened ahead */
 function jrCurKey(){const T=dayKey();if(!AMS.js)jrPlan(T);for(let k=AMS.js,g=0;k<=T&&g<800;k=kAdd(k,1),g++)jrPlan(k);let k=AMS.js;
-  for(let g=0;g<800;g++){if(k<=T)jrPlan(k);const P=(AMS.jp||{})[k];if(!P)return null;if(!jrDone(P))return k;k=kAdd(k,1)}return null}
+  for(let g=0;g<800;g++){if(k<=T)jrPlan(k);const P=(AMS.jp||{})[k];if(!P)return null;jrNorm(k,P);jrSkip(P);if(!jrDone(P))return k;k=kAdd(k,1)}return null}
 const jrCur=P=>P.b.find(x=>!x.done);
 /* what is left behind: plans of days before today that are not finished */
 function jrGap(){const T=dayKey(),o={days:0,words:0,q:0};if(!AMS.js)return o;for(let k=AMS.js;k<T;k=kAdd(k,1)){const P=(AMS.jp||{})[k];if(!P||jrDone(P))continue;o.days++;
@@ -2582,8 +2587,8 @@ setInterval(()=>{if(document.visibilityState!=='visible'||!/^am/.test(S.screen)|
 const jrMin=k=>Math.floor(((AMS.tm||{})[k]||0)/6e4);
 /* start (or go on with) a block */
 function jrRun(x){
-  if(x.k==='rev'||x.k==='rev2'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});if(!wDue().length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;wStart('rev')}
-  else if(x.k==='new'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const n=Math.max(0,x.n-x.d);if(!n||!wQueueCount()){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;wStart('new',null,n)}
+  if(x.k==='rev'||x.k==='rev2'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});if(!wDue().length){x.done=amNow();x.skip=1;amSave();go({screen:'am'});return}JRGO=x.id;wStart('rev')}
+  else if(x.k==='new'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const n=Math.max(0,x.n-x.d);if(!n||!wQueueCount()){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;wStart('new',null,n);if(S.screen!=='amwl'){JRGO=null;amToast('לא נמצאו מילים חדשות ללמידה');jrFinish(x.id,1);go({screen:'am'})}}
   else if(x.k==='q'||x.k==='sim'){if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
     if(x.k==='q'){const nx=amNextSet();if(!nx){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(nx.ids,AMTN[nx.t]+' · יחידה '+nx.u,'learn','am',nx.t)}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
@@ -2609,7 +2614,7 @@ function amHub(){if(!AMD)return amLoading();
     </section>
     ${nb&&nb.x?`<div class="am-box"><p>⏱ הצעדים של התוכנית נגמרו מהר${wDue().length?'':' (לא היו מילים לחזרה)'}, אבל היעד היום הוא ${goal} דקות ולמדת ${mins}. לכן נוסף תרגול שאלות עד שתגיעי ליעד. רק אחרי שתשלימי את הזמן אפשר להמשיך לתוכנית של מחר.</p></div>`:''}
     ${gap.days?`<div class="am-box bad"><h4>⏳ פער: ${gap.days} ${gap.days===1?'יום':'ימים'}</h4><p>${[gap.words?gap.words+' מילים חדשות':'',gap.q?gap.q+' שאלות':''].filter(Boolean).join(' · ')||'צעדים קצרים'} מימים קודמים. ממשיכים מאיפה שעצרת – הפער ייסגר כשתגיעי לתוכנית של היום.</p></div>`:gap.ahead?`<div class="am-box good"><p>💪 את מקדימה את לוח הזמנים ב־${gap.ahead} ${gap.ahead===1?'יום':'ימים'}</p></div>`:''}
-    <div class="am-box"><h4>${lbl}</h4><ol class="am-plan2">${P.b.map(x=>`<li class="${x.done?'done':x===nb?'on':''}"><span class="pi">${x.done?'✓':JB[x.k][0]}</span><span class="pt"><b>${JB[x.k][1]}</b><small>${x.done?'הושלם':jrWhat(x)} · ${x.m} דק׳</small></span></li>`).join('')}</ol>
+    <div class="am-box"><h4>${lbl}</h4><ol class="am-plan2">${P.b.map(x=>`<li class="${x.skip?'skip':x.done?'done':x===nb?'on':''}"><span class="pi">${x.skip?'–':x.done?'✓':JB[x.k][0]}</span><span class="pt"><b>${JB[x.k][1]}</b><small>${x.skip?'אין מילים לחזרה עכשיו – מדלגים':x.done?'הושלם':jrWhat(x)+' · '+x.m+' דק׳'}</small></span></li>`).join('')}</ol>
       ${EXB('המערכת בונה לך כל יום תוכנית קבועה ומעבירה אותך בה צעד אחרי צעד. <b>▶</b> פותח את הצעד הבא עם הסבר למה הוא עכשיו. אם עצרת באמצע – ממשיכים מאותו צעד, גם למחרת. זמן לימוד נספר רק כשאת פעילה; הפסקות לא נספרות.')}</div>
     <button class="am-card2" data-go="amp"><span class="gi">📊</span><span class="grow"><b>התקדמות ולוח זמנים</b><small>${cc.left?`כל המילים עד ${fmtD(endK)} · עוד ${cc.left} פירושים`:'כל המילים התחילו 🎉'}</small></span></button>
     <details class="am-box"><summary style="font-weight:800;cursor:pointer">🧰 תרגול חופשי (לא חלק מהמסע)</summary>
