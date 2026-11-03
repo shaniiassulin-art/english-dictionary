@@ -134,7 +134,7 @@ function wAdd(e,h,c,src,key){const k=key||wKey(e);if(!k)return;let w=AMS.w[k];if
   else{if(h&&!w.h)w.h=h;if(c&&!w.c)w.c=c;w.t=amNow()}
   amSave();return w}
 function wKnownDict(e){const d=dictFind(e);return d&&d.cards.every(isY)}
-function wDue(){const now=amNow();return Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&w.due<=now).sort((a,b)=>a.due-b.due)}
+function wDue(ahead){const now=amNow()+(ahead||0);return Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&w.due<=now).sort((a,b)=>a.due-b.due)}
 const NAUTO={90:13,180:16};
 function wNPer(k=dayKey()){return AMS.na===0?(AMS.n||8):NAUTO[jrGoal(k)]}
 function wNewToday(){return AMS.nd[dayKey()]||0}
@@ -498,7 +498,7 @@ const kDiff=(a,b)=>Math.round((dayDate(b)-dayDate(a))/DAY);
 function jrNorm(k,P){let ch=false;P.b.forEach((x,i)=>{if(!String(x.id).includes('|')){x.id=k+'|'+x.k+i;ch=true}
   if(x.n==null){x.n=x.k==='new'?wNPer(k):x.k==='q'?(x.m>=45?22:20):x.k==='sim'?22:x.k==='meth'?1:0;ch=true}if(x.d==null){x.d=0;ch=true}});if(ch){P.t=amNow();amSave()}return P}
 /* a review step with no words due is skipped (shown greyed, not "done"), so the day starts with what there is */
-function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==='rev'||x.k==='rev2')&&!wDue().length&&!(WS&&WS.jr===x.id&&WS.i<WS.list.length)){x.done=amNow();x.skip=1;ch=true;continue}break}if(ch){P.t=amNow();amSave()}return P}
+function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==='rev'||x.k==='rev2')&&!x.go&&!wDue(x.k==='rev2'?18e5:0).length&&!(WS&&WS.jr===x.id&&WS.i<WS.list.length)){x.done=amNow();x.skip=1;ch=true;continue}break}if(ch){P.t=amNow();amSave()}return P}
 function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return jrNorm(k,P);const long=jrGoal(k)===180;let n=0;
   const B=(kk,m,c)=>({id:k+'|'+kk+(n++),k:kk,m,n:c,d:0,done:0,used:0});const nw=wNPer(k);
   const b=long?[B('rev',20),B('new',25,nw),B('q',45,22),B('brk',10),B('rev2',10),B('q',45,22),B('sim',25,22),B('meth',10,1)]:[B('rev',15),B('new',20,nw),B('q',40,20),B('rev2',10),B('meth',5,1)];
@@ -520,7 +520,7 @@ function jrFinish(id,force){const x=jrBlock(id);if(!x||x.done)return;const P=AMS
   x.done=amNow();P.t=amNow();amSave();amToast('✓ '+JB[x.k][1]+' – הושלם')}
 const jrCount=id=>{const x=jrBlock(id);if(x){x.d=(x.d||0)+1;AMS.jp[id.split('|')[0]].t=amNow()}};
 /* what a block holds right now, in words / questions */
-function jrWhat(x){if(x.k==='rev'||x.k==='rev2'){const n=wDue().length;return x.done?'':n?n+' מילים מחכות לחזרה':'אין מילים לחזרה כרגע'}
+function jrWhat(x){if(x.k==='rev'||x.k==='rev2'){const n=wDue(x.k==='rev2'&&!x.go?18e5:0).length;return x.done?'':n?n+' מילים מחכות לחזרה':'אין מילים לחזרה כרגע'}
   if(x.k==='new')return `${x.d}/${x.n} מילים חדשות`;if(x.k==='q')return `${Math.min(x.d,x.n)}/${x.n} שאלות`;if(x.k==='sim')return '22 שאלות ב־20 דקות';if(x.k==='meth')return 'נושא אחד מהשיטה';return '10 דקות'}
 /* study time: counted every 15 s while the page is visible, on an אמירנט screen, and she did something in the last 2 minutes */
 let JACT=Date.now(),JTICK=0;['pointerdown','keydown','scroll','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{JACT=Date.now()},{passive:true,capture:true}));
@@ -531,7 +531,7 @@ setInterval(()=>{if(document.visibilityState!=='visible'||!/^am/.test(S.screen)|
 const jrMin=k=>Math.floor(((AMS.tm||{})[k]||0)/6e4);
 /* start (or go on with) a block */
 function jrRun(x){
-  if(x.k==='rev'||x.k==='rev2'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});if(!wDue().length){x.done=amNow();x.skip=1;amSave();go({screen:'am'});return}JRGO=x.id;wStart('rev')}
+  if(x.k==='rev'||x.k==='rev2'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const ah=x.k==='rev2'&&!x.go?18e5:0;if(!wDue(ah).length){x.done=amNow();x.skip=1;amSave();go({screen:'am'});return}JRGO=x.id;x.go=1;wStart('rev',null,ah)}
   else if(x.k==='new'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const n=Math.max(0,x.n-x.d);if(!n||!wQueueCount()){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;wStart('new',null,n);if(S.screen!=='amwl'){JRGO=null;amToast('לא נמצאו מילים חדשות ללמידה');jrFinish(x.id,1);go({screen:'am'})}}
   else if(x.k==='q'||x.k==='sim'){if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
     if(x.k==='q'){const nx=amNextSet();if(!nx){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(nx.ids,AMTN[nx.t]+' · יחידה '+nx.u,'learn','am',nx.t)}
@@ -1169,7 +1169,7 @@ function wSave(){try{LS.set('dictAmWs',JSON.stringify(WS))}catch(e){}}
 try{WS=JSON.parse(LS.get('dictAmWs')||'null')}catch(e){}
 function wStart(mode,keys,cnt){
   if(mode==='collect'){const L=(keys||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);if(!L.length)return;WS={mode:'new',list:L,i:0,step:'meet',hint:0,from:S.screen,ok:0,bad:0,collect:1};if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}wSave();go({screen:'amwl'});return}
-  if(mode==='rev'){const d=wDue();if(!d.length)return;WS={mode,list:d.slice(0,30).map(w=>wK(w)),i:0,step:'recall',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
+  if(mode==='rev'){const d=wDue(cnt||0);if(!d.length)return;WS={mode,list:d.slice(0,30).map(w=>wK(w)),i:0,step:'recall',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
   else{const n=cnt||Math.max(0,wNPer()-wNewToday());if(!n)return;const q=wQueue(n);if(!q.length)return;
     q.forEach(w=>{if(w.fresh){const x=wAdd(w.e,w.h,w.c,w.src,w.k);}});WS={mode,list:q.map(w=>wK(w)),i:0,step:'meet',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
   if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}
@@ -1447,7 +1447,7 @@ const AMHELP={
   <li><b>כרטיסיות</b> – מעבר מהיר על מילים.</li><li><b>🚗 מצב רכב</b> – הקראה ברצף להאזנה בנסיעה, סימון בכפתורי ההגה.</li>
   <li><b>מצב רץ</b> – כל מילה מוקראת כשעוברים אליה.</li><li><b>✍️ מילים לשיעור פרטי</b> – הרשימות השבועיות, וכתיבת משפטים עם בדיקה חכמה.</li>
   <li><b>היעד היומי</b> – 240 סימונים ביום.</li></ul>`]};
-const PAGEHELP={start:['overview'],amjb:['daily'],amq:['flow'],amwl:['learn','journey'],home:['dict'],am:['daily'],amqh:['questions','flow'],amu:['flow'],amls:['lessons'],amw:['words','journey','learn'],amwm:['mywords'],amwd:['mywords'],amm:['methods'],ammt:['methods'],amp:['progress','schedule']};
+const PAGEHELP={start:['overview'],amq:['flow'],amwl:['learn','journey'],home:['dict'],am:['daily'],amqh:['questions','flow'],amu:['flow'],amls:['lessons'],amw:['words','journey','learn'],amwm:['mywords'],amwd:['mywords'],amm:['methods'],ammt:['methods'],amp:['progress','schedule']};
 function amPageHelp(){if(S.screen==='amu')return S.amt==='ex'?['questions']:['flow'];return PAGEHELP[S.screen]||[]}
 /* after drawing: the page's explanation boxes right under its title (💬 hides them) */
 function amInjectHelp(){
