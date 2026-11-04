@@ -2374,6 +2374,8 @@ textarea.am-in{resize:vertical;min-height:70px}
 .am-idea{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--bg);display:flex;flex-direction:column;gap:6px;cursor:pointer;text-align:right;font:inherit;color:var(--ink)}
 .am-idea.on{border-color:var(--ok);background:var(--ok-soft)}
 .am-idea small{color:var(--muted)}
+.am-step-box .am-pill{background:var(--bg)}
+.am-as1{margin:0;padding:12px 14px;border-radius:12px;background:var(--bg);line-height:1.6;font-size:1.02rem}
 .am-prog{height:8px;border-radius:99px;background:var(--surface);overflow:hidden}.am-prog i{display:block;height:100%;background:var(--accent);border-radius:99px}
 .am-stage{display:flex;gap:4px;justify-content:center}.am-stage i{width:18px;height:6px;border-radius:9px;background:var(--line)}.am-stage i.on{background:var(--ok)}
 .am-m h3{margin:.2em 0}.am-m details{border:1.5px solid var(--line);border-radius:14px;padding:10px 14px;background:var(--bg)}
@@ -3351,18 +3353,21 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
     <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>`;
   const step=WS.step;
   if(step==='meet'){
+    if(!w.as&&x.tip){w.as=x.tip;w.asSeen=[x.tip];amSave()}
     const others=card&&card.others&&card.others.length;
     h+=WS.assocOnly?'':`<div class="am-path"><span class="on">1 · הכרות</span><span>2 · כתיבה</span><span>3 · בחירה במשפט</span></div>`;
     h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>
       ${others?`<p class="hint center" style="margin:0">לומדים עכשיו רק את הפירוש הזה. ${others===1?'לפירוש השני':'ל־'+others+' הפירושים האחרים'} של המילה יש כרטיס נפרד.</p>`:''}
       ${ctx?`<div class="ctx" data-ctx="${esc(ctx)}">${SAYB(ctx,'sm inl')}${tapEn(ctx)}</div>${x.tr&&ctx===ex?`<p class="hint" style="margin:0">${esc(x.tr)}</p>`:''}`:''}</div>
-      <div class="am-step-box"><h4>💡 בחרי אסוציאציה</h4><p>תמונה מוזרה וחיה בראש = זיכרון חזק. בחרי אחת ודמייני אותה 5 שניות.</p>
-      ${x.tip?`<button class="am-idea${w.as===x.tip?' on':''}" data-as="${esc(x.tip)}"><small>💡 מהמילון</small>${bdiEsc(x.tip)}</button>`:''}
-      ${wIdeas(w)}
+      <div class="am-step-box"><h4>💡 האסוציאציה</h4>
+      ${w.as?`<p class="am-as1">${bdiEsc(w.as)}</p>`:WSGEN[wK(w)]?'':'<p class="hint" style="margin:0">אין עדיין אסוציאציה למילה הזו.</p>'}
+      ${WSGEN[wK(w)]?'<p class="hint" style="margin:0">⏳ ממציאה אסוציאציה חדשה…</p>':''}${WSGERR[wK(w)]?`<p class="hint" style="margin:0">${esc(WSGERR[wK(w)])}</p>`:''}
+      <p class="hint" style="margin:0">דמייני את התמונה 5 שניות – תמונה מוזרה וחיה = זיכרון חזק.</p>
+      <div class="am-row2">${GKEY()?`<button class="am-pill" id="wGen1" ${WSGEN[wK(w)]?'disabled':''}>✨ אסוציאציה אחרת</button>`:''}${(w.asSeen||[]).length>1?'<button class="am-pill" id="wPrevAs">↩ הקודמת</button>':''}</div>
       </div>
       ${wMethodBox(w)}
       ${x.use?`<details class="am-box"><summary style="font-weight:800;cursor:pointer">📌 דגשים על המילה (לא חובה)</summary>${xuse(x.use)}</details>`:''}
-      <div class="am-cta"><button class="btn" id="wNext" ${w.as||!wHasAssoc(w,x)?'':'disabled'}>${WS.assocOnly?'שמירה ✓':'המשך ← לשלוף מהזיכרון'}</button></div>
+      <div class="am-cta"><button class="btn" id="wNext">${WS.assocOnly?'שמירה ✓':'המשך ← כתיבת המילה'}</button></div>
       ${WS.assocOnly?'':'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>'}
       ${WS.assocOnly?'':EXB('אחרי שבוחרים אסוציאציה: <b>שלב 2</b> – רואים את הפירוש בעברית וכותבים את המילה באנגלית. <b>שלב 3</b> – בסוף הסבב, אחרי כל המילים החדשות, עוד שליפה קצרה של כולן (השלמה במשפט).')}`}
   else if(step==='write'||(step==='recall'&&wTask(w)==='write')){
@@ -3412,6 +3417,15 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   wBind(w,x)}
 function wStageDots(w){return [1,2,3,4,5,6].map(i=>w.st>i?'●':w.st===i?'◉':'○').join('')}
 /* is there anything to choose from (the dictionary tip or Gemini ideas, or Gemini still working on them) */
+/* one association at a time: ✨ asks Gemini for a new one (not like the earlier ones), ↩ goes back to the previous one */
+const WSGEN={},WSGERR={};
+function wGenAssoc(w){const k=wK(w);if(WSGEN[k])return;WSGEN[k]=1;delete WSGERR[k];const seen=(w.asSeen||[]).concat(w.as?[w.as]:[]).slice(-8);if(S.screen==='amwl')amRedrawKeep();
+  aiRun('','',null,{prompt:promptAssoc(w,seen),temp:1}).then(r=>{delete WSGEN[k];const j=r&&r.j;
+    const id=j&&(j.ideas||[]).find(i=>i&&i.scene&&!seen.includes(i.scene));
+    if(id){const txt=String(id.scene).replace(/\s*\n+\s*/g,' ').trim()+(id.link?' ('+String(id.link).replace(/\s*\n+\s*/g,' ').trim()+')':'');
+      w.as=txt;w.asSeen=(w.asSeen||[]).filter(a=>a!==txt).concat(txt).slice(-10);w.t=amNow();if(j.method_tip){AMAI['as|'+k]=Object.assign(AMAI['as|'+k]||{},{method_tip:j.method_tip});amAiSave()}amSave()}
+    else WSGERR[k]=r&&r.why?aiWhyText(r.why):'לא הצלחתי ליצור אסוציאציה עכשיו – אפשר לנסות שוב.';
+    if(S.screen==='amwl'||S.screen==='amwd')amRedrawKeep()})}
 function wHasAssoc(w,x){const ai=AMAI['as|'+wK(w)];return !!((x&&x.tip)||(ai&&ai.ideas&&ai.ideas.length)||AIP['as|'+wK(w)])}
 function wIdeas(w){const k='as|'+wK(w),ai=AMAI[k];let h='';
   if(ai&&ai.ideas)h+=ai.ideas.map(i=>`<button class="am-idea${w.as===i.scene?' on':''}" data-as="${esc(i.scene)}"><small>${esc(i.sound||'')}</small>${bdiEsc(i.scene)}${i.link?`<small>${bdiEsc(i.link)}</small>`:''}</button>`).join('');
@@ -3419,7 +3433,11 @@ function wIdeas(w){const k='as|'+wK(w),ai=AMAI[k];let h='';
   h+=AIP[k]?'<p class="hint">⏳ ממציאה אסוציאציות…</p>':(GKEY()?`<button class="btn secondary" id="wGen">✨ ${ai&&ai.ideas?'עוד 3 אסוציאציות':'3 אסוציאציות ייחודיות'}</button>`:'');
   return h}
 function wBind(w,x){
-  if(WS&&WS.step==='meet'&&!(x&&x.tip)&&GKEY()){const k='as|'+wK(w);if(!AMAI[k]&&!AIP[k]){const p=aiCached(k,promptAssoc(w,[]),1);setTimeout(()=>{if(S.screen==='amwl')amRedrawKeep()},30);p.then(()=>{if(S.screen==='amwl')amRedrawKeep()})}}
+  const g1=$('wGen1');if(g1)g1.onclick=()=>wGenAssoc(w);
+  const pa=$('wPrevAs');if(pa)pa.onclick=()=>{const L=(w.asSeen||[]).filter(a=>a!==w.as);if(L.length){w.as=L[L.length-1];w.asSeen=(w.asSeen||[]).filter(a=>a!==w.as).concat(w.as);w.t=amNow();amSave();amRedrawKeep()}};
+  if(WS&&WS.step==='meet'&&!w.as&&x&&x.tip){w.as=x.tip;w.asSeen=[x.tip];amSave()}
+  if(WS&&WS.step==='meet'&&!w.as&&GKEY()&&!WSGEN[wK(w)]&&!WSGERR[wK(w)])wGenAssoc(w);
+  if(false){const k='as|'+wK(w);if(!AMAI[k]&&!AIP[k]){const p=aiCached(k,promptAssoc(w,[]),1);setTimeout(()=>{if(S.screen==='amwl')amRedrawKeep()},30);p.then(()=>{if(S.screen==='amwl')amRedrawKeep()})}}
   app.querySelectorAll('[data-as]').forEach(b=>b.onclick=()=>{w.as=b.dataset.as;w.t=amNow();amSave();amRedrawKeep()});
   const ta=$('wAs');if(ta)ta.oninput=()=>{w.as=ta.value.trim();w.t=amNow();clearTimeout(ta._t);ta._t=setTimeout(amSave,500);$('wNext').disabled=!w.as;app.querySelectorAll('.am-idea.on').forEach(e=>e.classList.remove('on'))};
   const gn=$('wGen');if(gn)gn.onclick=()=>{const k='as|'+wK(w),old=((AMAI[k]||{}).ideas||[]).map(i=>i.scene).concat(AMAI[k]&&AMAI[k].seen||[]).slice(-9);const seen=old;delete AMAI[k];
@@ -3428,7 +3446,7 @@ function wBind(w,x){
     if(WS.jr)jrCount(WS.jr);
     if(nq){if(nq.fresh)wAdd(nq.e,nq.h,nq.c,nq.src,nq.k);const k=wK(nq);if(!WS.list.includes(k))WS.list.push(k);const xb=WS.jr&&jrBlock(WS.jr);if(xb&&Array.isArray(xb.ws)&&!xb.ws.includes(k))xb.ws.push(k)}
     amSave();WS.i++;WS.step='meet';wSave();draw();window.scrollTo(0,0)};
-  const nx=$('wNext');if(nx)nx.onclick=()=>{if(!w.as&&wHasAssoc(w,x))return;if(WS.assocOnly){w.t=amNow();amSave();WS=null;wSave();go({screen:'amwd'});return}if(!w.log||!w.log.length){wLog(w,'learn',1,0);amSave()}WS.step='first';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0)};
+  const nx=$('wNext');if(nx)nx.onclick=()=>{if(WS.assocOnly){w.t=amNow();amSave();WS=null;wSave();go({screen:'amwd'});return}if(!w.log||!w.log.length){wLog(w,'learn',1,0);amSave()}WS.step='first';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0)};
   const my=$('wMy');if(my){my.oninput=()=>{WS.draft=my.value;WS.chk=null;wSave()};if(!WS.draft)setTimeout(()=>{try{my.focus({preventScroll:true})}catch(e){}},50)}
   const ck=$('wChk');if(ck)ck.onclick=async()=>{const t=(WS.draft||'').trim();if(!t)return;if(!GKEY()){WS.chk={err:'צריך מפתח ג׳מיני כדי לבדוק. אפשר לשמור גם בלי בדיקה.'};return draw()}
     WS.busy=true;draw();const r=await aiRun('','',null,{prompt:promptSent(w,t),temp:.2});WS.busy=false;WS.chk=r&&r.j?r.j:{err:aiWhyText(r&&r.why)};wSave();if(S.screen==='amwl')amRedrawKeep()};

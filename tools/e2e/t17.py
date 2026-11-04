@@ -47,7 +47,7 @@ async def main():
         if await pg.locator('#wBack').count():await pg.click('#wBack');await pg.wait_for_timeout(300);break
         if await pg.locator('#wNext').count():
           if await pg.locator('[data-as]').count():await pg.locator('[data-as]').first.click()
-          else:await pg.fill('#wAs','תמונה');
+          else:pass
           await pg.wait_for_timeout(120);await pg.click('#wNext');await pg.wait_for_timeout(200);continue
         if await pg.locator('#wOn').count():await pg.click('#wOn');await pg.wait_for_timeout(200);continue
         if await pg.locator('#wSelfY').count():await pg.click('#wSelfY');await pg.wait_for_timeout(200);continue
