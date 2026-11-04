@@ -3403,6 +3403,8 @@ function amWordPage(){if(!AMD)return amLoading();const w=AMS.w[S.wk];if(!w){go({
   const kn=$('wdKnow');if(kn)kn.onclick=()=>{wLog(w,'known',1,0);wMaster(w);w.t=amNow();amSave();draw()}}
 function wSave(){try{LS.set('dictAmWs',JSON.stringify(WS));amSessPut('ws',WS)}catch(e){}}
 try{WS=JSON.parse(LS.get('dictAmWs')||'null')}catch(e){}
+/* a round saved on this device before sessions were synced (or never sent) is sent now, so the other devices see it */
+setTimeout(()=>{try{if(WS&&!((AMS.ss||{}).ws&&AMS.ss.ws[0]))amSessPut('ws',WS);if(AQ&&!((AMS.ss||{}).aq&&AMS.ss.aq[0]))amSessPut('aq',AQ)}catch(e){}},0);
 function wStart(mode,keys,cnt){
   if(mode==='collect'){const L=(keys||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);if(!L.length)return;WS={mode:'new',perWord:1,list:L,i:0,step:'tr',hint:0,from:S.screen,ok:0,bad:0,collect:1,t0:amNow()};if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}wSave();go({screen:'amwl'});return}
   if(mode==='rev'){const d=wDue(cnt||0);if(!d.length)return;WS={mode,list:d.slice(0,30).map(w=>wK(w)),i:0,step:'tr',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
