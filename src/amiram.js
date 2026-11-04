@@ -483,17 +483,17 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .ax .ax-next{border:0!important;background:var(--axb);color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-size:.9rem;cursor:pointer}
 .ax .ax-tm{font-weight:800}
 .ax .ax-insbox{background:var(--surface);border-radius:12px;padding:10px 12px}.ax .ax-insbox p{margin:0 0 4px}.ax .ax-insbox p[dir=ltr]{text-align:left;font-family:var(--en)}
-.ax .ax-qn{margin:6px 0 0;color:var(--axb);font-size:1.6rem;text-align:left;font-family:var(--en);font-weight:700}
+.ax .ax-qn{margin:4px 0 0;color:var(--axb);font-size:1.3rem;text-align:left;font-family:Arial,Helvetica,sans-serif;font-weight:700}
 .ax .ax-qw{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-.ax .ax-q{font-family:var(--en);font-size:1.22rem;line-height:1.75;text-align:left;color:var(--ink)}.ax .ax-q .blank{display:inline-block;min-width:5.5em;border-bottom:2px solid var(--ink);margin:0 4px}
+.ax .ax-q{font-family:Arial,Helvetica,sans-serif;font-size:1rem;line-height:1.7;text-align:left;color:var(--ink)}.ax .ax-q .blank{display:inline-block;min-width:5.5em;border-bottom:2px solid var(--ink);margin:0 4px}
 .ax .ax-base{font-weight:800}
 .ax .ax-in{font-size:1.15rem;direction:ltr;text-align:left}
 .ax .ax-opts{display:flex;flex-direction:column;gap:10px}
 .ax .ax-orow{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px}.ax .ax-orow .am-elim{flex-basis:100%}
 .ax .ax-q.am-q,.ax .ax-qw .am-q{background:none!important;padding:0!important;border:0!important}
-.ax .ax-opt{flex:1;display:grid!important;align-items:stretch!important;grid-template-columns:54px 1fr;gap:4px;padding:0!important;background:none!important;border:0!important;text-align:left;font:inherit;cursor:pointer;min-height:56px;box-shadow:none!important}
-.ax .ax-opt .ax-rad{align-self:stretch;height:auto;min-height:100%;background:var(--surface);border-radius:8px 0 0 8px;display:grid;place-items:center}.ax .ax-opt .ax-rad i{width:22px;height:22px;border-radius:50%;border:2px solid #8a929b;background:var(--bg)}
-.ax .ax-opt .ax-ot{background:var(--surface);border-radius:0 8px 8px 0;padding:12px 14px;font-family:var(--en);font-size:1.1rem;color:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:4px}
+.ax .ax-opt{flex:1;display:grid!important;align-items:stretch!important;grid-template-columns:48px 1fr;gap:5px;padding:0!important;background:none!important;border:0!important;text-align:left;font:inherit;cursor:pointer;min-height:56px;box-shadow:none!important}
+.ax .ax-opt .ax-rad{align-self:stretch;height:auto;min-height:100%;background:var(--surface);border-radius:6px;display:grid;place-items:center}.ax .ax-opt .ax-rad i{width:24px;height:24px;border-radius:50%;border:2px solid #8a929b;background:var(--bg)}
+.ax .ax-opt .ax-ot{background:var(--surface);border-radius:6px;padding:10px 14px;font-family:Arial,Helvetica,sans-serif;font-size:.98rem;line-height:1.45;color:var(--ink);display:flex;flex-direction:column;justify-content:center;gap:4px}
 .ax .ax-opt .ax-ot .he{font-family:var(--he);font-size:.9rem;color:var(--muted);direction:rtl;text-align:right}
 .ax .ax-opt.sel .ax-rad i{border-color:var(--axb);background:radial-gradient(circle,var(--axb) 45%,var(--bg) 50%)}.ax .ax-opt.sel .ax-ot,.ax .ax-opt.sel .ax-rad{background:var(--accent-soft)}
 .ax .ax-opt.right .ax-ot,.ax .ax-opt.right .ax-rad{background:var(--ok-soft,#dff3e4)}.ax .ax-opt.right .ax-rad i{border-color:var(--ok);background:radial-gradient(circle,var(--ok) 45%,var(--bg) 50%)}
@@ -508,6 +508,10 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .am-mclosed h5{margin:10px 0 4px;color:var(--accent);font-size:.95rem}
 /* one style for every method text (lists, paragraphs, tables) */
 .am-mfull,.am-m .am-mfull{font-size:.93rem;line-height:1.6}.am-mfull p{margin:0 0 8px}.am-mfull ol,.am-mfull ul{margin:0 0 8px;padding-inline-start:20px;display:flex;flex-direction:column;gap:4px}
+/* question text a bit smaller, word marks quiet (her request) */
+.ax .ax-qn{font-size:1.12rem!important}.ax .ax-q{font-size:.92rem!important;line-height:1.65!important}.ax .ax-opt .ax-ot{font-size:.9rem!important;padding:9px 12px!important}.ax .ax-opt{min-height:46px!important;grid-template-columns:42px 1fr!important}.ax .ax-opt .ax-rad i{width:20px!important;height:20px!important}
+.ax .tw.db{text-decoration-color:color-mix(in srgb,var(--muted) 35%,transparent)!important;text-decoration-thickness:1px!important;text-underline-offset:3px!important}
+.ax .cn{background:none!important;filter:none!important;font-weight:inherit!important;padding:0!important;color:inherit!important;border-bottom:1.5px solid color-mix(in srgb,var(--accent) 35%,transparent)}
 /* a light outline on every button, so buttons that sit together are clearly separate (her request, whole site) */
 .item,.today,.resume-card,.home-btn,.x,.arr,.autob,.btn.secondary,.seg button,.qz .mic,.vstop,.rm,.am-card2,.am-pill,.am-gate,.am-fpg button,.am-tabs button,.am-unit,.am-elim button,.am-idea,.am-resume,.am-wl button,.am-plan2 li.tap,.am-topic,.am-opt,.opt,.am-ml,.spk{border:1px solid var(--line)!important}
 .seg{gap:4px}
@@ -1030,12 +1034,8 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   const ansd=i=>{const x=AQ.st[i];return !!(x&&(x.done||x.ans))};AQ.flag=AQ.flag||{};const INS=AMINS[q.t]||AMINS.sc;
   let h=`<div class="screen qz am-scr ax">
     <div class="nav"><button class="back" id="bk">${exam?'עצירה':'יציאה'}</button><span class="nav-ic">${HOME}</span></div>
-    <div class="ax-tabs" dir="ltr">${runs.map((r,j)=>`<button class="ax-tab${j===ri?' on':''}" data-axr="${r.s}">${j===ri?`<span class="n">${j+1}</span>`:''}<span class="tt">${AMEN[r.t]||r.t}</span></button>`).join('')}</div>
-    <div class="ax-head" dir="ltr"><button class="ax-ins${AQ.insOpen?' on':''}" id="axIns">Show Instructions</button>
-      <div class="ax-nums">${Array.from({length:run.e-run.s+1},(_,j)=>{const i=run.s+j;return `<button class="ax-num${i===AQ.i?' on':''}${ansd(i)?' ans':''}${AQ.flag[i]?' fl':''}" data-axq="${i}" aria-label="Question ${j+1}">${j+1}</button>`}).join('')}</div>
-      <button class="ax-flag${AQ.flag[AQ.i]?' on':''}" id="axFlag">⚑ Flag</button>${exam?'<span class="am-timer ax-tm" id="amTm"></span>':''}
-      <button class="ax-next" id="axNext">${AQ.i+1>=AQ.ids.length?'Finish':AQ.i===run.e?'Next Section':'Next'} ›</button></div>
-    ${AQ.insOpen?`<div class="ax-insbox"><p dir="ltr">${INS[0]}</p><p>${INS[1]}</p></div>`:''}
+    <div class="am-bar"><span class="am-chip t">${AMTI[q.t]} ${AMTN[q.t]}</span><span>${esc(AQ.name)}</span><span>· ${AQ.i+1}/${AQ.ids.length}</span>${exam?'<span class="am-timer" id="amTm"></span>':''}</div>
+    <div class="am-prog"><i style="width:${(AQ.i)/AQ.ids.length*100}%"></i></div>
     <h2 class="ax-qn" dir="ltr">Question ${qn}</h2>`;
   /* listening: play the recording (the transcript opens after answering) */
   const LS0=q.t==='lc'?q.say:q.t==='lq'&&T?T.say:'';
@@ -1071,7 +1071,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
     else h+=`<div class="ax-opts">${q.o.map((o,j)=>{const k=j+1,cl=st.done?(k===q.a?' right':k===st.sel?' wrong':''):(k===st.sel?' sel':'')+(st.elim[k]?' elim':'');
       const he=st.done&&!exam&&q.oh&&q.oh[j]?`<span class="he">${esc(q.oh[j])}</span>`:'';
       const elim=!st.done&&!exam&&['rs','rc','lq'].includes(q.t)?`<div class="am-elim">${(q.t==='rs'?[['add','מידע נוסף'],['rel','קשר אחר'],['ext','הקצנה'],['contra','סותר'],['miss','חסר']]:[['out',q.t==='lq'?'לא נאמר':'לא מהקטע'],['wrong',q.t==='lq'?'סותר את ההקלטה':'סותר את הקטע'],['nq','לא עונה לשאלה']]).map(([c,l])=>`<button data-el="${k}" data-r="${c}" aria-pressed="${st.elim[k]===c}">✗ ${l}</button>`).join('')}</div>`:'';
-      return `<div class="ax-orow"><button class="am-opt ax-opt${cl}" data-k="${k}" ${st.done?'disabled':''} dir="ltr"><span class="ax-rad"><i></i></span><span class="ax-ot">${esc(o)}${he}</span></button>${q.t==='lc'||q.t==='lq'?'':SAYB(o,'sm')}${elim}</div>`}).join('')}</div>`;
+      return `<div class="ax-orow"><button class="am-opt ax-opt${cl}" data-k="${k}" ${st.done?'disabled':''} dir="ltr"><span class="ax-rad"><i></i></span><span class="ax-ot"><span>${esc(o)}</span>${he}</span></button>${elim}</div>`}).join('')}</div>`;
     if(!st.done)h+=`<div class="am-cta"><button class="btn" id="amChk" ${st.sel?'':'disabled'}>${exam?(AQ.i+1<AQ.ids.length?'לשאלה הבאה':'סיום הסימולציה'):'בדיקה'}</button></div>${exam?`<div class="am-nav">${AQ.i?'<button class="btn secondary" id="amPrev">→ הקודמת</button>':''}<button class="btn secondary" id="amSkip">דילוג ←</button></div>`:''}`;
     else h+=amFeedback(id,st);}
   }
