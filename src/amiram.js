@@ -434,6 +434,8 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .am-chip.t{background:transparent;padding:0;color:var(--muted);font-weight:700}
 .st-screen .st-app,.st-dict,.st-am{background:var(--surface)!important;border:0!important;min-height:0!important;padding:18px!important}.st-screen .st-x{display:none}.st-screen .st-i{font-size:1.6rem}
 .am-meth ol{font-size:.9rem;gap:4px}.am-meth h4{font-size:.95rem}
+.am-dayb{width:100%;display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;align-items:center;padding:8px 2px;border:0;border-top:1px solid var(--line);background:none;font:inherit;color:var(--ink);text-align:right}.am-dayb[data-jday]{cursor:pointer}.am-dayb small{grid-column:1/-1;color:var(--muted)}.am-dayb.ok b{color:var(--ok)}.am-dayb.bad b{color:var(--bad)}
+.am-card2.gapc{background:var(--bad-soft)!important}
 .am-gap{display:inline-block;min-width:3.5em;border-bottom:3px solid var(--cw);color:var(--cw);font-weight:800;text-align:center}
 .am-path{display:flex;gap:4px}.am-path span{flex:1;text-align:center;padding:6px 2px;border-radius:999px;background:var(--surface);font-size:.78rem;font-weight:700;color:var(--muted)}.am-path .on{background:var(--cw);color:#fff}.am-path .done{background:color-mix(in srgb,var(--cs) 18%,transparent);color:var(--ok)}
 .am-next{display:flex;flex-wrap:wrap;gap:4px}.am-next span{padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--cw) 14%,var(--card));font-size:.8rem;font-weight:700}
@@ -527,8 +529,10 @@ function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return jrNorm
 const jrDone=P=>P.b.every(x=>x.done);
 function jrBlock(id){if(!id)return null;const P=(AMS.jp||{})[String(id).split('|')[0]];return P?P.b.find(x=>x.id===id):null}
 /* the plan she works on now: the first unfinished one from the start of the journey up to today, or one she opened ahead */
-function jrCurKey(){const T=dayKey();if(!AMS.js){const ks=Object.keys(AMS.jp||{}).filter(k=>/^\d{4}-\d\d-\d\d$/.test(k)).sort();AMS.js=ks[0]&&ks[0]<=T?ks[0]:T;amSave()}for(let k=AMS.js,g=0;k<=T&&g<800;k=kAdd(k,1),g++)jrPlan(k);let k=AMS.js;
-  for(let g=0;g<800;g++){if(k<=T)jrPlan(k);const P=(AMS.jp||{})[k];if(!P)return null;jrNorm(k,P);jrSkip(P);if(!jrDone(P))return k;k=kAdd(k,1)}return null}
+function jrCurKey(){const T=dayKey();if(!AMS.js){const ks=Object.keys(AMS.jp||{}).filter(k=>/^\d{4}-\d\d-\d\d$/.test(k)).sort();AMS.js=ks[0]&&ks[0]<=T?ks[0]:T;amSave()}
+  for(let k=AMS.js,g=0;k<=T&&g<800;k=kAdd(k,1),g++)jrPlan(k);
+  /* S.jday = a past day she opened to complete, or a future day she works on ahead */
+  let k=S.jday&&AMS.jp&&AMS.jp[S.jday]&&S.jday>=AMS.js?S.jday:T;const P=jrPlan(k);jrNorm(k,P);jrSkip(P);return k}
 const jrCur=P=>P.b.find(x=>!x.done);
 /* what is left behind: plans of days before today that are not finished */
 function jrGap(){const T=dayKey(),o={days:0,words:0,q:0};if(!AMS.js)return o;for(let k=AMS.js;k<T;k=kAdd(k,1)){const P=(AMS.jp||{})[k];if(!P||jrDone(P))continue;o.days++;
@@ -569,7 +573,7 @@ function amHub(){if(!AMD)return amLoading();
   const r=34,c=2*Math.PI*r,f=Math.min(1,mins/goal);
   let P=ck?AMS.jp[ck]:jrPlan(T),nb=ck?jrCur(P):null;
   /* plan finished but the day's minutes are not: add practice until the goal (questions, or reviews when none are left) */
-  if(!nb&&mins<goal&&(!ck||ck===T)){const TP=jrPlan(T),left=goal-mins,nx=amNextSet();const id=T+'|x'+TP.b.length;
+  if(!nb&&mins<goal&&ck===T){const TP=jrPlan(T),left=goal-mins,nx=amNextSet();const id=T+'|x'+TP.b.length;
     TP.b.push(nx?{id,k:'q',m:left,n:Math.max(5,Math.min(40,Math.ceil(left/2))),d:0,done:0,used:0,x:1}:{id,k:'meth',m:left,n:1,d:0,done:0,used:0,x:1});TP.t=amNow();amSave();P=TP;nb=jrCur(TP)}
   const lbl=ck===T?'התוכנית של היום':ck&&ck<T?'התוכנית של '+fmtD(ck,{weekday:'long',day:'numeric',month:'numeric'}):ck?'התוכנית של '+(kDiff(T,ck)===1?'מחר':fmtD(ck,{weekday:'long',day:'numeric',month:'numeric'})):'התוכנית של היום';
   const {c:cc,endK}=schPlan();
@@ -577,11 +581,12 @@ function amHub(){if(!AMD)return amLoading();
     ${amNav('start','בחירת אפליקציה')}
     <section class="am-hero2">
       <div class="hr-top"><svg class="am-ring" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="${r}" class="bg"/><circle cx="40" cy="40" r="${r}" class="fg" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}"/><text x="40" y="38" text-anchor="middle" style="font-size:15px">${mins}</text><text x="40" y="54" text-anchor="middle" style="font-size:10px;font-weight:600">מתוך ${goal} דק׳</text></svg>
-        <div><p class="hr-k">${lbl}${ck&&ck<T?' · ממשיכה מאיפה שעצרת':''}</p><h2>${nb?JB[nb.k][0]+' '+JB[nb.k][1]+(nb.x?' – עד היעד':''):'סיימת את היום 🎉'}</h2><p class="hr-d">${nb?jrWhat(nb):`למדת היום ${mins} דקות${mins<goal?` · היעד ${goal}`:' ✓'}`}</p></div></div>
-      ${nb?`<button class="btn" id="jrGo">▶ ${jrOpen(nb)||nb.d||nb.used?'להמשיך':'להתחיל'}</button>`:`<button class="btn" id="jrNext">▶ להמשיך לתוכנית של מחר</button>`}
+        <div><p class="hr-k">${lbl}${ck<T?' · משלימה יום שפספסת':''}</p><h2>${nb?JB[nb.k][0]+' '+JB[nb.k][1]+(nb.x?' – עד היעד':''):ck===T?'סיימת את היום 🎉':'היום הזה הושלם ✓'}</h2><p class="hr-d">${nb?jrWhat(nb):`למדת היום ${mins} דקות${mins<goal?` · היעד ${goal}`:' ✓'}`}</p></div></div>
+      ${nb?`<button class="btn" id="jrGo">▶ ${jrOpen(nb)||nb.d||nb.used?'להמשיך':'להתחיל'}</button>`:ck===T||ck>T?`<button class="btn" id="jrNext">▶ להמשיך לתוכנית של מחר</button>`:''}
+      ${ck!==T?`<button class="btn secondary" id="jrToday">← חזרה למסע של היום</button>`:''}
     </section>
     ${nb&&nb.x?`<div class="am-box"><p>⏱ הצעדים של התוכנית נגמרו מהר${wDue().length?'':' (לא היו מילים לחזרה)'}, אבל היעד היום הוא ${goal} דקות ולמדת ${mins}. לכן נוסף תרגול שאלות עד שתגיעי ליעד. רק אחרי שתשלימי את הזמן אפשר להמשיך לתוכנית של מחר.</p></div>`:''}
-    ${gap.days?`<div class="am-box bad"><h4>⏳ פער: ${gap.days} ${gap.days===1?'יום':'ימים'}</h4><p>${[gap.words?gap.words+' מילים חדשות':'',gap.q?gap.q+' שאלות':''].filter(Boolean).join(' · ')||'צעדים קצרים'} מימים קודמים. ממשיכים מאיפה שעצרת – הפער ייסגר כשתגיעי לתוכנית של היום.</p></div>`:gap.ahead?`<div class="am-box good"><p>💪 את מקדימה את לוח הזמנים ב־${gap.ahead} ${gap.ahead===1?'יום':'ימים'}</p></div>`:''}
+    ${(()=>{const G=jrGapInfo();return `<button class="am-card2${G.days||G.miss>0?' gapc':''}" data-go="amgap"><span class="grow"><b>${G.days||G.miss>0?'⏳ פערים במסע':'✓ אין פערים במסע'}</b><small>${G.days?`${G.days} ${G.days===1?'יום לא הושלם':'ימים לא הושלמו'} · `:''}${G.miss>0?`חסרות ${fmtMin(G.miss)} מימים קודמים`:`היום: ${G.today?G.today.m:0} מתוך ${G.today?G.today.goal:jrGoal()} דק׳`} – לפירוט ולהשלמת ימים</small></span></button>`})()}
     <div class="am-box"><h4>${lbl}</h4><p class="hint" style="margin:0">לחיצה על שלב = לעשות אותו עכשיו, גם לא לפי הסדר</p><ol class="am-plan2">${P.b.map(x=>`<li class="${x.skip?'skip':x.done?'done':x===nb?'on':''}${!x.done?' tap':''}" ${!x.done?`data-jstep="${esc(x.id)}" role="button" tabindex="0"`:''}><span class="pi">${x.skip?'–':x.done?'✓':JB[x.k][0]}</span><span class="pt"><b>${JB[x.k][1]}</b><small>${x.skip?'אין מילים לחזרה עכשיו – מדלגים':x.done?'הושלם':jrWhat(x)+' · '+x.m+' דק׳'}</small></span></li>`).join('')}</ol>
       ${EXB('המערכת בונה לך כל יום תוכנית קבועה ומעבירה אותך בה צעד אחרי צעד. <b>▶</b> פותח את הצעד הבא עם הסבר למה הוא עכשיו. אפשר גם ללחוץ על כל שלב ברשימה ולעשות אותו עכשיו, לא לפי הסדר – שלב שהושלם מסומן ✓ ו־▶ ידלג עליו; שלב שעשית חלק ממנו ימשיך מאיפה שעצרת. אם עצרת באמצע – ממשיכים מאותו צעד, גם למחרת. זמן לימוד נספר רק כשאת פעילה; הפסקות לא נספרות.')}</div>
     <button class="am-card2" data-go="amp"><span class="gi">📊</span><span class="grow"><b>התקדמות ולוח זמנים</b><small>${cc.left?`כל המילים עד ${fmtD(endK)} · עוד ${cc.left} פירושים`:'כל המילים התחילו 🎉'}</small></span></button>
@@ -592,7 +597,8 @@ function amHub(){if(!AMD)return amLoading();
   amBindNav();
   const g=$('jrGo');if(g)g.onclick=()=>{try{if(jrOpen(nb))return jrRun(nb);go({screen:'amjb',jb:nb.id})}catch(err){drawFail(err)}};
   app.querySelectorAll('[data-jstep]').forEach(li=>li.onclick=()=>{const x=jrBlock(li.dataset.jstep);if(!x||x.done)return;try{if(jrOpen(x))return jrRun(x);go({screen:'amjb',jb:x.id})}catch(err){drawFail(err)}});
-  const nx=$('jrNext');if(nx)nx.onclick=()=>{let k=kAdd(T,1);while(AMS.jp&&AMS.jp[k]&&jrDone(AMS.jp[k]))k=kAdd(k,1);jrPlan(k);draw()};
+  const nx=$('jrNext');if(nx)nx.onclick=()=>{let k=kAdd(ck>T?ck:T,1);while(AMS.jp&&AMS.jp[k]&&jrDone(AMS.jp[k]))k=kAdd(k,1);jrPlan(k);S.jday=k;persist();draw()};
+  const td=$('jrToday');if(td)td.onclick=()=>{S.jday=null;persist();draw()};
   app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go,mfrom:'am'})})}
 /* the intro page of a block: why now, what happens, then start */
 function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return go({screen:'am'});const [i,t,sub,why,fx]=JB[x.k];
@@ -653,14 +659,42 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
     WS={mode:'new',perWord:1,list:L,i:0,step:'meet',hint:0,from:'amnw',ok:0,bad:0,jr:x.id};amSave();wSave();go({screen:'amwl'})};
   const dn=$('nwDone');if(dn)dn.onclick=()=>{jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wMaster(w);jrCount(x.id)}});jrFinish(x.id,1);go({screen:'am'})}}
 
+
+/* ================= ⏳ completing the journey: gaps in time and in steps, every day since the start ================= */
+const fmtMin=m=>{m=Math.max(0,Math.round(m));const h=Math.floor(m/60),r=m%60;return h?`${h} ש׳${r?' ו־'+r+' דק׳':''}`:`${r} דק׳`};
+function jrGapInfo(){const T=dayKey();jrCurKey();let need=0,done=0;const days=[];
+  for(let k=AMS.js||T,g=0;k<=T&&g<800;k=kAdd(k,1),g++){const P=jrPlan(k),goal=jrGoal(k),m=jrMin(k),fin=jrDone(P),steps=P.b.filter(x=>x.done).length;
+    if(k<T){need+=goal;done+=Math.min(m,goal)}days.push({k,goal,m,fin,steps,tot:P.b.length,P})}
+  const today=days[days.length-1],past=days.filter(d=>d.k<T),miss=need-done;
+  return {days:past.filter(d=>!d.fin).length,need,done,miss,list:days.reverse(),today,timeDays:past.filter(d=>d.m<d.goal).length}}
+function amGaps(){if(!AMD)return amLoading();const T=dayKey(),G=jrGapInfo(),g=jrGap();
+  app.innerHTML=`<div class="screen am-scr">
+    ${amNav('am','המסע של היום')}
+    <div class="am-title"><div><h2>⏳ השלמת המסע היומי</h2><p>מתחילת המסע ב־${fmtD(AMS.js||T,{day:'numeric',month:'numeric'})} · ${G.list.length} ימים</p></div></div>
+    <section class="am-hero2"><p class="hr-k">איפה את עומדת בזמן</p>
+      <h2>${G.miss>0?`חסרות ${fmtMin(G.miss)}`:'את בזמן ✓'}</h2>
+      <p class="hr-d">${G.need?`עד אתמול היית צריכה ללמוד ${fmtMin(G.need)} · למדת ${fmtMin(G.done)}`:'זה היום הראשון של המסע'}${G.today?` · היום: ${G.today.m} מתוך ${G.today.goal} דק׳`:''}</p>
+      <span class="am-mini big"><i style="width:${Math.min(100,Math.round(G.done/Math.max(1,G.need)*100))}%"></i></span></section>
+    <div class="am-box"><h4>מה חסר בשלבים</h4>
+      ${G.days?`<p>${G.days} ${G.days===1?'יום':'ימים'} שלא הושלמו${g.words||g.q?': '+[g.words?g.words+' מילים חדשות':'',g.q?g.q+' שאלות':''].filter(Boolean).join(' · '):''}.</p><p class="hint" style="margin:0">ימים שפספסת לא נכנסים למסע של היום. לוחצים על יום ברשימה, משלימים אותו, וחוזרים למסע של היום – הפער קטן.</p>`:'<p style="margin:0">✓ כל הימים עד היום הושלמו.</p>'}
+      ${G.timeDays?`<p class="hint" style="margin:0">ב־${G.timeDays} ${G.timeDays===1?'יום':'ימים'} לא הגעת ליעד הזמן. דקות שלא נלמדו ביום שלהן נשארות בפער הזמן – הוא נסגר כשלומדים יותר מהיעד בימים הבאים.</p>`:''}
+    </div>
+    <div class="am-box"><h4>יום אחרי יום</h4><p class="hint" style="margin:0">שני ורביעי – 3 שעות, שאר הימים – שעה וחצי. לחיצה על יום שלא הושלם פותחת את התוכנית שלו.</p>
+      ${G.list.map(d=>`<button class="am-dayb ${d.fin&&d.m>=d.goal?'ok':d.k<T?'bad':''}" ${!d.fin?`data-jday="${d.k}"`:''}><span class="dn">${d.k===T?'היום':fmtD(d.k,{weekday:'short',day:'numeric',month:'numeric'})}</span>
+        <span class="am-mini"><i style="width:${Math.min(100,d.m/d.goal*100)}%"></i></span><b>${d.m}/${d.goal}</b>
+        <small>${d.fin?'✓ כל השלבים':`שלבים ${d.steps}/${d.tot}`} · ${d.m>=d.goal?'✓ הזמן הושלם':d.k<T?'✗ הזמן לא הושלם':'בתהליך'}${!d.fin&&d.k<T?' · להשלמה ←':''}</small></button>`).join('')}
+    </div>
+  </div>`;
+  amBindNav();app.querySelectorAll('[data-jday]').forEach(b=>b.onclick=()=>{const k=b.dataset.jday;S.jday=k===T?null:k;persist();go({screen:'am'})})}
+
 /* ================= 📅 schedule: when will all the dictionary meanings be learned =================
    left = meanings still to start (her added words + ✗ cards + unmarked cards; ✓ cards – also ones she marks in the dictionary – count as known).
    Plan days give wNPer(day) new meanings (13 / 16); behind = the plan days she still owes are added on. A meaning is "learned" ~55 days after it starts. */
 const WLEARN=55;
 function schCounts(){const all=DW.length,y=DW.filter(isY).length,n=DW.filter(isN).length,W=Object.values(AMS.w);
   const inW=W.filter(w=>w.st>=1&&w.st<WMAST).length,done=W.filter(w=>w.st>=WMAST).length;return {all,y,n,u:all-y-n,left:wQueueCount(),inW,done}}
-function schSim(left){/* plan days from the plan she is on (behind → later, ahead → it already counts) */
-  const T=dayKey(),ck=jrCurKey()||kAdd(T,1),days=[];let r=left,k=ck,i=0;const cur=AMS.jp&&AMS.jp[ck],nb=cur&&cur.b.find(x=>x.k==='new');
+function schSim(left){/* plan days from today (missed days simply leave more words for the days ahead) */
+  const T=dayKey(),ck=T,days=[];let r=left,k=ck,i=0;const cur=AMS.jp&&AMS.jp[ck],nb=cur&&cur.b.find(x=>x.k==='new');
   const shift=ck<T?kDiff(ck,T):0;
   while(r>0&&i<2000){const cap=i===0&&nb?Math.max(0,nb.n-nb.d):wNPer(k);const x=Math.min(r,cap);r-=x;days.push({k:kAdd(k,shift),pk:k,x,r});k=kAdd(k,1);i++}
   return days}
@@ -675,8 +709,7 @@ function schHtml(){const {c,d,endK}=schPlan(),learnK=kAdd(endK,WLEARN),gap=jrGap
   return `<section class="am-hero2"><p class="hr-k">${c.left?'המילה האחרונה תתחיל ב־':'כל המילים התחילו 🎉'}</p><h2>${c.left?fmtD(endK):'סיימת!'}</h2>
       <p class="hr-d">${c.left?`עוד ${c.left} פירושים · כ־${wk} שבועות · הכל נלמד עד הסוף (אחרי החזרה של 30 יום) בערך ב־${fmtD(learnK)}`:''}</p>
       <div><span class="am-mini big"><i style="width:${pc}%"></i></span><p class="hr-d">יודעת ${known.toLocaleString()} מתוך ${c.all.toLocaleString()} פירושים (${pc}%)</p></div></section>
-    ${gap.days?`<div class="am-box bad"><h4>⏳ פער של ${gap.days} ${gap.days===1?'יום':'ימים'} מלוח הזמנים</h4><p>${[gap.words?gap.words+' מילים חדשות':'',gap.q?gap.q+' שאלות':''].filter(Boolean).join(' · ')} שעוד לא נעשו. הפער ייעלם כשתשלימי אותם ותגיעי לתוכנית של היום – עד אז התאריך זז ב־${gap.days} ${gap.days===1?'יום':'ימים'}.</p></div>`
-      :gap.ahead?`<div class="am-box good"><h4>💪 מקדימה ב־${gap.ahead} ${gap.ahead===1?'יום':'ימים'}</h4></div>`:`<div class="am-box good"><h4>✓ את בקצב של לוח הזמנים</h4></div>`}
+    
     <div class="am-box"><h4>מאיפה המספר הזה</h4>
       <div class="am-stat3"><div><b>${c.all}</b><small>פירושים במילון</small></div><div><b>${c.y}</b><small>✓ יודעת</small></div><div><b>${c.left}</b><small>לפנייך</small></div></div>
       <p>${c.n} סימנת ✗ · ${c.u} עוד לא סימנת · ${c.inW} בלמידה עכשיו · ${c.done} נלמדו כאן.</p>
@@ -922,6 +955,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
     if(!st.done)h+=`<div class="am-cta"><button class="btn" id="amChk" ${st.sel?'':'disabled'}>${exam?(AQ.i+1<AQ.ids.length?'לשאלה הבאה':'סיום הסימולציה'):'בדיקה'}</button></div>${exam?`<div class="am-nav">${AQ.i?'<button class="btn secondary" id="amPrev">→ הקודמת</button>':''}<button class="btn secondary" id="amSkip">דילוג ←</button></div>`:''}`;
     else h+=amFeedback(id,st);
   }
+  if(!exam&&AQ.unit)h+=`<button class="link" id="amReset" style="align-self:center;font-size:.88rem">↺ לאפס את היחידה ולהתחיל מהשאלה הראשונה</button>`;
   h+=`</div>`;app.innerHTML=h;
   /* binding */
   $('bk').onclick=()=>{if(exam)AQ.paused=amNow();amSaveQ();clearInterval(AMTICK);go({screen:AQ.from||'am'})};
@@ -939,6 +973,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   const sk=$('amSkip');if(sk)sk.onclick=()=>{st.ms=(st.ms||0)+amNow()-st.seen;AQ.i++;amSaveQ();draw();window.scrollTo(0,0)};
   const pv=$('amPrev');if(pv)pv.onclick=()=>{st.ms=(st.ms||0)+amNow()-st.seen;AQ.i--;aqSt().seen=amNow();amSaveQ();draw();window.scrollTo(0,0)};
   amBindFeedback(id,st);
+  const rz=$('amReset');if(rz)rz.onclick=()=>favDlg('להתחיל את היחידה מההתחלה? כל השאלות יופיעו שוב בלי תשובות (התשובות הקודמות נשארות בהיסטוריה).','כן, מההתחלה',()=>{const u=AQ.unit,jr=AQ.jr;JRGO=jr||null;amStart(AQ.ids,AQ.name.replace(/ · תיקון$/,''),'learn',AQ.from,AQ.t);AQ.unit=u;amSaveQ()});
   app.querySelectorAll('[data-mtab]').forEach(b=>b.onclick=()=>{amSaveQ();if(b.dataset.mtab==='pre'){WP=null;go({screen:'amwp',mfrom:'amq'})}else go({screen:'ammt',amTab:b.dataset.mtab,mfrom:'amq'})});
   /* timer */
   clearInterval(AMTICK);const tm=()=>{const el=$('amTm');if(!el){clearInterval(AMTICK);return}
@@ -1140,8 +1175,7 @@ function amProgress(){if(!AMD)return amLoading();
     <div class="am-title"><span class="gi g-p">📊</span><div><h2>התקדמות ולוח זמנים</h2><p>${streak?`🔥 ${streak} ימים ברצף`:'עוד לא תרגלת היום'} · ${days.size} ימי תרגול</p></div></div>
     ${schHtml()}
     <button class="am-card2" data-go="amwm"><span class="gi">📒</span><span class="grow"><b>המילים שלי</b><small>${Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST).length} בלמידה · ${Object.values(AMS.w).filter(w=>w.st>=WMAST).length} נלמדו · כמה מילים חדשות ביום</small></span></button>
-    <div class="am-box"><h4>📅 היסטוריית ימים</h4>${EXB('כמה דקות למדת בכל יום מול היעד (3 שעות בשני ורביעי, שעה וחצי בשאר הימים).')}${(()=>{const out=[];for(let d=0;d<21;d++){const k=dayKey(now-d*DAY),m=jrMin(k),g=jrGoal(k),P=(AMS.jp||{})[k];if(!m&&!P&&d)continue;
-        out.push(`<div class="am-day ${m>=g?'ok':d?'bad':''}"><span>${d?dayDate(k).toLocaleDateString('he-IL',{weekday:'short',day:'numeric',month:'numeric'}):'היום'}</span><span class="am-mini"><i style="width:${Math.min(100,m/g*100)}%"></i></span><b>${m}/${g}</b><small>${m>=g?'✓ הזמן הושלם':d?'✗ הזמן לא הושלם':'בתהליך'}${P?' · צעדים '+P.b.filter(x=>x.done).length+'/'+P.b.length+(jrDone(P)?' ✓':''):''}</small></div>`)}return out.join('')})()}</div>
+    <button class="am-card2" data-go="amgap"><span class="grow"><b>⏳ השלמת המסע היומי</b><small>פערים בזמן ובשלבים, יום אחרי יום</small></span></button>
     <div class="am-box"><h4>שאלות</h4>${EXB('הפס = אחוז התשובות הנכונות. הזמן = ממוצע לשאלה מול היעד במבחן.')}${types.filter(x=>x.n).map(x=>`<div class="am-stat"><span>${AMTI[x.t]} ${AMTN[x.t]}</span><span class="am-mini"><i style="width:${x.ok/x.n*100}%"></i></span><b>${Math.round(x.ok/x.n*100)}%</b><small>${x.n} ניסיונות · ${Math.round(x.ms/1e3)} שנ׳ (יעד ${AMTARGET[x.t]})</small></div>`).join('')||'<p class="hint" style="margin:0">עוד לא פתרת שאלות.</p>'}</div>
     <div class="am-box"><h4>מילים לפי שלב</h4><div class="am-bars">${st.map((n,i)=>`<div><span style="height:${Math.max(4,n/Math.max(1,...st)*80)}px" class="${i===7?'ok':''}"></span><b>${n}</b><small>${stN[i]}</small></div>`).join('')}</div></div>
     <div class="am-box"><h4>חזרות בשבוע הקרוב</h4>${EXB('כמה מילים יחכו לחזרה פעילה בכל יום. מעט היום = אפשר ללמוד יותר מילים חדשות.')}<div class="am-bars">${fc.map((n,d)=>`<div><span style="height:${Math.max(4,n/mx*80)}px"></span><b>${n}</b><small>${d?['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'][new Date(now+d*DAY).getDay()]:'היום'}</small></div>`).join('')}</div></div>
