@@ -718,7 +718,7 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 
 /* state */
 let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch'].includes(S.screen))S.screen='start'}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw'].includes(S.screen))S.screen='start'}catch(e){}
 /* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
 try{if(!sessionStorage.getItem('dictOpen')){sessionStorage.setItem('dictOpen','1');if(!['quiz','car'].includes(S.screen))S.screen='start'}}catch(e){}
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb}))}catch(e){}}
@@ -753,7 +753,7 @@ function drawFail(err){const m=String(err&&(err.stack||err.message)||err).split(
   $('bk').onclick=()=>go({screen:/^am/.test(S.screen)?'am':'home'})}
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule})[S.screen]();}catch(err){drawFail(err)}
+  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords})[S.screen]();}catch(err){drawFail(err)}
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -1004,13 +1004,13 @@ function groupScreen(){
   bindCards(gkey(),ws);
 }
 function wordsScreen(){
-  const lv=S.wl==='level',ws=lv?byLv(S.l):group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
-  const f=F[S.filter]?S.filter:'all',up=lv?'level':'group';
+  const jn=S.wl==='jn',lv=S.wl==='level',ws=jn?(()=>{const x=jrBlock(S.jb);return x?jnCards(x):[]})():lv?byLv(S.l):group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
+  const f=F[S.filter]?S.filter:'all',up=jn?'amnw':lv?'level':'group';
   const rows=()=>{const hits=searchHits(F[f],S.q),list=hits||F[f];
     return list.length?`<ul class="words">${list.map(wordRow).join('')}</ul>`:`<p class="hint center">${hits?'לא נמצאו מילים.':'אין מילים כאן.'}</p>`};
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">${lv?(S.l===PL?'שיעור פרטי':lvName(S.l)):gName(S.l,S.g)}</button>${HOME}</div>
-    <div><h2>${lv?(S.l===PL?'כל המילים לשיעור הפרטי':`כל המילים ברמה ${S.l}`):(S.l===PL?`המילים ב${gName(S.l,S.g)}`:`המילים בקבוצה ${S.g+1}`)}</h2><p class="sub">${lv?'':`${lvName(S.l)} · `}✓ יודעת · ✗ לא יודעת</p></div>
+    <div class="nav"><button class="back" id="bk">${jn?'מילים חדשות להיום':lv?(S.l===PL?'שיעור פרטי':lvName(S.l)):gName(S.l,S.g)}</button>${HOME}</div>
+    <div><h2>${jn?'המילים החדשות של היום':lv?(S.l===PL?'כל המילים לשיעור הפרטי':`כל המילים ברמה ${S.l}`):(S.l===PL?`המילים ב${gName(S.l,S.g)}`:`המילים בקבוצה ${S.g+1}`)}</h2><p class="sub">${lv||jn?'':`${lvName(S.l)} · `}✓ יודעת · ✗ לא יודעת</p></div>
     <div class="sbox"><input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><button class="sclear" id="sclear" aria-label="מחיקת החיפוש" ${S.q?'':'hidden'}>✕</button></div>
     <div class="seg seg4" role="group" aria-label="סינון">${[['all','הכל'],['y','יודעת'],['n','לא יודעת'],['u','לא סומנו']].map(([k,t])=>`<button data-f="${k}" aria-pressed="${f===k}">${t} (${F[k].length})</button>`).join('')}</div>
     <div id="wlist">${rows()}</div>
@@ -1708,7 +1708,7 @@ function carX(w){const x=EXTRA[w.xid||w.id]||{};let h='';
   return h?`<div class="xfull">${h}</div>`:''}
 function carScreen(){const n=CAR.deck.length;
   if(CAR.i>=n){S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">🚗</div><h2 style="margin-top:14px">סיימת להאזין לכל ${n} המילים</h2></div><button class="btn secondary" id="b">חזרה</button></div>`;
-    $('b').onclick=()=>go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'});return}
+    $('b').onclick=()=>go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':CAR.from==='amnw'?'amnw':'group'});return}
   const w=CAR.deck[CAR.i],x=EXTRA[w.xid||w.id]||{},look=CAR.cur!=null&&CAR.i!==CAR.cur,rev=CAR.rev||look;
   app.innerHTML=`<div class="screen full car">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה ממצב רכב">✕</button>${HOME}<div class="prog"><i style="width:${CAR.i/n*100}%"></i></div><span class="count">${CAR.i+1} / ${n}</span></div>
@@ -1727,7 +1727,7 @@ function carScreen(){const n=CAR.deck.length;
 
 </div>
   </div>`;
-  $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
+  $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':CAR.from==='amnw'?'amnw':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
   $('cPlay').onclick=()=>{if(look){CAR.i=CAR.cur;CAR.rev=false;draw();carPlay(true);return}if(CAR.play&&!CAR.wait)carStop();else if(CAR.needTap||!CAR.unl){carRestart(true);return}else{carPlay(true)}draw()};
   $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};$('cPrev').onclick=()=>carGo(-1);const cu=$('carUse');if(cu)cu.ontoggle=()=>{CAR.useShut=cu.open?null:w.id};$('cNext').onclick=()=>carGo(1);bindCarSettings();const ct=$('cTap');if(ct)ct.onclick=()=>carRestart(true);

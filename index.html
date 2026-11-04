@@ -944,7 +944,7 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 
 /* state */
 let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch'].includes(S.screen))S.screen='start'}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw'].includes(S.screen))S.screen='start'}catch(e){}
 /* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
 try{if(!sessionStorage.getItem('dictOpen')){sessionStorage.setItem('dictOpen','1');if(!['quiz','car'].includes(S.screen))S.screen='start'}}catch(e){}
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb}))}catch(e){}}
@@ -979,7 +979,7 @@ function drawFail(err){const m=String(err&&(err.stack||err.message)||err).split(
   $('bk').onclick=()=>go({screen:/^am/.test(S.screen)?'am':'home'})}
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule})[S.screen]();}catch(err){drawFail(err)}
+  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords})[S.screen]();}catch(err){drawFail(err)}
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -1230,13 +1230,13 @@ function groupScreen(){
   bindCards(gkey(),ws);
 }
 function wordsScreen(){
-  const lv=S.wl==='level',ws=lv?byLv(S.l):group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
-  const f=F[S.filter]?S.filter:'all',up=lv?'level':'group';
+  const jn=S.wl==='jn',lv=S.wl==='level',ws=jn?(()=>{const x=jrBlock(S.jb);return x?jnCards(x):[]})():lv?byLv(S.l):group(S.l,S.g),F={all:ws,y:ws.filter(isY),n:ws.filter(isN),u:ws.filter(w=>!kst(w))};
+  const f=F[S.filter]?S.filter:'all',up=jn?'amnw':lv?'level':'group';
   const rows=()=>{const hits=searchHits(F[f],S.q),list=hits||F[f];
     return list.length?`<ul class="words">${list.map(wordRow).join('')}</ul>`:`<p class="hint center">${hits?'לא נמצאו מילים.':'אין מילים כאן.'}</p>`};
   app.innerHTML=`<div class="screen">
-    <div class="nav"><button class="back" id="bk">${lv?(S.l===PL?'שיעור פרטי':lvName(S.l)):gName(S.l,S.g)}</button>${HOME}</div>
-    <div><h2>${lv?(S.l===PL?'כל המילים לשיעור הפרטי':`כל המילים ברמה ${S.l}`):(S.l===PL?`המילים ב${gName(S.l,S.g)}`:`המילים בקבוצה ${S.g+1}`)}</h2><p class="sub">${lv?'':`${lvName(S.l)} · `}✓ יודעת · ✗ לא יודעת</p></div>
+    <div class="nav"><button class="back" id="bk">${jn?'מילים חדשות להיום':lv?(S.l===PL?'שיעור פרטי':lvName(S.l)):gName(S.l,S.g)}</button>${HOME}</div>
+    <div><h2>${jn?'המילים החדשות של היום':lv?(S.l===PL?'כל המילים לשיעור הפרטי':`כל המילים ברמה ${S.l}`):(S.l===PL?`המילים ב${gName(S.l,S.g)}`:`המילים בקבוצה ${S.g+1}`)}</h2><p class="sub">${lv||jn?'':`${lvName(S.l)} · `}✓ יודעת · ✗ לא יודעת</p></div>
     <div class="sbox"><input class="inp search" id="srch" type="search" inputmode="search" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="חיפוש מילה באנגלית או פירוש" value="${esc(S.q||'')}"><button class="sclear" id="sclear" aria-label="מחיקת החיפוש" ${S.q?'':'hidden'}>✕</button></div>
     <div class="seg seg4" role="group" aria-label="סינון">${[['all','הכל'],['y','יודעת'],['n','לא יודעת'],['u','לא סומנו']].map(([k,t])=>`<button data-f="${k}" aria-pressed="${f===k}">${t} (${F[k].length})</button>`).join('')}</div>
     <div id="wlist">${rows()}</div>
@@ -1934,7 +1934,7 @@ function carX(w){const x=EXTRA[w.xid||w.id]||{};let h='';
   return h?`<div class="xfull">${h}</div>`:''}
 function carScreen(){const n=CAR.deck.length;
   if(CAR.i>=n){S.active=null;persist();app.innerHTML=`<div class="screen"><div class="center"><div class="big">🚗</div><h2 style="margin-top:14px">סיימת להאזין לכל ${n} המילים</h2></div><button class="btn secondary" id="b">חזרה</button></div>`;
-    $('b').onclick=()=>go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'});return}
+    $('b').onclick=()=>go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':CAR.from==='amnw'?'amnw':'group'});return}
   const w=CAR.deck[CAR.i],x=EXTRA[w.xid||w.id]||{},look=CAR.cur!=null&&CAR.i!==CAR.cur,rev=CAR.rev||look;
   app.innerHTML=`<div class="screen full car">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה ממצב רכב">✕</button>${HOME}<div class="prog"><i style="width:${CAR.i/n*100}%"></i></div><span class="count">${CAR.i+1} / ${n}</span></div>
@@ -1953,7 +1953,7 @@ function carScreen(){const n=CAR.deck.length;
 
 </div>
   </div>`;
-  $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':'group'})};
+  $('exit').onclick=()=>{carStop();saveCar();S.active=null;go({screen:CAR.from==='home'?'home':CAR.from==='level'?'level':CAR.from==='amnw'?'amnw':'group'})};
   $('say').onclick=()=>{carStop();speak(w.e);draw()};const ss=$('saySent');if(ss)ss.onclick=()=>{carStop();speak(w.s,.9);draw()};
   $('cPlay').onclick=()=>{if(look){CAR.i=CAR.cur;CAR.rev=false;draw();carPlay(true);return}if(CAR.play&&!CAR.wait)carStop();else if(CAR.needTap||!CAR.unl){carRestart(true);return}else{carPlay(true)}draw()};
   $('cSet').onclick=()=>{CAR.set=!CAR.set;draw()};$('cPrev').onclick=()=>carGo(-1);const cu=$('carUse');if(cu)cu.ontoggle=()=>{CAR.useShut=cu.open?null:w.id};$('cNext').onclick=()=>carGo(1);bindCarSettings();const ct=$('cTap');if(ct)ct.onclick=()=>carRestart(true);
@@ -2483,6 +2483,19 @@ details.am-exb[open]{width:auto;align-self:stretch;padding:6px 12px 10px}details
 .am-pghelp{display:flex;flex-wrap:wrap;gap:6px}.am-pghelp details.am-exb[open]{flex-basis:100%}
 .am-card2+details.am-exb,.am-gates+details.am-exb{margin-top:-8px}
 .am-meth{border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;background:var(--bg);display:flex;flex-direction:column;gap:6px}.am-meth h4{margin:0;color:var(--accent)}.am-meth ol{margin:0;padding-inline-start:20px;display:flex;flex-direction:column;gap:5px;line-height:1.5;font-size:.93rem}
+/* ---- clean look (Nov 4): like the dictionary – grey panels, no borders or shadows, no emoji tiles, quiet explanations ---- */
+.am-scr .am-box,.am-card2,.am-gate,.am-resume,.am-topic,.am-wl button,.am-wordhead,.am-meth,.am-scr .am-step-box{background:var(--surface);border:0!important;box-shadow:none!important;border-radius:16px}
+.am-scr .am-box.good,.am-scr .am-box.bad,.am-scr .am-box.why{border:0!important}
+.am-title .gi,.am-card2 .gi,.am-gate .gi{display:none}
+.am-title h2{font-size:1.3rem}.am-card2{padding:16px}
+.am-hero2{border-radius:18px}
+.am-plan2 li{padding:8px 6px}.am-plan2 .pi{background:var(--bg)}
+details.am-exb{border:0;background:transparent;padding:2px 0;font-size:.82rem}details.am-exb>summary{color:var(--muted);font-weight:600}details.am-exb>summary::before{background:var(--muted)}
+details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radius:12px}
+.am-pghelp{gap:2px 14px}
+.am-chip.t{background:transparent;padding:0;color:var(--muted);font-weight:700}
+.st-screen .st-app,.st-dict,.st-am{background:var(--surface)!important;border:0!important;min-height:0!important;padding:18px!important}.st-screen .st-x{display:none}.st-screen .st-i{font-size:1.6rem}
+.am-meth ol{font-size:.9rem;gap:4px}.am-meth h4{font-size:.95rem}
 .am-gap{display:inline-block;min-width:3.5em;border-bottom:3px solid var(--cw);color:var(--cw);font-weight:800;text-align:center}
 .am-path{display:flex;gap:4px}.am-path span{flex:1;text-align:center;padding:6px 2px;border-radius:999px;background:var(--surface);font-size:.78rem;font-weight:700;color:var(--muted)}.am-path .on{background:var(--cw);color:#fff}.am-path .done{background:color-mix(in srgb,var(--cs) 18%,transparent);color:var(--ok)}
 .am-next{display:flex;flex-wrap:wrap;gap:4px}.am-next span{padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--cw) 14%,var(--card));font-size:.8rem;font-weight:700}
@@ -2542,9 +2555,9 @@ const JB={
   rev:['🔁','חזרה על מילים','כל המילים שהגיע זמנן במסלול',
     'מתחילים במילים שהזיכרון שלהן מתחיל לדעוך עכשיו. שליפה בדיוק ברגע הזה היא מה שמקבע אותן לטווח ארוך – לכן זה תמיד הצעד הראשון ביום, כשהראש רענן.',
     ['כל מילה מקבלת את התרגיל של השלב שלה: משפט בעברית, כתיבה, משפט חדש, פירוש','💡 רמז אם נתקעת – האסוציאציה, אחר כך האות הראשונה','טעות = כותבים את המילה פעם אחת, והיא חוזרת בסוף']],
-  new:['🌱','מילים חדשות','הכרות ← שליפה ← בחירה במשפט',
-    'אחרי החזרות יש מקום למילים חדשות. מעט מילים, לעומק: אסוציאציה שנבנית עכשיו + שליפה מיידית = המילה נכנסת למסלול. מחר היא כבר תחזור אלייך.',
-    ['רק מילים מהמילון שסימנת ✗ או שעוד לא סימנת: קודם מה שאספת מהשאלות, אחר כך ✗, ואז מילים שלא סומנו','בחירת אסוציאציה (מהמילון או ✨ מג׳מיני) – דמייני אותה 5 שניות','🧭 טיפ מהשיטה כשיש (תחילית, מילת קישור, מילה שקל לבלבל)']],
+  new:['🌱','מילים חדשות','הכרות ← כתיבה ← בחירה במשפט',
+    'אחרי החזרות יש מקום למילים חדשות מהמילון – רק מילים שסימנת ✗ או שעוד לא סימנת. קודם מכירים אותן כמו בכל קבוצה במילון, ואז שולפים: כותבים ובוחרים במשפט. מחר הן כבר יחזרו אלייך.',
+    ['שלב 1 – בדיוק כמו במילון: בוחן (קריאה / שמיעה), כרטיסיות או 🚗 מצב רכב. ✓ = כבר יודעת, המילה יוצאת מהלמידה','שלב 2 – כתיבת כל מילה באנגלית לפי הפירוש, ואז בחירה שלה במשפט','אחרי זה המילים נכנסות לחזרות: 20 דקות, יום, 3 ימים, שבוע, שבועיים, חודש']],
   q:['✏️','תרגול שאלות לפי השיטה','שאלה אחרי שאלה במסלול',
     'עכשיו מיישמים: שאלות מהמבחן, כל אחת במסלול – לחשוב לפני התשובות, לחקור כל טעות מיד, להבין איך פותרים לפי השיטה, ולאסוף מילים מהמאגר.',
     ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הצעד נגמר אחרי מספר השאלות שלו – עד אז ממשיכים ליחידה הבאה']],
@@ -2591,30 +2604,27 @@ function jrFinish(id,force){const x=jrBlock(id);if(!x||x.done)return;const P=AMS
 const jrCount=id=>{const x=jrBlock(id);if(x){x.d=(x.d||0)+1;AMS.jp[id.split('|')[0]].t=amNow()}};
 /* what a block holds right now, in words / questions */
 function jrWhat(x){if(x.k==='rev'||x.k==='rev2'){const n=wDue(x.k==='rev2'&&!x.go?18e5:0).length;return x.done?'':n?n+' מילים מחכות לחזרה':'אין מילים לחזרה כרגע'}
-  if(x.k==='new')return `${x.d}/${x.n} מילים חדשות`;if(x.k==='q')return `${Math.min(x.d,x.n)}/${x.n} שאלות`;if(x.k==='sim')return '22 שאלות ב־20 דקות';if(x.k==='meth')return 'נושא אחד מהשיטה';return '10 דקות'}
+  if(x.k==='new')return `${x.d}/${x.n} מילים חדשות`+(Array.isArray(x.ws)&&!x.done?` · ${jnLeft(x).length} עוד לא נכנסו`:'');if(x.k==='q')return `${Math.min(x.d,x.n)}/${x.n} שאלות`;if(x.k==='sim')return '22 שאלות ב־20 דקות';if(x.k==='meth')return 'נושא אחד מהשיטה';return '10 דקות'}
 /* study time: counted every 15 s while the page is visible, on an אמירנט screen, and she did something in the last 2 minutes */
 let JACT=Date.now(),JTICK=0;['pointerdown','keydown','scroll','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{JACT=Date.now()},{passive:true,capture:true}));
-setInterval(()=>{if(document.visibilityState!=='visible'||!/^am/.test(S.screen)||S.screen==='amhelp'||Date.now()-JACT>120e3)return;
+setInterval(()=>{const jnS=['quiz','cards','car'].includes(S.screen)&&/^[FC]?J/.test(String(S.active||''));if(document.visibilityState!=='visible'||!(/^am/.test(S.screen)||jnS)||S.screen==='amhelp'||Date.now()-JACT>120e3)return;
   const k=dayKey();AMS.tm=AMS.tm||{};AMS.tm[k]=(AMS.tm[k]||0)+15e3;const ck=jrCurKey(),P=ck&&AMS.jp[ck],cur=P&&jrCur(P);
-  if(cur&&cur.k!=='brk'){const act=(S.screen==='amq'&&AQ&&AQ.jr===cur.id)||(S.screen==='amwl'&&WS&&WS.jr===cur.id)||S.screen==='amjb';if(act)cur.used=(cur.used||0)+15e3}
+  if(cur&&cur.k!=='brk'){const act=(S.screen==='amq'&&AQ&&AQ.jr===cur.id)||(S.screen==='amwl'&&WS&&WS.jr===cur.id)||S.screen==='amjb'||(cur.k==='new'&&(S.screen==='amnw'||jnS));if(act)cur.used=(cur.used||0)+15e3}
   LS.set('dictAm',JSON.stringify(AMS));if(++JTICK%8===0){AMS.t=amNow();amSave()}},15e3);
 const jrMin=k=>Math.floor(((AMS.tm||{})[k]||0)/6e4);
 /* start (or go on with) a block */
 function jrRun(x){
   if(x.k==='rev'||x.k==='rev2'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const ah=x.k==='rev2'&&!x.go?18e5:0;if(!wDue(ah).length){x.done=amNow();x.skip=1;amSave();go({screen:'am'});return}JRGO=x.id;x.go=1;wStart('rev',null,ah)}
   else if(x.k==='new'){
-    if(WS&&WS.jr===x.id&&WS.list&&WS.i<WS.list.length&&WS.list.slice(WS.i).some(k=>AMS.w[k]))return go({screen:'amwl'});
-    if(WS&&WS.jr===x.id){WS=null;wSave()}
-    if(x.d>=x.n){jrFinish(x.id,1);go({screen:'am'});return}
-    JRGO=x.id;wStart('new',null,x.n-x.d);
-    if(S.screen!=='amwl'){JRGO=null;const y=DW.filter(isY).length,nn=DW.filter(isN).length;
-      amToast(`לא נמצאו מילים חדשות: במילון ${DW.length} פירושים – ${y} סימנת ✓, ${nn} ✗, ${DW.length-y-nn} לא סומנו`);go({screen:'am'})}}
+    if(x.d>=x.n&&!jnLeft(x).length){jrFinish(x.id,1);go({screen:'am'});return}
+    if(!jnBatch(x).length){const y=DW.filter(isY).length,nn=DW.filter(isN).length;amToast(`לא נמצאו מילים חדשות: במילון ${DW.length} פירושים – ${y} סימנת ✓, ${nn} ✗, ${DW.length-y-nn} לא סומנו`);go({screen:'am'});return}
+    go({screen:'amnw',jb:x.id})}
   else if(x.k==='q'||x.k==='sim'){if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
     if(x.k==='q'){const nx=amNextSet();if(!nx){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(nx.ids,AMTN[nx.t]+' · יחידה '+nx.u,'learn','am',nx.t)}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
       if(!u){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}}
   else go({screen:'amjb',jb:x.id})}
-const jrOpen=x=>(WS&&WS.jr===x.id&&WS.i<WS.list.length)||(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin);
+const jrOpen=x=>(x.k==='new'&&Array.isArray(x.ws))||(WS&&WS.jr===x.id&&WS.i<WS.list.length)||(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin);
 /* the journey: today's minutes, the plan she is on, the next step */
 function amHub(){if(!AMD)return amLoading();
   const T=dayKey(),ck=jrCurKey(),goal=jrGoal(T),mins=jrMin(T),gap=jrGap();
@@ -2661,6 +2671,42 @@ function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return
     <div class="am-cta"><button class="btn" id="jbGo">${inPlace?(x.k==='brk'?'חזרתי ✓':'סיימתי ✓'):'▶ להתחיל'}</button></div>
   </div>`;
   amBindNav();$('jbGo').onclick=()=>{try{if(inPlace){jrFinish(x.id,1);go({screen:'am'})}else jrRun(x)}catch(err){drawFail(err)}}}
+
+
+/* ================= today's new words – built exactly like a dictionary group =================
+   The step keeps its batch in x.ws (workshop keys 'c:<card id>'). Step 1: quiz / cards / car mode on these cards, like any dictionary group
+   (✓ = already known → leaves the learning, ✗ = to learn). Step 2: write the word (he→en) and then choose it in a sentence (the r2 round) –
+   after that the words are in the spaced path (20 min, 1, 3, 7, 14, 30 days). */
+function jnBatch(x){if(!x)return [];if(!Array.isArray(x.ws)){const q=wQueue(Math.max(0,x.n-x.d));q.forEach(w=>{if(w.fresh)wAdd(w.e,w.h,w.c,w.src,w.k)});x.ws=q.map(w=>wK(w)).filter(k=>AMS.w[k]);amSave()}return x.ws}
+const jnCard=k=>{const w=AMS.w[k];if(!w)return null;if(w.src&&String(w.src).startsWith('dict:'))return W[String(w.src).slice(5)]||null;const d=dictFind(w.e);return d?d.cards[0]:null};
+const jnCards=x=>jnBatch(x).map(jnCard).filter(Boolean);
+/* still to learn: not marked ✓ and not started yet */
+const jnLeft=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.st===0&&!(c&&isY(c))});
+const jnKey=x=>'J'+String(x.id).replace(/[^0-9a-z]/gi,'');
+function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.k!=='new'){go({screen:'am'});return}
+  const ws=jnCards(x),key=jnKey(x),name='מילים חדשות להיום',left=jnLeft(x),known=ws.filter(isY).length,started=jnBatch(x).filter(k=>AMS.w[k]&&AMS.w[k].st>=1).length;
+  app.innerHTML=`<div class="screen">
+    <div class="nav"><button class="back" id="bk">המסע</button>${HOME}</div>
+    <div><h2>${name}</h2><p class="sub">${ws.length} מילים מהמילון · מילים שסימנת ✗ או שעוד לא סימנת</p><p class="known-line">${countLine(ws)}</p></div>
+    <p class="lbl">שלב 1 · הכרות – בוחן, כרטיסיות או מצב רכב</p>
+    ${quizPanel(key,ws,'בוחן על המילים החדשות',name,'amnw')}
+    ${catPanel(key,ws)||''}
+    <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
+    ${cardsBtn(key,ws)}
+    <p class="lbl">שלב 2 · כתיבת המילה ובחירה במשפט</p>
+    <div class="panel">
+      <p class="hint" style="margin:0">${left.length?`${left.length} מילים לכתוב באנגלית לפי הפירוש, ואז לבחור כל אחת במשפט. אחרי זה הן נכנסות לחזרות (20 דקות, יום, 3 ימים, שבוע, שבועיים, חודש).${known?` ${known} סימנת ✓ – הן לא נכנסות ללמידה.`:''}`:started?'✓ כל המילים כבר בחזרות.':'אין מילים ללמוד – כולן מסומנות ✓.'}</p>
+      ${left.length?`<button class="btn" id="nwGo">✍️ כתיבה ובחירה במשפט · ${left.length} מילים</button>`:`<button class="btn" id="nwDone">סיום ← חזרה למסע</button>`}
+    </div>
+  </div>`;
+  $('bk').onclick=()=>go({screen:'am'});
+  $('list').onclick=()=>go({screen:'words',filter:'all',wl:'jn'});
+  bindSettings();bindQuizPanel(key,ws,name,'amnw');bindCatPanel(key,ws,name,'amnw');bindCards(key,ws);
+  const g=$('nwGo');if(g)g.onclick=()=>{const L=jnLeft(x);if(!L.length)return draw();
+    /* words she marked ✓ leave the learning (counted for the step) */
+    jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id)}});
+    L.forEach(k=>{const w=AMS.w[k],c=jnCard(k),t=c&&(EXTRA[c.xid||c.id]||{}).tip;if(w&&!w.as&&t)w.as=t});WS={mode:'new',list:L,i:0,step:'first',skipMeet:1,hint:0,from:'amnw',ok:0,bad:0,jr:x.id};amSave();wSave();go({screen:'amwl'})};
+  const dn=$('nwDone');if(dn)dn.onclick=()=>{jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wMaster(w);jrCount(x.id)}});jrFinish(x.id,1);go({screen:'am'})}}
 
 /* ================= 📅 schedule: when will all the dictionary meanings be learned =================
    left = meanings still to start (her added words + ✗ cards + unmarked cards; ✓ cards – also ones she marks in the dictionary – count as known).
@@ -3394,7 +3440,7 @@ function wBind(w,x){
   const sn=$('wSelfN');if(sn)sn.onclick=()=>{WS.res={ok:false,typed:WS.res.typed};wAfter(w,false);wSave();draw()};
   const cp=$('wCopy');if(cp){setTimeout(()=>{try{cp.focus({preventScroll:true})}catch(e){}},50);cp.oninput=()=>{if(cp.value.trim().toLowerCase()===w.e.toLowerCase()){WS.res.copied=true;wSave();draw()}}}
   const on=$('wOn');if(on)on.onclick=wNextWord}
-function wNextWord(){WS.i++;WS.step=WS.mode==='new'?'meet':'recall';WS.hint=0;WS.res=null;WS.chk=null;WS.draft='';
+function wNextWord(){WS.i++;WS.step=WS.mode==='new'?(WS.skipMeet?'first':'meet'):'recall';WS.hint=0;WS.res=null;WS.chk=null;WS.draft='';
   /* after all the new words: a second quick round of all of them (short-term memory), then the missed ones */
   if(WS.i>=WS.list.length&&WS.mode==='new'&&(WS.counted||[]).length){WS.list=WS.list.concat(shuffle(WS.counted));WS.mode='r2';WS.step='recall';WS.r2at=WS.i}
   else if(WS.i>=WS.list.length&&WS.mode==='r2'){WS.mode='rev'}
@@ -3422,7 +3468,7 @@ function wDone(){const n=WS?WS.list.length:0;
     <p class="center sub">${n} מילים${WS&&WS.ok?` · ${WS.ok} נשלפו נכון`:''}.</p>
     <div class="am-box"><h4>מה עכשיו?</h4><p>המילים יחזרו אלייך ב"חזרה פעילה" – הראשונה בעוד 20 דקות, ואז מחר, בעוד 3 ימים, שבוע, שבועיים וחודש. אין צורך לחזור עליהן לפני כן.</p><p class="hint" style="margin:0">את כל המילים, מתי כל אחת חוזרת והיומן שלה – ב"מילים ← המילים שלי".</p></div>
     <button class="btn" id="wBack">חזרה</button></div>`;
-  amBindNav();$('wBack').onclick=()=>{const f=WS&&WS.from||'amw',jr=WS&&WS.jr;if(jr)jrFinish(jr);WS=null;wSave();go({screen:jr?'am':f})}}
+  amBindNav();$('wBack').onclick=()=>{const f=WS&&WS.from||'amw',jr=WS&&WS.jr;if(jr){const x=jrBlock(jr);if(x&&x.k==='new'&&Array.isArray(x.ws)){if(!jnLeft(x).length)jrFinish(jr,1)}else jrFinish(jr)}WS=null;wSave();go({screen:jr?'am':f})}}
 
 /* ================= methods (from the course book) ================= */
 const AMM={
@@ -3526,7 +3572,7 @@ const AMHELP={
   <li><b>כרטיסיות</b> – מעבר מהיר על מילים.</li><li><b>🚗 מצב רכב</b> – הקראה ברצף להאזנה בנסיעה, סימון בכפתורי ההגה.</li>
   <li><b>מצב רץ</b> – כל מילה מוקראת כשעוברים אליה.</li><li><b>✍️ מילים לשיעור פרטי</b> – הרשימות השבועיות, וכתיבת משפטים עם בדיקה חכמה.</li>
   <li><b>היעד היומי</b> – 240 סימונים ביום.</li></ul>`]};
-const PAGEHELP={start:['overview'],amq:['flow'],amwl:['learn','journey'],home:['dict'],am:['daily'],amqh:['questions','flow'],amu:['flow'],amls:['lessons'],amw:['words','journey','learn'],amwm:['mywords'],amwd:['mywords'],amm:['methods'],ammt:['methods'],amp:['progress','schedule']};
+const PAGEHELP={amnw:[],start:['overview'],amq:[],amwl:[],home:['dict'],am:['daily'],amqh:['questions','flow'],amu:['flow'],amls:['lessons'],amw:['words','journey','learn'],amwm:['mywords'],amwd:['mywords'],amm:['methods'],ammt:['methods'],amp:['progress','schedule']};
 function amPageHelp(){if(S.screen==='amu')return S.amt==='ex'?['questions']:['flow'];return PAGEHELP[S.screen]||[]}
 /* after drawing: the page's explanation boxes right under its title (💬 hides them) */
 function amInjectHelp(){

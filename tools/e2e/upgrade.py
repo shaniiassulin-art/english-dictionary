@@ -45,6 +45,8 @@ async def run(p,tag):
     await tap(pg,'#jrGo');await pg.wait_for_timeout(300)
     if await pg.evaluate("S.screen")=='amjb':
       await check(pg,'amjb',bad);await tap(pg,'#jbGo');await pg.wait_for_timeout(400)
+    if await pg.evaluate("S.screen")=='amnw':
+      await check(pg,'amnw',bad);await tap(pg,'#nwGo') or await tap(pg,'#nwDone');await pg.wait_for_timeout(300)
     s=await pg.evaluate("S.screen");await check(pg,'after start '+cur,bad)
     if s=='amwl':r=await ws_drive(pg,log=log)
     elif s=='amq':r=await q_drive(pg,80,log=log)

@@ -38,6 +38,7 @@ async def main():
     await pg.click('#stAm');await pg.wait_for_timeout(900)
     log.append('plan:'+await E("JSON.stringify(jrPlan().b.map(x=>x.k+(x.skip?'(skip)':x.done?'(done)':'')))"))
     await pg.click('#jrGo');await pg.wait_for_timeout(300);log.append('block:'+await E("S.jb"));await pg.click('#jbGo');await pg.wait_for_timeout(500)
+    log.append('new page:'+await E("S.screen"));await pg.click('#nwGo');await pg.wait_for_timeout(300)
     # workshop driver
     async def ws_drive(limit=200,wrong_every=4):
       n=0
@@ -96,6 +97,7 @@ async def main():
       if not await pg.locator('#jrGo').count():break
       await pg.click('#jrGo');await pg.wait_for_timeout(300)
       if await pg.locator('#jbGo').count():await pg.click('#jbGo');await pg.wait_for_timeout(500)
+      if await E("S.screen")=='amnw':await tap('#nwGo') or await tap('#nwDone');await pg.wait_for_timeout(300)
       if await E("S.screen")=='amq':await q_drive(60)
       if await E("S.screen")=='amwl':await ws_drive()
     log.append('hub after plan: extra='+str(await E("jrPlan().b.some(x=>x.x)"))+' next='+str(await pg.locator('#jrNext').count()))
