@@ -1207,10 +1207,10 @@ function amParts(){if(!AMD)return amLoading();if(!WP)wpNext();if(!WP)return go({
     ${amNav(back,back==='amq'?'חזרה לשאלה':back==='amqh'?'תרגול שאלות':'המסע')}
     <div class="am-title"><div><h2>🧬 תחיליות וסופיות</h2><p>שולטת ב־${mastered} מתוך ${A.length} · 3 תשובות נכונות ברצף = נשלטה</p></div></div>
     <span class="am-mini big"><i style="width:${Math.round(mastered/A.length*100)}%"></i></span>
-    <details class="am-box"><summary style="font-weight:800;cursor:pointer">📘 השיטה – איך משתמשים בזה במבחן</summary>${AMM.pre?`<div>${AMM.pre[1].replace(/<table[\s\S]*<\/table>/,'')}</div>`:''}
+    <details class="am-box am-m"><summary style="font-weight:800;cursor:pointer">📘 השיטה – איך משתמשים בזה במבחן</summary>${AMM.pre?`<div>${AMM.pre[1].replace(/<table[\s\S]*<\/table>/,'')}</div>`:''}
       <p>מילה לא מוכרת בשאלה? מפרקים אותה: <b>תחילית + שלד + סופית</b>. התחילית נותנת את הכיוון (לא, שוב, לפני…), הסופית אומרת איזה סוג מילה זו (שם עצם, תואר, פועל) – ולפעמים זה מספיק כדי לפסול תשובות.</p>
       <p>את התחיליות כדאי <b>לדעת בעל פה</b>; את הסופיות מספיק <b>להכיר</b>.</p></details>
-    <details class="am-box"><summary style="font-weight:800;cursor:pointer">📋 הטבלה המלאה</summary>${amPxTables()}</details>
+    <details class="am-box am-m"><summary style="font-weight:800;cursor:pointer">📋 הטבלה המלאה</summary>${amPxTables()}</details>
     <div class="am-card">
       ${kind==='aff'?`<p class="hint center" style="margin:0">מה אומרת ${name}?</p><div class="w" dir="ltr"><span>${esc(wpForm(a.k,E))}</span></div>`
         :`<p class="hint center" style="margin:0">מה פירוש המילה? ${name} מסומנת</p><div class="w" dir="ltr">${SAYB(WP.en)}<span>${mark}</span></div>
