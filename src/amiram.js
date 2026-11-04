@@ -32,7 +32,7 @@ function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n
   if(o.ar){for(const k in o.a){const x=o.a[k];x.h=(x.h||[]).filter(r=>r[3]>o.ar);if(!x.h.length&&(x.t||0)<=o.ar)delete o.a[k]}}
   o.js=[a.js,b.js].filter(Boolean).sort()[0];o.tm={};for(const x of [a.tm||{},b.tm||{}])for(const k in x)o.tm[k]=Math.max(o.tm[k]||0,x[k]);
   o.jp={};for(const x of [a.jp||{},b.jp||{}])for(const k in x)if(!o.jp[k]||(x[k].t||0)>(o.jp[k].t||0))o.jp[k]=x[k];
-  for(const f of ['ls','hc','rd','ex']){o[f]={};for(const s of [a[f]||{},b[f]||{}])for(const k in s){const v=s[k],w=o[f][k],tv=Array.isArray(v)?v[1]:v&&v.t||v,tw=Array.isArray(w)?w[1]:w&&w.t||w;if(w===undefined||(tv||0)>(tw||0))o[f][k]=v}}
+  for(const f of ['ls','hc','rd','ex','wpa']){o[f]={};for(const s of [a[f]||{},b[f]||{}])for(const k in s){const v=s[k],w=o[f][k],tv=Array.isArray(v)?v[1]:v&&v.t||v,tw=Array.isArray(w)?w[1]:w&&w.t||w;if(w===undefined||(tv||0)>(tw||0))o[f][k]=v}}
   if(o.ar)for(const k in o.ex)if((o.ex[k].t||0)<=o.ar)delete o.ex[k];
   return o}
 function amFixW(){const W=AMS.w||(AMS.w={});for(const k of Object.keys(W)){const w=W[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete W[k];continue}if(!w.k)w.k=k;if(typeof w.st!=='number')w.st=0}}
@@ -394,7 +394,7 @@ body:has(.am-cta) .totop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .am-hrow{display:flex;justify-content:space-between;gap:8px;width:100%;border:0;border-top:1px solid var(--line);background:none;padding:9px 0;font:inherit;color:var(--ink);cursor:pointer;text-align:right}.am-hrow small{color:var(--muted)}
 .tw.db{text-decoration:underline dotted color-mix(in srgb,var(--cw) 70%,transparent);text-underline-offset:4px;text-decoration-thickness:2px}
 .am-plan2{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}.am-plan2 li{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:14px}.am-plan2 .pi{width:32px;height:32px;border-radius:50%;background:var(--surface);display:inline-flex;align-items:center;justify-content:center;flex:none}.am-plan2 .pt{display:flex;flex-direction:column}.am-plan2 small{color:var(--muted)}
-.am-plan2 li.on{background:color-mix(in srgb,var(--cw) 13%,transparent)}.am-plan2 li.on .pi{background:var(--cw);color:#fff}.am-plan2 li.done{opacity:.6}.am-plan2 li.skip{opacity:.45}.am-plan2 li.skip b{text-decoration:line-through}.am-plan2 li.done .pi{background:var(--cs);color:#fff}
+.am-plan2 li.on{background:color-mix(in srgb,var(--cw) 13%,transparent)}.am-plan2 li.on .pi{background:var(--cw);color:#fff}.am-plan2 li.tap{cursor:pointer}.am-plan2 li.tap:active{background:var(--accent-soft)}.am-plan2 li.done{opacity:.6}.am-plan2 li.skip{opacity:.45}.am-plan2 li.skip b{text-decoration:line-through}.am-plan2 li.done .pi{background:var(--cs);color:#fff}
 .am-day{display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}.am-day small{grid-column:1/-1;color:var(--muted)}.am-day.ok b{color:var(--ok)}.am-day.bad b{color:var(--bad)}
 .am-stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin-bottom:8px}.am-stat3 b{display:block;font-size:22px}.am-stat3 small{color:var(--muted)}
 .nav-ic{margin-inline-start:auto;display:flex;align-items:center;gap:8px}.nav-ic>*{margin:0!important}
@@ -558,7 +558,7 @@ function jrRun(x){
     if(!jnBatch(x).length){const y=DW.filter(isY).length,nn=DW.filter(isN).length;amToast(`לא נמצאו מילים חדשות: במילון ${DW.length} פירושים – ${y} סימנת ✓, ${nn} ✗, ${DW.length-y-nn} לא סומנו`);go({screen:'am'});return}
     go({screen:'amnw',jb:x.id})}
   else if(x.k==='q'||x.k==='sim'){if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
-    if(x.k==='q'){const nx=amNextSet();if(!nx){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(nx.ids,AMTN[nx.t]+' · יחידה '+nx.u,'learn','am',nx.t)}
+    if(x.k==='q'){const nx=amNextSet();if(!nx){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStartUnit(nx,AMTN[nx.t]+' · יחידה '+nx.u,'am',nx.t)}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
       if(!u){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}}
   else go({screen:'amjb',jb:x.id})}
@@ -582,17 +582,18 @@ function amHub(){if(!AMD)return amLoading();
     </section>
     ${nb&&nb.x?`<div class="am-box"><p>⏱ הצעדים של התוכנית נגמרו מהר${wDue().length?'':' (לא היו מילים לחזרה)'}, אבל היעד היום הוא ${goal} דקות ולמדת ${mins}. לכן נוסף תרגול שאלות עד שתגיעי ליעד. רק אחרי שתשלימי את הזמן אפשר להמשיך לתוכנית של מחר.</p></div>`:''}
     ${gap.days?`<div class="am-box bad"><h4>⏳ פער: ${gap.days} ${gap.days===1?'יום':'ימים'}</h4><p>${[gap.words?gap.words+' מילים חדשות':'',gap.q?gap.q+' שאלות':''].filter(Boolean).join(' · ')||'צעדים קצרים'} מימים קודמים. ממשיכים מאיפה שעצרת – הפער ייסגר כשתגיעי לתוכנית של היום.</p></div>`:gap.ahead?`<div class="am-box good"><p>💪 את מקדימה את לוח הזמנים ב־${gap.ahead} ${gap.ahead===1?'יום':'ימים'}</p></div>`:''}
-    <div class="am-box"><h4>${lbl}</h4><ol class="am-plan2">${P.b.map(x=>`<li class="${x.skip?'skip':x.done?'done':x===nb?'on':''}"><span class="pi">${x.skip?'–':x.done?'✓':JB[x.k][0]}</span><span class="pt"><b>${JB[x.k][1]}</b><small>${x.skip?'אין מילים לחזרה עכשיו – מדלגים':x.done?'הושלם':jrWhat(x)+' · '+x.m+' דק׳'}</small></span></li>`).join('')}</ol>
-      ${EXB('המערכת בונה לך כל יום תוכנית קבועה ומעבירה אותך בה צעד אחרי צעד. <b>▶</b> פותח את הצעד הבא עם הסבר למה הוא עכשיו. אם עצרת באמצע – ממשיכים מאותו צעד, גם למחרת. זמן לימוד נספר רק כשאת פעילה; הפסקות לא נספרות.')}</div>
+    <div class="am-box"><h4>${lbl}</h4><p class="hint" style="margin:0">לחיצה על שלב = לעשות אותו עכשיו, גם לא לפי הסדר</p><ol class="am-plan2">${P.b.map(x=>`<li class="${x.skip?'skip':x.done?'done':x===nb?'on':''}${!x.done?' tap':''}" ${!x.done?`data-jstep="${esc(x.id)}" role="button" tabindex="0"`:''}><span class="pi">${x.skip?'–':x.done?'✓':JB[x.k][0]}</span><span class="pt"><b>${JB[x.k][1]}</b><small>${x.skip?'אין מילים לחזרה עכשיו – מדלגים':x.done?'הושלם':jrWhat(x)+' · '+x.m+' דק׳'}</small></span></li>`).join('')}</ol>
+      ${EXB('המערכת בונה לך כל יום תוכנית קבועה ומעבירה אותך בה צעד אחרי צעד. <b>▶</b> פותח את הצעד הבא עם הסבר למה הוא עכשיו. אפשר גם ללחוץ על כל שלב ברשימה ולעשות אותו עכשיו, לא לפי הסדר – שלב שהושלם מסומן ✓ ו־▶ ידלג עליו; שלב שעשית חלק ממנו ימשיך מאיפה שעצרת. אם עצרת באמצע – ממשיכים מאותו צעד, גם למחרת. זמן לימוד נספר רק כשאת פעילה; הפסקות לא נספרות.')}</div>
     <button class="am-card2" data-go="amp"><span class="gi">📊</span><span class="grow"><b>התקדמות ולוח זמנים</b><small>${cc.left?`כל המילים עד ${fmtD(endK)} · עוד ${cc.left} פירושים`:'כל המילים התחילו 🎉'}</small></span></button>
     <details class="am-box"><summary style="font-weight:800;cursor:pointer">🧰 תרגול חופשי (לא חלק מהמסע)</summary>
-      <div class="am-row2" style="margin-top:8px"><button class="am-pill" data-go="amqh">✏️ שאלות</button><button class="am-pill" data-go="amw">🧠 מילים</button><button class="am-pill" data-go="amm">🧭 שיטות</button></div></details>
+      <div class="am-row2" style="margin-top:8px"><button class="am-pill" data-go="amqh">✏️ שאלות</button><button class="am-pill" data-go="amw">🧠 מילים</button><button class="am-pill" data-go="amwp">🧬 תחיליות וסופיות</button></div></details>
     
   </div>`;
   amBindNav();
   const g=$('jrGo');if(g)g.onclick=()=>{try{if(jrOpen(nb))return jrRun(nb);go({screen:'amjb',jb:nb.id})}catch(err){drawFail(err)}};
+  app.querySelectorAll('[data-jstep]').forEach(li=>li.onclick=()=>{const x=jrBlock(li.dataset.jstep);if(!x||x.done)return;try{if(jrOpen(x))return jrRun(x);go({screen:'amjb',jb:x.id})}catch(err){drawFail(err)}});
   const nx=$('jrNext');if(nx)nx.onclick=()=>{let k=kAdd(T,1);while(AMS.jp&&AMS.jp[k]&&jrDone(AMS.jp[k]))k=kAdd(k,1);jrPlan(k);draw()};
-  app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go})})}
+  app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go,mfrom:'am'})})}
 /* the intro page of a block: why now, what happens, then start */
 function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return go({screen:'am'});const [i,t,sub,why,fx]=JB[x.k];
   let body='';
@@ -726,7 +727,7 @@ function amHubOld(){if(!AMD)return amLoading();
   amBindNav();const rs=$('amRes');if(rs)rs.onclick=amResume;
   const ns=$('amNextStep');if(ns)ns.onclick=()=>amRunStep(next.k);
   app.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>amRunStep(b.dataset.step));
-  app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go})})}
+  app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go,mfrom:'am'})})}
 /* the practice hub: the question types, simulation and basics */
 function amQHub(){if(!AMD)return amLoading();
   const XQ={sc:EX('משפט באנגלית עם מילה חסרה ו־4 מילים לבחירה. קודם מנחשים לבד בעברית, ורק אז רואים תשובות.','רשת של יחידות – בוחרים יחידה ומתחילים'),
@@ -742,9 +743,12 @@ function amQHub(){if(!AMD)return amLoading();
     ${row('rs','g-q','🔁','ניסוח מחדש','איזה משפט אומר אותו דבר')}
     ${row('rc','g-q','📖','הבנת הנקרא','קטע ו־5 שאלות')}
     <button class="am-card2 g-p" data-t="ex"><span class="gi">⏱</span><span class="grow"><b>סימולציה</b><small>פרק שלם: 22 שאלות ב־20 דקות, בלי עזרה</small>${EX('כמו המבחן האמיתי: שעון שרץ, בלי רמזים ובלי הסברים עד הסוף. בסוף – ציון, זמן לכל סוג, וכל טעות פתוחה לחקירה.','בחירת פרק: 4 פרקים אמיתיים + 20 מהקורס')}</span></button>
+    <button class="am-card2" data-go3="amwp"><span class="grow"><b>🧬 תחיליות וסופיות</b><small>השיטה, הטבלה ותרגול פעיל</small></span></button>
+    <p class="lbl" style="margin:6px 0 0">📘 כללי – לפני ואחרי השאלות</p>
+    <div class="am-row2">${['gen','score','conn','mem'].filter(k=>AMM[k]).map(k=>`<button class="am-pill" data-mtab2="${k}">${AMMI[k]||'📘'} ${AMM[k][0]}</button>`).join('')}</div>
     <button class="am-card2 g-m" data-go2="amls"><span class="gi">📝</span><span class="grow"><b>הלקחים שלי</b><small>${Object.keys(AMS.ls||{}).length||'עוד אין'} כללים שלמדת מטעויות</small>${EX('כל לקח ששמרת בחקירת טעות, מקובץ לפי סוג הטעות. טוב לקרוא לפני סימולציה.')}</span></button>
   </div>`;
-  amBindNav();app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>go({screen:'amu',amt:b.dataset.t}));app.querySelectorAll('[data-go2]').forEach(b=>b.onclick=()=>go({screen:b.dataset.go2}))}
+  amBindNav();app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>go({screen:'amu',amt:b.dataset.t}));app.querySelectorAll('[data-go2]').forEach(b=>b.onclick=()=>go({screen:b.dataset.go2}));app.querySelectorAll('[data-go3]').forEach(b=>b.onclick=()=>{WP=null;go({screen:'amwp',mfrom:'amqh'})});app.querySelectorAll('[data-mtab2]').forEach(b=>b.onclick=()=>go({screen:'ammt',amTab:b.dataset.mtab2,mfrom:'amqh'}))}
 function amTypeLine(t){const ss=AMD.s.filter(s=>s.t===t);let d=0,n=0,ok=0;ss.forEach(s=>{const x=amSetStat(s);d+=x.done;n+=x.n;ok+=x.ok});return d?`${d}/${n} · ${Math.round(ok/d*100)}% נכון`:`${n} שאלות`}
 
 /* ================= units of one type ================= */
@@ -756,19 +760,19 @@ function amUnits(){if(!AMD)return amLoading();const t=S.amt||'sc';
   if(t==='ex')return amExams();
   if(t==='yb')return amBasics();
   const ss=AMD.s.filter(s=>s.t===t&&!s.b),bs=AMD.s.filter(s=>s.t===t&&s.b);
-  const ub=s=>{const x=amSetStat(s),m=s.ids.filter(amIsMist).length;return `<button class="am-unit${x.done===x.n?' full':x.done?' part':''}${m?' mist':''}" data-s="${s.id}"><b>${s.u}</b><small>${m?m+' לתיקון':x.done?x.ok+'/'+x.n+' נכון':x.n+' שאלות'}</small></button>`};
+  const ub=s=>{const x=amSetStat(s),m=x.done-x.ok;return `<button class="am-unit${x.done===x.n?' full':x.done?' part':''}${m?' mist':''}" data-s="${s.id}"><b>${s.u}</b><small>${x.done?x.ok+'/'+x.done+' נכון'+(x.done<x.n?' · עוד '+(x.n-x.done):''):x.n+' שאלות'}</small></button>`};
   app.innerHTML=`<div class="screen am-scr">
     ${amNav('amqh','תרגול שאלות')}
     <div class="am-title"><span class="gi g-q">${AMTI[t]}</span><div><h2>${AMTN[t]}</h2><p>${amTypeLine(t)} · במבחן: ${t==='sc'?'חצי דקה לשאלה':t==='rs'?'דקה לשאלה':'6 דקות לקטע'}</p></div></div>
     <p class="am-intro"><b>מה זה?</b> ${AMHOW[t]}</p>
     <button class="am-card2 g-s" data-m="${t}"><span class="gi">🧭</span><span class="grow"><b>השיטה לסוג הזה</b><small>לקרוא לפני שמתחילים</small>${EX('ההסבר המלא מהספר: איך פותרים את סוג השאלה הזה צעד אחר צעד.','עמוד השיטה')}</span></button>
-    <div class="am-box"><h4>הקורס – 20 יחידות</h4>${EXB('כל ריבוע = יחידה. לחיצה מתחילה את השאלות שלה (8 / 4 / 10). <b>כחול</b> = התחלת, <b>ירוק</b> = סיימת (המספר = כמה נכון), <b>אדום</b> = יש שאלות לתיקון.')}<div class="am-units">${ss.map(ub).join('')}</div></div>
+    <div class="am-box"><h4>הקורס – 20 יחידות</h4>${EXB('כל ריבוע = יחידה. כל שאלה שפתרת – כאן או במסע היומי – נשמרת ונספרת ביחידה שלה. לחיצה על יחידה ממשיכה מהשאלה הראשונה שעוד לא פתרת (השאלות שכבר פתרת מופיעות עם התשובה שלך). יחידה שסיימת פותחת את הסיכום שלה: אפשר לפתור שוב רק את מה שטעית, או את כל היחידה מחדש. <b>כחול</b> = התחלת, <b>ירוק</b> = סיימת, <b>אדום</b> = יש טעויות; המספר = כמה נכון מתוך מה שפתרת.')}<div class="am-units">${ss.map(ub).join('')}</div></div>
     ${bs.length?`<div class="am-box"><h4>ספר "חזרות וניהול זמנים" – 4 פרקים</h4>${EXB('שאלות מפרקים אמיתיים של המבחן, מאותו סוג.')}<div class="am-units">${bs.map(ub).join('')}</div></div>`:''}
     ${EXB('בתוך שאלה: לחיצה על מילה באנגלית = פירוש והוספה ללמידה · 🔊 = השמעה · מילים צבועות = מילות קישור.')}
   </div>`;
   amBindNav();
-  app.querySelector('[data-m]').onclick=()=>go({screen:'ammt',amTab:t});
-  app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const s=AMD.s.find(x=>x.id===b.dataset.s);amStart(s.ids,AMTN[t]+(s.b?' · ניהול זמנים פרק ':' · יחידה ')+s.u,'learn','amu',t)})}
+  app.querySelector('[data-m]').onclick=()=>go({screen:'ammt',amTab:t,mfrom:'amu'});
+  app.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const s=AMD.s.find(x=>x.id===b.dataset.s);amStartUnit(s,AMTN[t]+(s.b?' · ניהול זמנים פרק ':' · יחידה ')+s.u,'amu',t)})}
 function amExams(){const cell=(u,b)=>{const r=AMS.ex&&AMS.ex[(b?'b':'')+u];return `<button class="am-unit${r?' full':''}" data-u="${u}" data-b="${b?1:''}"><b>${u}</b><small>${r?r.ok+'/22':'22 שאלות'}</small></button>`};
   app.innerHTML=`<div class="screen am-scr">
     ${amNav('amqh','תרגול שאלות')}
@@ -871,6 +875,9 @@ let AQ=null;
 function amStart(ids,name,mode,from,t,u,b){AQ={ids:ids.slice(),i:0,name,mode,from:JRGO?'am':from,t,u,b,st:{},t0:amNow(),limit:mode==='exam'?20*60e3:0,jr:JRGO||null};JRGO=null;
   /* go on from the first question not answered in this session */
   amSaveQ();go({screen:'amq'})}
+function amStartUnit(s,name,from,t){amStart(s.ids,name,'learn',from,t);
+  let first=-1;s.ids.forEach((id,i)=>{const l=amLast(id);if(l){AQ.st[i]={stage:'opts',guess:'',sel:l[0],elim:{},done:true,ok:!!l[1],ms:l[2]||0,seen:amNow(),why:[],note:'',words:false,pass:true,fb:'',old:1}}else if(first<0)first=i});
+  AQ.i=first<0?s.ids.length:first;AQ.unit=s.id;if(AQ.i<AQ.ids.length)aqSt().seen=amNow();amSaveQ();draw();window.scrollTo(0,0)}
 function amResume(){if(AQ.paused){AQ.t0+=amNow()-AQ.paused;AQ.paused=0}aqSt().seen=amNow();amSaveQ();go({screen:'amq'})}
 function amStartMist(){if(!AMD)return;const ids=Object.keys(AMD.q).filter(amMistDue);if(!ids.length)return;amStart(ids,'מחברת הטעויות · ניסיון חוזר','learn','amx','mist')}
 function amSaveQ(){try{LS.set('dictAmQ',JSON.stringify(AQ))}catch(e){}}
@@ -932,6 +939,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   const sk=$('amSkip');if(sk)sk.onclick=()=>{st.ms=(st.ms||0)+amNow()-st.seen;AQ.i++;amSaveQ();draw();window.scrollTo(0,0)};
   const pv=$('amPrev');if(pv)pv.onclick=()=>{st.ms=(st.ms||0)+amNow()-st.seen;AQ.i--;aqSt().seen=amNow();amSaveQ();draw();window.scrollTo(0,0)};
   amBindFeedback(id,st);
+  app.querySelectorAll('[data-mtab]').forEach(b=>b.onclick=()=>{amSaveQ();if(b.dataset.mtab==='pre'){WP=null;go({screen:'amwp',mfrom:'amq'})}else go({screen:'ammt',amTab:b.dataset.mtab,mfrom:'amq'})});
   /* timer */
   clearInterval(AMTICK);const tm=()=>{const el=$('amTm');if(!el){clearInterval(AMTICK);return}
     if(exam){const left=AQ.limit-(amNow()-AQ.t0);if(left<=0){clearInterval(AMTICK);amFinishExam();return}const m=Math.floor(left/6e4),s=Math.floor(left%6e4/1e3);el.textContent='⏱ '+m+':'+String(s).padStart(2,'0');el.classList.toggle('over',left<120e3)}
@@ -968,7 +976,9 @@ function amMethodNow(q,cs){const T=AMTARGET[q.t],cn=cs.map(c=>`«<bdi>${c.ws.joi
       k==='main'||k==='para'?'שאלה כללית – עדיף לפתור אותה אחרי השאלות הספציפיות של הקטע, כשכבר מכירים אותו.':'שאלה ספציפית – חוזרים לשורה / לפסקה שעליה שואלים וקוראים את המשפט כולו – מנקודה עד נקודה, לא רק את השורה.',
       'פסלי תשובות עם ✗: <b>לא מהקטע</b>, <b>סותר את הקטע</b>, <b>לא עונה לשאלה</b>.'];
     more=['עיקר וטפל: קוראים לעומק רק את המשפטים שעליהם שואלים.','השאלות מסודרות לפי סדר הקטע; הפסקה האחרונה אינה סיכום.','יעד: כ־6 דקות לקטע (5 שאלות).']}
+  const lk=[[q.t,'📘 השיטה המלאה'],...(cs.length?[['conn','🔗 מילות קישור']]:[]),...((q.o||[]).some(o=>amBreak(o))?[['pre','🧬 תחיליות וסופיות']]:[])].filter(([k])=>AMM[k]);
   return `<div class="am-meth"><h4>🧭 פותרים לפי השיטה</h4><ol>${st.map(x=>`<li>${x}</li>`).join('')}</ol>
+    <div class="am-row2">${lk.map(([k,t])=>`<button class="am-pill sm" data-mtab="${k}">${t}</button>`).join('')}</div>
     ${more.length?`<details class="am-exb"><summary>עוד דגשים מהשיטה</summary><div><ul>${more.map(x=>`<li>${x}</li>`).join('')}</ul></div></details>`:''}</div>`}
 
 function amRedrawKeep(){const y=window.scrollY;draw();window.scrollTo(0,y)}
@@ -1035,7 +1045,7 @@ function amWordRow(e,he,src){const k=wKey(e),inW=AMS.w[k],kn=!inW&&wKnownDict(e)
   return `<div class="am-wrow"><button class="spk" data-amsay="${esc(e)}" aria-label="השמעה" style="width:34px;height:34px">${SPK}</button><span class="e">${esc(e)}</span><span class="h">${esc(he||'')}${kn?' · <b style="color:var(--ok)">✓ יודעת</b>':''}</span><button class="${inW?'in':''}" data-wadd="${esc(e)}" data-wh="${esc(he||'')}" data-wsrc="${src}">${inW?'✓ בסדנה':'➕ ללמוד'}</button></div>`}
 /* words of this question: her glosses from the book, the options (sentence completion), and words she added */
 function amWordsBox(id){if(!id||!AMD)return '';const R=amQWords(id),add=R.filter(d=>!amDbStatus(d)).length;
-  return `<div class="am-box am-wordsbox"><h4>📚 מילים מהשאלה שנמצאות במאגר (${R.length})</h4>${R.length?`<div class="am-words">${R.map(d=>{const st=amDbStatus(d);return `<div class="am-wrow"><button class="spk" data-amsay="${esc(d.e)}" aria-label="השמעה" style="width:34px;height:34px">${SPK}</button><span class="e">${esc(d.e)}</span><span class="h">${d.cards.length>1?d.cards.length+' פירושים':''}</span><button class="${st?'in':''}" data-dbadd="${esc(d.e)}">${st==='y'?'✓ יודעת':st==='w'?'🧠 בלמידה':'➕ ללמידה'}</button></div>`}).join('')}</div>`:'<p class="hint" style="margin:0">אין בשאלה מילים מהמאגר שעוד לא סימנת.</p>'}
+  return `<div class="am-box am-wordsbox"><h4>📚 מילים מהשאלה שנמצאות במאגר (${R.length})</h4>${R.length?`<div class="am-words">${R.map(d=>{const st=amDbStatus(d);return `<div class="am-wrow"><button class="spk" data-amsay="${esc(d.e)}" aria-label="השמעה" style="width:34px;height:34px">${SPK}</button><span class="e">${esc(d.e)}</span><span class="h">${esc(d.cards.map(c=>c.h[0]).filter((v,i,a)=>a.indexOf(v)===i).join(' · '))}</span><button class="${st?'in':''}" data-dbadd="${esc(d.e)}">${st==='y'?'✓ יודעת':st==='w'?'🧠 בלמידה':'➕ ללמידה'}</button></div>`}).join('')}</div>`:'<p class="hint" style="margin:0">אין בשאלה מילים מהמאגר שעוד לא סימנת.</p>'}
     ${add>1?`<button class="btn secondary" id="amAddAll">➕ להוסיף ללמידה את כל ${add} המילים</button>`:''}</div>`}
 function amBindFeedback(id,st){const q=AMD.q[id];
   const nx=$('amNext');if(nx)nx.onclick=()=>{const f=nx.dataset.fb;if(f){st.fb=f;amSaveQ();draw();window.scrollTo(0,0);
@@ -1076,9 +1086,13 @@ function amResult(){const exam=AQ.mode==='exam';clearInterval(AMTICK);
     <ul class="am-res">${rows.map(r=>`<li class="${r.ok?'ok':r.ans?'bad':''}"><button data-ri="${r.i}"><span class="s">${r.ok?'✓':r.ans?'✗':'—'}</span><span class="tx">${esc(r.q.q)}</span><small dir="rtl" style="font-family:var(--he)">${r.s.ms?Math.round(r.s.ms/1e3)+' שנ׳':''}</small></button></li>`).join('')}</ul>
     ${(()=>{const L=(AQ.added||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);return L.length?`<div class="am-box good"><h4>📚 אספת ${L.length} מילים חדשות בתרגול</h4><p style="margin:0">הכי טוב ללמוד אותן עכשיו, כשההקשר עוד טרי: אסוציאציה, משפט שלך ושליפה – ואז סיבוב שני מהיר. הן יחזרו אלייך אחרי 20 דקות, מחר, ועוד.</p><button class="btn" id="amLearnAdded">🌱 ללמוד אותן עכשיו</button></div>`:''})()}
     ${(()=>{if(!AQ.jr)return '';const x=jrBlock(AQ.jr);return x&&x.k==='q'&&!x.done&&x.d<x.n?`<button class="btn" id="amJrNext">▶ ליחידה הבאה (עוד ${x.n-x.d} שאלות בצעד הזה)</button>`:''})()}
+    ${!exam&&rows.some(r=>r.ans&&!r.ok)?`<button class="btn secondary" id="amFix">🔁 לפתור שוב רק את ${rows.filter(r=>r.ans&&!r.ok).length===1?'השאלה שטעיתי בה':rows.filter(r=>r.ans&&!r.ok).length+' השאלות שטעיתי בהן'}</button>`:''}
+    ${!exam&&AQ.unit?`<button class="link" id="amRedo" style="align-self:center">↺ לפתור את כל היחידה מחדש</button>`:''}
     <button class="btn ${(AQ.added||[]).some(k=>AMS.w[k]&&AMS.w[k].st===0)?'secondary':''}" id="amAgain">${AQ.jr?'חזרה למסע של היום ←':'סיום'}</button>
   </div>`;
   amBindNav();$('amAgain').onclick=()=>{if(AQ.jr)jrFinish(AQ.jr);go({screen:AQ.jr?'am':AQ.from||'am'})};
+  const fx=$('amFix');if(fx)fx.onclick=()=>{const w=rows.filter(r=>r.ans&&!r.ok).map(r=>r.id);JRGO=AQ.jr||null;amStart(w,AQ.name.replace(/ · תיקון$/,'')+' · תיקון','learn',AQ.from,AQ.t)};
+  const rd=$('amRedo');if(rd)rd.onclick=()=>{JRGO=AQ.jr||null;const u=AQ.unit;amStart(AQ.ids,AQ.name,'learn',AQ.from,AQ.t);AQ.unit=u;amSaveQ()};
   const jn=$('amJrNext');if(jn)jn.onclick=()=>{const x=jrBlock(AQ.jr);if(x)jrRun(x)};const la=$('amLearnAdded');if(la)la.onclick=()=>{JRGO=AQ.jr||null;wStart('collect',AQ.added)};
   app.querySelectorAll('[data-ri]').forEach(b=>b.onclick=()=>{const i=+b.dataset.ri,s=aqSt(i);if(!s.done){s.done=!!s.sel;}AQ.mode='learn';AQ.i=i;amSaveQ();draw();window.scrollTo(0,0)})}
 
@@ -1134,24 +1148,48 @@ function amProgress(){if(!AMD)return amLoading();
     ${top.length?`<div class="am-box why"><h4>למה אני טועה</h4>${top.map(([k,n])=>`<p>${(WHY.find(w=>w[0]===k)||[,k])[1]} – ${n}</p>`).join('')}<p class="hint" style="margin:0">💡 ${amAdvice(top[0][0])}</p></div>`:''}
     ${AMS.ex&&Object.keys(AMS.ex).length?`<div class="am-box"><h4>סימולציות</h4>${Object.entries(AMS.ex).map(([k,r])=>`<p>${k[0]==='b'?'ניהול זמנים פרק '+k.slice(1):'סימולציה '+k}: <b>${r.ok}/22</b> · ${Math.round(r.ms/6e4)} דק׳</p>`).join('')}</div>`:''}
   </div>`;const sa=$('schAuto');if(sa)sa.onclick=()=>{AMS.na=1;amSave();draw()};app.querySelectorAll('.am-card2[data-go]').forEach(b=>b.onclick=()=>go({screen:b.dataset.go}));amBindNav()}
-/* ---------- 🧬 word parts drill (prefixes / suffixes) ---------- */
+/* ---------- 🧬 prefixes & suffixes: their own page – the method, the tables and active practice ----------
+   Each affix has a streak in AMS.wpa['pre:i'|'suf:i'] = {s, n, ok, t}; 3 right in a row = mastered. Unmastered ones come first (weakest first),
+   a mastered one sometimes comes back. Two kinds of question, mixed: "what does the prefix/suffix mean?" and "what does this word mean?" (the affix marked). */
 let WP=null;
-function wpNext(){const P=AMD.px||{pre:[],suf:[]},all=[];['pre','suf'].forEach(k=>P[k].forEach((e,i)=>e.ex.forEach(([en,he])=>{if(en.length>3&&he)all.push({k,i,en,he})})));
-  const seen=AMS.wp||{},fresh=all.filter(x=>!seen[x.en]),pool=fresh.length?fresh:all,it=pool[Math.floor(Math.random()*pool.length)];
-  const other=shuffle(all.filter(x=>x.he!==it.he)).slice(0,3).map(x=>x.he);WP={it,opts:shuffle([it.he,...other]),sel:null,hint:false}}
-function amParts(){if(!AMD)return amLoading();if(!WP)wpNext();const it=WP.it,E=AMD.px[it.k][it.i],done=WP.sel!=null,n=Object.keys(AMS.wp||{}).length,ok=Object.values(AMS.wp||{}).filter(v=>v[0]).length;
-  const mark=it.k==='pre'?it.en.replace(new RegExp('^('+E.p.split(/[\/ (]/)[0].replace(/[^a-z]/gi,'')+')','i'),'<u>$1</u>'):it.en.replace(new RegExp('('+E.p.replace(/[^a-z]/gi,'')+')$','i'),'<u>$1</u>');
+const wpAll=()=>{const P=AMD.px||{pre:[],suf:[]},o=[];['pre','suf'].forEach(k=>P[k].forEach((e,i)=>o.push({k,i,key:k+':'+i,e})));return o};
+const wpSt=key=>(AMS.wpa||{})[key]||{s:0,n:0,ok:0,t:0};
+const wpForm=(k,e)=>k==='pre'?String(e.p).split(/[\/,]/).map(x=>x.trim()+'-').join(' / '):String(e.p).split(/[\/,]/).map(x=>'-'+x.trim()).join(' / ');
+function wpNext(){const A=wpAll();if(!A.length){WP=null;return}const last=WP&&WP.a&&WP.a.key;
+  const weak=A.filter(a=>wpSt(a.key).s<3&&a.key!==last).sort((x,y)=>wpSt(y.key).s-wpSt(x.key).s||(wpSt(y.key).n?1:0)-(wpSt(x.key).n?1:0)||A.indexOf(x)-A.indexOf(y));
+  const a=(weak.length&&Math.random()>.2)?weak[Math.floor(Math.random()*Math.min(4,weak.length))]:A.filter(x=>x.key!==last)[Math.floor(Math.random()*(A.length-1))];
+  const words=a.e.ex.filter(([en,he])=>en&&he&&en.length>3&&new RegExp(a.k==='pre'?'^'+String(a.e.p).split(/[\/,]/)[0].replace(/[^a-z]/gi,''):String(a.e.p).split(/[\/,]/)[0].replace(/[^a-z]/gi,'')+'$','i').test(en));
+  const kind=words.length&&Math.random()<.5?'word':'aff';
+  if(kind==='aff'){const others=shuffle(A.filter(x=>x.k===a.k&&wPxH(x.e.h)!==wPxH(a.e.h)).map(x=>wPxH(x.e.h))).filter((v,i,arr)=>arr.indexOf(v)===i).slice(0,3);
+    WP={a,kind,ans:wPxH(a.e.h),opts:shuffle([wPxH(a.e.h),...others]),sel:null}}
+  else{const [en,he]=words[Math.floor(Math.random()*words.length)];const others=shuffle(A.flatMap(x=>x.e.ex.map(r=>r[1])).filter(h=>h&&h!==he)).filter((v,i,arr)=>arr.indexOf(v)===i).slice(0,3);
+    WP={a,kind,en,ans:he,opts:shuffle([he,...others]),sel:null,hint:false}}}
+function amParts(){if(!AMD)return amLoading();if(!WP)wpNext();if(!WP)return go({screen:'am'});
+  const A=wpAll(),mastered=A.filter(a=>wpSt(a.key).s>=3).length,{a,kind}=WP,E=a.e,done=WP.sel!=null,isPre=a.k==='pre',name=isPre?'התחילית':'הסופית';
+  const back=['amq','amqh','am','amw'].includes(S.mfrom)?S.mfrom:'am';
+  const base=String(E.p).split(/[\/,]/)[0].replace(/[^a-z]/gi,'');
+  const mark=kind==='word'?esc(WP.en).replace(new RegExp(isPre?'^('+base+')':'('+base+')$','i'),'<u>$1</u>'):'';
   app.innerHTML=`<div class="screen am-scr">
-    ${amNav('amw','מילים')}
-    <div class="am-title"><span class="gi g-s">🧬</span><div><h2>פירוק מילים</h2><p>${n?`${ok}/${n} נכון · `:''}מה פירוש המילה? רמז: ה${it.k==='pre'?'תחילית':'סופית'} המסומנת.</p></div></div>
-    <div class="am-card"><div class="w" dir="ltr">${SAYB(it.en)}<span>${mark}</span></div>
-      ${WP.hint||done?`<p class="center" style="margin:0"><b dir="ltr">${esc(E.p)}</b> = ${esc(E.h)}</p>`:`<button class="link" id="wpHint" style="align-self:center">💡 מה אומרת ה${it.k==='pre'?'תחילית':'סופית'}?</button>`}</div>
-    ${!done?EXB('לחצי על הפירוש הנכון. 💡 מראה מה פירוש התחילית – נסי קודם בלי.'):''}
-    <div class="am-opts">${WP.opts.map((o,j)=>`<button class="am-opt he-opt${done?(o===it.he?' right':o===WP.sel?' wrong':''):''}" data-wp="${j}" ${done?'disabled':''}>${esc(o)}</button>`).join('')}</div>
-    ${done?`<div class="am-box"><h4>עוד מילים עם ${esc(E.p)}</h4><div class="am-words">${E.ex.map(([en,he])=>amWordRow(en,he,'parts')).join('')}</div></div><div class="am-cta"><button class="btn" id="wpNext">המילה הבאה ←</button></div>`:''}
+    ${amNav(back,back==='amq'?'חזרה לשאלה':back==='amqh'?'תרגול שאלות':'המסע')}
+    <div class="am-title"><div><h2>🧬 תחיליות וסופיות</h2><p>שולטת ב־${mastered} מתוך ${A.length} · 3 תשובות נכונות ברצף = נשלטה</p></div></div>
+    <span class="am-mini big"><i style="width:${Math.round(mastered/A.length*100)}%"></i></span>
+    <details class="am-box"><summary style="font-weight:800;cursor:pointer">📘 השיטה – איך משתמשים בזה במבחן</summary>${AMM.pre?`<div>${AMM.pre[1].replace(/<table[\s\S]*<\/table>/,'')}</div>`:''}
+      <p>מילה לא מוכרת בשאלה? מפרקים אותה: <b>תחילית + שלד + סופית</b>. התחילית נותנת את הכיוון (לא, שוב, לפני…), הסופית אומרת איזה סוג מילה זו (שם עצם, תואר, פועל) – ולפעמים זה מספיק כדי לפסול תשובות.</p>
+      <p>את התחיליות כדאי <b>לדעת בעל פה</b>; את הסופיות מספיק <b>להכיר</b>.</p></details>
+    <details class="am-box"><summary style="font-weight:800;cursor:pointer">📋 הטבלה המלאה</summary>${amPxTables()}</details>
+    <div class="am-card">
+      ${kind==='aff'?`<p class="hint center" style="margin:0">מה אומרת ${name}?</p><div class="w" dir="ltr"><span>${esc(wpForm(a.k,E))}</span></div>`
+        :`<p class="hint center" style="margin:0">מה פירוש המילה? ${name} מסומנת</p><div class="w" dir="ltr">${SAYB(WP.en)}<span>${mark}</span></div>
+          ${WP.hint||done?`<p class="center" style="margin:0"><b dir="ltr">${esc(wpForm(a.k,E))}</b> = ${esc(wPxH(E.h))}</p>`:`<button class="link" id="wpHint" style="align-self:center">💡 מה אומרת ${name}?</button>`}`}
+    </div>
+    <div class="am-opts">${WP.opts.map((o,j)=>`<button class="am-opt he-opt${done?(o===WP.ans?' right':o===WP.sel?' wrong':''):''}" data-wp="${j}" ${done?'disabled':''}>${esc(o)}</button>`).join('')}</div>
+    ${done?`<p class="am-fb ${WP.sel===WP.ans?'ok':'bad'}">${WP.sel===WP.ans?'נכון! ✓':'לא נכון – התשובה מסומנת בירוק'}</p>
+      <div class="am-box"><h4><bdi dir="ltr">${esc(wpForm(a.k,E))}</bdi> = ${esc(wPxH(E.h))}</h4><p class="hint" style="margin:0">רצף: ${Math.min(3,wpSt(a.key).s)}/3</p><div class="am-words">${E.ex.map(([en,he])=>amWordRow(en,he,'parts')).join('')}</div></div>
+      <div class="am-cta"><button class="btn" id="wpNext">השאלה הבאה ←</button></div>`:''}
   </div>`;
   amBindNav();const h=$('wpHint');if(h)h.onclick=()=>{WP.hint=true;draw()};
-  app.querySelectorAll('[data-wp]').forEach(b=>b.onclick=()=>{WP.sel=WP.opts[+b.dataset.wp];AMS.wp=AMS.wp||{};AMS.wp[it.en]=[WP.sel===it.he?1:0,amNow()];amSave();draw()});
+  app.querySelectorAll('[data-wp]').forEach(b=>b.onclick=()=>{if(WP.sel!=null)return;WP.sel=WP.opts[+b.dataset.wp];const ok=WP.sel===WP.ans&&!WP.hint;AMS.wpa=AMS.wpa||{};const st=wpSt(a.key);
+    AMS.wpa[a.key]={s:ok?st.s+1:0,n:st.n+1,ok:st.ok+(WP.sel===WP.ans?1:0),t:amNow()};if(kind==='word'){AMS.wp=AMS.wp||{};AMS.wp[WP.en]=[WP.sel===WP.ans?1:0,amNow()]}amSave();draw()});
   const nx=$('wpNext');if(nx)nx.onclick=()=>{wpNext();draw();window.scrollTo(0,0)};
   app.querySelectorAll('[data-wadd]').forEach(b=>b.onclick=()=>{const e=b.dataset.wadd;if(AMS.w[wKey(e)])return;wAdd(e,b.dataset.wh,'','parts');b.classList.add('in');b.textContent='✓ בסדנה'})}
 function amAdvice(k){return {vocabQ:'הכי משתלם: להוסיף את המילים מהשאלות לסדנת המילים ולעבור עליהן כל יום.',vocabA:'נסי קודם לנחש בעברית את ההשלמה, ורק אז לחפש תשובה שמתאימה לה – כך מילים לא מוכרות בתשובות פחות מבלבלות.',conn:'סמני כל מילת קישור לפני שאת קוראת את התשובות, ושאלי: ניגוד? סיבה? הוספה?',similar:'מילים שנראות דומות (in-, -ible…): פרקי לתחילית ושלד. בסדנת המילים כדאי לבנות אסוציאציה לכל אחת בנפרד.',trap:'בשאלות פרט והסקה – לחזור למשפט בקטע ולבדוק שהתשובה עונה בדיוק על מה ששאלו.',extra:'בניסוח מחדש: לחפש בכל תשובה מידע שלא כתוב במקור, ומילים כמו always / only / all.',rushed:'בתרגול לפי השיטה הזמן פחות חשוב – קודם דיוק, אחר כך מהירות.',guess:'כשמנחשים – קודם לפסול מה שבטוח לא נכון.'}[k]||''}
@@ -1252,7 +1290,7 @@ function wTask(w){let t=WPATH[w.st]||'he2en';
   if(t==='cloze2'&&!wOther(w))t=wCtx(w)?'cloze':'he2en';
   return t}
 const wCtx=w=>{const c=wCard(w);return [w.my,w.c,c&&c.s].find(x=>x&&blankOut(x,w.e))||''};
-const wTaskNow=w=>WS&&WS.step==='first'?'he2en':WS&&WS.mode==='r2'?(wCtx(w)||wOther(w)?'mc':'he2en'):wTask(w);
+const wTaskNow=w=>WS&&WS.step==='first'?'he2en':WS&&WS.mode==='r2'&&WS.phase==='he'?(wHeSent(w)?'hecl':(wCtx(w)||wOther(w)?'mc':'he2en')):WS&&WS.mode==='r2'?(wCtx(w)||wOther(w)?'mc':'he2en'):wTask(w);
 /* the Hebrew translation of the word's example sentence, with the meaning taken out */
 function heBlank(tr,h){if(!tr||!h)return '';const vs=String(h).replace(/\(.*?\)/g,'').split(/[,;/·]/).map(x=>x.trim().replace(/[-־]$/,'')).filter(x=>x.length>1).sort((a,b)=>b.length-a.length);
   const E=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
@@ -1282,13 +1320,13 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   const ctx=w.c||ex||'';
   let h=`<div class="screen qz am-scr">
     <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${HOME}${INFOB()}</span></div>
-    <div class="am-bar"><span class="am-chip t">${WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'?'🔁 שלב 3 – בחירה במשפט':(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span>${w.st?`<span class="am-timer">${wStageDots(w)}</span>`:''}</div>
+    <div class="am-bar"><span class="am-chip t">${WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 שלב 4 – משפט בעברית':'🔁 שלב 3 – בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span>${w.st?`<span class="am-timer">${wStageDots(w)}</span>`:''}</div>
     <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>`;
   const step=WS.step;
   if(step==='meet'){
     if(!w.as&&x.tip){w.as=x.tip;w.asSeen=[x.tip];amSave()}
     const others=card&&card.others&&card.others.length;
-    h+=WS.assocOnly?'':`<div class="am-path"><span class="on">1 · הכרות</span><span>2 · כתיבה</span><span>3 · בחירה במשפט</span></div>`;
+    h+=WS.assocOnly?'':`<div class="am-path"><span class="on">1 · הכרות</span><span>2 · כתיבה</span>${WS.perWord?'<span>3 · באנגלית</span><span>4 · בעברית</span>':'<span>3 · בחירה במשפט</span>'}</div>`;
     h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>
       ${others?`<p class="hint center" style="margin:0">לומדים עכשיו רק את הפירוש הזה. ${others===1?'לפירוש השני':'ל־'+others+' הפירושים האחרים'} של המילה יש כרטיס נפרד.</p>`:''}
       ${ctx?`<div class="ctx" data-ctx="${esc(ctx)}">${SAYB(ctx,'sm inl')}${tapEn(ctx)}</div>${x.tr&&ctx===ex?`<p class="hint" style="margin:0">${esc(x.tr)}</p>`:''}`:''}</div>
@@ -1314,8 +1352,9 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
       ${aiNeedKey()}`}
   else{ /* recall tasks */
     const task=wTaskNow(w),hint=WS.hint||0,res=WS.res;
-    if(step==='first')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="on">2 · כתיבה</span><span>3 · בחירה במשפט</span></div>`;
-    if(WS.mode==='r2')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="done">2 · כתיבה ✓</span><span class="on">3 · בחירה במשפט</span></div>`;
+    if(step==='first')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="on">2 · כתיבה</span>${WS.perWord?'<span>3 · באנגלית</span><span>4 · בעברית</span>':'<span>3 · בחירה במשפט</span>'}</div>`;
+    if(WS.mode==='r2'&&WS.perWord)h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="done">2 · כתיבה ✓</span><span class="${WS.phase==='he'?'done':'on'}">3 · באנגלית${WS.phase==='he'?' ✓':''}</span><span class="${WS.phase==='he'?'on':''}">4 · בעברית</span></div>`;
+    else if(WS.mode==='r2')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="done">2 · כתיבה ✓</span><span class="on">3 · בחירה במשפט</span></div>`;
     if(WS.mode!=='new'&&WS.mode!=='r2'&&w.st>=1&&!(WS.re||[]).includes(WS.list[WS.i]))h+=`<div class="am-path">${[1,2,3,4,5,6].map(i=>`<span class="${w.st>i?'done':w.st===i?'on':''}">${i}</span>`).join('')}</div><p class="hint center" style="margin:0">חזרה ${w.st} מתוך 6 · ${{hecl:'משפט בעברית – בחירה',mc:'משפט באנגלית – בחירה',cloze2:'משפט חדש – כתיבה',cloze:'השלמה במשפט – כתיבה',en2he:'הפירוש בעברית',he2en:'כתיבה באנגלית'}[task]}</p>`;
     const mcS=task==='mc'?blankOut(WS.mode==='r2'?(wCtx(w)||wOther(w)):(wOther(w)||wCtx(w)),w.e):'',heS=task==='hecl'?wHeSent(w):'';
     if(task==='mc'||task==='hecl'){
@@ -1403,8 +1442,12 @@ function wBind(w,x){
   const on=$('wOn');if(on)on.onclick=wNextWord}
 function wNextWord(){
   if(WS.perWord){
-    if(WS.mode==='new'){WS.mode='r2';WS.step='recall';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0);return}
-    WS.mode='new';WS.i++;WS.step='meet';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0);return}
+    WS.hint=0;WS.res=null;
+    /* 1–2: each word – meet, then write it */
+    if(WS.mode==='new'){WS.i++;WS.step='meet';if(WS.i>=WS.list.length){WS.mode='r2';WS.phase='mc';WS.step='recall';WS.i=0;WS.list=WS.list.filter(k=>AMS.w[k]&&AMS.w[k].st>=1&&AMS.w[k].st<WMAST)}}
+    /* 3: all the words, each chosen in an English sentence; 4: all the words, each put into a Hebrew sentence */
+    else if(WS.mode==='r2'){WS.i++;if(WS.i>=WS.list.length&&WS.phase==='mc'){WS.phase='he';WS.i=0}}
+    wSave();draw();window.scrollTo(0,0);return}
   /* one word right after the dictionary quiz: write it → choose it in a sentence → back to the quiz */
   if(WS.one){if(WS.mode==='new'){WS.mode='r2';WS.step='recall';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0);return}
     const f=WS.from||'amnw';WS=null;wSave();go({screen:f});if(f==='quiz'&&typeof autoSay==='function'&&Q&&!Q.checked)try{autoSay()}catch(e){}return}
@@ -1479,15 +1522,15 @@ function amMethods(){
     ${Object.entries(AMM).map(([k,[t]])=>`<button class="am-card2 g-s" data-tab="${k}"><span class="gi">${AMMI[k]||'📘'}</span><span class="grow"><b>${t}</b>${EX(AMMD[k]||'','')}</span></button>`).join('')}
   </div>`;amBindNav();app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>go({screen:'ammt',amTab:b.dataset.tab}))}
 const AMMD={score:'מבנה המבחן וכמה הציון באנגלית חשוב (פטור, קורסים).',gen:'4 העקרונות שתקפים לכל שאלות האנגלית.',sc:'השיטה להשלמת משפטים: לחשוב לפני התשובות.',rs:'השיטה לניסוח מחדש: מבנה, מילות קישור, ואיך פוסלים.',rc:'7 סוגי שאלות בהבנת הנקרא – איך מזהים ואיך פותרים כל אחד.',conn:'טבלת מילות הקישור לפי סוג הקשר (ניגוד, סיבה…).',pre:'מה אומרות התחיליות והסופיות + הטבלה המלאה מהקובץ.',basics:'פעלים מורכבים, ביטויים ומילים מבלבלות.',mem:'למה הסתכלות לא מספיקה, ומה כן עובד לזיכרון.'};
-function amMethod(){const k=S.amTab||'gen',M=AMM[k];if(!M)return go({screen:'amm'});
+function amMethod(){const k=S.amTab||'gen',M=AMM[k];if(!M)return go({screen:'amqh'});const back=['amq','amu','amqh','amjb','am'].includes(S.mfrom)?S.mfrom:'amqh';
   if(k==='pre'&&!AMD)return amLoading();
   const keys=Object.keys(AMM),i=keys.indexOf(k),nx=keys[i+1];
   app.innerHTML=`<div class="screen am-scr am-m">
-    ${amNav('amm','שיטות')}
+    ${amNav(back,back==='amq'?'חזרה לשאלה':back==='amu'?'חזרה לתרגול':back==='am'?'המסע':'תרגול שאלות')}
     <div class="am-title"><span class="gi g-s">${AMMI[k]||'📘'}</span><div><h2>${M[0]}</h2></div></div>
     <div class="am-box">${M[1]}${k==='pre'?amPxTables():''}</div>
     ${nx?`<button class="am-card2 g-s" data-tab="${nx}"><span class="gi">${AMMI[nx]||'📘'}</span><span class="grow"><small>הנושא הבא</small><b>${AMM[nx][0]}</b></span></button>`:''}
-  </div>`;amBindNav();app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{go({screen:'ammt',amTab:b.dataset.tab})})}
+  </div>`;amBindNav();app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{go({screen:'ammt',amTab:b.dataset.tab,mfrom:back})})}
 function amPxTables(){const P=AMD.px||{pre:[],suf:[]};const tb=(L,t)=>`<h4 style="margin-top:12px">${t} (${L.length})</h4><table><tr><th>${t==='תחיליות'?'תחילית':'סופית'}</th><th>פירוש</th><th>דוגמה</th></tr>${L.map(e=>`<tr><td class="en"><b>${esc(e.p)}</b></td><td>${esc(e.h)}</td><td>${e.ex.map(([en,he])=>`<span dir="ltr" style="font-family:var(--en)">${esc(en)}</span> – ${esc(he)}`).join('<br>')}</td></tr>`).join('')}</table>`;
   return `<p class="hint">מהקובץ "תחיליות וסופיות באנגלית". במילים שבנויות מתחילית או סופית מוכרת, הפירוק מופיע כ"טיפ מהשיטה" ליד האסוציאציה.</p>`+tb(P.pre,'תחיליות')+tb(P.suf,'סופיות')}
 
@@ -1583,7 +1626,7 @@ function startScreen(){const k=DW.filter(known).length,td=dayCount(dayKey()),due
     <div class="home-head"><div><h1>מה לומדים היום? 👋</h1><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>${RELOADBTN}</div>
     ${favCard()}
     <button class="st-app st-dict" id="stDict"><span class="st-i">📚</span><span class="st-t">מילון אנגלית</span><span class="st-d">${DW.length.toLocaleString()} פירושים · יודעת ${k.toLocaleString()} · היום ${td}/${GOAL}</span>${AMEX?'<span class="st-x">כל 4,000+ המילים לפי רמות: בחנים, כרטיסיות, מצב רכב, סימון ✓/✗, ומילים לשיעור הפרטי עם כתיבת משפטים.</span>':''}</button>
-    <button class="st-app st-am" id="stAm"><span class="st-i">🎯</span><span class="st-t">הכנה לאמירנט</span><span class="st-d">${[due?due+' מילים לחזרה':'',nl?nl+' מילים חדשות':'',mi?mi+' טעויות לתיקון':''].filter(Boolean).join(' · ')||'תרגול שאלות לפי השיטה'}</span>${AMEX?'<span class="st-x">הכנה למבחן: שאלות מהספרים לפי השיטה, חקירת כל טעות, ולמידת מילים פעילה עם חזרות בזמן הנכון.</span>':''}</button>
+    <button class="st-app st-am" id="stAm"><span class="st-i">🎯</span><span class="st-t">הכנה לאמירנט</span><span class="st-d">${[due?due+' מילים לחזרה':'',nl?nl+' מילים חדשות':''].filter(Boolean).join(' · ')||'תרגול שאלות לפי השיטה'}</span>${AMEX?'<span class="st-x">הכנה למבחן: שאלות מהספרים לפי השיטה, חקירת כל טעות, ולמידת מילים פעילה עם חזרות בזמן הנכון.</span>':''}</button>
   </div>`;
   $('stDict').onclick=()=>go({screen:'home'});favGoBind();$('stAm').onclick=()=>go({screen:'am'})}
 function amHomeCard(){const due=wDue().length,nl=Math.max(0,wNPer()-wNewToday());

@@ -721,7 +721,7 @@ let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar
 try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw'].includes(S.screen))S.screen='start'}catch(e){}
 /* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
 try{if(!sessionStorage.getItem('dictOpen')){sessionStorage.setItem('dictOpen','1');if(!['quiz','car'].includes(S.screen))S.screen='start'}}catch(e){}
-function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb}))}catch(e){}}
+function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb,mfrom:S.mfrom}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
 /* ↑ button: back to the top of long pages */
