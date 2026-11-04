@@ -1,6 +1,6 @@
 import asyncio,json
 from playwright.async_api import async_playwright
-OUT=''+__import__('os').path.dirname(__import__('os').path.abspath(__file__))+'/'
+OUT='/tmp/claude-0/-home-claude/57ff57e9-f98a-5dad-a91a-88f510546bae/scratchpad/am/'
 GEM={"ideas":[{"sound":"צליל","scene":"תמונה מצחיקה","link":"קשר"}],"method_tip":"טיפ","analysis":"ניתוח","steps":["צעד 1","צעד 2"],"ok":True,"fixes":[],"corrected":"","word_present":True,"word_used_correctly":True,"mistakes":[],"translation":"תרגום","summary":"סיכום","lesson":"לקח"}
 async def gem(route):
   await route.fulfill(status=200,content_type='application/json',body=json.dumps({"candidates":[{"content":{"parts":[{"text":json.dumps(GEM,ensure_ascii=False)}]}}]}))
@@ -101,7 +101,7 @@ async def main():
       if await E("S.screen")=='amq':await q_drive(60)
       if await E("S.screen")=='amwl':await ws_drive()
     log.append('hub after plan: extra='+str(await E("jrPlan().b.some(x=>x.x)"))+' next='+str(await pg.locator('#jrNext').count()))
-    await go("AMS.tm[dayKey()]=200*6e4;AMS.jp[dayKey()].b.forEach(x=>x.done=x.done||Date.now());go({screen:'am'})",400)
+    await go("Object.values(AMS.w).forEach(w=>{if(w.st>=1)w.due=Date.now()+2*DAY});AMS.tm[dayKey()]=200*6e4;AMS.jp[dayKey()].b.forEach(x=>x.done=x.done||Date.now());go({screen:'am'})",400)
     log.append('tomorrow btn='+str(await pg.locator('#jrNext').count()))
     await pg.click('#jrNext');await pg.wait_for_timeout(400);log.append('ahead cur:'+await E("jrCurKey()"))
     # simulation
