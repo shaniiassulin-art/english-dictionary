@@ -1380,12 +1380,15 @@ function qMark(v){const w=Q.list[Q.i];setKnow(w.id,v);Q.marks=Q.marks||{};Q.mark
   /* marked before answering: open the answer (options with the right ones, tip, notes) as if checked, and stay on the word */
   if(!Q.checked&&!V.on){if(!Q.opts)Q.opts=buildOpts(w);Q.stage='pick';Q.sel=[];Q.checked=true;Q.skip=true;Q.sent=Q.sent;saveQ();draw();window.scrollTo(0,0);return false}
   return qNext()}
-function qNext(){const n=Q.list.length;
+function qNext(){const n=Q.list.length,wPrev=Q.list[Q.i];
   Q.st=Q.st||{};Q.st[Q.i]=curState();
   /* on to the next word not marked yet; when none is left after this one, the quiz is done */
   let j=Q.i+1;while(j<n&&Q.marks[Q.list[j].id])j++;
-  if(j>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);go({screen:'result'});return true}
-  enterWord(j);saveQ();draw();window.scrollTo(0,0);
+  if(j>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'result'))return true;go({screen:'result'});return true}
+  enterWord(j);saveQ();
+  /* today's new words (אמירנט): right after a word, its writing + sentence step, then back here to the next word */
+  if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'quiz'))return false;
+  draw();window.scrollTo(0,0);
   if(!V.on){if(!Q.checked)autoSay();if(Q.mode==='read'&&Q.stage==='write'){const i=$('inp0');i&&i.focus({preventScroll:true})}}
   return false}
 

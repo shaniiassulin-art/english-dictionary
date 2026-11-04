@@ -1606,12 +1606,15 @@ function qMark(v){const w=Q.list[Q.i];setKnow(w.id,v);Q.marks=Q.marks||{};Q.mark
   /* marked before answering: open the answer (options with the right ones, tip, notes) as if checked, and stay on the word */
   if(!Q.checked&&!V.on){if(!Q.opts)Q.opts=buildOpts(w);Q.stage='pick';Q.sel=[];Q.checked=true;Q.skip=true;Q.sent=Q.sent;saveQ();draw();window.scrollTo(0,0);return false}
   return qNext()}
-function qNext(){const n=Q.list.length;
+function qNext(){const n=Q.list.length,wPrev=Q.list[Q.i];
   Q.st=Q.st||{};Q.st[Q.i]=curState();
   /* on to the next word not marked yet; when none is left after this one, the quiz is done */
   let j=Q.i+1;while(j<n&&Q.marks[Q.list[j].id])j++;
-  if(j>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);go({screen:'result'});return true}
-  enterWord(j);saveQ();draw();window.scrollTo(0,0);
+  if(j>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'result'))return true;go({screen:'result'});return true}
+  enterWord(j);saveQ();
+  /* today's new words (אמירנט): right after a word, its writing + sentence step, then back here to the next word */
+  if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'quiz'))return false;
+  draw();window.scrollTo(0,0);
   if(!V.on){if(!Q.checked)autoSay();if(Q.mode==='read'&&Q.stage==='write'){const i=$('inp0');i&&i.focus({preventScroll:true})}}
   return false}
 
@@ -2683,17 +2686,24 @@ const jnCards=x=>jnBatch(x).map(jnCard).filter(Boolean);
 /* still to learn: not marked ✓ and not started yet */
 const jnLeft=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.st===0&&!(c&&isY(c))});
 const jnKey=x=>'J'+String(x.id).replace(/[^0-9a-z]/gi,'');
+/* called by the dictionary quiz after each word of a 'J' session: a word that isn't ✓ gets its step 2 at once (write it, then choose it in a sentence), then back to the quiz */
+function jnAfterWord(card,back){try{if(!Q||!/^J/.test(String(Q.key||'').replace(/^[NUY](?=J)/,''))||!card)return false;
+  const x=jrBlock(S.jb);if(!x||x.k!=='new'||jnKey(x)!==String(Q.key).replace(/^[NUY](?=J)/,''))return false;
+  const k=jnBatch(x).find(k=>{const c=jnCard(k);return c&&c.id===card.id});const w=k&&AMS.w[k];if(!w||w.st!==0)return false;
+  if(isY(card)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id);amSave();return false}
+  const t=(EXTRA[card.xid||card.id]||{}).tip;if(!w.as&&t)w.as=t;
+  WS={mode:'new',one:1,list:[k],i:0,step:'first',skipMeet:1,hint:0,from:back,ok:0,bad:0,jr:x.id};amSave();wSave();go({screen:'amwl'});return true}catch(e){return false}}
 function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.k!=='new'){go({screen:'am'});return}
   const ws=jnCards(x),key=jnKey(x),name='מילים חדשות להיום',left=jnLeft(x),known=ws.filter(isY).length,started=jnBatch(x).filter(k=>AMS.w[k]&&AMS.w[k].st>=1).length;
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">המסע</button>${HOME}</div>
     <div><h2>${name}</h2><p class="sub">${ws.length} מילים מהמילון · מילים שסימנת ✗ או שעוד לא סימנת</p><p class="known-line">${countLine(ws)}</p></div>
-    <p class="lbl">שלב 1 · הכרות – בוחן, כרטיסיות או מצב רכב</p>
+    <p class="lbl">לומדים כמו במילון – בבוחן, אחרי כל מילה מגיעים מיד הכתיבה שלה והבחירה במשפט, ואז חוזרים למילה הבאה</p>
     ${quizPanel(key,ws,'בוחן על המילים החדשות',name,'amnw')}
     ${catPanel(key,ws)||''}
     <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
     ${cardsBtn(key,ws)}
-    <p class="lbl">שלב 2 · כתיבת המילה ובחירה במשפט</p>
+    <p class="lbl">מילים שעוד לא עברו כתיבה ובחירה במשפט (למשל אחרי כרטיסיות או מצב רכב)</p>
     <div class="panel">
       <p class="hint" style="margin:0">${left.length?`${left.length} מילים לכתוב באנגלית לפי הפירוש, ואז לבחור כל אחת במשפט. אחרי זה הן נכנסות לחזרות (20 דקות, יום, 3 ימים, שבוע, שבועיים, חודש).${known?` ${known} סימנת ✓ – הן לא נכנסות ללמידה.`:''}`:started?'✓ כל המילים כבר בחזרות.':'אין מילים ללמוד – כולן מסומנות ✓.'}</p>
       ${left.length?`<button class="btn" id="nwGo">✍️ כתיבה ובחירה במשפט · ${left.length} מילים</button>`:`<button class="btn" id="nwDone">סיום ← חזרה למסע</button>`}
@@ -3367,8 +3377,8 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
       ${aiNeedKey()}`}
   else{ /* recall tasks */
     const task=wTaskNow(w),hint=WS.hint||0,res=WS.res;
-    if(step==='first')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="on">2 · שליפה</span><span>3 · בחירה במשפט</span></div>`;
-    if(WS.mode==='r2')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="done">2 · שליפה ✓</span><span class="on">3 · בחירה במשפט</span></div>`;
+    if(step==='first')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="on">2 · כתיבה</span><span>3 · בחירה במשפט</span></div>`;
+    if(WS.mode==='r2')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="done">2 · כתיבה ✓</span><span class="on">3 · בחירה במשפט</span></div>`;
     if(WS.mode!=='new'&&WS.mode!=='r2'&&w.st>=1&&!(WS.re||[]).includes(WS.list[WS.i]))h+=`<div class="am-path">${[1,2,3,4,5,6].map(i=>`<span class="${w.st>i?'done':w.st===i?'on':''}">${i}</span>`).join('')}</div><p class="hint center" style="margin:0">חזרה ${w.st} מתוך 6 · ${{hecl:'משפט בעברית – בחירה',mc:'משפט באנגלית – בחירה',cloze2:'משפט חדש – כתיבה',cloze:'השלמה במשפט – כתיבה',en2he:'הפירוש בעברית',he2en:'כתיבה באנגלית'}[task]}</p>`;
     const mcS=task==='mc'?blankOut(WS.mode==='r2'?(wCtx(w)||wOther(w)):(wOther(w)||wCtx(w)),w.e):'',heS=task==='hecl'?wHeSent(w):'';
     if(task==='mc'||task==='hecl'){
@@ -3440,7 +3450,11 @@ function wBind(w,x){
   const sn=$('wSelfN');if(sn)sn.onclick=()=>{WS.res={ok:false,typed:WS.res.typed};wAfter(w,false);wSave();draw()};
   const cp=$('wCopy');if(cp){setTimeout(()=>{try{cp.focus({preventScroll:true})}catch(e){}},50);cp.oninput=()=>{if(cp.value.trim().toLowerCase()===w.e.toLowerCase()){WS.res.copied=true;wSave();draw()}}}
   const on=$('wOn');if(on)on.onclick=wNextWord}
-function wNextWord(){WS.i++;WS.step=WS.mode==='new'?(WS.skipMeet?'first':'meet'):'recall';WS.hint=0;WS.res=null;WS.chk=null;WS.draft='';
+function wNextWord(){
+  /* one word right after the dictionary quiz: write it → choose it in a sentence → back to the quiz */
+  if(WS.one){if(WS.mode==='new'){WS.mode='r2';WS.step='recall';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0);return}
+    const f=WS.from||'amnw';WS=null;wSave();go({screen:f});if(f==='quiz'&&typeof autoSay==='function'&&Q&&!Q.checked)try{autoSay()}catch(e){}return}
+  WS.i++;WS.step=WS.mode==='new'?(WS.skipMeet?'first':'meet'):'recall';WS.hint=0;WS.res=null;WS.chk=null;WS.draft='';
   /* after all the new words: a second quick round of all of them (short-term memory), then the missed ones */
   if(WS.i>=WS.list.length&&WS.mode==='new'&&(WS.counted||[]).length){WS.list=WS.list.concat(shuffle(WS.counted));WS.mode='r2';WS.step='recall';WS.r2at=WS.i}
   else if(WS.i>=WS.list.length&&WS.mode==='r2'){WS.mode='rev'}
