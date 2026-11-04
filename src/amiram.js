@@ -43,9 +43,9 @@ function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const
   else if(/ · /.test(w.h||'')&&typeof W!=='undefined'){try{const cc=wCard(w);if(cc&&cc.h[0])w.h=cc.h[0]}catch(e){}}}}
 function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});amFixW();LS.set('dictAm',JSON.stringify(AMS));amTakeSess()}
 /* a session saved later on another device replaces this device's copy (not while it is open on this screen) */
-function amTakeSess(){const ss=AMS.ss||{};try{
-  const w=ss.ws;if(w&&(w[1]||0)>(+LS.get('dictAmWsT')||0)&&S.screen!=='amwl'&&!(S.screen==='quiz'&&/^JW/.test(String(S.active||'')))){WS=w[0];LS.set('dictAmWs',JSON.stringify(WS));LS.set('dictAmWsT',String(w[1]))}
-  const q=ss.aq;if(q&&(q[1]||0)>(+LS.get('dictAmQT')||0)&&S.screen!=='amq'){AQ=q[0];LS.set('dictAmQ',JSON.stringify(AQ));LS.set('dictAmQT',String(q[1]))}}catch(e){}}
+function amTakeSess(force){const ss=AMS.ss||{};try{
+  const w=ss.ws;if(w&&(w[1]||0)>(+LS.get('dictAmWsT')||0)&&(force||S.screen!=='amwl'&&!(S.screen==='quiz'&&/^JW/.test(String(S.active||''))))){WS=w[0];LS.set('dictAmWs',JSON.stringify(WS));LS.set('dictAmWsT',String(w[1]))}
+  const q=ss.aq;if(q&&(q[1]||0)>(+LS.get('dictAmQT')||0)&&(force||S.screen!=='amq')){AQ=q[0];LS.set('dictAmQ',JSON.stringify(AQ));LS.set('dictAmQT',String(q[1]))}}catch(e){}}
 function amSessPut(f,v){const t=Date.now();AMS.ss=AMS.ss||{};AMS.ss[f]=[v,t];LS.set(f==='ws'?'dictAmWsT':'dictAmQT',String(t));LS.set('dictAm',JSON.stringify(AMS));try{dirty()}catch(e){}}
 const DAY=864e5;
 const amNow=()=>Date.now();

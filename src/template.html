@@ -495,11 +495,12 @@ function mergeData(a,b){
   const am=amMerge(a.am,b.am);
   return{prog,sess,sdel,know,days,notes,sent,gk,fav,am};
 }
-function applyRemote(d,t){
+function applyRemote(d,t,fresh){
   SYNC.applying=true;
   try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));if(d.gk){LS.set('dictGemKeyT',JSON.stringify(d.gk));LS.set('dictGemKey',d.gk[0]||'')}if(d.fav){FAV=d.fav;LS.set('dictFav',JSON.stringify(d.fav))}if(d.am)amApply(d.am);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   /* the sentences page is updated in place (never redrawn while typing); other pages keep their scroll position */
-  if(S.screen==='sent')sentRefresh();else if(!['quiz','cards','amq','amwl'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
+  if(fresh)try{reopenFresh()}catch(e){}
+  if(S.screen==='sent')sentRefresh();else if(fresh||!['quiz','cards','amq','amwl'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
 }
 async function syncNow(quiet){
   if(SYNC.pushing)return;
@@ -508,7 +509,9 @@ async function syncNow(quiet){
     if(!rem){await push();return}
     if(SYNC.pushing||SYNC.timer)return;
     const local=JSON.parse(snapshot()),merged=mergeData(rem.data,local);
-    if(normD(merged)!==normD(local))applyRemote(merged,Date.now());
+    /* the first sync after a load/refresh: the open screen takes the newest place from any device */
+    const fresh=!SYNC.boot;SYNC.boot=true;
+    if(normD(merged)!==normD(local))applyRemote(merged,Date.now(),fresh);
     if(normD(merged)!==normD(rem.data)){LS.set('dictUpdated',String(Date.now()));await push();return}
     setSync('ok');
   }catch(e){SYNC.ready=true;setSync('error')}
@@ -1840,6 +1843,12 @@ function restoreScroll(){let v=null;try{v=JSON.parse(LS.get('dictScroll')||'null
   to();requestAnimationFrame(to);setTimeout(to,150);setTimeout(()=>{to();done();restoreCaret()},600);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(SCR.restoring)to()})}
 /*__AMIRAM_JS__*/
+/* after a refresh: the session open on this screen is re-read from the merged (newest) data */
+function reopenFresh(){
+  if(typeof amTakeSess==='function')amTakeSess(true);
+  if(S.screen==='quiz'&&S.active&&SESS[S.active])loadQ(S.active);
+  if(S.screen==='cards'&&S.active){const ss=SESS[S.active];if(ss&&ss.kind==='cards')C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false,from:ss.from}}
+  if(S.screen==='amwl'&&!WS)S.screen='am';if(S.screen==='amq'&&!AQ)S.screen='am'}
 (function boot(){
   if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
   if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false,from:ss.from}}else S.screen='group'}

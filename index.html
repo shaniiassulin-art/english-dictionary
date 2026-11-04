@@ -509,11 +509,12 @@ function mergeData(a,b){
   const am=amMerge(a.am,b.am);
   return{prog,sess,sdel,know,days,notes,sent,gk,fav,am};
 }
-function applyRemote(d,t){
+function applyRemote(d,t,fresh){
   SYNC.applying=true;
   try{prog=d.prog||{};SESS=d.sess||{};SDEL=d.sdel||{};KNOW=d.know||migrateMist(d.mist);DAYS=d.days||DAYS;LS.set('dictDays',JSON.stringify(DAYS));NOTES=d.notes||NOTES;LS.set('dictNotes',JSON.stringify(NOTES));SENT=d.sent||SENT;LS.set('dictSent',JSON.stringify(SENT));if(d.gk){LS.set('dictGemKeyT',JSON.stringify(d.gk));LS.set('dictGemKey',d.gk[0]||'')}if(d.fav){FAV=d.fav;LS.set('dictFav',JSON.stringify(d.fav))}if(d.am)amApply(d.am);save();saveSess();saveKnow();LS.set('dictUpdated',String(t));LS.set('dictSynced',String(t))}finally{SYNC.applying=false}
   /* the sentences page is updated in place (never redrawn while typing); other pages keep their scroll position */
-  if(S.screen==='sent')sentRefresh();else if(!['quiz','cards','amq','amwl'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
+  if(fresh)try{reopenFresh()}catch(e){}
+  if(S.screen==='sent')sentRefresh();else if(fresh||!['quiz','cards','amq','amwl'].includes(S.screen)){const y=window.scrollY;draw();window.scrollTo(0,y)}
 }
 async function syncNow(quiet){
   if(SYNC.pushing)return;
@@ -522,7 +523,9 @@ async function syncNow(quiet){
     if(!rem){await push();return}
     if(SYNC.pushing||SYNC.timer)return;
     const local=JSON.parse(snapshot()),merged=mergeData(rem.data,local);
-    if(normD(merged)!==normD(local))applyRemote(merged,Date.now());
+    /* the first sync after a load/refresh: the open screen takes the newest place from any device */
+    const fresh=!SYNC.boot;SYNC.boot=true;
+    if(normD(merged)!==normD(local))applyRemote(merged,Date.now(),fresh);
     if(normD(merged)!==normD(rem.data)){LS.set('dictUpdated',String(Date.now()));await push();return}
     setSync('ok');
   }catch(e){SYNC.ready=true;setSync('error')}
@@ -2110,9 +2113,9 @@ function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const
   else if(/ · /.test(w.h||'')&&typeof W!=='undefined'){try{const cc=wCard(w);if(cc&&cc.h[0])w.h=cc.h[0]}catch(e){}}}}
 function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});amFixW();LS.set('dictAm',JSON.stringify(AMS));amTakeSess()}
 /* a session saved later on another device replaces this device's copy (not while it is open on this screen) */
-function amTakeSess(){const ss=AMS.ss||{};try{
-  const w=ss.ws;if(w&&(w[1]||0)>(+LS.get('dictAmWsT')||0)&&S.screen!=='amwl'&&!(S.screen==='quiz'&&/^JW/.test(String(S.active||'')))){WS=w[0];LS.set('dictAmWs',JSON.stringify(WS));LS.set('dictAmWsT',String(w[1]))}
-  const q=ss.aq;if(q&&(q[1]||0)>(+LS.get('dictAmQT')||0)&&S.screen!=='amq'){AQ=q[0];LS.set('dictAmQ',JSON.stringify(AQ));LS.set('dictAmQT',String(q[1]))}}catch(e){}}
+function amTakeSess(force){const ss=AMS.ss||{};try{
+  const w=ss.ws;if(w&&(w[1]||0)>(+LS.get('dictAmWsT')||0)&&(force||S.screen!=='amwl'&&!(S.screen==='quiz'&&/^JW/.test(String(S.active||''))))){WS=w[0];LS.set('dictAmWs',JSON.stringify(WS));LS.set('dictAmWsT',String(w[1]))}
+  const q=ss.aq;if(q&&(q[1]||0)>(+LS.get('dictAmQT')||0)&&(force||S.screen!=='amq')){AQ=q[0];LS.set('dictAmQ',JSON.stringify(AQ));LS.set('dictAmQT',String(q[1]))}}catch(e){}}
 function amSessPut(f,v){const t=Date.now();AMS.ss=AMS.ss||{};AMS.ss[f]=[v,t];LS.set(f==='ws'?'dictAmWsT':'dictAmQT',String(t));LS.set('dictAm',JSON.stringify(AMS));try{dirty()}catch(e){}}
 const DAY=864e5;
 const amNow=()=>Date.now();
@@ -3855,6 +3858,12 @@ function amHomeCard(){const due=wDue().length,nl=Math.max(0,wNPer()-wNewToday())
   const d=[due?due+' מילים לחזרה':'',nl?nl+' מילים חדשות':'אין מילים חדשות היום ✓'].filter(Boolean).join(' · ');
   return `<button class="item am-home" id="amGo"><span class="num">🎯</span><span class="grow"><span class="t">הכנה לאמירנט</span><br><span class="d">${d} · תרגול שאלות לפי השיטה</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`}
 
+/* after a refresh: the session open on this screen is re-read from the merged (newest) data */
+function reopenFresh(){
+  if(typeof amTakeSess==='function')amTakeSess(true);
+  if(S.screen==='quiz'&&S.active&&SESS[S.active])loadQ(S.active);
+  if(S.screen==='cards'&&S.active){const ss=SESS[S.active];if(ss&&ss.kind==='cards')C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false,from:ss.from}}
+  if(S.screen==='amwl'&&!WS)S.screen='am';if(S.screen==='amq'&&!AQ)S.screen='am'}
 (function boot(){
   if(S.screen==='quiz'){if(!(S.active&&loadQ(S.active)))S.screen=S.active&&S.active.startsWith('L')?'level':'home'}
   if(S.screen==='cards'){const ss=S.active&&SESS[S.active];if(ss&&ss.kind==='cards'){C={key:S.active,deck:objs(ss.ids),i:ss.i,open:false,from:ss.from}}else S.screen='group'}
