@@ -85,6 +85,7 @@ async def main():
       n=0;ans=0
       while n<limit and await E("S.screen")=='amq':
         n+=1
+        if await pg.locator('#amMGo').count():await pg.click('#amMGo');await pg.wait_for_timeout(200);continue
         if await pg.locator('#amAgain').count():
           if await pg.locator('#amJrNext').count():await pg.click('#amJrNext');await pg.wait_for_timeout(400);continue
           await pg.click('#amAgain');await pg.wait_for_timeout(300);break

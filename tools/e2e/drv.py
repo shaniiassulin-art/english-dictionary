@@ -52,6 +52,7 @@ async def q_drive(pg,limit=300,log=None):
   n=0;k=0
   while n<limit and await pg.evaluate("S.screen")=='amq':
     n+=1
+    if await tap(pg,'#amMGo'):continue
     if await pg.locator('#amAgain').count():
       if await tap(pg,'#amJrNext'):continue
       await tap(pg,'#amAgain');break
