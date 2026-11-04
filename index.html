@@ -2694,28 +2694,27 @@ function jnAfterWord(card,back){try{if(!Q||!/^J/.test(String(Q.key||'').replace(
   const t=(EXTRA[card.xid||card.id]||{}).tip;if(!w.as&&t)w.as=t;
   WS={mode:'new',one:1,list:[k],i:0,step:'first',skipMeet:1,hint:0,from:back,ok:0,bad:0,jr:x.id};amSave();wSave();go({screen:'amwl'});return true}catch(e){return false}}
 function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.k!=='new'){go({screen:'am'});return}
-  const ws=jnCards(x),key=jnKey(x),name='מילים חדשות להיום',left=jnLeft(x),known=ws.filter(isY).length,started=jnBatch(x).filter(k=>AMS.w[k]&&AMS.w[k].st>=1).length;
+  const ws=jnCards(x),key=jnKey(x),name='מילים חדשות להיום',left=jnLeft(x),known=ws.filter(isY).length,open=WS&&WS.jr===x.id&&WS.perWord&&WS.i<WS.list.length;
+  const cur=open?AMS.w[WS.list[WS.i]]:null;
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">המסע</button>${HOME}</div>
     <div><h2>${name}</h2><p class="sub">${ws.length} מילים מהמילון · מילים שסימנת ✗ או שעוד לא סימנת</p><p class="known-line">${countLine(ws)}</p></div>
-    <p class="lbl">לומדים כמו במילון – בבוחן, אחרי כל מילה מגיעים מיד הכתיבה שלה והבחירה במשפט, ואז חוזרים למילה הבאה</p>
-    ${quizPanel(key,ws,'בוחן על המילים החדשות',name,'amnw')}
-    ${catPanel(key,ws)||''}
+    <div class="panel">
+      <h3 style="margin:0">לימוד המילים</h3>
+      <p class="hint" style="margin:0">כל מילה בתורה: היכרות (המילה, הפירוש, משפט לדוגמה ואסוציאציה) ← כתיבה באנגלית ← בחירה במשפט, ואז המילה הבאה.</p>
+      ${left.length?`<button class="btn" id="nwGo">${open?`המשך · מילה ${WS.i+1} מתוך ${WS.list.length}${cur?' – '+esc(cur.e):''}`:`▶ ללמוד את המילים · ${left.length}`}</button>`:`<p style="margin:0">✓ כל המילים של היום נכנסו לחזרות.</p><button class="btn" id="nwDone">סיום ← חזרה למסע</button>`}
+    </div>
+    <div class="panel">${carToggle()}<p class="hint" style="margin:0">מצב רכב מקריא את המילים של היום ברצף – להאזנה בנסיעה.</p></div>
     <button class="btn secondary" id="list">רשימת ${ws.length} המילים · סימון ✓ / ✗</button>
     ${cardsBtn(key,ws)}
-    <p class="lbl">מילים שעוד לא עברו כתיבה ובחירה במשפט (למשל אחרי כרטיסיות או מצב רכב)</p>
-    <div class="panel">
-      <p class="hint" style="margin:0">${left.length?`${left.length} מילים לכתוב באנגלית לפי הפירוש, ואז לבחור כל אחת במשפט. אחרי זה הן נכנסות לחזרות (20 דקות, יום, 3 ימים, שבוע, שבועיים, חודש).${known?` ${known} סימנת ✓ – הן לא נכנסות ללמידה.`:''}`:started?'✓ כל המילים כבר בחזרות.':'אין מילים ללמוד – כולן מסומנות ✓.'}</p>
-      ${left.length?`<button class="btn" id="nwGo">✍️ כתיבה ובחירה במשפט · ${left.length} מילים</button>`:`<button class="btn" id="nwDone">סיום ← חזרה למסע</button>`}
-    </div>
   </div>`;
   $('bk').onclick=()=>go({screen:'am'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'jn'});
-  bindSettings();bindQuizPanel(key,ws,name,'amnw');bindCatPanel(key,ws,name,'amnw');bindCards(key,ws);
-  const g=$('nwGo');if(g)g.onclick=()=>{const L=jnLeft(x);if(!L.length)return draw();
-    /* words she marked ✓ leave the learning (counted for the step) */
+  bindSettings();bindQuizPanel(key,ws,name,'amnw');bindCards(key,ws);
+  const g=$('nwGo');if(g)g.onclick=()=>{if(open)return go({screen:'amwl'});const L=jnLeft(x);if(!L.length)return draw();
+    /* words she marked ✓ in the dictionary leave the learning (counted for the step) */
     jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id)}});
-    L.forEach(k=>{const w=AMS.w[k],c=jnCard(k),t=c&&(EXTRA[c.xid||c.id]||{}).tip;if(w&&!w.as&&t)w.as=t});WS={mode:'new',list:L,i:0,step:'first',skipMeet:1,hint:0,from:'amnw',ok:0,bad:0,jr:x.id};amSave();wSave();go({screen:'amwl'})};
+    WS={mode:'new',perWord:1,list:L,i:0,step:'meet',hint:0,from:'amnw',ok:0,bad:0,jr:x.id};amSave();wSave();go({screen:'amwl'})};
   const dn=$('nwDone');if(dn)dn.onclick=()=>{jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wMaster(w);jrCount(x.id)}});jrFinish(x.id,1);go({screen:'am'})}}
 
 /* ================= 📅 schedule: when will all the dictionary meanings be learned =================
@@ -3353,7 +3352,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   const step=WS.step;
   if(step==='meet'){
     const others=card&&card.others&&card.others.length;
-    h+=WS.assocOnly?'':`<div class="am-path"><span class="on">1 · הכרות</span><span>2 · שליפה</span><span>3 · בחירה במשפט</span></div>`;
+    h+=WS.assocOnly?'':`<div class="am-path"><span class="on">1 · הכרות</span><span>2 · כתיבה</span><span>3 · בחירה במשפט</span></div>`;
     h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>
       ${others?`<p class="hint center" style="margin:0">לומדים עכשיו רק את הפירוש הזה. ${others===1?'לפירוש השני':'ל־'+others+' הפירושים האחרים'} של המילה יש כרטיס נפרד.</p>`:''}
       ${ctx?`<div class="ctx" data-ctx="${esc(ctx)}">${SAYB(ctx,'sm inl')}${tapEn(ctx)}</div>${x.tr&&ctx===ex?`<p class="hint" style="margin:0">${esc(x.tr)}</p>`:''}`:''}</div>
@@ -3426,7 +3425,8 @@ function wBind(w,x){
   const gn=$('wGen');if(gn)gn.onclick=()=>{const k='as|'+wK(w),old=((AMAI[k]||{}).ideas||[]).map(i=>i.scene).concat(AMAI[k]&&AMAI[k].seen||[]).slice(-9);const seen=old;delete AMAI[k];
     const p=aiCached(k,promptAssoc(w,old),1);amRedrawKeep();p.then(r=>{if(r&&!r.err){r.seen=seen;amAiSave()}if(S.screen==='amwl')amRedrawKeep()})};
   const kw=$('wKnow');if(kw)kw.onclick=()=>{wLog(w,'known',1,0);wMaster(w);w.t=amNow();const nq=wQueue(1)[0];
-    if(nq){if(nq.fresh)wAdd(nq.e,nq.h,nq.c,nq.src,nq.k);const k=wK(nq);if(!WS.list.includes(k))WS.list.push(k)}
+    if(WS.jr)jrCount(WS.jr);
+    if(nq){if(nq.fresh)wAdd(nq.e,nq.h,nq.c,nq.src,nq.k);const k=wK(nq);if(!WS.list.includes(k))WS.list.push(k);const xb=WS.jr&&jrBlock(WS.jr);if(xb&&Array.isArray(xb.ws)&&!xb.ws.includes(k))xb.ws.push(k)}
     amSave();WS.i++;WS.step='meet';wSave();draw();window.scrollTo(0,0)};
   const nx=$('wNext');if(nx)nx.onclick=()=>{if(!w.as&&wHasAssoc(w,x))return;if(WS.assocOnly){w.t=amNow();amSave();WS=null;wSave();go({screen:'amwd'});return}if(!w.log||!w.log.length){wLog(w,'learn',1,0);amSave()}WS.step='first';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0)};
   const my=$('wMy');if(my){my.oninput=()=>{WS.draft=my.value;WS.chk=null;wSave()};if(!WS.draft)setTimeout(()=>{try{my.focus({preventScroll:true})}catch(e){}},50)}
@@ -3451,6 +3451,9 @@ function wBind(w,x){
   const cp=$('wCopy');if(cp){setTimeout(()=>{try{cp.focus({preventScroll:true})}catch(e){}},50);cp.oninput=()=>{if(cp.value.trim().toLowerCase()===w.e.toLowerCase()){WS.res.copied=true;wSave();draw()}}}
   const on=$('wOn');if(on)on.onclick=wNextWord}
 function wNextWord(){
+  if(WS.perWord){
+    if(WS.mode==='new'){WS.mode='r2';WS.step='recall';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0);return}
+    WS.mode='new';WS.i++;WS.step='meet';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0);return}
   /* one word right after the dictionary quiz: write it → choose it in a sentence → back to the quiz */
   if(WS.one){if(WS.mode==='new'){WS.mode='r2';WS.step='recall';WS.hint=0;WS.res=null;wSave();draw();window.scrollTo(0,0);return}
     const f=WS.from||'amnw';WS=null;wSave();go({screen:f});if(f==='quiz'&&typeof autoSay==='function'&&Q&&!Q.checked)try{autoSay()}catch(e){}return}
