@@ -515,6 +515,43 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 /* a light outline on every button, so buttons that sit together are clearly separate (her request, whole site) */
 .item,.today,.resume-card,.home-btn,.x,.arr,.autob,.btn.secondary,.seg button,.qz .mic,.vstop,.rm,.am-card2,.am-pill,.am-gate,.am-fpg button,.am-tabs button,.am-unit,.am-elim button,.am-idea,.am-resume,.am-wl button,.am-plan2 li.tap,.am-topic,.am-opt,.opt,.am-ml,.spk{border:1px solid var(--line)!important}
 .seg{gap:4px}
+/* ===== design layer (Nov 4, her request – calmer, more modern, one look for the dictionary and Amirnet; styles only) ===== */
+:root{--sh1:0 1px 2px rgba(17,24,39,.04),0 6px 16px -8px rgba(17,24,39,.12);--sh2:0 14px 32px -14px rgba(17,24,39,.28);--card:var(--surface)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sh1:0 1px 0 rgba(255,255,255,.03),0 8px 20px -10px rgba(0,0,0,.7);--sh2:0 16px 34px -14px rgba(0,0,0,.8)}}
+:root[data-theme="dark"]{--sh1:0 1px 0 rgba(255,255,255,.03),0 8px 20px -10px rgba(0,0,0,.7);--sh2:0 16px 34px -14px rgba(0,0,0,.8)}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+h1,h2,h3{letter-spacing:-.012em}h1{font-weight:800}
+/* cards and panels: white, soft shadow, hairline */
+.panel,.item,.today,.resume-card,.card,.am-box,.am-card,.am-card2,.am-gate,.am-meth,.am-step-box,.am-topic,.am-resume,.st-app,.am-wl button,.am-unit{box-shadow:var(--sh1)!important;border-radius:18px}
+.am-scr .am-box,.am-card,.am-meth,.am-step-box,.panel,.card{background:var(--surface)!important;border:1px solid var(--line)!important}
+.am-unit{border-radius:14px!important}
+/* hero areas: a soft accent wash */
+.am-hero2,.today{background:linear-gradient(140deg,var(--accent-soft) 0%,color-mix(in srgb,var(--accent-soft) 45%,var(--surface)) 100%)!important;border:1px solid color-mix(in srgb,var(--accent) 16%,transparent)!important;box-shadow:var(--sh1)!important}
+/* main buttons */
+.btn:not(.secondary):not(.knowyes):not(.knowno):not([class*="cat-"]):not(.carbtn){background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 86%,#fff) 0%,var(--accent) 100%);color:var(--accent-ink);box-shadow:0 10px 20px -10px color-mix(in srgb,var(--accent) 80%,transparent)}
+.btn{border-radius:14px;font-weight:700;letter-spacing:.01em;transition:transform .12s ease,box-shadow .2s ease}.btn:active{transform:scale(.985)}
+.btn:disabled{opacity:.45;box-shadow:none!important}
+.btn.secondary{background:var(--surface);color:var(--accent);box-shadow:var(--sh1)}
+.btn.knowyes,.btn.knowno{box-shadow:var(--sh1)!important}
+/* pills, segments, chips */
+.am-pill,.am-tabs button,.am-fpg button{background:var(--surface)!important;box-shadow:var(--sh1)}
+.seg{background:var(--fill)!important;border-radius:12px;padding:4px}.seg button[aria-pressed="true"],.seg button.on{background:var(--surface)!important;color:var(--accent)!important;box-shadow:var(--sh1)}
+.am-tabs button[aria-pressed="true"],.am-fpg button[aria-pressed="true"]{background:var(--accent)!important;color:var(--accent-ink)!important}
+.am-chip{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 10px;font-weight:700}
+.am-prog,.prog{background:var(--fill)!important;border-radius:999px;overflow:hidden}.am-prog i,.prog i{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 70%,#fff),var(--accent))!important;border-radius:999px}
+/* round icon buttons in the top bar */
+.home-btn,.x,.arr,.autob,.reload-top{background:var(--surface)!important;box-shadow:var(--sh1)}
+/* text fields */
+input.am-in,textarea.am-in,.search input,input[type=search],input[type=text],textarea{background:var(--surface);border:1px solid var(--line);border-radius:14px}
+/* inner fills inside white cards */
+.am-as1,.am-mean,.ax-insbox{background:var(--fill)!important}
+.ax .ax-opt .ax-rad,.ax .ax-opt .ax-ot{background:var(--fill)!important}.ax .ax-opt.sel .ax-rad,.ax .ax-opt.sel .ax-ot{background:var(--accent-soft)!important}
+.ax .ax-opt.right .ax-rad,.ax .ax-opt.right .ax-ot{background:var(--ok-soft)!important}.ax .ax-opt.wrong .ax-rad,.ax .ax-opt.wrong .ax-ot{background:var(--bad-soft)!important}
+/* quiz options and the card in the dictionary quiz */
+.opt{background:var(--surface);box-shadow:var(--sh1);border-radius:14px}
+/* app chooser tiles */
+.st-screen .st-app{background:linear-gradient(160deg,var(--surface) 0%,var(--accent-soft) 140%)!important;box-shadow:var(--sh2)!important;border:1px solid var(--line)!important}
+.st-screen .st-am{background:linear-gradient(160deg,var(--accent-soft) 0%,var(--surface) 120%)!important}
 /* the two apps fill the screen (Amirnet first) */
 .app:has(.st-screen){padding-block:12px!important;min-height:0}.st-screen{height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:0!important;overflow:hidden;gap:12px!important}.st-screen .st-app{flex:1 1 0;min-height:0!important;justify-content:center;align-items:center;text-align:center;border:1.5px solid var(--line)!important}.st-screen .st-i{font-size:3rem!important}.st-screen .st-t{font-size:1.9rem!important}.st-screen .st-d{font-size:1rem}
 .am-meth ol{font-size:.9rem;gap:4px}.am-meth h4{font-size:.95rem}
