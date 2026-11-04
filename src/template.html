@@ -723,7 +723,12 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
 try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw','amgap','amfp','amfpl'].includes(S.screen))S.screen='start'}catch(e){}
 /* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
-try{if(!sessionStorage.getItem('dictOpen')){sessionStorage.setItem('dictOpen','1');if(!['quiz','car'].includes(S.screen))S.screen='start'}}catch(e){}
+/* coming back: the site stays exactly where she was; after a long break (3 h) it opens on the first page */
+try{const lt=+localStorage.getItem('dictLastT')||0;if(Date.now()-lt>3*36e5)S.screen='start'}catch(e){}
+const markLast=()=>{try{localStorage.setItem('dictLastT',String(Date.now()))}catch(e){}};markLast();
+['pointerdown','keydown','scroll'].forEach(ev=>document.addEventListener(ev,()=>{if(!markLast.t||Date.now()-markLast.t>15e3){markLast.t=Date.now();markLast()}},{passive:true,capture:true}));
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')markLast();else{const lt=+localStorage.getItem('dictLastT')||0;markLast();if(Date.now()-lt>3*36e5&&!['quiz','car','sent'].includes(S.screen)){try{go({screen:'start'})}catch(e){}}}});
+window.addEventListener('pagehide',markLast);
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb,mfrom:S.mfrom,jday:S.jday,fps:S.fps,fpsrc:S.fpsrc}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
