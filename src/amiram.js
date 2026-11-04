@@ -512,6 +512,8 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .ax .ax-qn{font-size:1.12rem!important}.ax .ax-q{font-size:.92rem!important;line-height:1.65!important}.ax .ax-opt .ax-ot{font-size:.9rem!important;padding:9px 12px!important}.ax .ax-opt{min-height:46px!important;grid-template-columns:42px 1fr!important}.ax .ax-opt .ax-rad i{width:20px!important;height:20px!important}
 .ax .tw.db{text-decoration-color:color-mix(in srgb,var(--muted) 35%,transparent)!important;text-decoration-thickness:1px!important;text-underline-offset:3px!important}
 .ax .cn{background:none!important;filter:none!important;font-weight:inherit!important;padding:0!important;color:inherit!important;border-bottom:1.5px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+/* option speaker sits inside the option row, at its end */
+.ax .ax-orow{position:relative}.ax .ax-osp{position:absolute;right:6px;top:6px;z-index:1}.ax .ax-osp .spk{width:30px;height:30px;min-width:30px}.ax .ax-opt .ax-ot{padding-right:42px!important}
 /* a light outline on every button, so buttons that sit together are clearly separate (her request, whole site) */
 .item,.today,.resume-card,.home-btn,.x,.arr,.autob,.btn.secondary,.seg button,.qz .mic,.vstop,.rm,.am-card2,.am-pill,.am-gate,.am-fpg button,.am-tabs button,.am-unit,.am-elim button,.am-idea,.am-resume,.am-wl button,.am-plan2 li.tap,.am-topic,.am-opt,.opt,.am-ml,.spk{border:1px solid var(--line)!important}
 .seg{gap:4px}
@@ -552,6 +554,22 @@ input.am-in,textarea.am-in,.search input,input[type=search],input[type=text],tex
 /* app chooser tiles */
 .st-screen .st-app{background:linear-gradient(160deg,var(--surface) 0%,var(--accent-soft) 140%)!important;box-shadow:var(--sh2)!important;border:1px solid var(--line)!important}
 .st-screen .st-am{background:linear-gradient(160deg,var(--accent-soft) 0%,var(--surface) 120%)!important}
+/* ===== type scale (her request: text like 11–12 pt in Word; only headings bigger) ===== */
+body{font-size:16px!important}@media (max-width:420px){body{font-size:15px!important}}
+h1{font-size:1.45rem!important}h2,.am-title h2{font-size:1.2rem!important}h3,.panel h3{font-size:1.02rem!important}
+.item .t,.resume-card .t,.am-gate b,.words .e,.fb,.am-fb,.am-verdict,.am-go,.am-q,.am-trs,.si-e{font-size:1rem!important}
+.btn{font-size:1rem!important;min-height:50px}.btn.small{font-size:.92rem!important}
+.card .w,.am-card .w,.am-wordhead .w{font-size:1.7rem!important}.card .a,.am-card .m,.am-wordhead .m,.am-mean b,.tr-out{font-size:1.06rem!important}
+.am-card .ctx,.am-card .m[style]{font-size:1rem!important}.today .td-num b,.sh-count b{font-size:1.2rem!important}
+.am-pop .e{font-size:1.1rem!important}.ax .ax-in{font-size:1rem!important}.ax .ax-play{font-size:1rem!important;padding:10px 24px!important}
+.am-meth ol,.am-mfull,.am-m p,.am-m li,.am-meth p{font-size:.86rem!important;line-height:1.55!important}.am-mclosed>summary{font-size:.92rem;white-space:nowrap}.home-head .sub,.sync-state{font-size:.85rem!important}
+.st-screen .st-t{font-size:1.5rem!important}.st-screen .st-i{font-size:2.4rem!important}
+/* no ugly line breaks: balanced headings and labels, no single orphan word at the end of a paragraph */
+h1,h2,h3,h4,h5,.t,.am-card2 b,.am-gate b,.btn,.am-title p,.st-t,.st-d{text-wrap:balance}
+#app,#app *{text-wrap:pretty}
+.am-pill{white-space:nowrap}
+#app small,#app b,.am-card2 small,.am-fpg small,.st-d,.d,.sub,.lbl,button{text-wrap:balance}
+.am-m table,.am-m table td,.am-m table th{font-size:.78rem!important;line-height:1.35}
 /* the two apps fill the screen (Amirnet first) */
 .app:has(.st-screen){padding-block:12px!important;min-height:0}.st-screen{height:calc(100dvh - 24px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:0!important;overflow:hidden;gap:12px!important}.st-screen .st-app{flex:1 1 0;min-height:0!important;justify-content:center;align-items:center;text-align:center;border:1.5px solid var(--line)!important}.st-screen .st-i{font-size:3rem!important}.st-screen .st-t{font-size:1.9rem!important}.st-screen .st-d{font-size:1rem}
 .am-meth ol{font-size:.9rem;gap:4px}.am-meth h4{font-size:.95rem}
@@ -1079,7 +1097,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   if(LS0){const ctx=q.t==='lc'?q.ctx:T.ctx;
     h+=`<div class="ax-listen" dir="ltr"><p class="ax-ctx">${esc(ctx||'')}</p><button class="ax-play" data-amsay="${esc(LS0)}">▶ Play</button><p class="hint" style="margin:0;direction:rtl;text-align:center">אפשר להשמיע שוב · ההקראה בקול שבחרת להקראה באנגלית</p></div>`;
     if(st.done){const lines=q.t==='lq'?T.l:[q.say],he=q.t==='lq'?T.he:q.he;
-      h+=`<details class="am-box" ${st.trOpen?'':'open'}><summary style="font-weight:800;cursor:pointer">📜 התמליל והתרגום</summary><div dir="ltr" style="text-align:left">${lines.map(l=>`<p>${tapEn(l)}</p>`).join('')}</div>${he?`<p style="margin-top:8px">${esc(he)}</p>`:''}</details>`}}
+      h+=`<details class="am-box" ${st.trOpen?'':'open'}><summary style="font-weight:800;cursor:pointer">📜 התמליל והתרגום</summary><div dir="ltr" style="text-align:left">${lines.map(l=>`<p>${SAYB(l.replace(/^[A-Z][a-z]+:\s*/,''),'sm inl')}${tapEn(l)}</p>`).join('')}</div>${he?`<p style="margin-top:8px">${esc(he)}</p>`:''}</details>`}}
   /* passage (reading) */
   else if(T&&!(st.done&&['why','words'].includes(st.fb))){let n=0,par=[],ps=[];T.l.forEach(l=>{if(!l){if(par.length)ps.push(par.join(' '));par=[];return}n++;par.push((n%5===0?`<sup class="lnm">${n}</sup>`:'')+tapEn(l))});if(par.length)ps.push(par.join(' '));
     const lines=ps.map((x,j)=>`<p>${SAYB(amParas(T)[j],'sm inl')}${x}</p>`).join('');
@@ -1108,7 +1126,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
     else h+=`<div class="ax-opts">${q.o.map((o,j)=>{const k=j+1,cl=st.done?(k===q.a?' right':k===st.sel?' wrong':''):(k===st.sel?' sel':'')+(st.elim[k]?' elim':'');
       const he=st.done&&!exam&&q.oh&&q.oh[j]?`<span class="he">${esc(q.oh[j])}</span>`:'';
       const elim=!st.done&&!exam&&['rs','rc','lq'].includes(q.t)?`<div class="am-elim">${(q.t==='rs'?[['add','מידע נוסף'],['rel','קשר אחר'],['ext','הקצנה'],['contra','סותר'],['miss','חסר']]:[['out',q.t==='lq'?'לא נאמר':'לא מהקטע'],['wrong',q.t==='lq'?'סותר את ההקלטה':'סותר את הקטע'],['nq','לא עונה לשאלה']]).map(([c,l])=>`<button data-el="${k}" data-r="${c}" aria-pressed="${st.elim[k]===c}">✗ ${l}</button>`).join('')}</div>`:'';
-      return `<div class="ax-orow"><button class="am-opt ax-opt${cl}" data-k="${k}" ${st.done?'disabled':''} dir="ltr"><span class="ax-rad"><i></i></span><span class="ax-ot"><span>${esc(o)}</span>${he}</span></button>${elim}</div>`}).join('')}</div>`;
+      return `<div class="ax-orow"><button class="am-opt ax-opt${cl}" data-k="${k}" ${st.done?'disabled':''} dir="ltr"><span class="ax-rad"><i></i></span><span class="ax-ot"><span>${esc(o)}</span>${he}</span></button><span class="ax-osp">${SAYB(o,'sm')}</span>${elim}</div>`}).join('')}</div>`;
     if(!st.done)h+=`<div class="am-cta"><button class="btn" id="amChk" ${st.sel?'':'disabled'}>${exam?(AQ.i+1<AQ.ids.length?'לשאלה הבאה':'סיום הסימולציה'):'בדיקה'}</button></div>${exam?`<div class="am-nav">${AQ.i?'<button class="btn secondary" id="amPrev">→ הקודמת</button>':''}<button class="btn secondary" id="amSkip">דילוג ←</button></div>`:''}`;
     else h+=amFeedback(id,st);}
   }
@@ -1152,36 +1170,52 @@ function amBreak(w){const e=String(w||'').toLowerCase();if(!AMD||!AMD.px||e.incl
   const ok=b=>[b,b+'e',b.replace(/i$/,'y'),/(.)\1$/.test(b)?b.slice(0,-1):''].some(c=>c&&c.length>=3&&DIX[c]);
   for(const [t,h] of PX.pre)if(e.startsWith(t)&&e.length-t.length>=3&&ok(e.slice(t.length)))return `<bdi>${t}-</bdi> (${esc(h)}) + <bdi>${esc(e.slice(t.length))}</bdi>`;
   for(const [t,h] of PX.suf)if(e.endsWith(t)&&e.length-t.length>=3&&ok(e.slice(0,-t.length)))return `<bdi>${esc(e.slice(0,-t.length))}</bdi> + <bdi>-${t}</bdi> (${esc(h)})`;return ''}
-function amMethodNow(q,cs){const T=AMTARGET[q.t],cn=cs.map(c=>`«<bdi>${c.ws.join(', ')}</bdi>» = <b>${c.he}</b> – ${c.tip}`).join('<br>');
-  let st=[],more=[];
+/* the method box under a question: only what this question needs (general tips live in the "השיטה המלאה" button below) */
+function amMethodNow(q,cs){const cn=cs.map(c=>`«<bdi>${c.ws.join(', ')}</bdi>» = <b>${c.he}</b> – ${c.tip}`).join('<br>');
+  const B=x=>`«<bdi dir="ltr">${esc(x)}</bdi>»`,qq=String(q.q||''),gap=qq.search(/_{3,}/),W=t=>t.toLowerCase().match(/[a-z']+/g)||[];
+  const before=gap>=0?W(qq.slice(0,gap)).slice(-2):[],after=gap>=0?W(qq.slice(gap).replace(/^_+/,'')).slice(0,2):[];
+  const near=gap>=0?`${before.join(' ')} ____ ${after.join(' ')}`.trim():'';
+  const brk=()=>{const br=(q.o||[]).map(o=>[o,amBreak(o)]).filter(x=>x[1]);return br.length?'מילה לא מוכרת בתשובות? מפרקים: '+br.map(([o,b])=>`<bdi dir="ltr">${esc(o)}</bdi> = ${b}`).join(' · '):''};
+  let st=[];
   if(q.t==='sc'){
-    st=['כסי את התשובות ותרגמי בראש את המשפט עד המקום הריק.',
-      cs.length?'<b>הרמז במשפט:</b> '+cn:'<b>חפשי את הרמז:</b> מילה במשפט שההשלמה צריכה להתאים לה – או להיות הפוכה לה. בכל שאלה יש רמז.',
-      'נחשי בראש מילה בעברית שמתאימה למקום הריק.','רק עכשיו – עברי על 4 התשובות וחפשי מילה במשמעות דומה לניחוש.','קראי את המשפט המלא עם התשובה שבחרת: הוא הגיוני?'];
-    const br=(q.o||[]).map(o=>[o,amBreak(o)]).filter(x=>x[1]);
-    if(br.length)st.push('מילה לא מוכרת בתשובות? מפרקים לתחילית + שלד (+ סופית):<br>'+br.map(([o,b])=>`<bdi>${esc(o)}</bdi> = ${b}`).join('<br>'))}
+    st.push(cs.length?'<b>הרמז במשפט:</b> '+cn:`<b>אין מילת קישור.</b> הרמז הוא מילה במשפט שההשלמה מתארת או מסבירה – התחילי מהמילים שליד המקום הריק: ${B(near)}.`);
+    st.push(brk())}
   else if(q.t==='rs'){
-    st=['תרגמי והביני את המבנה: על מי מדובר, מה נאמר עליו, ומה הקשר בין החלקים.',
-      cs.length?'<b>מילות הקישור (צבועות במשפט):</b><br>'+cn+'<br>הקשר הזה חייב להישמר בתשובה הנכונה.':'אין מילת קישור בולטת – שימי לב לסימני פיסוק ולמי עושה מה.',
-      'חלקי בראש את המשפט לחלקים (כמו לוכסן). שמות ומילים קשות – "בלוק נשאר בלוק": מחליפים באות וממשיכים.',
-      'פסלי תשובות עם ✗ והסיבה: <b>מידע נוסף</b> (כולל "סלט מילים" – אותן מילים, מי עושה מה התחלף), <b>קשר אחר</b>, <b>הקצנה</b> (רוב ← תמיד, may ← will), <b>סותר</b> / היפוך סיבה ותוצאה, <b>חסר</b> (רק אם יש תשובה מלאה יותר).',
-      'גם כשמצאת תשובה שנראית נכונה – המשיכי לפסול. פסלת 3? קראי את הרביעית עד הסוף כדי לוודא.'];
-}
-  else if(q.t==='wf')st=['קראי את כל המשפט והחליטי איזה סוג מילה חסר: אחרי the / a / his – שם עצם; לפני שם עצם – שם תואר; מתאר איך – תואר הפועל (‎-ly); אחרי נושא / can / to – פועל.',
-      'בדקי זמן (עבר? have + V3?), פעיל או סביל, יחיד או רבים.','צריך את ההפך? תחילית שלילה: un-, dis-, im-, il-, ir-, in-.',
-      'מילה אחת, אותיות בלבד, חייבים לשנות את <b><bdi>'+esc(q.base||'')+'</bdi></b> – ובודקים איות.'];
-  else if(q.t==='gc')st=['קראי את כל המשפט: מה הדקדוק דורש? זמן (מילות זמן), התאמת נושא ופועל, פעיל / סביל.',
-      cs.length?'<b>מילות קישור במשפט:</b> '+cn:'חפשי מבנה קבוע (look forward to + ing, too … to, the more … the better) או משפט תנאי.',
-      'הציבי כל תשובה במשפט וקראי אותו בשלמותו – רק אחת נכונה דקדוקית וגם הגיונית.'];
-  else if(q.t==='lc')st=['קראי את משפט ההקשר ואת 4 התשובות לפני שמשמיעים.','הקשיבי לכיוון: however / so / because – ההמשך דומה, הפוך או תוצאה?','התמקדי במשפט האחרון: מה חסר כדי שיהיה הגיוני? אפשר להשמיע שוב.'];
-  else if(q.t==='lq')st=['קראי את השאלה לפני שמשמיעים – ממה צריך לשים לב (סיבה, הצעה, החלטה, פרט)?','בשיחה – מי אומר מה. התשובה הנכונה לרוב במילים אחרות ממה ששומעים.','פסלי: לא נאמר / סותר את ההקלטה / לא עונה על השאלה.'];
-  else if(q.t==='rc'){const k=rcType(q.q);
-    st=[`<b>סוג השאלה: ${RCT[k][0]}.</b> ${RCT[k][1]}`,
-      k==='main'||k==='para'?'שאלה כללית – עדיף לפתור אותה אחרי השאלות הספציפיות של הקטע, כשכבר מכירים אותו.':'שאלה ספציפית – חוזרים לשורה / לפסקה שעליה שואלים וקוראים את המשפט כולו – מנקודה עד נקודה, לא רק את השורה.',
-      'פסלי תשובות עם ✗: <b>לא מהקטע</b>, <b>סותר את הקטע</b>, <b>לא עונה לשאלה</b>.'];
-}
-  return `<details class="am-meth am-mclosed"><summary><b>🧭 השיטה</b> <small>– לפתוח אחרי שחשבת לבד</small></summary><h5>איך פותרים את השאלה הזו</h5><ol>${st.map(x=>`<li>${x}</li>`).join('')}</ol>
-    ${AMM[q.t]?`<h5>השיטה המלאה – ${AMM[q.t][0]}</h5><div class="am-m am-mfull">${AMM[q.t][1]}</div>`:''}</details>`}
+    if(cs.length)st.push('<b>מילות הקישור:</b><br>'+cn+'<br>הקשר הזה חייב להישמר בתשובה הנכונה.');
+    const names=[...new Set((qq.match(/(?:^|[^.]\s)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/g)||[]).map(x=>x.replace(/^[^A-Z]*/,'')).filter(x=>!/^(The|A|An|In|On|At|Although|However|While|Because|Since|When|If|It|This|That|These|Those|Many|Most|Some)$/.test(x)))];
+    if(names.length)st.push('<b>בלוק נשאר בלוק:</b> '+names.slice(0,4).map(B).join(', ')+' – לא צריך להבין, רק לוודא שהם באותו תפקיד בתשובה.');
+    const EXT=['always','never','all','only','must','will','every','none','completely','entirely','certainly'];
+    const ext=(q.o||[]).map((o,k)=>[k+1,W(o).filter(w=>EXT.includes(w)&&!W(qq).includes(w))]).filter(x=>x[1].length);
+    if(ext.length)st.push('<b>חשד להקצנה:</b> '+ext.map(([k,ws])=>`בתשובה ${k} – ${ws.map(B).join(', ')}`).join(' · ')+' – מילים שאין במשפט המקורי.');
+    if(!st.length)st.push('אין מילת קישור בולטת – בדקי מי עושה מה למי, והאם התשובה מוסיפה, משמיטה או הופכת משהו.')}
+  else if(q.t==='rc'){const k=rcType(q.q),ln=qq.match(/\blines?\s+(\d+)(?:\s*[-–]\s*(\d+))?/i),pa=qq.match(/\b(first|second|third|fourth|last)\s+paragraph|paragraph\s+(\w+)/i);
+    st.push(`<b>סוג השאלה: ${RCT[k][0]}.</b> ${RCT[k][1]}`);
+    if(ln)st.push(`חזרי ל${ln[2]?'שורות '+ln[1]+'–'+ln[2]:'שורה '+ln[1]} וקראי את כל המשפט – מנקודה עד נקודה.`);else if(pa)st.push(`חזרי ל${B(pa[0])} וקראי אותה.`);
+    else if(k==='main'||k==='para')st.push('שאלה כללית – עדיף לפתור אחרי השאלות הספציפיות של הקטע.')}
+  else if(q.t==='wf'){const p=before[before.length-1]||'',n=after[0]||'';
+    const DET=['the','a','an','his','her','its','their','our','my','your','this','that','these','those','of','some','many','several','most','any','no','each','every'];
+    const BE=['is','was','were','are','be','been','being','so','too','very','more','most','quite','rather','seem','seems','seemed','look','looks','become','became','left','remain','remained'];
+    const MOD=['to','can','could','will','would','should','must','may','might','not',"don't","didn't",'cannot'];
+    const STOP=['of','to','in','that','for','between','with','was','is','were','are','on','at','by','and','from','about','than'];
+    const pos=DET.includes(p)?(n&&!STOP.includes(n)?`שם תואר – הוא בא לפני שם העצם ${B(n)}`:'שם עצם (אחרי '+B(p)+')'):BE.includes(p)?`שם תואר או בינוני פעול (אחרי ${B(p)})`:MOD.includes(p)?`פועל בצורת בסיס (אחרי ${B(p)})`:/ly$/.test(n)||['the','a','an','his','her','their'].includes(n)?'כנראה פועל – זה הפועל של המשפט; בדקי זמן ויחיד/רבים':`בדקי מה לפני (${B(p)}) ומה אחרי (${B(n)}) – זה מגלה את סוג המילה`;
+    st.push('<b>איזו מילה חסרה:</b> '+pos+'.');
+    st.push(`יוצרים אותה מ־<b><bdi dir="ltr">${esc(q.base||'')}</bdi></b> – מילה אחת, בלי מקף, ובודקים איות. צריך את ההפך? un- / dis- / im- / il- / ir- / in-.`)}
+  else if(q.t==='gc'){const ws=W(qq),o=(q.o||[]).map(x=>x.toLowerCase());
+    const TW={yesterday:'עבר פשוט',ago:'עבר פשוט',last:'עבר פשוט',since:'have + V3 (present perfect)',already:'have + V3',yet:'have + V3',tomorrow:'עתיד',next:'עתיד'};
+    const tw=Object.keys(TW).find(x=>ws.includes(x));if(tw)st.push(`<b>מילת זמן:</b> ${B(tw)} → ${TW[tw]}.`);
+    if(/by the time/i.test(qq))st.push(`<b>מילת זמן:</b> ${B('by the time')} → מה שקרה קודם: had + V3.`);
+    if(/\bif\b|^had\b/i.test(qq)||ws.includes('would'))st.push('<b>משפט תנאי:</b> בדקי איזה סוג – if + עבר ← would; if + had + V3 ← would have + V3.');
+    if(o.some(x=>['who','which','where','whose','whom','what','that'].includes(x)))st.push(`<b>מילת זיקה:</b> על מה מדובר לפני המקום הריק – אדם, דבר, מקום או שייכות? (${B(before.join(' '))})`);
+    if(o.some(x=>/ing\b/.test(x))&&o.some(x=>/^to\s/.test(x)))st.push(`<b>to או ‎-ing:</b> מה בא לפני המקום הריק? ${B(before.join(' '))} – יש מבנים קבועים (look forward to + ing, too … to).`);
+    if(cs.length)st.push('<b>מילות קישור:</b> '+cn);
+    if(!st.length)st.push(`התחילי מהמילים שליד המקום הריק: ${B(near)} – מה הן דורשות (נושא יחיד/רבים, פעיל/סביל, מבנה קבוע)?`)}
+  else if(q.t==='lc'){const last=String(q.say||'').split(/(?<=[.!?])\s+/).pop()||'',lc=connFind(last);
+    st.push(`<b>מי מדבר:</b> ${esc(q.ctx||'')} – על זה יהיה ההמשך.`);
+    st.push(lc.length?'<b>המשפט האחרון:</b> '+lc.map(c=>`«<bdi>${c.ws.join(', ')}</bdi>» = ${c.he}`).join(' · ')+' – זה הכיוון של ההשלמה.':'הקשיבי למשפט האחרון: מה הנושא שלו, ומה חסר כדי שיהיה הגיוני?')}
+  else if(q.t==='lq'){const t=qq.toLowerCase();
+    st.push('<b>מה מחפשים:</b> '+(/^why/.test(t)?'סיבה – הקשיבי ל־because / so / since.':/will .* do|offer|plan|decide|suggest/.test(t)?'מה מישהו יעשה / מציע – בדרך כלל בסוף השיחה.':/according to|what does .* say|mention/.test(t)?'פרט שנאמר – התשובה מנוסחת במילים אחרות.':/problem/.test(t)?'בעיה – מילים כמו unfortunately / but / however.':'הנושא והפרטים שהשאלה שואלת עליהם.'))}
+  st=st.filter(Boolean);
+  return `<details class="am-meth am-mclosed"><summary><b>🧭 איך פותרים את השאלה</b> <small>· אחרי שחשבת</small></summary><ol>${st.map(x=>`<li>${x}</li>`).join('')}</ol></details>`}
 
 function amMethodFirst(t){
   app.innerHTML=`<div class="screen am-scr">
@@ -1201,7 +1235,7 @@ Judge on the test's two dimensions: (1) content and organization – relates to 
 JSON: {"level":"low" | "medium" | "high","content":{"score":1-5,"note":"one Hebrew sentence"},"language":{"score":1-5,"note":"one Hebrew sentence"},"strengths":["short Hebrew points"],"mistakes":[{"wrong":"exact words from her text","fix":"corrected words","why":"short Hebrew reason"}],"improved":"her text rewritten correctly and a bit richer, 90–120 words, keeping her ideas","tip":"one Hebrew tip for next time"}
 ${AIHE}`}
 function amWriteBox(id,st){const q=AMD.q[id],n=wcount(st.txt),ev=st.ev,col=n<90?'var(--bad)':n>120?'var(--bad)':'var(--ok)';
-  let h=`<textarea class="am-in ax-write" id="axW" dir="ltr" placeholder="Write here (90–120 words)…" ${st.done?'readonly':''}>${esc(st.txt||'')}</textarea>
+  let h=`<div dir="ltr" style="text-align:left">${SAYB(q.q,'sm inl')}<span class="hint">Listen to the topic</span></div><textarea class="am-in ax-write" id="axW" dir="ltr" placeholder="Write here (90–120 words)…" ${st.done?'readonly':''}>${esc(st.txt||'')}</textarea>
     <p class="hint" style="margin:0;color:${col}" id="axWc">${n} מילים · היעד 90–120</p>`;
   if(!st.done)return h+(st.busy?'<p class="hint center">⏳ ג׳מיני בודק את החיבור…</p>':st.err?`<p class="hint center">${esc(st.err)}</p>`:'')+`<div class="am-cta"><button class="btn" id="axWGo" ${st.busy?'disabled':''}>בדיקה</button></div>${aiNeedKey()}`;
   const L={low:['נמוך','bad'],medium:['בינוני','mid'],high:['גבוה','ok']}[ev.level]||['—','mid'];
@@ -1209,7 +1243,7 @@ function amWriteBox(id,st){const q=AMD.q[id],n=wcount(st.txt),ev=st.ev,col=n<90?
     <div class="am-box"><p><b>תוכן וארגון: ${ev.content&&ev.content.score||'–'}/5</b> – ${bdiEsc(ev.content&&ev.content.note||'')}</p><p style="margin:0"><b>דקדוק ואוצר מילים: ${ev.language&&ev.language.score||'–'}/5</b> – ${bdiEsc(ev.language&&ev.language.note||'')}</p></div>
     ${(ev.strengths||[]).length?`<div class="am-box good"><h4>מה טוב</h4><ul>${ev.strengths.map(x=>`<li>${bdiEsc(x)}</li>`).join('')}</ul></div>`:''}
     ${(ev.mistakes||[]).length?`<div class="am-box why"><h4>✍️ לתקן (${ev.mistakes.length})</h4>${ev.mistakes.map(m=>`<p><s dir="ltr">${esc(m.wrong||'')}</s> ← <b dir="ltr">${esc(m.fix||'')}</b><br><small>${bdiEsc(m.why||'')}</small></p>`).join('')}</div>`:''}
-    ${ev.improved?`<div class="am-box"><h4>✅ גרסה משופרת שלך</h4><p dir="ltr" style="text-align:left">${esc(ev.improved)}</p></div>`:''}
+    ${ev.improved?`<div class="am-box"><h4>✅ גרסה משופרת שלך</h4><p dir="ltr" style="text-align:left">${SAYB(ev.improved,'sm inl')}${esc(ev.improved)}</p></div>`:''}
     ${ev.tip?`<div class="am-box"><p style="margin:0">💡 ${bdiEsc(ev.tip)}</p></div>`:''}
     <div class="am-cta"><button class="btn secondary" id="axWAgain">✎ לכתוב שוב</button><button class="btn" id="amNext" data-fb="">${amNextLbl()} ←</button></div>`;
   return h}
@@ -1446,7 +1480,7 @@ function amWords(){if(!AMD)return amLoading();
     ${amNav('am','אמירנט')}
     <div class="am-title"><span class="gi g-w">🧠</span><div><h2>מילים</h2><p>לומדים לעומק ושולפים מהזיכרון – בלי "ידעתי / לא ידעתי".</p></div></div>
     ${card('wRev','g-w','🔁','חזרה פעילה',due?'משפט חדש לתרגום, ואז תרגיל לפי השלב':'אין מילים שמחכות עכשיו',due||'',!due)}
-    ${card('wNew','g-w','🌱','מילים חדשות להיום',newLeft?'תרגום משפט ← פירוש ← משפט בעברית ← משפט באנגלית':'סיימת את המילים של היום ✓',newLeft||'',!newLeft)}
+    ${card('wNew','g-w','🌱','מילים חדשות להיום',newLeft?'תרגום משפט ← פירוש ← בחירה במשפטים':'סיימת את המילים של היום ✓',newLeft||'',!newLeft)}
     ${card('wFree','g-w','🎯','תרגול חופשי','לבחור שלב ומילים – כמה שרוצים, קדימה ואחורה','','',EX('תרגול אישי בלבד: לא נספר בחזרות ולא מזיז מילים במסלול. בוחרים שלב (תרגום משפט, הפירוש בעברית, משפט בעברית, משפט באנגלית, כתיבה באנגלית) ואילו מילים – גם את כל המילון.'))}
     ${''&&card('wMine','g-w','📒','המילים שלי',`${learn} בלמידה · ${mast} נלמדו${hard?' · '+hard+' קשות':''}${wait?' · '+wait+' מחכות':''}`,'','',EX('כל המילים שאת לומדת, מסוננות: לחזרה, בלמידה, קשות, נלמדו, מחכות. לחיצה על מילה מראה מתי החזרה הבאה, יומן של כל הצלחה וטעות, והמלצה איך ללמוד אותה.','רשימת המילים שלך ← עמוד לכל מילה'))}
   </div>`;
@@ -2078,7 +2112,7 @@ function startScreen(){const k=DW.filter(known).length,td=dayCount(dayKey()),due
     <div class="home-head"><div><h1>מה לומדים היום? 👋</h1><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>${RELOADBTN}</div>
     ${favCard()}
     <button class="st-app st-am" id="stAm"><span class="st-i">🎯</span><span class="st-t">הכנה לאמירנט</span><span class="st-d">${[due?due+' מילים לחזרה':'',nl?nl+' מילים חדשות':''].filter(Boolean).join(' · ')||'תרגול שאלות לפי השיטה'}</span>${AMEX?'<span class="st-x">הכנה למבחן: שאלות מהספרים לפי השיטה, חקירת כל טעות, ולמידת מילים פעילה עם חזרות בזמן הנכון.</span>':''}</button>
-    <button class="st-app st-dict" id="stDict"><span class="st-i">📚</span><span class="st-t">מילון אנגלית</span><span class="st-d">${DW.length.toLocaleString()} פירושים · יודעת ${k.toLocaleString()} · היום ${td}/${GOAL}</span>${AMEX?'<span class="st-x">כל 4,000+ המילים לפי רמות: בחנים, כרטיסיות, מצב רכב, סימון ✓/✗, ומילים לשיעור הפרטי עם כתיבת משפטים.</span>':''}</button>
+    <button class="st-app st-dict" id="stDict"><span class="st-i">📚</span><span class="st-t">מילון אנגלית</span><span class="st-d">${DW.length.toLocaleString()} פירושים · יודעת ${k.toLocaleString()} · היום ${td}</span>${AMEX?'<span class="st-x">כל 4,000+ המילים לפי רמות: בחנים, כרטיסיות, מצב רכב, סימון ✓/✗, ומילים לשיעור הפרטי עם כתיבת משפטים.</span>':''}</button>
   </div>`;
   $('stDict').onclick=()=>go({screen:'home'});favGoBind();$('stAm').onclick=()=>go({screen:'am'})}
 function amHomeCard(){const due=wDue().length,nl=Math.max(0,wNPer()-wNewToday());

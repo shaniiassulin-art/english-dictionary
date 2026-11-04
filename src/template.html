@@ -523,7 +523,7 @@ function setSync(st){SYNC.state=st;const el=document.getElementById('syncState')
 function sentSyncLabel(){return {idle:'',loading:'מתחבר לחשבון…',saving:'שומר…',ok:'נשמר בחשבון שלך ✓',error:'נשמר במכשיר הזה בלבד'}[SYNC.state]||''}
 /* while the sentences page is open, check the account every few seconds so text typed on another device shows up here */
 setInterval(()=>{if(S.screen==='sent'&&document.visibilityState==='visible'&&SYNC.ready&&!SYNC.pushing&&!SYNC.timer)syncNow(true)},4000);
-function syncLabel(){return {idle:'',loading:'מתחבר…',saving:'שומר…',ok:'מסונכרן בין המכשירים ✓',error:'אין חיבור כרגע · נשמר במכשיר ויסונכרן אחר כך'}[SYNC.state]||''}
+function syncLabel(){return {idle:'',loading:'מתחבר…',saving:'שומר…',ok:'מסונכרן בין המכשירים ✓',error:'אין חיבור · נשמר ויסונכרן אחר כך'}[SYNC.state]||''}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&SYNC.ready&&!['quiz','cards'].includes(S.screen))syncNow(S.screen==='sent');if(document.visibilityState==='hidden'&&SYNC.timer){push()}});
 const D=__DATA__;
 const LVN=['קל מאוד','קל','קל-בינוני','בינוני','בינוני+','בינוני-קשה','קשה','קשה מאוד','מתקדם','מומחה'];
@@ -724,10 +724,13 @@ let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar
 try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw','amgap','amfp','amfpl'].includes(S.screen))S.screen='start'}catch(e){}
 /* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
 /* coming back: the site stays exactly where she was; after a long break (3 h) it opens on the first page */
-try{const lt=+localStorage.getItem('dictLastT')||0;if(Date.now()-lt>3*36e5)S.screen='start'}catch(e){}
+try{const lt=+localStorage.getItem('dictLastT')||0;
+  /* sessionStorage lives as long as the tab / app is open (also across refreshes); iPhone sometimes reloads a page it put to sleep
+     without it, so a very recent visit (under 10 min) still counts as "the same visit" */
+  if(!sessionStorage.getItem('dictOpen')&&Date.now()-lt>10*6e4)S.screen='start';sessionStorage.setItem('dictOpen','1')}catch(e){}
 const markLast=()=>{try{localStorage.setItem('dictLastT',String(Date.now()))}catch(e){}};markLast();
 ['pointerdown','keydown','scroll'].forEach(ev=>document.addEventListener(ev,()=>{if(!markLast.t||Date.now()-markLast.t>15e3){markLast.t=Date.now();markLast()}},{passive:true,capture:true}));
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')markLast();else{const lt=+localStorage.getItem('dictLastT')||0;markLast();if(Date.now()-lt>3*36e5&&!['quiz','car','sent'].includes(S.screen)){try{go({screen:'start'})}catch(e){}}}});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')markLast();else markLast()});
 window.addEventListener('pagehide',markLast);
 function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb,mfrom:S.mfrom,jday:S.jday,fps:S.fps,fpsrc:S.fpsrc}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
@@ -874,31 +877,29 @@ function bindQuizPanel(key,ws,name,from){
 }
 
 /* today's progress toward the daily goal (the day turns over at 05:00) */
-function todayCard(){const k=dayKey(),n=dayCount(k),p=Math.min(100,n/GOAL*100);
-  return `<button class="today${n>=GOAL?' done':''}" id="today" aria-label="ההתקדמות של היום, לחיצה להיסטוריה">
+function todayCard(){const k=dayKey(),n=dayCount(k);
+  return `<button class="today" id="today" aria-label="מה עשיתי היום, לחיצה להיסטוריה">
     <span class="td-top"><span class="td-date">היום · ${esc(dayLabel(k))}</span><span class="td-hist">היסטוריה ‹</span></span>
-    <span class="td-num"><b>${n}</b> / ${GOAL} מילים${n>=GOAL?' · עמדת ביעד! ✓':` · נשארו ${GOAL-n}`}</span>
-    <span class="bar2"><i style="width:${p}%"></i></span></button>`}
+    <span class="td-num"><b>${n}</b> מילים סימנת היום</span></button>`}
 function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(DAYS)])].sort().reverse();
-  const tot=ks.reduce((s,k)=>s+dayCount(k),0),hit=ks.filter(k=>dayCount(k)>=GOAL).length;
+  const tot=ks.reduce((s,k)=>s+dayCount(k),0),mx=Math.max(1,...ks.map(dayCount));
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">מסך ראשי</button>${HOME}</div>
-    <div><h2>כמה מילים עשיתי בכל יום</h2><p class="sub">יעד יומי: ${GOAL} מילים · יום מתחלף ב־05:00 · סה"כ ${tot.toLocaleString()} מילים ב־${ks.filter(k=>dayCount(k)).length} ימים · עמדת ביעד ${hit} פעמים</p></div>
-    <ul class="days">${ks.map(k=>{const n=dayCount(k);return `<li class="${n>=GOAL?'done':''}"><span class="dd">${k===today?'<b>היום</b> · ':''}${esc(dayLabel(k))}</span><span class="dn">${n} / ${GOAL}${n>=GOAL?' ✓':''}</span><span class="bar2"><i style="width:${Math.min(100,n/GOAL*100)}%"></i></span></li>`}).join('')}</ul>
+    <div><h2>כמה מילים עשיתי בכל יום</h2><p class="sub">יום מתחלף ב־05:00 · סה"כ ${tot.toLocaleString()} מילים ב־${ks.filter(k=>dayCount(k)).length} ימים</p></div>
+    <ul class="days">${ks.map(k=>{const n=dayCount(k);return `<li><span class="dd">${k===today?'<b>היום</b> · ':''}${esc(dayLabel(k))}</span><span class="dn">${n}</span><span class="bar2"><i style="width:${n/mx*100}%"></i></span></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'})}
 function home(){
   const k=DW.filter(known).length;
   app.innerHTML=`<div class="screen">
     <div class="nav" style="min-height:0"><button class="back" id="toStart">בחירת אפליקציה</button></div>
-    <div class="home-head"><div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים לתרגול · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>${INFOB('dict')}<button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button></div>
+    <div class="home-head"><div><h1>מילון אנגלית</h1><p class="sub">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים · <b class="kn">יודעת ${k.toLocaleString()}</b></p><p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p></div>${INFOB('dict')}<button class="home-btn priv-ic" id="privGo" aria-label="${PNAME}" title="${PNAME}">✍</button><button class="home-btn reload-top" data-reload="1" aria-label="רענון האתר ועדכון לגרסה החדשה"><svg class="re-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg></button></div>
     <div class="home-top"><div class="ht-s">${searchBox()}</div></div>
     ${favCard()}
     ${(()=>{const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2);if(!ks.length)return'';
       ks.sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0));const k=ks[0],ss=SESS[k];
       return `<button class="resume-card" data-resume="${k}"><span class="grow"><span class="t">להמשיך מאיפה שעצרת</span><br><span class="d">${esc(ss.name)} · מילה ${Math.min(ss.i+1,ss.ids.length)} מתוך ${ss.ids.length}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
     ${todayCard()}
-    ${(()=>{const ws=byLv(PL),kk=ws.filter(known).length;return `<button class="item priv" data-l="${PL}"><span class="num">✍</span><span class="grow"><span class="t">${PNAME}</span><br><span class="d">${PRIV.lists.map(L=>'רשימה '+LN(L)).join(' · ')} · ${ws.length} מילים${kk?` · <b class="kn">יודעת ${kk}</b>`:''}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button>`})()}
     <p class="lbl">בחרי רמה (מהקלה לקשה)</p>
     <ul class="list">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
       return `<li><button class="item" data-l="${i+1}"><span class="num">${i+1}</span><span class="grow"><span class="t">רמה ${i+1} · ${n}</span><br><span class="d lvd">${ws.length} מילים${kk?'':` · ${nGroups(i+1)} קבוצות`}${kk?` · <b class="kn">יודעת ${kk}</b>`:''}${(()=>{const mk=ws.filter(x=>kst(x)).length;return mk&&mk<ws.length?` · לא סומנו ${ws.length-mk}`:''})()}</span></span><span class="chev" aria-hidden="true"><svg class="ai" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span></button></li>`}).join('')}</ul>
@@ -907,7 +908,7 @@ function home(){
   </div>`;
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.resume-card');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
-  $('today').onclick=()=>go({screen:'days'});$('toStart').onclick=()=>go({screen:'start'});favGoBind();
+  $('today').onclick=()=>go({screen:'days'});$('toStart').onclick=()=>go({screen:'start'});favGoBind();$('privGo').onclick=()=>go({screen:'level',l:PL});
   bindSearch(DW);bindSettings();bindQuizPanel('ALL',DW,'כל המילים','home');bindCatPanel('ALL',DW,'כל המילים','home');
 }
 
@@ -1554,7 +1555,7 @@ function quizScreen(){
   app.innerHTML=`<div class="screen qz">
     <div class="qtop"><button class="x" id="exit" aria-label="יציאה מהבוחן">✕</button>${HOMEONLY}<div class="prog"><i style="width:${Q.i/n*100}%"></i></div><span class="count">${Q.i+1} / ${n}</span>${AUTOBTN()}${RELOADBTN}</div>
     <p class="vmsg" id="vmsg" hidden></p>
-    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)} · <span class="${dayCount(dayKey())>=GOAL?'kn':''}">היום ${dayCount(dayKey())}/${GOAL}</span></p>
+    <p class="mode-tag">${listen?'שמיעה':'קריאה'} · ${esc(Q.name)} · <span>היום ${dayCount(dayKey())}</span></p>
     <div class="wnav"><button class="arr" id="navPrev" aria-label="למילה הקודמת" ${Q.i>0?'':'disabled'}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></button>${wordBox}<button class="arr" id="navNext" aria-label="למילה הבאה" ${Q.i<n-1?'':'disabled'}><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg></button></div>
     ${sentence}
     ${body}
