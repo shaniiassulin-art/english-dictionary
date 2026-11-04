@@ -34,12 +34,19 @@ function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n
   o.jp={};for(const x of [a.jp||{},b.jp||{}])for(const k in x)if(!o.jp[k]||(x[k].t||0)>(o.jp[k].t||0))o.jp[k]=x[k];
   for(const f of ['ls','hc','rd','ex','wpa']){o[f]={};for(const s of [a[f]||{},b[f]||{}])for(const k in s){const v=s[k],w=o[f][k],tv=Array.isArray(v)?v[1]:v&&v.t||v,tw=Array.isArray(w)?w[1]:w&&w.t||w;if(w===undefined||(tv||0)>(tw||0))o[f][k]=v}}
   if(o.ar)for(const k in o.ex)if((o.ex[k].t||0)<=o.ar)delete o.ex[k];
+  /* the open learning round / question session, so another device goes on from the same place (newest wins) */
+  o.ss={};for(const f of ['ws','aq']){const x=(a.ss||{})[f],y=(b.ss||{})[f];const v=!x?y:!y?x:(y[1]||0)>(x[1]||0)?y:x;if(v)o.ss[f]=v}
   return o}
 function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const w=A[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete A[k];continue}if(!w.k)w.k=k;if(typeof w.st!=='number')w.st=0;
   /* a card's word (c:<id>) learns that card's single meaning – older entries could hold all the meanings joined */
   const c=String(w.k).startsWith('c:')&&typeof W!=='undefined'&&W[String(w.k).slice(2)];if(c){if(c.h[0]&&w.h!==c.h[0])w.h=c.h[0];if(!w.src||!String(w.src).startsWith('dict:'))w.src='dict:'+c.id}
   else if(/ · /.test(w.h||'')&&typeof W!=='undefined'){try{const cc=wCard(w);if(cc&&cc.h[0])w.h=cc.h[0]}catch(e){}}}}
-function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});amFixW();LS.set('dictAm',JSON.stringify(AMS))}
+function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});amFixW();LS.set('dictAm',JSON.stringify(AMS));amTakeSess()}
+/* a session saved later on another device replaces this device's copy (not while it is open on this screen) */
+function amTakeSess(){const ss=AMS.ss||{};try{
+  const w=ss.ws;if(w&&(w[1]||0)>(+LS.get('dictAmWsT')||0)&&S.screen!=='amwl'&&!(S.screen==='quiz'&&/^JW/.test(String(S.active||'')))){WS=w[0];LS.set('dictAmWs',JSON.stringify(WS));LS.set('dictAmWsT',String(w[1]))}
+  const q=ss.aq;if(q&&(q[1]||0)>(+LS.get('dictAmQT')||0)&&S.screen!=='amq'){AQ=q[0];LS.set('dictAmQ',JSON.stringify(AQ));LS.set('dictAmQT',String(q[1]))}}catch(e){}}
+function amSessPut(f,v){const t=Date.now();AMS.ss=AMS.ss||{};AMS.ss[f]=[v,t];LS.set(f==='ws'?'dictAmWsT':'dictAmQT',String(t));LS.set('dictAm',JSON.stringify(AMS));try{dirty()}catch(e){}}
 const DAY=864e5;
 const amNow=()=>Date.now();
 
@@ -938,7 +945,7 @@ function amStartUnit(s,name,from,t){amStart(s.ids,name,'learn',from,t);
   AQ.i=first<0?s.ids.length:first;AQ.unit=s.id;if(AQ.i<AQ.ids.length)aqSt().seen=amNow();amSaveQ();draw();window.scrollTo(0,0)}
 function amResume(){if(AQ.paused){AQ.t0+=amNow()-AQ.paused;AQ.paused=0}aqSt().seen=amNow();amSaveQ();go({screen:'amq'})}
 function amStartMist(){if(!AMD)return;const ids=Object.keys(AMD.q).filter(amMistDue);if(!ids.length)return;amStart(ids,'מחברת הטעויות · ניסיון חוזר','learn','amx','mist')}
-function amSaveQ(){try{LS.set('dictAmQ',JSON.stringify(AQ))}catch(e){}}
+function amSaveQ(){try{LS.set('dictAmQ',JSON.stringify(AQ));amSessPut('aq',AQ)}catch(e){}}
 try{AQ=JSON.parse(LS.get('dictAmQ')||'null')}catch(e){}
 function aqSt(i){i=i??AQ.i;return AQ.st[i]=AQ.st[i]||{stage:'read',guess:'',sel:0,elim:{},done:false,ms:0,seen:amNow(),why:[],note:'',words:false,pass:true}}
 let AMTICK=null;
@@ -1327,7 +1334,7 @@ function amWordPage(){if(!AMD)return amLoading();const w=AMS.w[S.wk];if(!w){go({
   $('wdSent').onclick=()=>{WS={mode:'one',list:[wK(w)],i:0,step:'write',hint:0,from:'amwd',sentOnly:1,draft:''};wSave();go({screen:'amwl'})};
   $('wdReset').onclick=()=>{w.st=0;w.due=0;w.t=amNow();amSave();draw()};
   const kn=$('wdKnow');if(kn)kn.onclick=()=>{wLog(w,'known',1,0);wMaster(w);w.t=amNow();amSave();draw()}}
-function wSave(){try{LS.set('dictAmWs',JSON.stringify(WS))}catch(e){}}
+function wSave(){try{LS.set('dictAmWs',JSON.stringify(WS));amSessPut('ws',WS)}catch(e){}}
 try{WS=JSON.parse(LS.get('dictAmWs')||'null')}catch(e){}
 function wStart(mode,keys,cnt){
   if(mode==='collect'){const L=(keys||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);if(!L.length)return;WS={mode:'new',perWord:1,list:L,i:0,step:'tr',hint:0,from:S.screen,ok:0,bad:0,collect:1,t0:amNow()};if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}wSave();go({screen:'amwl'});return}
