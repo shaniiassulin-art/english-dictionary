@@ -35,7 +35,10 @@ function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n
   for(const f of ['ls','hc','rd','ex','wpa']){o[f]={};for(const s of [a[f]||{},b[f]||{}])for(const k in s){const v=s[k],w=o[f][k],tv=Array.isArray(v)?v[1]:v&&v.t||v,tw=Array.isArray(w)?w[1]:w&&w.t||w;if(w===undefined||(tv||0)>(tw||0))o[f][k]=v}}
   if(o.ar)for(const k in o.ex)if((o.ex[k].t||0)<=o.ar)delete o.ex[k];
   return o}
-function amFixW(){const W=AMS.w||(AMS.w={});for(const k of Object.keys(W)){const w=W[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete W[k];continue}if(!w.k)w.k=k;if(typeof w.st!=='number')w.st=0}}
+function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const w=A[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete A[k];continue}if(!w.k)w.k=k;if(typeof w.st!=='number')w.st=0;
+  /* a card's word (c:<id>) learns that card's single meaning – older entries could hold all the meanings joined */
+  const c=String(w.k).startsWith('c:')&&typeof W!=='undefined'&&W[String(w.k).slice(2)];if(c){if(c.h[0]&&w.h!==c.h[0])w.h=c.h[0];if(!w.src||!String(w.src).startsWith('dict:'))w.src='dict:'+c.id}
+  else if(/ · /.test(w.h||'')&&typeof W!=='undefined'){try{const cc=wCard(w);if(cc&&cc.h[0])w.h=cc.h[0]}catch(e){}}}}
 function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});amFixW();LS.set('dictAm',JSON.stringify(AMS))}
 const DAY=864e5;
 const amNow=()=>Date.now();
@@ -159,7 +162,7 @@ function wMaster(w){w.st=WMAST;w.due=0;
   if(w.src&&w.src.startsWith('dict:')){const c=W[w.src.slice(5)];if(c&&!isY(c))setKnow(c.id,'y');return}
   const d=dictFind(w.e);if(d)d.cards.forEach(c=>{if(!isY(c))setKnow(c.id,'y')})}
 /* the dictionary card behind a workshop word (for its tip, notes, sentence and translation) */
-function wCard(w){if(w.src&&w.src.startsWith('dict:'))return W[w.src.slice(5)]||null;const d=dictFind(w.e);if(!d)return null;return d.cards.find(c=>heMatch(c.h[0],w.h||''))||d.cards[0]}
+function wCard(w){if(w.k&&String(w.k).startsWith('c:')&&W[String(w.k).slice(2)])return W[String(w.k).slice(2)];if(w.src&&w.src.startsWith('dict:'))return W[w.src.slice(5)]||null;const d=dictFind(w.e);if(!d)return null;return d.cards.find(c=>heMatch(c.h[0],w.h||''))||d.cards[0]}
 /* 🧭 tips from the methods, for words where they really apply */
 function wMethodTips(w){const out=[],e=String(w.e||'').toLowerCase().trim(),P=AMD&&AMD.px,L=AMD&&AMD.lists;if(!e)return out;
   for(const [he,k,ws,tip] of CONN)if(ws.includes(e)){out.push(['🔗','מילת קישור – '+he,tip+' בהשלמת משפטים ובניסוח מחדש מילה כזו היא בדרך כלל הרמז לתשובה.']);break}
@@ -1431,6 +1434,10 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   if(WS.mode==='r2'&&WS.phase==='dq')return wDqPage();
   const w=AMS.w[WS.list[WS.i]];if(!w){WS.i++;wSave();return draw()}
   const card=wCard(w),x=card?EXTRA[card.xid||card.id]||{}:{},ex=card?card.s:'';
+  /* one meaning at a time: an entry that holds all the meanings joined ("a · b · c") learns its card's meaning */
+  if(card&&card.h[0]&&w.h!==card.h[0]&&(String(w.k||'').startsWith('c:')||/ · /.test(w.h||''))){w.h=card.h[0];w.t=amNow();amSave()}
+  /* a learning round started by the older version (meet → write) goes on in the new order: sentence translation first */
+  if(WS.perWord&&WS.mode==='new'&&WS.step==='meet'){WS.step='tr';WS.res=null;wSave()}
   const ctx=w.c||ex||'';
   let h=`<div class="screen qz am-scr">
     <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${HOME}${INFOB()}</span></div>
