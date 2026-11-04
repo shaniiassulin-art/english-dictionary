@@ -1384,7 +1384,7 @@ function qNext(){const n=Q.list.length,wPrev=Q.list[Q.i];
   Q.st=Q.st||{};Q.st[Q.i]=curState();
   /* on to the next word not marked yet; when none is left after this one, the quiz is done */
   let j=Q.i+1;while(j<n&&Q.marks[Q.list[j].id])j++;
-  if(j>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'result'))return true;go({screen:'result'});return true}
+  if(j>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);if(typeof jwQuizDone==='function'&&jwQuizDone())return true;if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'result'))return true;go({screen:'result'});return true}
   enterWord(j);saveQ();
   /* today's new words (אמירנט): right after a word, its writing + sentence step, then back here to the next word */
   if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'quiz'))return false;
