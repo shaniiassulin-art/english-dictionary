@@ -9,8 +9,21 @@ async def tap(pg,sel):
   return False
 async def ws_drive(pg,limit=160,wrong=4,log=None):
   n=0
-  while n<limit and await pg.evaluate("S.screen")=='amwl':
+  while n<limit and await pg.evaluate("S.screen") in ('amwl','quiz') and await pg.evaluate("S.screen!=='quiz'||/^JW/.test(Q.key)"):
     n+=1
+    if await pg.evaluate("S.screen")=='quiz':
+      if await pg.locator('#inp0').count():await pg.fill('#inp0','x')
+      for _s in ['#show','.opt','#check']:
+        _l=pg.locator(_s)
+        if await _l.count() and await _l.first.is_enabled():await _l.first.click();await pg.wait_for_timeout(100)
+      _l=pg.locator('#markY')
+      if await _l.count():await _l.click();await pg.wait_for_timeout(250)
+      continue
+    if await pg.locator('#dqGo').count():await pg.click('#dqGo');await pg.wait_for_timeout(400);continue
+    if await pg.locator('#trY').count():await pg.click('#trY');await pg.wait_for_timeout(200);continue
+    if await pg.locator('#trIn').count():await pg.fill('#trIn','תרגום');await pg.click('#trChk');await pg.wait_for_timeout(500);continue
+    if await pg.locator('#trSkip').count():await pg.click('#trSkip');await pg.wait_for_timeout(200);continue
+    if not await pg.locator('#wOn,#wNext,#wAns,[data-wmc],#wCopy,#wSelfY,#wBack,#wSaveS').count():await pg.wait_for_timeout(400)
     if await tap(pg,'#wBack'):break
     if await pg.locator('#wNext').count():
       if not await tap(pg,'[data-as]'):
