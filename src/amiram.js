@@ -556,7 +556,6 @@ input.am-in,textarea.am-in,.search input,input[type=search],input[type=text],tex
 .st-screen .st-app{background:var(--surface)!important;box-shadow:var(--sh1)!important;border:1px solid var(--line)!important}.st-screen .st-t{color:var(--ink)!important}
 /* calmer palette: chips and number badges neutral; emoji tiles toned down */
 .am-chip{background:var(--fill)!important;color:var(--ink)!important}.item .num,.gi{background:var(--fill)!important;color:var(--ink)!important}
-.st-screen .st-i,.gi{filter:saturate(.35)}
 /* the word-path timeline */
 .am-tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}.am-tl li{position:relative;padding:0 18px 12px 0;border-inline-start:2px solid var(--line);margin-inline-start:6px;display:flex;flex-direction:column;gap:1px}.am-tl li:last-child{border-color:transparent;padding-bottom:0}
 .am-tl li::before{content:'';position:absolute;inset-inline-start:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}.am-tl li:last-child::before{background:var(--accent)}
