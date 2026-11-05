@@ -3,19 +3,19 @@
 <style>
 /* Layout: one screen at a time, like an app — levels → groups → group → quiz. One accent, lots of space. */
 :root{
-  --bg:#f3f5f9; --surface:#ffffff; --ink:#151a24; --muted:#5b6474; --line:#e1e5ee; --fill:#eef1f6;
-  --accent:#3451c7; --accent-ink:#ffffff; --accent-soft:#e9edfd;
-  --ok:#1d8556; --ok-soft:#e1f3e9; --bad:#c93c3c; --bad-soft:#fce9e9;
+  --bg:#f5f5f4; --surface:#ffffff; --ink:#18181b; --muted:#63636b; --line:#e4e4e7; --fill:#f1f1f2;
+  --accent:#3f4a5e; --accent-ink:#ffffff; --accent-soft:#eceef2; --btn:#1f2329; --btn-ink:#ffffff;
+  --ok:#2f7a57; --ok-soft:#e8f2ec; --bad:#b04646; --bad-soft:#f7e9e9;
   --he:"Heebo","Assistant",Arial,sans-serif; --en:"Inter","Helvetica Neue",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1117; --surface:#171b23; --ink:#eef1f7; --muted:#a6aebc; --line:#2a303c; --fill:#20252f;
-  --accent:#8fa4ff; --accent-ink:#0e1117; --accent-soft:#1c2340;
-  --ok:#8fc2a3; --ok-soft:#1d2b23; --bad:#d9a0a0; --bad-soft:#33221f; color-scheme:dark}}
+  --bg:#111113; --surface:#1a1a1d; --ink:#ededef; --muted:#a0a0a8; --line:#2c2c31; --fill:#222226;
+  --accent:#b9c0cc; --accent-ink:#111113; --accent-soft:#26272c; --btn:#ededef; --btn-ink:#111113;
+  --ok:#8fc2a3; --ok-soft:#1c2620; --bad:#d9a0a0; --bad-soft:#2e2020; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1117; --surface:#171b23; --ink:#eef1f7; --muted:#a6aebc; --line:#2a303c; --fill:#20252f;
-  --accent:#8fa4ff; --accent-ink:#0e1117; --accent-soft:#1c2340;
-  --ok:#8fc2a3; --ok-soft:#1d2b23; --bad:#d9a0a0; --bad-soft:#33221f; color-scheme:dark}
+  --bg:#111113; --surface:#1a1a1d; --ink:#ededef; --muted:#a0a0a8; --line:#2c2c31; --fill:#222226;
+  --accent:#b9c0cc; --accent-ink:#111113; --accent-soft:#26272c; --btn:#ededef; --btn-ink:#111113;
+  --ok:#8fc2a3; --ok-soft:#1c2620; --bad:#d9a0a0; --bad-soft:#2e2020; color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--he);font-size:18px;line-height:1.55}
@@ -721,7 +721,7 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 
 /* state */
 let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw','amgap','amfp','amfpl'].includes(S.screen))S.screen='start'}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw','amgap','amfp','amfpl','ampath'].includes(S.screen))S.screen='start'}catch(e){}
 /* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
 /* coming back: the site stays exactly where she was; after a long break (3 h) it opens on the first page */
 try{const lt=+localStorage.getItem('dictLastT')||0;
@@ -732,7 +732,7 @@ const markLast=()=>{try{localStorage.setItem('dictLastT',String(Date.now()))}cat
 ['pointerdown','keydown','scroll'].forEach(ev=>document.addEventListener(ev,()=>{if(!markLast.t||Date.now()-markLast.t>15e3){markLast.t=Date.now();markLast()}},{passive:true,capture:true}));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')markLast();else markLast()});
 window.addEventListener('pagehide',markLast);
-function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb,mfrom:S.mfrom,jday:S.jday,fps:S.fps,fpsrc:S.fpsrc}))}catch(e){}}
+function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb,mfrom:S.mfrom,jday:S.jday,fps:S.fps,fpsrc:S.fpsrc,pfrom:S.pfrom}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
 /* ↑ button: back to the top of long pages */
@@ -764,7 +764,7 @@ function drawFail(err){const m=String(err&&(err.stack||err.message)||err).split(
   $('bk').onclick=()=>go({screen:/^am/.test(S.screen)?'am':'home'})}
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords,amgap:amGaps,amfp:amFreePick,amfpl:amFreeRun})[S.screen]();}catch(err){drawFail(err)}
+  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords,amgap:amGaps,amfp:amFreePick,amfpl:amFreeRun,ampath:amPath})[S.screen]();}catch(err){drawFail(err)}
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});

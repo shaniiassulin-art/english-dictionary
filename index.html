@@ -15,19 +15,19 @@
 <style>
 /* Layout: one screen at a time, like an app — levels → groups → group → quiz. One accent, lots of space. */
 :root{
-  --bg:#f3f5f9; --surface:#ffffff; --ink:#151a24; --muted:#5b6474; --line:#e1e5ee; --fill:#eef1f6;
-  --accent:#3451c7; --accent-ink:#ffffff; --accent-soft:#e9edfd;
-  --ok:#1d8556; --ok-soft:#e1f3e9; --bad:#c93c3c; --bad-soft:#fce9e9;
+  --bg:#f5f5f4; --surface:#ffffff; --ink:#18181b; --muted:#63636b; --line:#e4e4e7; --fill:#f1f1f2;
+  --accent:#3f4a5e; --accent-ink:#ffffff; --accent-soft:#eceef2; --btn:#1f2329; --btn-ink:#ffffff;
+  --ok:#2f7a57; --ok-soft:#e8f2ec; --bad:#b04646; --bad-soft:#f7e9e9;
   --he:"Heebo","Assistant",Arial,sans-serif; --en:"Inter","Helvetica Neue",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1117; --surface:#171b23; --ink:#eef1f7; --muted:#a6aebc; --line:#2a303c; --fill:#20252f;
-  --accent:#8fa4ff; --accent-ink:#0e1117; --accent-soft:#1c2340;
-  --ok:#8fc2a3; --ok-soft:#1d2b23; --bad:#d9a0a0; --bad-soft:#33221f; color-scheme:dark}}
+  --bg:#111113; --surface:#1a1a1d; --ink:#ededef; --muted:#a0a0a8; --line:#2c2c31; --fill:#222226;
+  --accent:#b9c0cc; --accent-ink:#111113; --accent-soft:#26272c; --btn:#ededef; --btn-ink:#111113;
+  --ok:#8fc2a3; --ok-soft:#1c2620; --bad:#d9a0a0; --bad-soft:#2e2020; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1117; --surface:#171b23; --ink:#eef1f7; --muted:#a6aebc; --line:#2a303c; --fill:#20252f;
-  --accent:#8fa4ff; --accent-ink:#0e1117; --accent-soft:#1c2340;
-  --ok:#8fc2a3; --ok-soft:#1d2b23; --bad:#d9a0a0; --bad-soft:#33221f; color-scheme:dark}
+  --bg:#111113; --surface:#1a1a1d; --ink:#ededef; --muted:#a0a0a8; --line:#2c2c31; --fill:#222226;
+  --accent:#b9c0cc; --accent-ink:#111113; --accent-soft:#26272c; --btn:#ededef; --btn-ink:#111113;
+  --ok:#8fc2a3; --ok-soft:#1c2620; --bad:#d9a0a0; --bad-soft:#2e2020; color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--ink);font-family:var(--he);font-size:18px;line-height:1.55}
@@ -947,7 +947,7 @@ function highlight(s,e){const toks=e.toLowerCase().match(/[a-z]+/g)||[];let out=
 
 /* state */
 let S={screen:'start',l:1,g:0,mode:'read',active:null};let CARON=LS.get('dictCar')==='1';
-try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw','amgap','amfp','amfpl'].includes(S.screen))S.screen='start'}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['home','level','group','words','quiz','cards','sent','car','tr','start','am','amu','amq','amx','amw','amwl','amm','amh','amrd','aml','amhelp','amqh','amwm','amwd','amls','amp','amwp','ammt','amjb','amsch','amnw','amgap','amfp','amfpl','ampath'].includes(S.screen))S.screen='start'}catch(e){}
 /* a fresh launch opens on the app chooser; a reload (refresh button, iPhone restoring the tab) stays where it was */
 /* coming back: the site stays exactly where she was; after a long break (3 h) it opens on the first page */
 try{const lt=+localStorage.getItem('dictLastT')||0;
@@ -958,7 +958,7 @@ const markLast=()=>{try{localStorage.setItem('dictLastT',String(Date.now()))}cat
 ['pointerdown','keydown','scroll'].forEach(ev=>document.addEventListener(ev,()=>{if(!markLast.t||Date.now()-markLast.t>15e3){markLast.t=Date.now();markLast()}},{passive:true,capture:true}));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')markLast();else markLast()});
 window.addEventListener('pagehide',markLast);
-function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb,mfrom:S.mfrom,jday:S.jday,fps:S.fps,fpsrc:S.fpsrc}))}catch(e){}}
+function persist(){try{localStorage.setItem('dictNav2',JSON.stringify({screen:S.screen,l:S.l,g:S.g,mode:S.mode,active:S.active,amt:S.amt,amTab:S.amTab,aml:S.aml,amrd:S.amrd,hk:S.hk,hfrom:S.hfrom,wk:S.wk,wf:S.wf,jb:S.jb,mfrom:S.mfrom,jday:S.jday,fps:S.fps,fpsrc:S.fpsrc,pfrom:S.pfrom}))}catch(e){}}
 function go(patch){if(patch.screen&&patch.screen!==S.screen)S.q='';Object.assign(S,patch);persist();draw();window.scrollTo(0,0)}
 /* keep the keyboard open: if an answer box had focus, focus it again after the screen is redrawn */
 /* ↑ button: back to the top of long pages */
@@ -990,7 +990,7 @@ function drawFail(err){const m=String(err&&(err.stack||err.message)||err).split(
   $('bk').onclick=()=>go({screen:/^am/.test(S.screen)?'am':'home'})}
 function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords,amgap:amGaps,amfp:amFreePick,amfpl:amFreeRun})[S.screen]();}catch(err){drawFail(err)}
+  try{({home,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords,amgap:amGaps,amfp:amFreePick,amfpl:amFreeRun,ampath:amPath})[S.screen]();}catch(err){drawFail(err)}
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -2546,6 +2546,7 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .st-screen .st-app,.st-dict,.st-am{background:var(--surface)!important;border:0!important;min-height:0!important;padding:18px!important}.st-screen .st-x{display:none}.st-screen .st-i{font-size:1.6rem}
 /* exam look for the questions (like the real AMIRNET screen) */
 .ax{--axb:#2f6fb3;--axo:#f0a020}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ax{--axb:#8fb3e6}}:root[data-theme="dark"] .ax{--axb:#8fb3e6}
 .ax .ax-tabs{display:flex;overflow-x:auto;scrollbar-width:none;background:var(--surface);border-radius:10px;margin:0 -2px}.ax .ax-tabs::-webkit-scrollbar{display:none}
 .ax .ax-tab{flex:none;display:flex;align-items:center;gap:8px;border:0!important;background:none;padding:10px 16px 10px 12px;font:inherit;font-size:.95rem;color:var(--ink);cursor:pointer;white-space:nowrap;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%,10px 50%)}
 .ax .ax-tab:first-child{clip-path:polygon(0 0,calc(100% - 10px) 0,100% 50%,calc(100% - 10px) 100%,0 100%)}
@@ -2604,9 +2605,9 @@ h1,h2,h3{letter-spacing:-.012em}h1{font-weight:800}
 .am-scr .am-box,.am-card,.am-meth,.am-step-box,.panel,.card{background:var(--surface)!important;border:1px solid var(--line)!important}
 .am-unit{border-radius:14px!important}
 /* hero areas: a soft accent wash */
-.am-hero2,.today{background:linear-gradient(140deg,var(--accent-soft) 0%,color-mix(in srgb,var(--accent-soft) 45%,var(--surface)) 100%)!important;border:1px solid color-mix(in srgb,var(--accent) 16%,transparent)!important;box-shadow:var(--sh1)!important}
+.am-hero2,.today{background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:var(--sh1)!important}
 /* main buttons */
-.btn:not(.secondary):not(.knowyes):not(.knowno):not([class*="cat-"]):not(.carbtn){background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 86%,#fff) 0%,var(--accent) 100%);color:var(--accent-ink);box-shadow:0 10px 20px -10px color-mix(in srgb,var(--accent) 80%,transparent)}
+.btn:not(.secondary):not(.knowyes):not(.knowno):not([class*="cat-"]):not(.carbtn){background:var(--btn);color:var(--btn-ink);box-shadow:0 8px 18px -12px rgba(0,0,0,.5)}
 .btn{border-radius:14px;font-weight:700;letter-spacing:.01em;transition:transform .12s ease,box-shadow .2s ease}.btn:active{transform:scale(.985)}
 .btn:disabled{opacity:.45;box-shadow:none!important}
 .btn.secondary{background:var(--surface);color:var(--accent);box-shadow:var(--sh1)}
@@ -2614,9 +2615,9 @@ h1,h2,h3{letter-spacing:-.012em}h1{font-weight:800}
 /* pills, segments, chips */
 .am-pill,.am-tabs button,.am-fpg button{background:var(--surface)!important;box-shadow:var(--sh1)}
 .seg{background:var(--fill)!important;border-radius:12px;padding:4px}.seg button[aria-pressed="true"],.seg button.on{background:var(--surface)!important;color:var(--accent)!important;box-shadow:var(--sh1)}
-.am-tabs button[aria-pressed="true"],.am-fpg button[aria-pressed="true"]{background:var(--accent)!important;color:var(--accent-ink)!important}
+.am-tabs button[aria-pressed="true"],.am-fpg button[aria-pressed="true"]{background:var(--btn)!important;color:var(--btn-ink)!important}
 .am-chip{background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 10px;font-weight:700}
-.am-prog,.prog{background:var(--fill)!important;border-radius:999px;overflow:hidden}.am-prog i,.prog i{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 70%,#fff),var(--accent))!important;border-radius:999px}
+.am-prog,.prog{background:var(--fill)!important;border-radius:999px;overflow:hidden}.am-prog i,.prog i{background:var(--accent)!important;border-radius:999px}
 /* round icon buttons in the top bar */
 .home-btn,.x,.arr,.autob,.reload-top{background:var(--surface)!important;box-shadow:var(--sh1)}
 /* text fields */
@@ -2628,8 +2629,14 @@ input.am-in,textarea.am-in,.search input,input[type=search],input[type=text],tex
 /* quiz options and the card in the dictionary quiz */
 .opt{background:var(--surface);box-shadow:var(--sh1);border-radius:14px}
 /* app chooser tiles */
-.st-screen .st-app{background:linear-gradient(160deg,var(--surface) 0%,var(--accent-soft) 140%)!important;box-shadow:var(--sh2)!important;border:1px solid var(--line)!important}
-.st-screen .st-am{background:linear-gradient(160deg,var(--accent-soft) 0%,var(--surface) 120%)!important}
+.st-screen .st-app{background:var(--surface)!important;box-shadow:var(--sh1)!important;border:1px solid var(--line)!important}.st-screen .st-t{color:var(--ink)!important}
+/* calmer palette: chips and number badges neutral; emoji tiles toned down */
+.am-chip{background:var(--fill)!important;color:var(--ink)!important}.item .num,.gi{background:var(--fill)!important;color:var(--ink)!important}
+.st-screen .st-i,.gi{filter:saturate(.35)}
+/* the word-path timeline */
+.am-tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}.am-tl li{position:relative;padding:0 18px 12px 0;border-inline-start:2px solid var(--line);margin-inline-start:6px;display:flex;flex-direction:column;gap:1px}.am-tl li:last-child{border-color:transparent;padding-bottom:0}
+.am-tl li::before{content:'';position:absolute;inset-inline-start:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}.am-tl li:last-child::before{background:var(--accent)}
+.am-tl .d{font-size:.78rem;color:var(--muted);font-weight:600}.am-tl b{font-size:.95rem}.am-tl small{color:var(--muted)}
 /* ===== type scale (her request: text like 11–12 pt in Word; only headings bigger) ===== */
 body{font-size:16px!important}@media (max-width:420px){body{font-size:15px!important}}
 h1{font-size:1.45rem!important}h2,.am-title h2{font-size:1.2rem!important}h3,.panel h3{font-size:1.02rem!important}
@@ -3557,10 +3564,11 @@ function amWords(){if(!AMD)return amLoading();
     <div class="am-title"><span class="gi g-w">🧠</span><div><h2>מילים</h2><p>לומדים לעומק ושולפים מהזיכרון – בלי "ידעתי / לא ידעתי".</p></div></div>
     ${card('wRev','g-w','🔁','חזרה פעילה',due?'משפט חדש לתרגום, ואז תרגיל לפי השלב':'אין מילים שמחכות עכשיו',due||'',!due)}
     ${card('wNew','g-w','🌱','מילים חדשות להיום',newLeft?'תרגום משפט ← פירוש ← בחירה במשפטים':'סיימת את המילים של היום ✓',newLeft||'',!newLeft)}
+    ${card('wPath','g-w','🛤','המסלול של מילה','הסבר מפורט: מה קורה למילה מהלמידה ועד שהיא נלמדה')}
     ${card('wFree','g-w','🎯','תרגול חופשי','לבחור שלב ומילים – כמה שרוצים, קדימה ואחורה','','',EX('תרגול אישי בלבד: לא נספר בחזרות ולא מזיז מילים במסלול. בוחרים שלב (תרגום משפט, הפירוש בעברית, משפט בעברית, משפט באנגלית, כתיבה באנגלית) ואילו מילים – גם את כל המילון.'))}
     ${''&&card('wMine','g-w','📒','המילים שלי',`${learn} בלמידה · ${mast} נלמדו${hard?' · '+hard+' קשות':''}${wait?' · '+wait+' מחכות':''}`,'','',EX('כל המילים שאת לומדת, מסוננות: לחזרה, בלמידה, קשות, נלמדו, מחכות. לחיצה על מילה מראה מתי החזרה הבאה, יומן של כל הצלחה וטעות, והמלצה איך ללמוד אותה.','רשימת המילים שלך ← עמוד לכל מילה'))}
   </div>`;
-  amBindNav();$('wRev').onclick=()=>{if(due)wStart('rev');else amToast('אין עכשיו מילים לחזרה – הן יופיעו כשיגיע זמנן')};$('wNew').onclick=()=>{if(newLeft)wStart('new');else amToast('סיימת את המילים החדשות של היום. אפשר להגדיל את הכמות ב"המילים שלי".')};($('wMine')||{}).onclick=()=>go({screen:'amwm'});$('wFree').onclick=()=>go({screen:'amfp'});
+  amBindNav();$('wRev').onclick=()=>{if(due)wStart('rev');else amToast('אין עכשיו מילים לחזרה – הן יופיעו כשיגיע זמנן')};$('wNew').onclick=()=>{if(newLeft)wStart('new');else amToast('סיימת את המילים החדשות של היום. אפשר להגדיל את הכמות ב"המילים שלי".')};($('wMine')||{}).onclick=()=>go({screen:'amwm'});$('wFree').onclick=()=>go({screen:'amfp'});$('wPath').onclick=()=>go({screen:'ampath',pfrom:'amw'});
 }
 /* ================= 🎯 free practice: any stage, any words, back and forth – nothing is recorded =================
    FP = {stage, src, ids:[card ids], i, st:{index:{…}}, t0} (localStorage dictAmFp, synced as AMS.ss.fp). The 'dq' stage is the dictionary quiz itself. */
@@ -3641,6 +3649,41 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
 /* the dictionary quiz of a free practice ends → back to the practice page */
 function jpQuizDone(){if(!Q||!/^JP/.test(String(Q.key||''))||!FP||FP.key!==Q.key)return false;FP=null;fpSave();go({screen:'amfp'});amToast('✓ סיימת את התרגול');return true}
 
+/* ================= 🛤 the path of a word – a detailed explanation page (from the words page, a word's page and progress) ================= */
+function amPath(){const back=['amw','amwd','amp','am'].includes(S.pfrom)?S.pfrom:'amw';
+  const T=[['היום','למידה','4 סבבים, כל סבב לכל המילים של היום (פירוט למטה).'],['אחרי 20 דקות','שלב 1 · משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
+    ['אחרי יום','שלב 2 · כתיבה באנגלית','רואים את הפירוש בעברית וכותבים את המילה באנגלית.'],['אחרי 3 ימים','שלב 3 · משפט חדש – כתיבה','משפט חדש באנגלית (מהשאלות, הקטעים או הספרים) – כותבים את המילה החסרה.'],
+    ['אחרי שבוע','שלב 4 · הפירוש בעברית','רואים את המילה באנגלית וכותבים את הפירוש בעברית.'],['אחרי שבועיים','שלב 5 · משפט חדש – בחירה','משפט חדש באנגלית – בוחרים את המילה מתוך 4.'],
+    ['אחרי חודש','שלב 6 · כתיבה באנגלית','שוב כותבים את המילה מהפירוש.'],['כ־55 יום מההתחלה','🏆 נלמדה','המילה מסומנת ✓ במילון ויוצאת מהחזרות.']];
+  app.innerHTML=`<div class="screen am-scr">
+    ${amNav(back,back==='amwd'?'המילה':back==='amp'?'התקדמות':back==='am'?'המסע':'מילים')}
+    <div class="am-title"><div><h2>🛤 המסלול של מילה</h2><p>מה קורה למילה מהרגע שמתחילים ללמוד אותה ועד שהיא נלמדה.</p></div></div>
+    <div class="am-box"><h4>בקצרה</h4><ol class="am-tl">${T.map(([d,t,x])=>`<li><span class="d">${d}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ol></div>
+    <div class="am-box"><h4>1 · היום הראשון – למידה</h4>
+      <p>כל סבב נעשה לכל המילים של היום, ורק אחריו מתחיל הבא:</p>
+      <ol><li><b>תרגום משפט</b> – משפט קל באנגלית עם המילה החדשה. לחיצה על המילה מראה את הפירוש. מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה. מכאן המילה נכנסת למסלול.</li>
+      <li><b>הפירוש בעברית</b> – הבוחן של המילון על המילים של היום: כותבים פירוש, אפשרויות, ידעתי / לא ידעתי (הסימון נשמר במילון).</li>
+      <li><b>משפט בעברית</b> – בוחרים את המילה באנגלית שחסרה.</li>
+      <li><b>משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol>
+      <p class="hint" style="margin:0">מילה עם כמה פירושים – כל פירוש הוא כרטיס נפרד ועובר מסלול משלו.</p></div>
+    <div class="am-box"><h4>2 · כל חזרה</h4>
+      <ol><li><b>קודם, לכל המילים של החזרה:</b> משפט חדש וקל לתרגום – בכל חזרה משפט אחר. זה תרגול בלבד, לא קובע אם המילה מתקדמת.</li>
+      <li><b>אחר כך, לכל מילה:</b> התרגיל של השלב שלה (ברשימה למעלה). <b>רק התרגיל הזה</b> קובע מה יקרה למילה.</li></ol></div>
+    <div class="am-box"><h4>3 · מה קובע אם מתקדמים</h4>
+      <ul><li><b>נכון בלי רמז</b> – המילה עולה שלב, והחזרה הבאה רחוקה יותר.</li>
+      <li><b>נכון עם רמז</b> – אותו שלב שוב, באותו מרווח.</li>
+      <li><b>טעות</b> – יורדת שני שלבים (לא פחות משלב 1), חוזרת בעוד 20 דקות, וגם מופיעה שוב בסוף אותו סבב.</li></ul>
+      <p class="hint" style="margin:0">דוגמה: מילה בשלב 4 שטעית בה חוזרת לשלב 2 – כלומר שוב "כתיבה באנגלית", בעוד 20 דקות.</p></div>
+    <div class="am-box"><h4>4 · מתי המילים מופיעות</h4>
+      <ul><li><b>במסע היומי:</b> "חזרה על מילים" בתחילת היום (כל מה שהגיע זמנו) ו"חזרה על המילים של היום" בסוף (20 דקות אחרי הלמידה).</li>
+      <li><b>במילים שלי</b> (בעמוד ההתקדמות): כל מילה עם השלב שלה, מתי החזרה הבאה, והיומן של כל תרגול.</li></ul></div>
+    <div class="am-box"><h4>5 · מה לא משנה את המסלול</h4>
+      <ul><li><b>תרגול חופשי</b> – תרגול אישי בלבד.</li>
+      <li><b>בחנים, כרטיסיות ומצב רכב במילון</b> – משנים רק את סימוני ✓ / ✗ במילון.</li>
+      <li>מילה שעוד לא התחלת ללמוד וסימנת ✓ במילון – כבר לא תיכנס ללמידה. מילה שכבר במסלול ממשיכה בו.</li></ul></div>
+  </div>`;
+  amBindNav()}
+
 /* ---------- the words she studies: management, history and advice ---------- */
 const wAcc=w=>{const L=(w.log||[]).filter(r=>['he2en','cloze','cloze2','mc','hecl','en2he','write','first'].includes(r[1]));if(!L.length)return null;return L.reduce((a,r)=>a+r[2],0)/L.length};
 const wHard=w=>w.st>0&&w.st<WMAST&&((w.bad||0)>=3||((w.bad||0)>=2&&(wAcc(w)??1)<.6));
@@ -3683,6 +3726,7 @@ function amWordPage(){if(!AMD)return amLoading();const w=AMS.w[S.wk];if(!w){go({
     <div class="am-wordhead"><div class="w" dir="ltr">${SAYB(w.e)}<span>${esc(w.e)}</span></div><div class="m">${esc(w.h||'')}</div>
       <div class="am-track">${steps.map((t,i)=>`<span class="${w.st>i+1?'done':w.st===i+1?'on':''}"><i></i>${t}</span>`).join('')}<span class="${w.st>=WMAST?'on done':''}"><i></i>🏆</span></div>
       <p class="hint center" style="margin:0">${w.st>=WMAST?'נלמדה ✓':w.st?'החזרה הבאה '+wWhen(w.due):'עוד לא התחלת ללמוד'} · ✓ ${w.ok||0} · ✗ ${w.bad||0}${a!=null?' · '+Math.round(a*100)+'% הצלחה':''}</p></div>
+    <button class="link small-link" id="wdPath" style="align-self:center">🛤 איך עובד המסלול של מילה?</button>
     <div class="am-box"><h4>🎯 ההמלצה שלי בשבילך</h4>${wRec(w).map(([i,t,dd])=>`<div class="am-rec"><span>${i}</span><div><b>${t}</b><p>${dd}</p></div></div>`).join('')}</div>
     <div class="am-cta" style="position:static"><button class="btn" id="wdGo">${w.st===0?'🌱 ללמוד עכשיו':'🧠 תרגול עכשיו'}</button></div>
     ${EXB(w.st===0?'מתחיל את הלמידה של המילה: אסוציאציה, משפט שלך ושליפה.':'שליפה אחת עכשיו מהזיכרון, מחוץ לתור. הצלחה בלי רמז מקדמת את המילה שלב.')}
@@ -3695,6 +3739,7 @@ function amWordPage(){if(!AMD)return amLoading();const w=AMS.w[S.wk];if(!w){go({
     ${EXB('↺ <b>ללמוד מחדש</b> – המילה חוזרת ל"מחכות" ותילמד שוב מההתחלה (היומן נשמר). · ✓ <b>אני יודעת אותה</b> – מסמנת שנלמדה (🏆) ומסמנת ✓ במילון.')}
   </div>`;
   amBindNav();
+  $('wdPath').onclick=()=>go({screen:'ampath',pfrom:'amwd'});
   $('wdGo').onclick=()=>{const k=wK(w);WS={mode:w.st===0?'new':'one',list:[k],i:0,step:w.st===0?'meet':'recall',hint:0,from:'amwd',ok:0,bad:0};wSave();go({screen:'amwl'})};
   $('wdAs').onclick=()=>{const k=wK(w);WS={mode:'new',list:[k],i:0,step:'meet',hint:0,from:'amwd',assocOnly:1};wSave();go({screen:'amwl'})};
   $('wdSent').onclick=()=>{WS={mode:'one',list:[wK(w)],i:0,step:'write',hint:0,from:'amwd',sentOnly:1,draft:''};wSave();go({screen:'amwl'})};
