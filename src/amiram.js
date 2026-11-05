@@ -587,7 +587,7 @@ h1,h2,h3,h4,h5,.t,.am-card2 b,.am-gate b,.btn,.am-title p,.st-t,.st-d{text-wrap:
 .am-topic .tb{display:flex;gap:8px}.am-topic .am-pill{background:var(--surface);box-shadow:none;font-size:.92rem}
 .st-x{font-size:.84rem;opacity:.92;line-height:1.45;margin-top:4px;max-width:92%}
 .am-card2[aria-disabled="true"]{opacity:.6}
-.st-screen .home-head .home-btn{flex:none}
+.st-screen .home-head .home-btn{flex:none}.home-head .home-btn.priv-ic,.home-head .reload-top{margin-top:4px!important;width:40px;height:40px;font-size:1.1rem}
 
 
 @media (max-width:420px){.am-units{grid-template-columns:repeat(4,1fr);gap:6px}.am-q{font-size:1.08rem;padding:12px}.am-opt{font-size:1rem;padding:10px 12px}.am-grid{gap:8px}.am-tile{padding:12px}}
@@ -2014,7 +2014,6 @@ function amMethod(){const k=S.amTab||'gen',M=AMM[k];if(!M)return go({screen:'amq
     ${amNav(back,back==='amq'?'חזרה לשאלה':back==='amu'?'חזרה לתרגול':back==='am'?'המסע':'תרגול שאלות')}
     <div class="am-title"><span class="gi g-s">${AMMI[k]||'📘'}</span><div><h2>${M[0]}</h2></div></div>
     <div class="am-box">${M[1]}${k==='pre'?amPxTables():''}</div>
-    ${nx?`<button class="am-card2 g-s" data-tab="${nx}"><span class="gi">${AMMI[nx]||'📘'}</span><span class="grow"><small>הנושא הבא</small><b>${AMM[nx][0]}</b></span></button>`:''}
   </div>`;amBindNav();app.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{go({screen:'ammt',amTab:b.dataset.tab,mfrom:back})})}
 function amPxTables(){const P=AMD.px||{pre:[],suf:[]};const tb=(L,t)=>`<h4 style="margin-top:12px">${t} (${L.length})</h4><table><tr><th>${t==='תחיליות'?'תחילית':'סופית'}</th><th>פירוש</th><th>דוגמה</th></tr>${L.map(e=>`<tr><td class="en"><b>${esc(e.p)}</b></td><td>${esc(e.h)}</td><td>${e.ex.map(([en,he])=>`<span dir="ltr" style="font-family:var(--en)">${esc(en)}</span> – ${esc(he)}`).join('<br>')}</td></tr>`).join('')}</table>`;
   return `<p class="hint">מהקובץ "תחיליות וסופיות באנגלית". במילים שבנויות מתחילית או סופית מוכרת, הפירוק מופיע כ"טיפ מהשיטה" ליד האסוציאציה.</p>`+tb(P.pre,'תחיליות')+tb(P.suf,'סופיות')}
