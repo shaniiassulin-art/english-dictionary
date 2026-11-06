@@ -37,7 +37,7 @@ async def main():
     await go("DW.slice(0,300).forEach((w,i)=>KNOW[w.id]=[i%4?'y':'n',Date.now()]);saveKnow();go({screen:'start'})")
     await pg.click('#stAm');await pg.wait_for_timeout(900)
     log.append('plan:'+await E("JSON.stringify(jrPlan().b.map(x=>x.k+(x.skip?'(skip)':x.done?'(done)':'')))"))
-    await pg.click('#jrGo');await pg.wait_for_timeout(300);log.append('block:'+await E("S.jb"));await pg.click('#jbGo');await pg.wait_for_timeout(500)
+    await pg.click('#jrGo');await pg.wait_for_timeout(300);log.append('block:'+await E("S.jb"));await (pg.click('#jbGo') if await pg.locator('#jbGo').count() else pg.wait_for_timeout(10));await pg.wait_for_timeout(500)
     log.append('new page:'+await E("S.screen"));await pg.click('#nwGo');await pg.wait_for_timeout(300)
     # workshop driver
     async def ws_drive(limit=200,wrong_every=4):
@@ -80,7 +80,7 @@ async def main():
       return n
     n=await ws_drive();log.append(f'new words steps {n}, now {await E("S.screen")}; block new: '+await E("JSON.stringify(jrPlan().b[1])"))
     # questions block
-    await pg.click('#jrGo');await pg.wait_for_timeout(300);await pg.click('#jbGo');await pg.wait_for_timeout(500);log.append('q start:'+await E("S.screen+' '+AQ.jr"))
+    await pg.click('#jrGo');await pg.wait_for_timeout(300);await (pg.click('#jbGo') if await pg.locator('#jbGo').count() else pg.wait_for_timeout(10));await pg.wait_for_timeout(500);log.append('q start:'+await E("S.screen+' '+AQ.jr"))
     async def q_drive(limit=400):
       n=0;ans=0
       while n<limit and await E("S.screen")=='amq':
@@ -103,14 +103,14 @@ async def main():
     # make words due -> rev2
     await go("Object.values(AMS.w).forEach(w=>{if(w.st>=1)w.due=0});amSave();go({screen:'am'})",500)
     log.append('cur after due:'+await E("(jrCur(AMS.jp[jrCurKey()])||{}).k"))
-    await pg.click('#jrGo');await pg.wait_for_timeout(300);await pg.click('#jbGo');await pg.wait_for_timeout(500)
+    await pg.click('#jrGo');await pg.wait_for_timeout(300);await (pg.click('#jbGo') if await pg.locator('#jbGo').count() else pg.wait_for_timeout(10));await pg.wait_for_timeout(500)
     if await E("S.screen")=='amwl':n=await ws_drive();log.append(f'rev steps {n}')
     log.append('plan2:'+await E("JSON.stringify(jrPlan().b.map(x=>x.k+(x.skip?'(skip)':x.done?'✓':'')))")+' screen '+await E("S.screen"))
     # finish remaining blocks (meth)
     for _ in range(4):
       if not await pg.locator('#jrGo').count():break
       await pg.click('#jrGo');await pg.wait_for_timeout(300)
-      if await pg.locator('#jbGo').count():await pg.click('#jbGo');await pg.wait_for_timeout(500)
+      if await pg.locator('#jbGo').count():await (pg.click('#jbGo') if await pg.locator('#jbGo').count() else pg.wait_for_timeout(10));await pg.wait_for_timeout(500)
       if await E("S.screen")=='amnw':await tap('#nwGo') or await tap('#nwDone');await pg.wait_for_timeout(300)
       if await E("S.screen")=='amq':await q_drive(60)
       if await E("S.screen")=='amwl':await ws_drive()
