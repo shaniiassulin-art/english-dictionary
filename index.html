@@ -2633,7 +2633,7 @@ input.am-in,textarea.am-in,.search input,input[type=search],input[type=text],tex
 /* calmer palette: chips and number badges neutral; emoji tiles toned down */
 .am-chip{background:var(--fill)!important;color:var(--ink)!important}.item .num,.gi{background:var(--fill)!important;color:var(--ink)!important}
 /* the word's path inside a review */
-.am-mpath{display:flex;flex-direction:column;gap:4px;align-items:center}.am-mpath p{margin:0;font-size:.8rem;color:var(--muted);text-align:center}.am-mpath .am-path{width:100%}
+.am-mpath{display:flex;flex-direction:column;gap:4px;align-items:center}.am-mpath p{margin:0;font-size:.8rem;color:var(--muted);text-align:center}.am-mpath .am-path{width:100%;align-items:center}.am-mpath .am-path>span:first-child{flex:0 0 auto;padding:6px 10px}.am-mpath .am-path small{font-size:.72rem;color:var(--muted);white-space:nowrap}
 /* the word-path timeline */
 .am-tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}.am-tl li{position:relative;padding:0 18px 12px 0;border-inline-start:2px solid var(--line);margin-inline-start:6px;display:flex;flex-direction:column;gap:1px}.am-tl li:last-child{border-color:transparent;padding-bottom:0}
 .am-tl li::before{content:'';position:absolute;inset-inline-start:-7px;top:3px;width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--accent)}.am-tl li:last-child::before{background:var(--accent)}
@@ -2726,10 +2726,10 @@ const jrGoal=(k=dayKey())=>JLONG.includes(new Date(k+'T12:00:00').getDay())?180:
 const JB={
   rev:['🔁','חזרה על מילים','כל המילים שהגיע זמנן במסלול',
     'מתחילים במילים שהזיכרון שלהן מתחיל לדעוך עכשיו. שליפה בדיוק ברגע הזה היא מה שמקבע אותן לטווח ארוך – לכן זה תמיד הצעד הראשון ביום, כשהראש רענן.',
-    ['כל מילה מקבלת את התרגיל של השלב שלה: משפט בעברית, תרגום משפט, משפט חדש באנגלית או הפירוש בעברית','אין שלב שבו כותבים את המילה באנגלית – בוחרים אותה מתוך 4, או מתרגמים משפט שהיא בתוכו','טעות = המילה חוזרת בסוף הסבב ושוב בעוד 20 דקות']],
+    ['כל מילה מקבלת את התרגיל של החזרה שלה (חזרה 1–6): משפט בעברית, תרגום משפט, משפט חדש באנגלית או הפירוש בעברית','אין חזרה שבה כותבים את המילה באנגלית – בוחרים אותה מתוך 4, או מתרגמים משפט שהיא בתוכו','טעות = המילה חוזרת בסוף הסבב ושוב בעוד 20 דקות']],
   new:['🌱','מילים חדשות','תרגום משפט ← הפירוש ← משפט בעברית ← משפט באנגלית',
     'אחרי החזרות יש מקום למילים חדשות מהמילון – רק מילים שסימנת ✗ או שעוד לא סימנת. קודם מכירים אותן כמו בכל קבוצה במילון, ואז שולפים: בוחרים אותן במשפט. מחר הן כבר יחזרו אלייך.',
-    ['שלב 1 – לכל המילים: משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון','שלב 2 – לכל המילים: כותבים את הפירוש בעברית ובודקים, בדיוק כמו בבוחן במילון','שלב 3 – בוחרים את המילה באנגלית במשפט בעברית · שלב 4 – בוחרים אותה במשפט באנגלית','אחרי זה המילים נכנסות לחזרות: 20 דקות, יום, 3 ימים, שבוע, שבועיים, חודש']],
+    ['סבב 1 – לכל המילים: משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון','סבב 2 – לכל המילים: כותבים את הפירוש בעברית ובודקים, בדיוק כמו בבוחן במילון','סבב 3 – בוחרים את המילה באנגלית במשפט בעברית · סבב 4 – בוחרים אותה במשפט באנגלית','אחרי 4 הסבבים הלמידה של היום נגמרת, והמילים נכנסות ל־6 חזרות: חזרה 1 אחרי 20 דקות, ואז יום, 3 ימים, שבוע, שבועיים, חודש']],
   q:['✏️','תרגול שאלות לפי השיטה','שאלה אחרי שאלה במסלול',
     'עכשיו מיישמים: שאלות מהמבחן, כל אחת במסלול – לחשוב לפני התשובות, לחקור כל טעות מיד, להבין איך פותרים לפי השיטה, ולאסוף מילים מהמאגר.',
     ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הצעד נגמר אחרי מספר השאלות שלו – עד אז ממשיכים ליחידה הבאה']],
@@ -2880,7 +2880,7 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
     <div><h2>${name}</h2><p class="sub">${ws.length} מילים מהמילון · מילים שסימנת ✗ או שעוד לא סימנת</p><p class="known-line">${countLine(ws)}</p></div>
     <div class="panel">
       <h3 style="margin:0">לימוד המילים</h3>
-      <p class="hint" style="margin:0">4 שלבים, כל שלב לכל המילים לפני הבא: 1 תרגום משפט קל עם המילה ← 2 הפירוש בעברית (כמו בבוחן במילון) ← 3 בחירת המילה במשפט בעברית ← 4 בחירת המילה במשפט באנגלית.</p>
+      <p class="hint" style="margin:0">4 סבבים, כל סבב לכל המילים לפני הבא: 1 תרגום משפט קל עם המילה ← 2 הפירוש בעברית (כמו בבוחן במילון) ← 3 בחירת המילה במשפט בעברית ← 4 בחירת המילה במשפט באנגלית.</p>
       ${left.length?`<button class="btn" id="nwGo">${open?`המשך · מילה ${WS.i+1} מתוך ${WS.list.length}${cur?' – '+esc(cur.e):''}`:`▶ ללמוד את המילים · ${left.length}`}</button>`:`<p style="margin:0">✓ כל המילים של היום נכנסו לחזרות.</p><button class="btn" id="nwDone">סיום ← חזרה למסע</button>`}
     </div>
     <div class="panel">${carToggle()}<p class="hint" style="margin:0">מצב רכב מקריא את המילים של היום ברצף – להאזנה בנסיעה.</p></div>
@@ -3651,31 +3651,31 @@ function jpQuizDone(){if(!Q||!/^JP/.test(String(Q.key||''))||!FP||FP.key!==Q.key
 
 /* ================= 🛤 the path of a word – a detailed explanation page (from the words page, a word's page and progress) ================= */
 function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?S.pfrom:'amw';
-  const T=[['היום','למידה','4 סבבים, כל סבב לכל המילים של היום (פירוט למטה).'],['אחרי 20 דקות','שלב 1 · משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
-    ['אחרי יום','שלב 2 · תרגום משפט','משפט חדש וקל באנגלית עם המילה – מתרגמים לעברית.'],['אחרי 3 ימים','שלב 3 · משפט חדש – בחירה','משפט חדש באנגלית (מהשאלות, הקטעים או הספרים) – בוחרים את המילה החסרה מתוך 4.'],
-    ['אחרי שבוע','שלב 4 · הפירוש בעברית','רואים את המילה באנגלית וכותבים את הפירוש בעברית.'],['אחרי שבועיים','שלב 5 · תרגום משפט','עוד משפט חדש באנגלית עם המילה – מתרגמים לעברית.'],
-    ['אחרי חודש','שלב 6 · משפט חדש – בחירה','משפט חדש באנגלית – בוחרים את המילה מתוך 4.'],['כ־55 יום מההתחלה','🏆 נלמדה','המילה מסומנת ✓ במילון ויוצאת מהחזרות.']];
+  const T=[['היום','למידה','4 סבבים, כל סבב לכל המילים של היום (פירוט למטה).'],['אחרי 20 דקות','חזרה 1 · משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
+    ['אחרי יום','חזרה 2 · תרגום משפט','משפט חדש וקל באנגלית עם המילה – מתרגמים לעברית.'],['אחרי 3 ימים','חזרה 3 · משפט חדש – בחירה','משפט חדש באנגלית (מהשאלות, הקטעים או הספרים) – בוחרים את המילה החסרה מתוך 4.'],
+    ['אחרי שבוע','חזרה 4 · הפירוש בעברית','רואים את המילה באנגלית וכותבים את הפירוש בעברית.'],['אחרי שבועיים','חזרה 5 · תרגום משפט','עוד משפט חדש באנגלית עם המילה – מתרגמים לעברית.'],
+    ['אחרי חודש','חזרה 6 · משפט חדש – בחירה','משפט חדש באנגלית – בוחרים את המילה מתוך 4.'],['כ־55 יום מההתחלה','🏆 נלמדה','המילה מסומנת ✓ במילון ויוצאת מהחזרות.']];
   app.innerHTML=`<div class="screen am-scr">
     ${amNav(back,back==='amwd'?'המילה':back==='amp'?'התקדמות':back==='am'?'המסע':back==='amwl'?'חזרה לתרגול':'מילים')}
     <div class="am-title"><div><h2>🛤 המסלול של מילה</h2><p>מה קורה למילה מהרגע שמתחילים ללמוד אותה ועד שהיא נלמדה.</p></div></div>
     <div class="am-box"><h4>בקצרה</h4><ol class="am-tl">${T.map(([d,t,x])=>`<li><span class="d">${d}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ol></div>
     <div class="am-box"><h4>1 · היום הראשון – למידה</h4>
-      <p>כל סבב נעשה לכל המילים של היום, ורק אחריו מתחיל הבא:</p>
-      <ol><li><b>תרגום משפט</b> – משפט קל באנגלית עם המילה החדשה. לחיצה על המילה מראה את הפירוש. מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה. מכאן המילה נכנסת למסלול.</li>
-      <li><b>הפירוש בעברית</b> – הבוחן של המילון על המילים של היום: כותבים פירוש, אפשרויות, ידעתי / לא ידעתי (הסימון נשמר במילון).</li>
-      <li><b>משפט בעברית</b> – בוחרים את המילה באנגלית שחסרה.</li>
-      <li><b>משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol>
+      <p>4 סבבים (זו עוד לא חזרה). כל סבב נעשה לכל המילים של היום, ורק אחריו מתחיל הבא:</p>
+      <ol><li><b>סבב 1 · תרגום משפט</b> – משפט קל באנגלית עם המילה החדשה. לחיצה על המילה מראה את הפירוש. מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה. מכאן המילה נכנסת למסלול.</li>
+      <li><b>סבב 2 · הפירוש בעברית</b> – הבוחן של המילון על המילים של היום: כותבים פירוש, אפשרויות, ידעתי / לא ידעתי (הסימון נשמר במילון).</li>
+      <li><b>סבב 3 · משפט בעברית</b> – בוחרים את המילה באנגלית שחסרה.</li>
+      <li><b>סבב 4 · משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן.</p>
       <p class="hint" style="margin:0">מילה עם כמה פירושים – כל פירוש הוא כרטיס נפרד ועובר מסלול משלו.</p></div>
-    <div class="am-box"><h4>2 · כל חזרה</h4>
-      <p>כל מילה מקבלת רק את התרגיל של השלב שלה (ברשימה למעלה), והוא קובע מה יקרה למילה. אין שלב שבו כותבים את המילה באנגלית.</p></div>
+    <div class="am-box"><h4>2 · כל חזרה (חזרה 1–6)</h4>
+      <p>כל מילה מקבלת רק את התרגיל של החזרה שלה (חזרה 1–6 ברשימה למעלה), והוא קובע מה יקרה למילה. אין חזרה שבה כותבים את המילה באנגלית.</p></div>
     <div class="am-box"><h4>3 · מה קובע אם מתקדמים</h4>
-      <ul><li><b>נכון בלי רמז</b> – המילה עולה שלב, והחזרה הבאה רחוקה יותר.</li>
-      <li><b>נכון עם רמז</b> – אותו שלב שוב, באותו מרווח.</li>
-      <li><b>טעות</b> – יורדת שני שלבים (לא פחות משלב 1), חוזרת בעוד 20 דקות, וגם מופיעה שוב בסוף אותו סבב.</li></ul>
-      <p class="hint" style="margin:0">דוגמה: מילה בשלב 4 שטעית בה חוזרת לשלב 2 – כלומר שוב "תרגום משפט", בעוד 20 דקות.</p></div>
+      <ul><li><b>נכון בלי רמז</b> – המילה עוברת לחזרה הבאה, שרחוקה יותר בזמן.</li>
+      <li><b>נכון עם רמז</b> – אותה חזרה שוב, באותו מרווח.</li>
+      <li><b>טעות</b> – חוזרת שתי חזרות אחורה (לא לפני חזרה 1), מופיעה שוב בעוד 20 דקות, וגם מופיעה שוב בסוף אותו סבב.</li></ul>
+      <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 2 – כלומר שוב "תרגום משפט", בעוד 20 דקות.</p></div>
     <div class="am-box"><h4>4 · מתי המילים מופיעות</h4>
       <ul><li><b>במסע היומי:</b> "חזרה על מילים" בתחילת היום (כל מה שהגיע זמנו) ו"חזרה על המילים של היום" בסוף (20 דקות אחרי הלמידה).</li>
-      <li><b>במילים שלי</b> (בעמוד ההתקדמות): כל מילה עם השלב שלה, מתי החזרה הבאה, והיומן של כל תרגול.</li></ul></div>
+      <li><b>במילים שלי</b> (בעמוד ההתקדמות): כל מילה עם החזרה שהיא נמצאת בה, מתי החזרה הבאה, והיומן של כל תרגול.</li></ul></div>
     <div class="am-box"><h4>5 · מה לא משנה את המסלול</h4>
       <ul><li><b>תרגול חופשי</b> – תרגול אישי בלבד.</li>
       <li><b>בחנים, כרטיסיות ומצב רכב במילון</b> – משנים רק את סימוני ✓ / ✗ במילון.</li>
@@ -3689,8 +3689,8 @@ const wHard=w=>w.st>0&&w.st<WMAST&&((w.bad||0)>=3||((w.bad||0)>=2&&(wAcc(w)??1)<
 /* the word's place on its path, shown in every review (stage dots + what this review does + where a right answer takes it) */
 const WPN=['','20 דק׳','יום','3 ימים','שבוע','שבועיים','חודש'];
 function wMiniPath(w){const s=Math.min(w.st,WMAST),res=WS&&WS.res&&WS.step!=='tr';
-  const dots=[1,2,3,4,5,6].map(i=>`<span class="${i<s?'done':i===s?'on':''}">${i}</span>`).join('')+`<span class="${s>=WMAST?'on':''}">🏆</span>`;
-  const now=s>=WMAST?'🏆 המילה נלמדה':res?`עכשיו: שלב ${s} · החזרה הבאה ${wWhen(w.due)}`:`שלב ${s} מתוך 6 · ${{hecl:'משפט בעברית – בחירה',mc:'משפט באנגלית – בחירה',tr:'תרגום משפט',en2he:'הפירוש בעברית'}[wTask(w)]||WPATHN[s]||''}${s<6?` · נכון בלי רמז ← שלב ${s+1} (בעוד ${WPN[s+1]})`:' · נכון בלי רמז ← 🏆 נלמדה'}`;
+  const dots=`<span class="done">למידה ✓</span><small>חזרות:</small>`+[1,2,3,4,5,6].map(i=>`<span class="${i<s?'done':i===s?'on':''}">${i}</span>`).join('')+`<span class="${s>=WMAST?'on':''}">🏆</span>`;
+  const now=s>=WMAST?'🏆 המילה נלמדה':res?`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${{hecl:'משפט בעברית – בחירה',mc:'משפט באנגלית – בחירה',tr:'תרגום משפט',en2he:'הפירוש בעברית'}[wTask(w)]||WPATHN[s]||''}${s<6?` · נכון בלי רמז ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון בלי רמז ← 🏆 נלמדה'}`;
   return `<div class="am-mpath"><div class="am-path">${dots}</div><p>${now} · <button class="link small-link" data-path="1">🛤 המסלול</button></p></div>`}
 const wWhen=t=>{const d=t-amNow();if(d<=0)return 'עכשיו';if(d<36e5)return 'בעוד '+Math.max(1,Math.round(d/6e4))+' דק׳';if(d<DAY)return 'בעוד '+Math.round(d/36e5)+' שע׳';return 'בעוד '+Math.round(d/DAY)+' ימים'};
 const wDate=t=>{const d=new Date(t);return d.getDate()+'.'+(d.getMonth()+1)+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
@@ -3803,8 +3803,8 @@ function wOpts(w){WS.opts=WS.opts||{};const k=wK(w);if(WS.opts[k])return WS.opts
    1 תרגום משפט (an easy English sentence with the new word – tap it for the meaning – translate, feedback, the right translation)
    2 הפירוש בעברית = the dictionary quiz itself on the round's cards (key 'JW…')   3 משפט בעברית (choose the English word)   4 משפט באנגלית (choose)
    Reviews start with round 1 too (a new sentence every time), then each word's task by its stage. */
-const WPH=['תרגום משפט','הפירוש בעברית','משפט בעברית','משפט באנגלית'];
-function wPathChips(n){return `<div class="am-path">${WPH.map((t,i)=>`<span class="${i<n?'done':i===n?'on':''}">${i+1} · ${t}${i<n?' ✓':''}</span>`).join('')}</div>`}
+const WPH=['תרגום משפט','הפירוש בעברית','משפט בעברית','משפט באנגלית'];/* the 4 learning rounds (סבב 1–4) – not the 6 reviews (חזרה 1–6) */
+function wPathChips(n){return `<div class="am-path">${WPH.map((t,i)=>`<span class="${i<n?'done':i===n?'on':''}">סבב ${i+1} · ${t}${i<n?' ✓':''}</span>`).join('')}</div>`}
 const wPhN=()=>!WS?0:WS.mode==='new'?0:WS.mode==='r2'?({dq:1,he:2,mc:3}[WS.phase]||3):0;
 /* the sentence to translate: the card's example the first time, then a new easy sentence from Gemini each time (else another sentence + Google) */
 const TRP={},TRERR={};
@@ -3845,7 +3845,7 @@ function wTrPage(w,h){const k=wK(w),res=WS.res,t=res&&res.en?{en:res.en,he:res.h
   h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="am-mean"><b>${esc(w.h)}</b></div>
     ${w.as?`<p class="am-as1">💡 ${bdiEsc(w.as)}</p>`:WSGEN[k]?'<p class="hint" style="margin:0">⏳ ממציאה אסוציאציה…</p>':''}${WSGERR[k]?`<p class="hint" style="margin:0">${esc(WSGERR[k])}</p>`:''}
     <div class="am-row2">${GKEY()?`<button class="am-pill" id="wGen1" ${WSGEN[k]?'disabled':''}>✨ אסוציאציה ${w.as?'אחרת':'למילה'}</button>`:''}${(w.asSeen||[]).length>1?'<button class="am-pill" id="wPrevAs">↩ הקודמת</button>':''}</div></div>`;
-  if(res.rec)h+=`<div class="am-cta"><button class="btn" id="wOn">${WS.i+1<WS.list.length?'המילה הבאה ←':WS.mode==='new'?'לשלב 2 – הפירוש בעברית ←':'המשך ←'}</button></div>`;
+  if(res.rec)h+=`<div class="am-cta"><button class="btn" id="wOn">${WS.i+1<WS.list.length?'המילה הבאה ←':WS.mode==='new'?'לסבב 2 – הפירוש בעברית ←':'המשך ←'}</button></div>`;
   return h+'</div>'}
 /* round 2: the dictionary quiz on the round's cards */
 const wDqKey=()=>'JW'+String(WS.t0||'').slice(-9);
@@ -3856,9 +3856,9 @@ function jwQuizDone(){if(!Q||!/^JW/.test(String(Q.key||''))||!WS||WS.phase!=='dq
 function wDqPage(){const key=wDqKey(),open=SESS[key]&&SESS[key].kind==='quiz',n=WS.list.length;
   app.innerHTML=`<div class="screen qz am-scr"><div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${HOME}</span></div>
     ${wPathChips(1)}
-    <div class="am-card"><h3 class="center" style="margin:0">שלב 2 – הפירוש בעברית</h3><p class="center" style="margin:0">כל אחת מ־${n} המילים בנפרד: כותבים את הפירוש בעברית, בודקים ומציגים אפשרויות – בדיוק כמו בבוחן במילון. בסוף כל מילה מסמנים ידעתי / לא ידעתי.</p></div>
+    <div class="am-card"><h3 class="center" style="margin:0">סבב 2 – הפירוש בעברית</h3><p class="center" style="margin:0">כל אחת מ־${n} המילים בנפרד: כותבים את הפירוש בעברית, בודקים ומציגים אפשרויות – בדיוק כמו בבוחן במילון. בסוף כל מילה מסמנים ידעתי / לא ידעתי.</p></div>
     <div class="am-cta"><button class="btn" id="dqGo">${open?'▶ להמשיך':'▶ להתחיל'}</button></div>
-    <button class="link" id="dqSkip" style="align-self:center">לדלג לשלב 3 – משפט בעברית</button></div>`;
+    <button class="link" id="dqSkip" style="align-self:center">לדלג לסבב 3 – משפט בעברית</button></div>`;
   $('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};$('dqGo').onclick=wDqStart;
   $('dqSkip').onclick=()=>{WS.phase='he';WS.i=0;wSave();draw()}}
 function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
@@ -3872,7 +3872,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   const ctx=w.c||ex||'';
   let h=`<div class="screen qz am-scr">
     <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${HOME}${INFOB()}</span></div>
-    <div class="am-bar"><span class="am-chip t">${WS.step==='tr'?(WS.mode==='new'?'🌱 שלב 1 – תרגום משפט':'🌐 תרגום משפט חדש'):WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'&&WS.perWord?(WS.phase==='he'?'🇮🇱 שלב 3 – משפט בעברית':'🔁 שלב 4 – משפט באנגלית'):WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 שלב 4 – משפט בעברית':'🔁 שלב 3 – בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span>${w.st?`<span class="am-timer">${wStageDots(w)}</span>`:''}</div>
+    <div class="am-bar"><span class="am-chip t">${WS.step==='tr'?(WS.mode==='new'?'🌱 סבב 1 – תרגום משפט':'🌐 חזרה · תרגום משפט חדש'):WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'&&WS.perWord?(WS.phase==='he'?'🇮🇱 סבב 3 – משפט בעברית':'🔁 סבב 4 – משפט באנגלית'):WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 משפט בעברית':'🔁 בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span>${w.st?`<span class="am-timer">${wStageDots(w)}</span>`:''}</div>
     <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>`;
   if(['rev','one'].includes(WS.mode)&&w.st>=1)h+=wMiniPath(w);
   /* a review saved during the old warm-up (sentence translation for all words first) goes straight to the stage tasks */
@@ -3898,7 +3898,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
       ${x.use?`<details class="am-box"><summary style="font-weight:800;cursor:pointer">📌 דגשים על המילה (לא חובה)</summary>${xuse(x.use)}</details>`:''}
       <div class="am-cta"><button class="btn" id="wNext">${WS.assocOnly?'שמירה ✓':'המשך ←'}</button></div>
       ${WS.assocOnly?'':'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>'}
-      ${WS.assocOnly?'':EXB('אחרי שבוחרים אסוציאציה: <b>שלב 2</b> – בוחרים את המילה באנגלית במשפט. <b>שלב 3</b> – בסוף הסבב, אחרי כל המילים החדשות, עוד שליפה קצרה של כולן (השלמה במשפט).')}`}
+      ${WS.assocOnly?'':EXB('אחרי שבוחרים אסוציאציה: <b>אחר כך</b> – בוחרים את המילה באנגלית במשפט. <b>ובסוף</b> – בסוף הסבב, אחרי כל המילים החדשות, עוד שליפה קצרה של כולן (השלמה במשפט).')}`}
   else if(step==='write'||(step==='recall'&&wTask(w)==='write')){
     const ck=WS.chk;
     h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>${w.as?`<div class="am-hint">💡 ${bdiEsc(w.as)}</div>`:''}</div>
@@ -4174,22 +4174,22 @@ const AMHELP={
   <p>מילים עם קו מנוקד בשאלה = מילים מהמאגר. לחיצה על מילה = פירוש. 🔊 = השמעה. מילים צבועות = מילות קישור.</p>`],
  lessons:['📝','הלקחים שלי','אמירנט',`<p>בכל חקירת טעות אפשר לשמור משפט אחד – <b>הלקח</b>. כאן כל הלקחים מקובצים לפי סוג הטעות.</p><p>טיפ: לקרוא אותם לפני כל סימולציה.</p>`],
  words:['🧠','מילים','אמירנט',`<p>כאן אין סקשנים נפרדים – כל מילה עוברת <b>מסלול קבוע</b> (ראי "המסלול של מילה"). יש רק 3 כפתורים:</p>
-  <ul><li><b>🔁 חזרה פעילה</b> – המילים שהגיע זמנן ממשיכות לשלב הבא במסלול.</li><li><b>🌱 מילים חדשות</b> – מילים חדשות מתחילות את המסלול. קודם מילים שהוספת מהשאלות, אחר כך מילים שסימנת ✗ במילון, ואז מילים שלא סימנת.</li><li><b>📒 המילים שלי</b> – איפה כל מילה במסלול, היומן שלה וההמלצה.</li></ul>`],
+  <ul><li><b>🔁 חזרה פעילה</b> – המילים שהגיע זמנן עוברות את החזרה שלהן במסלול.</li><li><b>🌱 מילים חדשות</b> – מילים חדשות מתחילות את המסלול. קודם מילים שהוספת מהשאלות, אחר כך מילים שסימנת ✗ במילון, ואז מילים שלא סימנת.</li><li><b>📒 המילים שלי</b> – איפה כל מילה במסלול, היומן שלה וההמלצה.</li></ul>`],
  learn:['🌱','איך לומדים מילה חדשה','אמירנט',`<p>4 סבבים. כל סבב נעשה לכל המילים, ורק אחריו מתחיל הבא:</p>
-  <ol><li><b>תרגום משפט</b> – משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה.</li>
-  <li><b>הפירוש בעברית</b> – הבוחן של המילון: כותבים את הפירוש, אפשרויות, ידעתי / לא ידעתי.</li>
-  <li><b>משפט בעברית</b> – בוחרים את המילה באנגלית שחסרה.</li>
-  <li><b>משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol>
+  <ol><li><b>סבב 1 · תרגום משפט</b> – משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה.</li>
+  <li><b>סבב 2 · הפירוש בעברית</b> – הבוחן של המילון: כותבים את הפירוש, אפשרויות, ידעתי / לא ידעתי.</li>
+  <li><b>סבב 3 · משפט בעברית</b> – בוחרים את המילה באנגלית שחסרה.</li>
+  <li><b>סבב 4 · משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן.</p>
   <p><b>מילה עם כמה פירושים</b> – כל פירוש נלמד בנפרד.</p>`],
  journey:['🛤','המסלול של מילה','אמירנט',`<p><b>למידה (באותו יום) – 4 סבבים, כל סבב לכל המילים לפני הבא:</b> 1 תרגום משפט קל עם המילה ← 2 הפירוש בעברית (כמו הבוחן במילון) ← 3 בחירת המילה במשפט בעברית ← 4 בחירת המילה במשפט באנגלית.</p>
-  <p><b>חזרות – תרגיל לפי השלב, במרווחים שגדלים (אין שלב שבו כותבים את המילה באנגלית):</b></p>
+  <p><b>חזרות – חזרה 1–6, תרגיל לפי החזרה, במרווחים שגדלים (אין חזרה שבה כותבים את המילה באנגלית):</b></p>
   <ol><li><b>אחרי 20 דקות</b> – משפט <b>בעברית</b> עם מקום ריק: בוחרים את המילה באנגלית מתוך 4.</li>
   <li><b>אחרי יום</b> – משפט חדש וקל באנגלית עם המילה: מתרגמים לעברית.</li>
   <li><b>אחרי 3 ימים</b> – <b>משפט חדש באנגלית</b> (מהשאלות, הקטעים או הספרים) – בוחרים את המילה החסרה מתוך 4.</li>
   <li><b>אחרי שבוע</b> – רואים את המילה וכותבים מה הפירוש בעברית.</li>
   <li><b>אחרי שבועיים</b> – עוד משפט חדש לתרגום לעברית.</li>
   <li><b>אחרי חודש</b> – משפט חדש באנגלית, בוחרים מתוך 4. הצלחה = 🏆 נלמדה, וסימון ✓ במילון.</li></ol>
-  <p>הצלחה בלי רמז = שלב קדימה · עם רמז = אותו שלב שוב · טעות = שני שלבים אחורה ושוב בעוד 20 דקות (וגם בסוף הסבב). האפשרויות בבחירה הן מילים אחרות שאת לומדת – כך לומדים להבחין ביניהן.</p>`],
+  <p>הצלחה בלי רמז = לחזרה הבאה · עם רמז = אותה חזרה שוב · טעות = שתי חזרות אחורה ושוב בעוד 20 דקות (וגם בסוף הסבב). האפשרויות בבחירה הן מילים אחרות שאת לומדת – כך לומדים להבחין ביניהן.</p>`],
  mywords:['📒','המילים שלי','אמירנט',`<p>כל המילים שלך, עם לשוניות: <b>לחזרה</b> (הגיע זמנן), <b>בלמידה</b>, <b>קשות</b>, <b>נלמדו</b>, <b>מחכות</b>. הנקודות ●◉○ = באיזה שלב המילה (6 שלבים).</p>
   <p>לחיצה על מילה פותחת את העמוד שלה: מסלול החזרות ומתי הבאה, <b>היומן</b> (כל תרגול: מתי, איזה תרגיל, הצלחה / טעות / עם רמז), אחוז הצלחה, <b>המלצה אישית</b>, האסוציאציה (אפשר להחליף), משפט משלך (לא חובה), איפה פגשת אותה, ו"תרגול עכשיו".</p>
   <p>למטה בעמוד הרשימה: כמה מילים חדשות ביום.</p>`],
