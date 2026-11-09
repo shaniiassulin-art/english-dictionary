@@ -162,12 +162,15 @@ const WLRN=[['תרגום משפט','משפט קל באנגלית עם המילה
   ['הפירוש בעברית','הבוחן של המילון על המילים של היום: כותבים פירוש, אפשרויות, ידעתי / לא ידעתי (הסימון נשמר במילון).'],
   ['משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
   ['משפט באנגלית','משפט באנגלית עם מקום ריק – בוחרים את המילה מתוך 4.']];
+/* reviews get harder one by one, and every review brings a new sentence: easy sentences early, hard exam sentences late
+   (a sentence from the exam questions when there is one at that level, else Gemini writes one – the source is shown) */
 const WREV=[null,['20 דקות','משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
-  ['יום','תרגום משפט','משפט חדש וקל באנגלית עם המילה – מתרגמים לעברית.'],
-  ['3 ימים','משפט חדש באנגלית','משפט חדש באנגלית (מהשאלות, הקטעים או הספרים) – בוחרים את המילה החסרה מתוך 4.'],
-  ['שבוע','הפירוש בעברית','רואים את המילה באנגלית וכותבים את הפירוש בעברית.'],
-  ['שבועיים','תרגום משפט','עוד משפט חדש באנגלית עם המילה – מתרגמים לעברית.'],
-  ['חודש','משפט חדש באנגלית','משפט חדש באנגלית – בוחרים את המילה מתוך 4.']];
+  ['יום','משפט קל באנגלית','משפט קצר וקל באנגלית (מהשאלות כשיש, אחרת משפט שנכתב בשבילך) – בוחרים את המילה החסרה מתוך 4.'],
+  ['3 ימים','הפירוש בעברית','רואים רק את המילה באנגלית, בלי אפשרויות, וכותבים מה הפירוש בעברית.'],
+  ['שבוע','תרגום משפט','משפט באורך בינוני (מהשאלות כשיש) – מתרגמים את כל המשפט לעברית.'],
+  ['שבועיים','משפט קשה באנגלית','משפט ארוך וקשה מהשאלות (או ברמת המבחן) – בוחרים את המילה החסרה מתוך 4.'],
+  ['חודש','תרגום משפט קשה','משפט ארוך וקשה מהשאלות (או ברמת המבחן) – מתרגמים את כל המשפט לעברית.']];
+const WLV=[0,0,1,0,2,3,3];/* sentence level per review: 1 easy · 2 medium · 3 hard */
 const WPN=WREV.map(r=>r?r[0]:'');
 const WTASKN={he2en:'עברית ← אנגלית',cloze:'השלמה במשפט',mc:'משפט באנגלית',hecl:'משפט בעברית',cloze2:'משפט חדש',en2he:'הפירוש בעברית',tr:'תרגום משפט',write:'משפט חדש',first:'שליפה ראשונה',r2:'סיבוב שני',learn:'למידה',known:'ידעתי מראש'};
 function amToast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
@@ -267,8 +270,8 @@ Use the keyword method: take a Hebrew word, name, loanword common in spoken Hebr
 ${old&&old.length?'Do NOT repeat these earlier ideas: '+old.join(' | '):''}
 Also, ONLY if it truly applies to this word, add "method_tip": one short Hebrew line based on English word structure or the psychometric course methods – e.g. a known prefix/suffix/root that explains the meaning, a family word she may know, a connector type (contrast/cause…), a common confusion with a similar-looking word, or a typical exam context. Otherwise "".
 JSON: {"method_tip":"","ideas":[{"sound":"the sound-alike in Hebrew letters and which part of the English word it matches, e.g. 'אבנדון ← abandon'","scene":"the scene in Hebrew","link":"one short line: «${w.e}» נשמע כמו ... ← ..."},{...},{...}]} – exactly 3 different ideas. ${AIHE}`}
-function promptTrSent(w,old){return `Write ONE short, easy English sentence for a Hebrew-speaking learner who knows very little English. It must use the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew).
-Every other word must be very common and simple (CEFR A1–A2, 5–12 words), so the learner understands everything except "${w.e}". Everyday situation, concrete, natural.
+function promptTrSent(w,old,lv){return `Write ONE English sentence for a Hebrew-speaking learner preparing for the Amirnet / psychometric English exam. It must use the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew).
+${lv===3?'Level: HARD – like a sentence in the exam itself: academic register, 18–30 words, two clauses joined by a connector (although, whereas, however, because, despite…), CEFR B2–C1.':lv===2?'Level: MEDIUM – CEFR B1, 10–16 words, a natural sentence like in a simple article, may have one connector.':'Level: EASY – every other word very common and simple (CEFR A1–A2, 5–12 words), so the learner understands everything except "'+w.e+'". Everyday situation, concrete, natural.'}
 It must be different from these sentences: ${JSON.stringify(old||[])}.
 JSON: {"en":"the sentence","he":"a natural Hebrew translation of the whole sentence"}
 ${AIHE}`}
@@ -317,7 +320,7 @@ ${AIHE}`}
 .am-in:focus{border-color:var(--accent);outline:none}.am-in.en{font-family:var(--en);direction:ltr;text-align:left}
 textarea.am-in{resize:vertical;min-height:70px}
 .am-opts{display:flex;flex-direction:column;gap:10px}
-.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
+.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
 .am-opt .k{flex:none;font-weight:700;color:var(--muted)}
 .am-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
 .am-opt.right{border-color:var(--ok);background:var(--ok-soft);border-width:3px}
@@ -1633,12 +1636,13 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
       <ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן.</p>
       <p class="hint" style="margin:0">מילה עם כמה פירושים – כל פירוש הוא כרטיס נפרד ועובר מסלול משלו.</p></div>
     <div class="am-box"><h4>2 · כל חזרה (חזרה 1–6)</h4>
-      <p>כל מילה מקבלת רק את התרגיל של החזרה שלה (חזרה 1–6 ברשימה למעלה), והוא קובע מה יקרה למילה. אין חזרה שבה כותבים את המילה באנגלית.</p></div>
+      <p>כל מילה מקבלת רק את התרגיל של החזרה שלה (חזרה 1–6 ברשימה למעלה), והוא קובע מה יקרה למילה. אין חזרה שבה כותבים את המילה באנגלית.</p>
+      <p>כל חזרה קשה יותר מהקודמת, ובכל חזרה יש משפט חדש שלא היה לך עם המילה: בהתחלה משפטים קלים, ובהמשך משפטים ארוכים וקשים מהשאלות. כשאין במאגר משפט מתאים ברמה הזו, נכתב משפט חדש בשבילך. משפט שנלקח מהשאלות מסומן "📘 מתוך שאלות האמירנט" עם סוג השאלה והיחידה.</p></div>
     <div class="am-box"><h4>3 · מה קובע אם מתקדמים</h4>
       <ul><li><b>נכון בלי רמז</b> – המילה עוברת לחזרה הבאה, שרחוקה יותר בזמן.</li>
       <li><b>נכון עם רמז</b> – אותה חזרה שוב, באותו מרווח.</li>
       <li><b>טעות</b> – חוזרת שתי חזרות אחורה (לא לפני חזרה 1), מופיעה שוב בעוד 20 דקות, וגם מופיעה שוב בסוף אותו סבב.</li></ul>
-      <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 2 – כלומר שוב "תרגום משפט", בעוד 20 דקות.</p></div>
+      <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 2 – כלומר שוב "${WREV[2][1]}", בעוד 20 דקות.</p></div>
     <div class="am-box"><h4>4 · מתי המילים מופיעות</h4>
       <ul><li><b>במסע היומי:</b> "חזרה על מילים" בתחילת היום (כל מה שהגיע זמנו) ו"חזרה על המילים של היום" בסוף (20 דקות אחרי הלמידה).</li>
       <li><b>במילים שלי</b> (בעמוד ההתקדמות): כל מילה עם החזרה שהיא נמצאת בה, מתי החזרה הבאה, והיומן של כל תרגול.</li></ul></div>
@@ -1656,7 +1660,7 @@ const wHard=w=>w.st>0&&w.st<WMAST&&((w.bad||0)>=3||((w.bad||0)>=2&&(wAcc(w)??1)<
 /* the name of the task a word really gets now (a fallback when it has no fitting sentence) */
 const WTN={hecl:'משפט בעברית',tr:'תרגום משפט',mc:'משפט באנגלית',en2he:'הפירוש בעברית'};
 const wRevLbl=s=>s>=WMAST?'🏆 נלמדה':s>=1?`חזרה ${s} · ${WREV[s][1]}`:'עוד לא התחילה';
-const wFb=(w,s)=>{const t=wTask(w),n=WTN[t];return n&&n!==WPATHN[s]&&!(t==='mc'&&WPATH[s]==='mc')?` (במילה הזו: ${n} – אין לה משפט מתאים)`:''};
+const wFb=(w,s)=>{const t=wTask(w),n=WTN[t];return n&&t!==WPATH[s]?` (במילה הזו: ${n} – אין לה משפט מתאים)`:''};
 function wMiniPath(w){const s=Math.min(w.st,WMAST),res=WS&&WS.res&&WS.step!=='tr';
   const dots=`<span class="done">למידה ✓</span><small>חזרות:</small>`+[1,2,3,4,5,6].map(i=>`<span class="${i<s?'done':i===s?'on':''}">${i}</span>`).join('')+`<span class="${s>=WMAST?'on':''}">🏆</span>`;
   const now=s>=WMAST?'🏆 המילה נלמדה':res?`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${wFb(w,s)}${s<6?` · נכון בלי רמז ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון בלי רמז ← 🏆 נלמדה'}`;
@@ -1735,7 +1739,7 @@ function wStart(mode,keys,cnt){
    Reviews by stage (Nov 6, her request – no stage where she writes the English word): 1 (20 min) Hebrew sentence – choose the English word ·
    2 (1 day) translate an English sentence · 3 (3 days) another English sentence – choose from 4 · 4 (7 days) the meaning in Hebrew ·
    5 (14 days) translate an English sentence · 6 (30 days) another English sentence – choose from 4 → learned. No warm-up before a review. */
-const WPATH=[null,'hecl','tr','mc','en2he','tr','mc'];
+const WPATH=[null,'hecl','mc','en2he','tr','mc','tr'];
 const WPATHN=WREV.map(r=>r?r[1]:'');
 /* a choosing task for the word (never writing it in English): Hebrew sentence → English sentence → its meaning in Hebrew */
 const wPick=(w,he)=>he&&wHeSent(w)?'hecl':(wCtx(w)||wOther(w))?'mc':wHeSent(w)?'hecl':'en2he';
@@ -1758,6 +1762,35 @@ function sPool(){if(SPOOL||!AMD)return SPOOL;const out=[],add=t=>{t=String(t||''
   Object.values(AMD.x).forEach(T=>(T.l.filter(Boolean).join(' ').match(/[^.!?]+[.!?]+/g)||[]).forEach(add));
   (AMD.rd||[]).forEach(T=>T.en.forEach(p=>(p.match(/[^.!?]+[.!?]+/g)||[]).forEach(add)));
   Object.values(AMD.lists||{}).forEach(L=>L.forEach(x=>add(x.s)));return SPOOL=[...new Set(out)]}
+/* every sentence with its source and level; exam-question sentences carry their book translation */
+let SPOOLX=null;const QSRC={sc:'השלמת משפטים',rs:'ניסוח מחדש',rc:'הבנת הנקרא'};
+function sLvl(t,src){const ws=t.split(/\s+/),n=ws.length,L=ws.reduce((a,x)=>a+x.replace(/[^A-Za-z]/g,'').length,0)/Math.max(1,n);
+  return n<=12&&L<=5.4&&src!=='rc'?1:(n>=20||L>=6.2)?3:2}
+function sPoolX(){if(SPOOLX||!AMD)return SPOOLX;const out=[],seen=new Set(),set={};(AMD.s||[]).forEach(x=>(x.ids||[]).forEach(id=>set[id]=x));
+  const add=(t,src,he,lab)=>{t=String(t||'').replace(/\s+/g,' ').trim();if(t.length<=20||t.length>=260||seen.has(t))return;seen.add(t);out.push({t,src,he:String(he||'').replace(/\s*\([^)]*\)/g,'').trim(),lab,lvl:sLvl(t,src)})};
+  const labOf=(id,src)=>{const x=set[id];return QSRC[src]+(x&&x.u?(x.b?` · פרק ${x.u} בספר החזרות`:` · יחידה ${x.u}`):'')};
+  Object.entries(AMD.q).forEach(([id,q])=>{if(q.nt)return;
+    if(q.t==='sc'&&Array.isArray(q.o)&&q.a)add(q.q.replace(/_{3,}/g,q.o[q.a-1]),'sc',q.he,labOf(id,'sc'));
+    else if(q.t==='rs'){add(q.q,'rs',q.he,labOf(id,'rs'));if(Array.isArray(q.o)&&q.a)add(q.o[q.a-1],'rs',(q.oh||[])[q.a-1],labOf(id,'rs'))}});
+  Object.entries(AMD.x).forEach(([id,T])=>(T.l.filter(Boolean).join(' ').match(/[^.!?]+[.!?]+/g)||[]).forEach(t=>add(t,'rc','',QSRC.rc+(set[id]&&set[id].u?' · יחידה '+set[id].u:''))));
+  (AMD.rd||[]).forEach(T=>T.en.forEach(p=>(p.match(/[^.!?]+[.!?]+/g)||[]).forEach(t=>add(t,'rd','',''))));
+  Object.values(AMD.lists||{}).forEach(L=>L.forEach(x=>add(x.s,'list','','')));return SPOOLX=out}
+const wHas=(t,w)=>!!blankOut(t,w.e)&&new RegExp('\\b'+w.e.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|es|ed|d|ing|ly)?\\b','i').test(t);
+/* the sentence of a review: chosen once per review (kept in w.rv until it is graded), never one she already had */
+const RVP={},RVERR={};
+function wRevSent(w){w=wLive(w);if(w.rv&&w.rv.st===w.st&&w.rv.en)return w.rv;const k=wK(w),lv=WLV[w.st]||2;if(RVP[k])return null;
+  const c=wCard(w),used=new Set([...(w.used||[]),...(w.trs||[]).map(t=>t.en),c&&c.s].filter(Boolean)),P=(sPoolX()||[]).filter(p=>!used.has(p.t)&&wHas(p.t,w));
+  const ex=P.filter(p=>QSRC[p.src]),at=l=>ex.filter(p=>p.lvl===l),rnd=a=>a[Math.floor(Math.random()*Math.min(a.length,6))];
+  const order=lv===1?[at(1)]:lv===2?[at(2),at(1)]:[at(3),at(2)];
+  const set=p=>{const L=wLive(w);L.rv={st:L.st,en:p.t,he:p.he||'',src:p.src,lab:p.lab||''};if(p.he)TRC[p.t.toLowerCase()]={h:p.he,src:'הספר'};amSave();
+    if(!p.he){amTrans(p.t).then(r=>{const L2=wLive(w);if(L2.rv&&L2.rv.en===p.t&&!L2.rv.he){L2.rv.he=r&&r.h||'';amSave();if(S.screen==='amwl')amRedrawKeep()}})}return L.rv};
+  for(const a of order)if(a.length)return set(lv===1?rnd(a.slice().sort((x,y)=>x.t.length-y.t.length)):rnd(shuffle(a.slice())));
+  const any=()=>{const a=P.filter(p=>Math.abs(p.lvl-lv)<=1);if(a.length)return set(rnd(shuffle(a.slice())));if(P.length)return set(P[0]);if(c&&c.s&&wHas(c.s,w))return set({t:c.s,src:'dict',he:(EXTRA[c.xid||c.id]||{}).tr||''});RVERR[k]='לא נמצא משפט למילה הזו.';return null};
+  if(!GKEY())return any();
+  RVP[k]=1;aiRun('','',null,{prompt:promptTrSent(w,[...used].slice(-8),lv),temp:.9}).then(r=>{delete RVP[k];const j=r&&r.j,en=j&&String(j.en||'').trim();
+    if(en&&j.he&&wHas(en,w)&&!used.has(en))set({t:en,he:String(j.he).trim(),src:'ai'});else any();if(S.screen==='amwl')amRedrawKeep()});return null}
+const wRevNow=w=>WS&&WS.mode==='rev'&&WS.step==='recall'&&w&&w.st>=1&&w.st<WMAST;
+function srcLab(t){return t&&QSRC[t.src]?`<p class="am-srcl">📘 מתוך שאלות האמירנט · ${esc(t.lab||QSRC[t.src])}</p>`:t&&t.src==='rd'?'<p class="am-srcl">📖 מתוך קטעי הקריאה בספר</p>':''}
 const WOC={};
 function wOther(w){const k=wK(w);if(k in WOC)return WOC[k];const P=sPool();if(!P)return '';const own=[w.my,w.c,(wCard(w)||{}).s].filter(Boolean);
   const c=P.filter(t=>!own.includes(t)&&blankOut(t,w.e)&&new RegExp('\\b'+w.e.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|es|ed|d|ing|ly)?\\b','i').test(t)).sort((a,b)=>a.length-b.length).slice(0,6);
@@ -1777,7 +1810,7 @@ function wPathChips(n){return `<div class="am-path">${WPH.map((t,i)=>`<span clas
 const wPhN=()=>!WS?0:WS.mode==='new'?0:WS.mode==='r2'?({dq:1,he:2,mc:3}[WS.phase]||3):0;
 /* the sentence to translate: the card's example the first time, then a new easy sentence from Gemini each time (else another sentence + Google) */
 const TRP={},TRERR={};
-function trSent(w){if(w.trc&&w.trc.en)return w.trc;const k=wK(w),c=wCard(w),x=c?EXTRA[c.xid||c.id]||{}:{},used=(w.trs||[]).map(t=>t.en);
+function trSent(w){if(wRevNow(w))return wRevSent(w);if(w.trc&&w.trc.en)return w.trc;const k=wK(w),c=wCard(w),x=c?EXTRA[c.xid||c.id]||{}:{},used=(w.trs||[]).map(t=>t.en);
   if(TRP[k]||TRERR[k])return null;
   const fillHe=en=>{TRP[k]=1;amTrans(en).then(r=>{delete TRP[k];if(w.trc&&w.trc.en===en&&!w.trc.he){w.trc.he=r&&r.h||'';amSave()}if(S.screen==='amwl')amRedrawKeep()})};
   if(c&&c.s&&!used.includes(c.s)&&blankOut(c.s,w.e)){w.trc={en:c.s,he:x.tr||'',src:'dict'};amSave();if(!x.tr)fillHe(c.s);return w.trc}
@@ -1796,14 +1829,14 @@ function wTrDone(w,ok){w=wLive(w);if(WS.res&&WS.res.rec)return;WS.res.ok=ok;WS.r
   if(WS.mode==='new'){WS.step='first';wAfter(w,ok);WS.step='tr'}else if(WS.step==='recall')wAfter(w,ok);else{wLog(w,'tr',ok?1:0,0);w.t=amNow();amSave()}}
 const TRLIVE={};
 function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.res.rec){WS.res.pend=0;WS.res.err='הבדיקה החכמה נקטעה – השווי לתרגום הנכון וסמני בעצמך.'}
-  const k=wK(w),res=WS.res,t=res&&res.en?{en:res.en,he:res.he||(w.trc&&w.trc.he)||''}:trSent(w);
+  const k=wK(w),res=WS.res,t=res&&res.en?{en:res.en,he:res.he||(w.rv&&w.rv.en===res.en&&w.rv.he)||(w.trc&&w.trc.he)||'',src:res.src,lab:res.lab}:trSent(w);
   /* the next sentences are made ahead, so there is no wait between words */
   if(WS.step==='tr')setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx)try{trSent(nx)}catch(e){}}},300);
-  else setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx&&wTask(nx)==='tr')try{trSent(nx)}catch(e){}}},300);
+  else setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx&&['tr','mc'].includes(wTask(nx)))try{wRevNow(nx)?wRevSent(nx):trSent(nx)}catch(e){}}},300);
   if(WS.mode==='new')h+=wPathChips(0);
-  if(!t){h+=`<div class="am-card"><p class="hint center" style="margin:0">${TRERR[k]?esc(TRERR[k]):'⏳ מכינה משפט קל עם המילה…'}</p></div>${TRERR[k]?'<div class="am-cta"><button class="btn" id="trSkip">המשך ←</button></div>':''}`;return h+'</div>'}
+  if(!t){h+=`<div class="am-card"><p class="hint center" style="margin:0">${TRERR[k]||RVERR[k]?esc(TRERR[k]||RVERR[k]):'⏳ מכינה משפט עם המילה…'}</p></div>${TRERR[k]||RVERR[k]?'<div class="am-cta"><button class="btn" id="trSkip">המשך ←</button></div>':''}`;return h+'</div>'}
   h+=`<div class="am-card"><p class="hint center" style="margin:0">תרגמי את המשפט לעברית. ${WS.mode==='new'?'המילה החדשה':'המילה'} מודגשת – לחיצה עליה מראה את הפירוש.</p>
-    <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,WS.nwOpen||res)}</div></div>`;
+    <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,WS.nwOpen||res)}</div>${srcLab(t)}</div>`;
   if(!res){h+=`<textarea class="am-in" id="trIn" rows="2" placeholder="התרגום שלי לעברית" dir="rtl">${esc(WS.draft||'')}</textarea>
     ${WS.busy?'<p class="hint center">⏳ בודקת את התרגום…</p>':''}<div class="am-cta"><button class="btn" id="trChk" ${WS.busy?'disabled':''}>בדיקה</button></div>
     ${WS.mode==='new'?'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>':''}`;return h+'</div>'}
@@ -1849,7 +1882,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   /* a review saved during the old warm-up (sentence translation for all words first) goes straight to the stage tasks */
   if(WS.mode==='rev'&&WS.step==='tr'){WS.step='recall';WS.i=0;WS.res=null;wSave()}
   const step=WS.step;
-  if(step==='recall'&&WS.mode==='rev'&&(WS.res?!!WS.res.en:wTask(w)==='tr')){app.innerHTML=wTrPage(w,h);$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};wBind(w,x);wTrBind(w);return}
+  if(step==='recall'&&WS.mode==='rev'&&(WS.res?(WS.res.task?WS.res.task==='tr':!!WS.res.en):wTask(w)==='tr')){app.innerHTML=wTrPage(w,h);$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};wBind(w,x);wTrBind(w);return}
   if(step==='tr'){app.innerHTML=wTrPage(w,h);$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};wBind(w,x);wTrBind(w);return}
   if(step==='meet'){
     if(!w.as&&x.tip){w.as=x.tip;w.asSeen=[x.tip];amSave()}
@@ -1880,15 +1913,18 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
       <div class="am-nav"><button class="btn secondary" id="wChk" ${WS.busy?'disabled':''}>🔍 בדיקה</button><button class="btn" id="wSaveS">${ck&&!ck.ok&&ck.corrected?'לשמור את המתוקן':'שמירה והמשך'}</button></div>
       ${aiNeedKey()}`}
   else{ /* recall tasks */
-    const task=wTaskNow(w),hint=WS.hint||0,res=WS.res;
+    const task=(WS.res&&WS.res.task)||wTaskNow(w),hint=WS.hint||0,res=WS.res;
     if(step==='first')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="on">2 · שליפה</span>${WS.perWord?'<span>3 · באנגלית</span><span>4 · בעברית</span>':'<span>3 · בחירה במשפט</span>'}</div>`;
     if(WS.mode==='r2'&&WS.perWord)h+=wPathChips(wPhN());
     else if(WS.mode==='r2')h+=`<div class="am-path"><span class="done">1 · הכרות ✓</span><span class="done">2 · שליפה ✓</span><span class="on">3 · בחירה במשפט</span></div>`;
-    const mcS=task==='mc'?blankOut(WS.mode==='r2'?(wCtx(w)||wOther(w)):(wOther(w)||wCtx(w)),w.e):'',heS=task==='hecl'?wHeSent(w):'';
-    const mcF=task==='mc'?(WS.mode==='r2'?(wCtx(w)||wOther(w)):(wOther(w)||wCtx(w))):'';
+    const rvS=task==='mc'&&wRevNow(w)?(res&&res.en?{en:res.en,src:res.src,lab:res.lab}:wRevSent(w)):null;
+    if(task==='mc'&&wRevNow(w)&&!rvS){const kk=wK(w);setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx&&['tr','mc'].includes(wTask(nx)))try{wRevSent(nx)}catch(e){}}},300);
+      h+=`<div class="am-card"><p class="hint center" style="margin:0">${RVERR[kk]?esc(RVERR[kk]):'⏳ מכינה משפט עם המילה…'}</p></div>`;if(!RVERR[kk]){app.innerHTML=h+'</div>';$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};return}}
+    const mcF=task==='mc'?(rvS?rvS.en:WS.mode==='r2'?(wCtx(w)||wOther(w)):(wOther(w)||wCtx(w))):'';
+    const mcS=task==='mc'?blankOut(mcF,w.e):'',heS=task==='hecl'?wHeSent(w):'';
     if(task==='mc'||task==='hecl'){
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${task==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-        <div class="${task==='hecl'?'m':'ctx'}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?esc(heS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>'):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
+        <div class="${task==='hecl'?'m':'ctx'}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?esc(heS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>'):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):''}${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
       const O=wOpts(w);
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
@@ -1972,7 +2008,7 @@ function wBind(w,x){
     else{const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=w.e.toLowerCase(),dd=lev(a,e);const ok=a===e||dd<=(e.length>=6?1:0);WS.res={ok,near:ok&&a!==e,typed:v}}
     if(!WS.res.self)wAfter(w,WS.res.ok);wSave();draw()};
   const gv=$('wGive');if(gv)gv.onclick=()=>{WS.res={ok:false};wAfter(w,false);wSave();draw()};
-  app.querySelectorAll('[data-wmc]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(WS.res)return;const v=b.dataset.wmc,ok=v===w.e;WS.res={ok,typed:v};wAfter(w,ok);wSave();draw()});
+  app.querySelectorAll('[data-wmc]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(WS.res)return;const v=b.dataset.wmc,ok=v===w.e,rv=wRevNow(w)&&wLive(w).rv;WS.res={ok,typed:v};if(rv)Object.assign(WS.res,{en:rv.en,src:rv.src,lab:rv.lab});wAfter(w,ok);wSave();draw()});
   const sy=$('wSelfY');if(sy)sy.onclick=()=>{WS.res={ok:true,typed:WS.res.typed};wAfter(w,true);wSave();draw()};
   const sn=$('wSelfN');if(sn)sn.onclick=()=>{WS.res={ok:false,typed:WS.res.typed};wAfter(w,false);wSave();draw()};
   const cp=$('wCopy');if(cp){setTimeout(()=>{try{cp.focus({preventScroll:true})}catch(e){}},50);cp.oninput=()=>{if(cp.value.trim().toLowerCase()===w.e.toLowerCase()){WS.res.copied=true;wSave();draw()}}}
@@ -1980,10 +2016,10 @@ function wBind(w,x){
 function wTrBind(w){
   const tw=$('trW');if(tw)tw.onclick=()=>{WS.nwOpen=1;wSave();amRedrawKeep()};
   const ti=$('trIn');if(ti){ti.oninput=()=>{WS.draft=ti.value;wSave()};if(!WS.draft&&!WS.busy)setTimeout(()=>{try{ti.focus({preventScroll:true})}catch(e){}},50)}
-  const sk=$('trSkip');if(sk)sk.onclick=()=>{delete TRERR[wK(w)];WS.res={typed:''};wTrDone(w,true);wNextWord()};
+  const sk=$('trSkip');if(sk)sk.onclick=()=>{delete TRERR[wK(w)];if(wRevNow(w)){delete RVERR[wK(w)];WS.res={typed:'',rec:1};wNextWord();return}WS.res={typed:''};wTrDone(w,true);wNextWord()};
   /* the right translation shows at once; Gemini's feedback comes in when ready (she can also mark it herself meanwhile) */
-  const ck=$('trChk');if(ck)ck.onclick=()=>{const v=(WS.draft||'').trim(),t=w.trc;if(!v||!t){ti&&ti.focus();return}
-    const key=wK(w);WS.draft='';WS.res={typed:v,en:t.en,he:t.he,pend:GKEY()?1:0};if(GKEY())TRLIVE[key]=1;if(!GKEY())WS.res.err='אין בדיקה חכמה – השווי לתרגום הנכון וסמני בעצמך.';
+  const ck=$('trChk');if(ck)ck.onclick=()=>{const v=(WS.draft||'').trim(),t=wRevNow(w)?wLive(w).rv:w.trc;if(!v||!t){ti&&ti.focus();return}
+    const key=wK(w);WS.draft='';WS.res={typed:v,en:t.en,he:t.he,src:t.src,lab:t.lab,task:'tr',pend:GKEY()?1:0};if(GKEY())TRLIVE[key]=1;if(!GKEY())WS.res.err='אין בדיקה חכמה – השווי לתרגום הנכון וסמני בעצמך.';
     wSave();draw();window.scrollTo(0,0);if(!GKEY())return;
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';const R0=WS&&WS.res;if(R0&&WS.list[WS.i]===key&&!R0.he){R0.he=he;if(S.screen==='amwl')amRedrawKeep()}}
       const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
@@ -2014,7 +2050,7 @@ function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;
   if(WS.i>=WS.list.length&&WS.mode==='r2')WS.mode='rev';
   wSave();draw();window.scrollTo(0,0)}
 /* result of a recall: the stage goes up (a hint keeps it), a miss goes back and comes again at the end of this session */
-function wAfter(w,ok){w=wLive(w);
+function wAfter(w,ok){w=wLive(w);if(WS.res&&!WS.res.task)WS.res.task=wTaskNow(w);/* the answered task stays on screen even after the stage changes */
   if(WS.mode==='r2'){/* second round of the new words, same session: practice only */wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   if(WS.step==='first'){/* the first recall right after learning */
     wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();if(!(WS.counted&&WS.counted.includes(wK(w)))&&WS.jr)jrCount(WS.jr);AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
@@ -2026,6 +2062,7 @@ function wGrade(w,ok,hint){w=wLive(w);const k=wK(w),task=wTask(w);
   /* right without a hint: one stage up; with a hint: same stage again; wrong: two stages back and again in 20 minutes */
   if(ok){w.ok=(w.ok||0)+1;if(!hint)w.st=Math.min(WMAST,w.st+1);if(w.st>=WMAST)wMaster(w);else w.due=amNow()+WINT[w.st]}
   else{w.bad=(w.bad||0)+1;w.st=Math.max(1,w.st-2);w.due=amNow()+WINT[1];if(!(WS.again||[]).includes(k))WS.again=(WS.again||[]).concat(k)}
+  if(w.rv){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}
   w.t=amNow();if(ok)WS.ok=(WS.ok||0)+1;else WS.bad=(WS.bad||0)+1;amSave()}
 function wDone(){const n=WS?WS.list.length:0;
   app.innerHTML=`<div class="screen">${amNav(WS&&WS.from||'amw','חזרה')}
