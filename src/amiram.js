@@ -1895,7 +1895,27 @@ function wDqPage(){const key=wDqKey(),open=SESS[key]&&SESS[key].kind==='quiz',n=
     <button class="link" id="dqSkip" style="align-self:center">לדלג לסבב 3 – משפט בעברית</button></div>`;
   $('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};$('dqGo').onclick=wDqStart;
   $('dqSkip').onclick=()=>{WS.phase='he';WS.i=0;wSave();draw()}}
+/* going back to words already done in this round: each one is shown as it was answered (read only) */
+function wHistPage(){const H=WS.hist||[],v=Math.max(0,Math.min(WS.view,H.length-1)),it=H[v],w=it&&AMS.w[it.k];if(!it||!w){WS.view=null;wSave();return draw()}
+  const r=it.res||{},t=r.task||it.task||'',nm=t==='tr'?'תרגום משפט':WTN[t]||WTASKN[t]||'';
+  let h=`<div class="screen qz am-scr">
+    <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${HOME}</span></div>
+    <div class="am-bar"><span class="am-chip t">↩ מילה שכבר עשית</span><span>${v+1}/${H.length}</span></div>
+    <div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>
+      <p class="hint center" style="margin:0">${esc(nm)}${it.st?` · עכשיו ${wRevLbl(it.st)}`:''}</p></div>`;
+  if(r.en){const b=blankOut(r.en,w.e);h+=`<div class="am-card"><div class="ctx" dir="ltr" style="font-size:1.05rem;color:var(--ink)">${SAYB(r.en,'sm inl')}${t==='tr'?tapEn(r.en):mcFilled(r.en,b||r.en)}</div>${srcLab(r)}</div>`}
+  if(r.ai)h+=`<p class="am-fb ${r.ai.ok?'ok':'bad'}">${r.ai.ok?'נכון ✓':'לא לגמרי'}</p>${r.ai.feedback?`<div class="am-box ${r.ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(r.ai.feedback)}</p></div>`:''}`;
+  else if(r.ok!=null)h+=`<p class="am-fb ${r.ok?'ok':'bad'}">${r.skip?'דילגת בלי בדיקה':r.ok?'נכון ✓':'טעית'}</p>`;
+  if(t==='tr'&&r.he)h+=`<div class="am-box"><h4>התרגום הנכון</h4><p style="margin:0">${esc(r.he)}</p></div>`;
+  if(r.typed)h+=`<p class="hint center" style="margin:0">${t==='tr'?'התרגום שלך':'בחרת / כתבת'}: <bdi>${esc(r.typed)}</bdi></p>`;
+  h+=`<div class="am-nav">${v>0?'<button class="btn secondary" id="hPrev">→ הקודמת</button>':''}${v<H.length-1?'<button class="btn secondary" id="hNext">הבאה ←</button>':''}</div>
+    <div class="am-cta"><button class="btn" id="hBack">חזרה למילה הנוכחית</button></div></div>`;
+  app.innerHTML=h;$('bk').onclick=()=>{WS.view=null;wSave();go({screen:WS.from||'amw'})};
+  const mv=d=>{WS.view=v+d;wSave();draw();window.scrollTo(0,0)};
+  const p=$('hPrev');if(p)p.onclick=()=>mv(-1);const n=$('hNext');if(n)n.onclick=()=>mv(1);
+  $('hBack').onclick=()=>{WS.view=null;wSave();draw();window.scrollTo(0,0)}}
 function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
+  if(WS.view!=null&&(WS.hist||[]).length)return wHistPage();
   if(WS.mode==='r2'&&WS.phase==='dq')return wDqPage();
   const w=AMS.w[WS.list[WS.i]];if(!w){WS.i++;wSave();return draw()}
   const card=wCard(w),x=card?EXTRA[card.xid||card.id]||{}:{},ex=card?card.s:'';
@@ -1907,7 +1927,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   let h=`<div class="screen qz am-scr">
     <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${HOME}${INFOB()}</span></div>
     <div class="am-bar"><span class="am-chip t">${WS.step==='tr'?(WS.mode==='new'?'🌱 סבב 1 – תרגום משפט':'🌐 חזרה · תרגום משפט חדש'):WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'&&WS.perWord?(WS.phase==='he'?'🇮🇱 סבב 3 – משפט בעברית':'🔁 סבב 4 – משפט באנגלית'):WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 משפט בעברית':'🔁 בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span>${w.st?`<span class="am-timer">${wStageDots(w)}</span>`:''}</div>
-    <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>`;
+    <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>${(WS.hist||[]).length?'<button class="link small-link" id="wPrev" style="align-self:flex-start">→ למילה הקודמת</button>':''}`;
   if(['rev','one'].includes(WS.mode)&&w.st>=1)h+=wMiniPath(w);
   /* a review saved during the old warm-up (sentence translation for all words first) goes straight to the stage tasks */
   if(WS.mode==='rev'&&WS.step==='tr'){WS.step='recall';WS.i=0;WS.res=null;wSave()}
@@ -2005,6 +2025,7 @@ function wIdeas(w){const k='as|'+wK(w),ai=AMAI[k];let h='';
   h+=AIP[k]?'<p class="hint">⏳ ממציאה אסוציאציות…</p>':(GKEY()?`<button class="btn secondary" id="wGen">✨ ${ai&&ai.ideas?'עוד 3 אסוציאציות':'3 אסוציאציות ייחודיות'}</button>`:'');
   return h}
 function wBind(w,x){
+  const pv=$('wPrev');if(pv)pv.onclick=()=>{WS.view=WS.hist.length-1;wSave();draw();window.scrollTo(0,0)};
   app.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{wSave();go({screen:'ampath',pfrom:'amwl'})});
   app.querySelectorAll('[data-wtr]').forEach(b=>b.onclick=()=>{const s=b.dataset.wtr;WTRO[s]=!WTRO[s];const sp=b.nextElementSibling;b.textContent=WTRO[s]?'הסתרת התרגום':'תרגום לעברית';if(sp)sp.hidden=!WTRO[s];
     if(WTRO[s]&&sp&&!sp.textContent.trim()){sp.textContent='⏳ מתרגמת…';amTrans(s).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו';else if(S.screen==='amwl')amRedrawKeep()})}});
@@ -2063,6 +2084,8 @@ function trCheck(w,v,t,key){
       if(r&&r.j&&typeof r.j.ok==='boolean'){R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
       wSave();if(S.screen==='amwl')amRedrawKeep()})()}
 function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;
+  /* remember the answered word, so she can go back to it */
+  {const k=WS.list[WS.i],r=WS.res;if(k&&r&&(r.rec||r.ok!=null||r.ai)){WS.hist=(WS.hist||[]).concat({k,res:JSON.parse(JSON.stringify(r)),task:r.task,st:(AMS.w[k]||{}).st}).slice(-60)}WS.view=null}
   /* a review starts with round 1 for all its words (a new sentence each), then each word's own task */
   if(WS.step==='tr'&&WS.mode!=='new'){WS.res=null;WS.hint=0;WS.i++;if(WS.i>=WS.list.length){WS.i=0;WS.step='recall'}wSave();draw();window.scrollTo(0,0);return}
   if(WS.perWord){
