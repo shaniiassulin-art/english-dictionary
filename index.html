@@ -3905,7 +3905,7 @@ function trHtml(en,w,open){const st=w.e.toLowerCase().slice(0,Math.max(3,w.e.len
 function wTrDone(w,ok){w=wLive(w);if(WS.res&&WS.res.rec)return;WS.res.ok=ok;WS.res.rec=1;const t=w.trc;if(t&&!WS.res.en){WS.res.en=t.en;WS.res.he=WS.res.he||t.he}if(t){w.trs=(w.trs||[]).concat({en:t.en,ok:ok?1:0,t:amNow()}).slice(-12);delete w.trc}
   if(WS.mode==='new'){WS.step='first';wAfter(w,ok);WS.step='tr'}else if(WS.step==='recall')wAfter(w,ok);else{wLog(w,'tr',ok?1:0,0);w.t=amNow();amSave()}}
 const TRLIVE={};
-function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.res.rec){WS.res.pend=0;WS.res.err='הבדיקה החכמה נקטעה – השווי לתרגום הנכון וסמני בעצמך.'}
+function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.res.rec){if(GKEY()){TRLIVE[wK(w)]=1;trCheck(w,WS.res.typed,{en:WS.res.en,he:WS.res.he},wK(w))}else{WS.res.pend=0;WS.res.err='אין בדיקה חכמה – השווי לתרגום הנכון וסמני בעצמך.'}}
   const k=wK(w),res=WS.res,t=res&&res.en?{en:res.en,he:res.he||(w.rv&&w.rv.en===res.en&&w.rv.he)||(w.trc&&w.trc.he)||'',src:res.src,lab:res.lab}:trSent(w);
   /* the next sentences are made ahead, so there is no wait between words */
   if(WS.step==='tr')setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx)try{trSent(nx)}catch(e){}}},300);
@@ -3922,7 +3922,7 @@ function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.re
   else if(res.pend)h+=`<p class="hint center" style="margin:0">⏳ בודקת את התרגום שלך…</p>`;
   else if(res.err)h+=`<p class="hint center" style="margin:0">${esc(res.err)}</p>`;
   h+=`<div class="am-box"><h4>התרגום הנכון</h4><p style="margin:0">${t.he?esc(t.he):'⏳'}</p><p class="hint" style="margin:6px 0 0">התרגום שלך: ${esc(res.typed||'')}</p></div>`;
-  if(!res.rec&&!res.pend&&!ai)h+=`<p class="center" style="margin:0">התרגום שלך נכון?</p><div class="am-nav"><button class="btn" id="trY">✓ כן</button><button class="btn secondary" id="trN">✗ לא</button></div>`;
+  if(!res.rec&&!res.pend&&!ai)h+=GKEY()?`<div class="am-cta"><button class="btn" id="trRetry">🔄 לבדוק שוב</button></div><button class="link small-link" id="trLater" style="align-self:center">להמשיך בלי בדיקה${WS.mode==='new'?'':' (המילה תחזור שוב)'}</button>`:`<p class="center" style="margin:0">התרגום שלך נכון?</p><div class="am-nav"><button class="btn" id="trY">✓ כן</button><button class="btn secondary" id="trN">✗ לא</button></div>`;
   h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="am-mean"><b>${esc(w.h)}</b></div>
     ${w.as?`<p class="am-as1">💡 ${bdiEsc(w.as)}</p>`:WSGEN[k]?'<p class="hint" style="margin:0">⏳ ממציאה אסוציאציה…</p>':''}${WSGERR[k]?`<p class="hint" style="margin:0">${esc(WSGERR[k])}</p>`:''}
     <div class="am-row2">${GKEY()?`<button class="am-pill" id="wGen1" ${WSGEN[k]?'disabled':''}>✨ אסוציאציה ${w.as?'אחרת':'למילה'}</button>`:''}${(w.asSeen||[]).length>1?'<button class="am-pill" id="wPrevAs">↩ הקודמת</button>':''}</div></div>`;
@@ -4097,14 +4097,18 @@ function wTrBind(w){
   /* the right translation shows at once; Gemini's feedback comes in when ready (she can also mark it herself meanwhile) */
   const ck=$('trChk');if(ck)ck.onclick=()=>{const v=(WS.draft||'').trim(),t=wRevNow(w)?wLive(w).rv:w.trc;if(!v||!t){ti&&ti.focus();return}
     const key=wK(w);WS.draft='';WS.res={typed:v,en:t.en,he:t.he,src:t.src,lab:t.lab,task:'tr',pend:GKEY()?1:0};if(GKEY())TRLIVE[key]=1;if(!GKEY())WS.res.err='אין בדיקה חכמה – השווי לתרגום הנכון וסמני בעצמך.';
-    wSave();draw();window.scrollTo(0,0);if(!GKEY())return;
-    (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';const R0=WS&&WS.res;if(R0&&WS.list[WS.i]===key&&!R0.he){R0.he=he;if(S.screen==='amwl')amRedrawKeep()}}
-      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
-      if(r&&r.j&&typeof r.j.ok==='boolean'){R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון וסמני בעצמך.';
-      wSave();if(S.screen==='amwl')amRedrawKeep()})()};
+    wSave();draw();window.scrollTo(0,0);if(!GKEY())return;trCheck(w,v,t,key)};
+  const rt=$('trRetry');if(rt)rt.onclick=()=>{const R=WS.res;if(!R||R.rec)return;const key=wK(w);R.err='';R.pend=1;TRLIVE[key]=1;wSave();amRedrawKeep();trCheck(w,R.typed,{en:R.en,he:R.he},key)};
+  const lt=$('trLater');if(lt)lt.onclick=()=>{if(WS.mode==='new'){wTrDone(w,true);wSave();amRedrawKeep();return}WS.res.rec=1;WS.res.skip=1;wNextWord()};
   const y=$('trY');if(y)y.onclick=()=>{wTrDone(w,true);wSave();amRedrawKeep()};
   const n=$('trN');if(n)n.onclick=()=>{wTrDone(w,false);wSave();amRedrawKeep()};
   if(WS.res&&!w.as){const c=wCard(w),t=c&&(EXTRA[c.xid||c.id]||{}).tip;if(t){w.as=t;w.asSeen=[t];amSave()}else if(GKEY()&&!WSGEN[wK(w)]&&!WSGERR[wK(w)])wGenAssoc(w)}}
+/* Gemini checks the translation (tries twice before giving up) */
+function trCheck(w,v,t,key){
+    (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';const R0=WS&&WS.res;if(R0&&WS.list[WS.i]===key&&!R0.he){R0.he=he;if(S.screen==='amwl')amRedrawKeep()}}
+      let r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});if(!(r&&r.j&&typeof r.j.ok==='boolean'))r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
+      if(r&&r.j&&typeof r.j.ok==='boolean'){R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
+      wSave();if(S.screen==='amwl')amRedrawKeep()})()}
 function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;
   /* a review starts with round 1 for all its words (a new sentence each), then each word's own task */
   if(WS.step==='tr'&&WS.mode!=='new'){WS.res=null;WS.hint=0;WS.i++;if(WS.i>=WS.list.length){WS.i=0;WS.step='recall'}wSave();draw();window.scrollTo(0,0);return}
