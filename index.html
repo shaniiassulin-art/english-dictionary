@@ -2117,7 +2117,12 @@ function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n
 function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const w=A[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete A[k];continue}if(!w.k)w.k=k;if(typeof w.st!=='number')w.st=0;
   /* a card's word (c:<id>) learns that card's single meaning – older entries could hold all the meanings joined */
   const c=String(w.k).startsWith('c:')&&typeof W!=='undefined'&&W[String(w.k).slice(2)];if(c){if(c.h[0]&&w.h!==c.h[0])w.h=c.h[0];if(!w.src||!String(w.src).startsWith('dict:'))w.src='dict:'+c.id}
-  else if(/ · /.test(w.h||'')&&typeof W!=='undefined'){try{const cc=wCard(w);if(cc&&cc.h[0])w.h=cc.h[0]}catch(e){}}}}
+  else if(/ · /.test(w.h||'')&&typeof W!=='undefined'){try{const cc=wCard(w);if(cc&&cc.h[0])w.h=cc.h[0]}catch(e){}}}
+  /* the same card learned twice (an older word entry + its c:<id> entry): one path only */
+  if(typeof W!=='undefined')for(const k of Object.keys(A)){if(String(k).startsWith('c:'))continue;const w=A[k];let cid=w.src&&String(w.src).startsWith('dict:')?String(w.src).slice(5):null;
+    if(!cid){try{const cc=wCard(w);cid=cc&&cc.id}catch(e){}}const c=cid&&A['c:'+cid];if(!c||c===w)continue;
+    if(w.st>c.st||(w.st===c.st&&(w.t||0)>(c.t||0)))Object.assign(c,{st:w.st,due:w.due,ok:Math.max(w.ok||0,c.ok||0),bad:Math.max(w.bad||0,c.bad||0)});
+    c.log=[...(c.log||[]),...(w.log||[])].sort((a,b)=>a[0]-b[0]).slice(-40);c.as=c.as||w.as;c.used=[...new Set([...(c.used||[]),...(w.used||[])])].slice(-24);c.t=Math.max(w.t||0,c.t||0);delete A[k]}}
 function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});amFixW();LS.set('dictAm',JSON.stringify(AMS));amTakeSess()}
 /* a session saved later on another device replaces this device's copy (not while it is open on this screen) */
 function amTakeSess(force){const ss=AMS.ss||{};try{
@@ -2397,7 +2402,7 @@ ${AIHE}`}
 .am-in:focus{border-color:var(--accent);outline:none}.am-in.en{font-family:var(--en);direction:ltr;text-align:left}
 textarea.am-in{resize:vertical;min-height:70px}
 .am-opts{display:flex;flex-direction:column;gap:10px}
-.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-popss{display:block;margin:4px 0 2px;font-size:.85rem}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
+.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-fill{color:var(--ok);text-decoration:underline;text-underline-offset:3px}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-popss{display:block;margin:4px 0 2px;font-size:.85rem}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
 .am-opt .k{flex:none;font-weight:700;color:var(--muted)}
 .am-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
 .am-opt.right{border-color:var(--ok);background:var(--ok-soft);border-width:3px}
@@ -2848,6 +2853,7 @@ const jrMin=k=>Math.floor(((AMS.tm||{})[k]||0)/6e4);
 function jrRun(x){
   if(x.k==='rev'||x.k==='rev2'){if(WS&&WS.jr===x.id&&WS.i<WS.list.length)return go({screen:'amwl'});const ah=x.k==='rev2'&&!x.go?18e5:0;if(!wDue(ah).length){x.done=amNow();x.skip=1;amSave();go({screen:'am'});return}JRGO=x.id;x.go=1;wStart('rev',null,ah)}
   else if(x.k==='new'){
+    if(!Array.isArray(x.ws)&&GKEY()&&x.d<x.n){if(!JNP[x.id]){amToast('⏳ בוחרת קבוצה של מילים דומות…');jnGroupAI(x).then(()=>jrRun(x))}return}
     if(x.d>=x.n&&!jnLeft(x).length){jrFinish(x.id,1);go({screen:'am'});return}
     if(!jnBatch(x).length){const y=DW.filter(isY).length,nn=DW.filter(isN).length;amToast(`לא נמצאו מילים חדשות: במילון ${DW.length} פירושים – ${y} סימנת ✓, ${nn} ✗, ${DW.length-y-nn} לא סומנו`);go({screen:'am'});return}
     go({screen:'amnw',jb:x.id})}
@@ -2911,7 +2917,27 @@ function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return
    The step keeps its batch in x.ws (workshop keys 'c:<card id>'). Step 1: quiz / cards / car mode on these cards, like any dictionary group
    (✓ = already known → leaves the learning, ✗ = to learn). Step 2: write the word (he→en) and then choose it in a sentence (the r2 round) –
    after that the words are in the spaced path (20 min, 1, 3, 7, 14, 30 days). */
-function jnBatch(x){if(!x)return [];if(!Array.isArray(x.ws)){const q=wQueue(Math.max(0,x.n-x.d));q.forEach(w=>{if(w.fresh)wAdd(w.e,w.h,w.c,w.src,w.k)});x.ws=q.map(w=>wK(w)).filter(k=>AMS.w[k]);amSave()}return x.ws}
+function jnBatch(x){if(!x)return [];if(!Array.isArray(x.ws)){const n=Math.max(0,x.n-x.d);jnSet(x,jnGroup(wQueue(Math.max(n*6,60)),n))}return x.ws}
+function jnSet(x,q,theme){q.forEach(w=>{if(w.fresh)wAdd(w.e,w.h,w.c,w.src,w.k)});x.ws=q.map(w=>wK(w)).filter(k=>AMS.w[k]);if(theme)x.theme=theme;amSave()}
+/* part of speech from the Hebrew meaning (verbs come as infinitives) and the English ending */
+function wPos(e,h){e=String(e).toLowerCase();h=String(h||'').trim();if(/\s/.test(e))return 'phrase';if(STOP.has(e))return 'func';
+  if(/^ל[א-ת]{2,}/.test(h)&&!/^(לא|לפי|למרות|לכן|לעומת|ליד|לפני|לאחר)\b/.test(h))return 'verb';if(/^(באופן|בצורה|ב[א-ת]+ות)\b/.test(h)||/ly$/.test(e))return 'adv';
+  if(/(ous|ful|ive|able|ible|less|ic|al|ant|ent|ary|ish)$/.test(e))return 'adj';return 'noun'}
+const heToks=h=>new Set(String(h||'').replace(/\(.*?\)/g,' ').split(/[^א-ת]+/).map(t=>t.replace(/^[והבלמש](?=[א-ת]{3})/,'')).filter(t=>t.length>=2));
+/* the day's words as one group: the first word in line, then the words most like it (same part of speech, shared meaning words), earlier in line first */
+const uniqE=c=>{const s=new Set();return c.filter(w=>{const e=String(w.e).toLowerCase();if(s.has(e))return false;s.add(e);return true})};
+function jnGroup(c,n){c=uniqE(c);if(c.length<=n)return c;const s=c[0],ps=wPos(s.e,s.h),ts=heToks(s.h);
+  const sc=(w,i)=>(wPos(w.e,w.h)===ps?10:0)+[...heToks(w.h)].filter(t=>ts.has(t)).length*4-i*.02;
+  return [s,...c.slice(1).map((w,i)=>[w,sc(w,i)]).sort((a,b)=>b[1]-a[1]).slice(0,n-1).map(a=>a[0])]}
+/* with Gemini: it picks the group (similar meaning / topic, same part of speech – words easy to confuse) */
+const JNP={};
+function jnGroupAI(x){const n=Math.max(0,x.n-x.d),c=uniqE(wQueue(Math.max(n*5,60)));if(c.length<=n){jnSet(x,c);return Promise.resolve()}
+  JNP[x.id]=1;const list=c.map((w,i)=>`${i}|${w.e}|${w.h}|${wPos(w.e,w.h)}`).join('\n');
+  const prompt=`A Hebrew-speaking student learns English words for the Amirnet exam. From this numbered list (index|English|Hebrew meaning|guessed part of speech; lower index = should be learned sooner), choose exactly ${n} items that form ONE group: the same part of speech and meanings as close as possible (one topic / semantic field, near-synonyms or words that are easy to confuse), so that telling them apart is real practice. Item 0 must be in the group. Prefer lower indexes when choices are equal.\n${list}\nJSON: {"ids":[numbers],"theme":"a short Hebrew name for the group (2-4 words)"}\n${AIHE}`;
+  const done=r=>{delete JNP[x.id];if(Array.isArray(x.ws))return;const j=r&&r.j,ids=j&&Array.isArray(j.ids)?[...new Set(j.ids.map(Number).filter(i=>i>=0&&i<c.length))]:[];
+    let q=ids.map(i=>c[i]);if(!q.includes(c[0]))q.unshift(c[0]);q=q.slice(0,n);if(q.length<n){const more=jnGroup(c.filter(w=>!q.includes(w)),n-q.length+1).filter(w=>!q.includes(w));q=q.concat(more).slice(0,n)}
+    jnSet(x,q,j&&typeof j.theme==='string'?j.theme.trim().slice(0,40):'')};
+  return Promise.race([aiRun('','',null,{prompt,temp:.3}),new Promise(r=>setTimeout(()=>r(null),20000))]).then(done,()=>done(null))}
 const jnCard=k=>{const w=AMS.w[k];if(!w)return null;if(w.src&&String(w.src).startsWith('dict:'))return W[String(w.src).slice(5)]||null;const d=dictFind(w.e);return d?d.cards[0]:null};
 const jnCards=x=>jnBatch(x).map(jnCard).filter(Boolean);
 /* still to learn: not marked ✓ and not started yet */
@@ -2929,7 +2955,7 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
   const cur=open?AMS.w[WS.list[WS.i]]:null;
   app.innerHTML=`<div class="screen">
     <div class="nav"><button class="back" id="bk">המסע</button>${HOME}</div>
-    <div><h2>${name}</h2><p class="sub">${ws.length} מילים מהמילון · מילים שסימנת ✗ או שעוד לא סימנת</p><p class="known-line">${countLine(ws)}</p></div>
+    <div><h2>${name}</h2><p class="sub">${ws.length} מילים מהמילון · מילים שסימנת ✗ או שעוד לא סימנת${x.theme?` · קבוצת היום: <b>${esc(x.theme)}</b>`:''}</p><p class="known-line">${countLine(ws)}</p></div>
     <div class="panel">
       <h3 style="margin:0">לימוד המילים</h3>
       <p class="hint" style="margin:0">4 סבבים, כל סבב לכל המילים לפני הבא: ${WLRN.map((r,i)=>`סבב ${i+1} · ${r[0]}`).join(' ← ')}. אחר כך 6 חזרות: ${[1,2,3,4,5,6].map(i=>`חזרה ${i} · ${WREV[i][1]}`).join(' ← ')}.</p>
@@ -3741,7 +3767,8 @@ const wFb=(w,s)=>{const t=wTask(w),n=WTN[t];return n&&t!==WPATH[s]?` (במילה
 function wMiniPath(w){const s=Math.min(w.st,WMAST),res=WS&&WS.res&&WS.step!=='tr';
   const dots=`<span class="done">למידה ✓</span><small>חזרות:</small>`+[1,2,3,4,5,6].map(i=>`<span class="${i<s?'done':i===s?'on':''}">${i}</span>`).join('')+`<span class="${s>=WMAST?'on':''}">🏆</span>`;
   const now=s>=WMAST?'🏆 המילה נלמדה':res?`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${wFb(w,s)}${s<6?` · נכון בלי רמז ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון בלי רמז ← 🏆 נלמדה'}`;
-  return `<div class="am-mpath"><div class="am-path">${dots}</div><p>${now} · <button class="link small-link" data-path="1">🛤 המסלול</button></p></div>`}
+  const oth=res?Object.values(AMS.w).filter(o=>o!==w&&wK(o)!==wK(w)&&String(o.e).toLowerCase()===String(w.e).toLowerCase()&&o.st>=1):[];
+  return `<div class="am-mpath"><div class="am-path">${dots}</div><p>${now} · <button class="link small-link" data-path="1">🛤 המסלול</button></p>${oth.length?`<p class="hint" style="margin:2px 0 0">הפירוש שתרגלת עכשיו: <b>${esc(w.h)}</b>. ל־<bdi>${esc(w.e)}</bdi> יש אצלך עוד ${oth.length>1?'פירושים':'פירוש'} במסלול, וכל פירוש עובר מסלול משלו: ${oth.map(o=>`${esc(o.h)} (${o.st>=WMAST?'🏆':'חזרה '+o.st})`).join(' · ')}</p>`:''}</div>`}
 const wWhen=t=>{const d=t-amNow();if(d<=0)return 'עכשיו';if(d<36e5)return 'בעוד '+Math.max(1,Math.round(d/6e4))+' דק׳';if(d<DAY)return 'בעוד '+Math.round(d/36e5)+' שע׳';return 'בעוד '+Math.round(d/DAY)+' ימים'};
 const wDate=t=>{const d=new Date(t);return d.getDate()+'.'+(d.getMonth()+1)+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
 function amMyWords(){if(!AMD)return amLoading();const f=S.wf||'due',all=Object.values(AMS.w);
@@ -3866,6 +3893,9 @@ function wRevSent(w){w=wLive(w);if(w.rv&&w.rv.st===w.st&&w.rv.en)return w.rv;con
   if(!GKEY())return any();
   RVP[k]=1;aiRun('','',null,{prompt:promptTrSent(w,[...used].slice(-8),lv),temp:.9}).then(r=>{delete RVP[k];const j=r&&r.j,en=j&&String(j.en||'').trim();
     if(en&&j.he&&wHas(en,w)&&!used.has(en))set({t:en,he:String(j.he).trim(),src:'ai'});else any();if(S.screen==='amwl')amRedrawKeep()});return null}
+/* the sentence with the missing word put back and marked */
+function mcFilled(full,blank){const i=blank.search(/_{4,}/);if(i<0)return tapEn(full);const m=/_{4,}/.exec(blank),tail=blank.slice(i+m[0].length),j=full.length-tail.length;
+  return tapEn(full.slice(0,i))+`<b class="am-fill">${esc(full.slice(i,j))}</b>`+tapEn(full.slice(j))}
 const wRevNow=w=>WS&&WS.mode==='rev'&&WS.step==='recall'&&w&&w.st>=1&&w.st<WMAST;
 function srcLab(t){return t&&QSRC[t.src]?`<p class="am-srcl">📘 מתוך שאלות האמירנט · ${esc(t.lab||QSRC[t.src])}</p>`:t&&t.src==='rd'?'<p class="am-srcl">📖 מתוך קטעי הקריאה בספר</p>':''}
 const WOC={};
@@ -4001,7 +4031,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
     const mcS=task==='mc'?blankOut(mcF,w.e):'',heS=task==='hecl'?wHeSent(w):'';
     if(task==='mc'||task==='hecl'){
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${task==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-        <div class="${task==='hecl'?'m':'ctx'}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?esc(heS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>'):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):''}${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
+        <div class="${task==='hecl'?'m':'ctx'}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?esc(heS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>'):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):''}${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
       const O=wOpts(w);
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
@@ -4017,7 +4047,7 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
       <div class="am-nav"><button class="btn secondary" id="wHint" ${hint>=(task==='en2he'?2:3)?'disabled':''}>💡 רמז ${hint?'נוסף':''}</button><button class="btn" id="wGo">בדיקה</button></div>
       <button class="link" id="wGive" style="align-self:center">לא זוכרת – הראי לי</button>${EXB('<b>בדיקה</b> – בודק מה כתבת (טעות הקלדה קטנה נחשבת). <b>💡 רמז</b> – כל לחיצה נותנת רמז נוסף: האסוציאציה, האות הראשונה, המשפט שלך עם חור. רמז לא מקדם שלב. <b>לא זוכרת</b> – מראה את התשובה.')}`}
     else if(res){
-      if(task==='hecl'||task==='mc'){const c=wCard(w),full=task==='hecl'?(c&&c.s):(WS.mode==='r2'?(wCtx(w)||wOther(w)):(wOther(w)||wCtx(w)));if(full)h+=`<div class="am-box"><p dir="ltr" style="margin:0;text-align:left;font-family:var(--en)">${SAYB(full,'sm inl')}${esc(full)}</p></div>`}
+      if(task==='hecl'){const c=wCard(w),full=c&&c.s;if(full)h+=`<div class="am-box"><p dir="ltr" style="margin:0;text-align:left;font-family:var(--en)">${SAYB(full,'sm inl')}${esc(full)}</p></div>`}
       h+=`<p class="am-fb ${res.ok?'ok':'bad'}">${res.ok?(res.near?'כמעט מושלם ✓':'נכון! ✓'):res.self?'':'עוד לא – הנה התשובה:'}</p>
         <div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>${res.typed?`<p class="hint center" style="margin:0">כתבת: <bdi>${esc(res.typed)}</bdi></p>`:''}${w.as?`<div class="am-hint">💡 ${bdiEsc(w.as)}</div>`:''}${w.my?`<div class="ctx">${SAYB(w.my,'sm inl')}✍️ ${esc(w.my)}</div>`:''}</div>`;
       if(!res.ok)h+=wMethodBox(w);
