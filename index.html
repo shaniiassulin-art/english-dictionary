@@ -805,7 +805,8 @@ function xfull(w){const x=EXTRA[w.xid||w.id]||{};let h='';
   if(x.use)h+=`<div class="xbox"><h4>📌 דגשים</h4>${xuse(x.use)}</div>`;
   return h?`<div class="xfull">${h}</div>`:''}
 /* Hebrew translation of the example sentence, behind a small button */
-function trPart(w){const tr=(EXTRA[w.xid||w.id]||{}).tr;return tr?`<button class="trbtn" data-tr="1">תרגום לעברית</button><span class="trans" hidden>${esc(tr)}</span>`:''}
+/* full sentence translation only once the answer is shown (rv===false = still solving – then each word is tapped for its meaning) */
+function trPart(w,rv){const tr=(EXTRA[w.xid||w.id]||{}).tr;if(rv===false)return '';return tr?`<button class="trbtn" data-tr="1">תרגום לעברית</button><span class="trans" hidden>${esc(tr)}</span>`:''}
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-xt]');
   if(b){const id=b.dataset.xid,k=b.dataset.xt,wrap=b.closest('[data-xw]');XO[id]=XO[id]===k?null:k;
@@ -1954,7 +1955,7 @@ function carScreen(){const n=CAR.deck.length;
     <p class="cartag">🚗 מצב רכב · ${esc(CAR.name||'')}</p>
     ${CAR.set?carSettings():''}
     <div class="word" data-cstep="w"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
-    ${w.s?`<div class="sentence" data-cstep="s"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(w.s,w.e)}</span>${trPart(w)}</div></div>`:''}
+    ${w.s?`<div class="sentence" data-cstep="s"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(w.s,w.e)}</span>${trPart(w,rev)}</div></div>`:''}
     ${look?`<p class="carlook">מסתכלת על מילה ${CAR.i+1} · המילה שמתרגלים עכשיו: ${CAR.cur+1}</p>`:''}
     ${rev?`<div class="carmean" data-cstep="h"><p class="lbl">תרגום המילה</p><p class="cm">${w.h.map(esc).join('<br>')}</p>${w.others.length?`<p class="oth">פירושים נוספים: ${esc(numText(w.others))}</p>`:''}</div>
     <div data-cstep="t">${carX(w)}</div>`:`<div class="carmean think" data-cstep="p"><p class="lbl">תרגום המילה</p><p class="cm">🤔 מה הפירוש?</p><button class="link" id="cRev">הצגת התשובה</button></div>`}
@@ -2383,7 +2384,7 @@ ${AIHE}`}
 .am-in:focus{border-color:var(--accent);outline:none}.am-in.en{font-family:var(--en);direction:ltr;text-align:left}
 textarea.am-in{resize:vertical;min-height:70px}
 .am-opts{display:flex;flex-direction:column;gap:10px}
-.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
+.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
 .am-opt .k{flex:none;font-weight:700;color:var(--muted)}
 .am-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
 .am-opt.right{border-color:var(--ok);background:var(--ok-soft);border-width:3px}
@@ -2715,12 +2716,37 @@ function amLoading(){app.innerHTML=`<div class="screen">${amNav('start','בחי�
   amLoad().then(()=>draw()).catch(()=>{app.innerHTML=`<div class="screen">${amNav('start','בחירת אפליקציה')}<p class="am-load">לא הצלחתי לטעון את השאלות – בדקי את החיבור ונסי שוב.</p><button class="btn" id="amRe">לנסות שוב</button></div>`;amBindNav();$('amRe').onclick=()=>draw()})}
 /* tap any English word → its meaning + add to the workshop */
 let AMPOP=null;
+/* the word being tested right now – its meaning stays hidden in the popup until the answer is shown */
+function popSecret(e){e=String(e||'').toLowerCase();const is=x=>x&&e===String(x).toLowerCase();try{
+  if(S.screen==='quiz'&&Q){const w=Q.list[Q.i];return is(w.e)&&!(Q.checked||(Q.marks||{})[w.id])}
+  if(S.screen==='car'&&CAR){const w=CAR.deck[CAR.i];return is(w.e)&&!(CAR.rev||(CAR.cur!=null&&CAR.i!==CAR.cur))}
+  if(S.screen==='cards'&&C){const w=C.deck[C.i];return is(w.e)&&!C.open}
+  if(S.screen==='amwl'&&WS&&WS.list){const w=AMS.w[WS.list[WS.i]];return w&&is(w.e)&&!WS.res&&WS.step!=='tr'}
+  if(S.screen==='amfpl'&&FP){const c=W[FP.ids[FP.i]],st=FP.st[FP.i]||{};return c&&is(c.e)&&!st.done&&FP.stage!=='tr'}
+  }catch(err){}return false}
+/* tap any English word anywhere (outside buttons and fields) → the same popup: 🔊 the word, 🔊 its sentence, its meaning */
+function wordAt(x,y){let n,o;if(document.caretPositionFromPoint){const p=document.caretPositionFromPoint(x,y);if(!p)return null;n=p.offsetNode;o=p.offset}
+  else if(document.caretRangeFromPoint){const r=document.caretRangeFromPoint(x,y);if(!r)return null;n=r.startContainer;o=r.startOffset}
+  if(!n||n.nodeType!==3)return null;const t=n.data,L=/[A-Za-z'’\-]/;let a=o,b=o;while(a>0&&L.test(t[a-1]))a--;while(b<t.length&&L.test(t[b]))b++;
+  let w=t.slice(a,b).replace(/^['’\-]+|['’\-]+$/g,'');if(!/[A-Za-z]{2}/.test(w))return null;
+  const r=document.createRange();r.setStart(n,a);r.setEnd(n,b);if(![...r.getClientRects()].some(q=>x>=q.left-3&&x<=q.right+3&&y>=q.top-3&&y<=q.bottom+3))return null;
+  return {w,n}}
+function enSentOf(node,w){const el=node.parentElement&&node.parentElement.closest('p,li,div,td,blockquote')||node.parentElement;if(!el)return '';
+  const segs=String(el.innerText||el.textContent||'').split(/[\u0590-\u05FF\n•·|]+/).map(x=>x.replace(/^[^A-Za-z]+|[^A-Za-z.!?'’"_)]+$/g,'').trim());
+  const s=segs.find(x=>new RegExp('(^|[^A-Za-z])'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'([^A-Za-z]|$)').test(x))||'';return s.split(/\s+/).length>=3?s:''}
+/* on the #app element (iPhone sends taps on plain text only to an element that listens) */
+app.addEventListener('click',e=>{if(e.defaultPrevented||!(e.target instanceof Element))return;
+  if(e.target.closest('button,a,input,textarea,select,summary,label,[data-tw],[data-amsay],[data-say],.am-pop,[contenteditable],#cTap'))return;
+  if(window.getSelection&&String(getSelection()).length>1)return;
+  const hit=wordAt(e.clientX,e.clientY);if(!hit)return;
+  amPop(hit.w,enSentOf(hit.n,hit.w),'')});
 function amPop(e,ctx,src){AMPOP={e,ctx,src,h:null};amPopDraw();amTrans(e).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
 function amPopDraw(){let el=$('amPop');if(!AMPOP){if(el)el.remove();return}
   if(!el){el=document.createElement('div');el.id='amPop';el.className='am-pop';document.body.appendChild(el)}
   const k=wKey(AMPOP.e),inW=AMS.w[k],d=dictFind(AMPOP.e);
   el.innerHTML=`<div class="e"><button class="spk" data-amsay="${esc(d?d.e:AMPOP.e)}" aria-label="השמעה">${SPK}</button>${esc(AMPOP.e)}${d&&d.e.toLowerCase()!==AMPOP.e.toLowerCase()?` <small style="font-size:.8rem;color:var(--muted)">(${esc(d.e)})</small>`:''}</div>
-    <div>${d&&/^amq/.test(S.screen)?'📘 המילה במילון שלך – הפירוש לא מוצג בזמן התרגול. אפשר להוסיף אותה ללמידה.':AMPOP.h?(AMPOP.h.h?esc(AMPOP.h.h)+` <small style="color:var(--muted)">· ${esc(AMPOP.h.src)}</small>`:'לא נמצא תרגום'):'⏳ מחפשת פירוש…'}${d&&d.cards.every(isY)?' · <b style="color:var(--ok)">✓ סימנת שאת יודעת</b>':''}</div>
+    ${AMPOP.ctx&&AMPOP.ctx.split(/\s+/).length>=3?`<div class="am-popsent" dir="ltr">${SAYB(AMPOP.ctx,'sm inl')}<span>${esc(AMPOP.ctx)}</span></div>`:''}
+    <div>${popSecret(AMPOP.e)?'🔒 זו המילה שאת נבחנת עליה – הפירוש יופיע אחרי הבדיקה.':AMPOP.h?(AMPOP.h.h?esc(AMPOP.h.h)+` <small style="color:var(--muted)">· ${esc(AMPOP.h.src)}</small>`:'לא נמצא תרגום'):'⏳ מחפשת פירוש…'}${d&&d.cards.every(isY)?' · <b style="color:var(--ok)">✓ סימנת שאת יודעת</b>':''}</div>
     <div class="row"><button class="btn${inW?' secondary':''}" id="popAdd">${inW?'✓ בסדנת המילים':'➕ ללמוד את המילה'}</button><button class="btn secondary" id="popX">סגירה</button></div>`;
     $('popX').onclick=()=>{AMPOP=null;amPopDraw()};
   $('popAdd').onclick=()=>{if(!inW){const cq=AQ&&AQ.cur&&AMD&&AMD.q[AQ.cur];wAdd(d?d.e:AMPOP.e,AMPOP.h&&AMPOP.h.src!=='המילון שלך'?AMPOP.h.h:'',AMPOP.ctx||(cq&&cq.x?amSentenceWith(cq,AMPOP.e):''),AMPOP.src||(AQ&&AQ.cur)||'');amPopDraw();const r=document.querySelector('.am-wordsbox');if(r)r.outerHTML=amWordsBox(AQ&&AQ.cur)}}}
@@ -3633,8 +3659,8 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
     else h+=`<p class="am-fb ${s.ok?'ok':'bad'}">${s.ok?'נכון! ✓':'התשובה:'}</p>`}
   else{const heS=st==='hecl'?wHeSent(w):'',enS=st==='mc'?blankOut(c.s,c.e):'',O=fpOpts(c,s);
     h+=`<div class="am-card"><p class="hint center" style="margin:0">${st==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-      <div class="${st==='hecl'?'m':'ctx'}" style="font-size:1.15rem;color:var(--ink);line-height:1.6;${st==='hecl'?'font-weight:600':''}">${esc(st==='hecl'?heS:enS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${st==='mc'?wTrHtml(c.s,x,c.s):''}</div>
-      <div class="am-opts">${O.map(o=>`<button class="am-opt${s.done?(o===c.e?' right':o===s.sel?' wrong':''):''}" data-fpo="${esc(o)}" ${s.done?'disabled':''}><span>${esc(o)}</span></button>`).join('')}</div>`;
+      <div class="${st==='hecl'?'m':'ctx'}" ${st==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${st==='hecl'?'font-weight:600':''}">${st==='hecl'?esc(heS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>'):SAYB(enS,'sm inl')+tapEn(enS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${st==='mc'&&s.done?wTrHtml(c.s,x,c.s):''}</div>
+      <div class="am-opts">${O.map(o=>`<button class="am-opt${s.done?(o===c.e?' right':o===s.sel?' wrong':''):''}" data-fpo="${esc(o)}" ${s.done?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
     if(s.done)h+=`<p class="am-fb ${s.ok?'ok':'bad'}">${s.ok?'נכון! ✓':'לא נכון – התשובה מסומנת בירוק'}</p><div class="am-box"><p dir="ltr" style="margin:0;text-align:left;font-family:var(--en)">${SAYB(c.s,'sm inl')}${esc(c.s)}</p>${x.tr?`<p style="margin:6px 0 0">${esc(x.tr)}</p>`:''}</div>`}
   if(s.done)h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(c.e)}">${SPK}</button><span>${esc(c.e)}</span></div><div class="am-mean"><b>${esc(w.h)}</b></div>${x.tip?`<p class="am-as1">💡 ${bdiEsc(x.tip)}</p>`:''}</div>
     <div class="am-cta"><button class="btn" id="fpOn">${FP.i+1<n?'המילה הבאה ←':'סיום'}</button></div>`;
@@ -3654,7 +3680,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
       const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});s.pend=0;if(r&&r.j&&typeof r.j.ok==='boolean')s.ai=r.j;else s.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון.';
       fpSave();if(S.screen==='amfpl'&&FP&&FP.i===idx)amRedrawKeep()})()};
   const gv=$('fpGive');if(gv)gv.onclick=()=>{s.done=1;s.ok=false;fpSave();draw()};
-  app.querySelectorAll('[data-fpo]').forEach(b=>b.onclick=()=>{if(s.done)return;s.sel=b.dataset.fpo;s.ok=s.sel===c.e;s.done=1;fpSave();amRedrawKeep()});
+  app.querySelectorAll('[data-fpo]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(s.done)return;s.sel=b.dataset.fpo;s.ok=s.sel===c.e;s.done=1;fpSave();amRedrawKeep()});
   app.querySelectorAll('[data-wtr]').forEach(b=>b.onclick=()=>{const t=b.dataset.wtr;WTRO[t]=!WTRO[t];const sp=b.nextElementSibling;b.textContent=WTRO[t]?'הסתרת התרגום':'תרגום לעברית';if(sp)sp.hidden=!WTRO[t];
     if(WTRO[t]&&sp&&!sp.textContent.trim()){sp.textContent='⏳ מתרגמת…';amTrans(t).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו'})}});
   fitWords(app)}
@@ -3926,13 +3952,13 @@ function amWordLearn(){if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
     const mcF=task==='mc'?(WS.mode==='r2'?(wCtx(w)||wOther(w)):(wOther(w)||wCtx(w))):'';
     if(task==='mc'||task==='hecl'){
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${task==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-        <div class="${task==='hecl'?'m':'ctx'}" style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${esc(task==='hecl'?heS:mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?wTrHtml(mcF,x,ex):''}</div>`;
+        <div class="${task==='hecl'?'m':'ctx'}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?esc(heS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>'):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
       const O=wOpts(w);
-      h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'disabled':''}><span>${esc(o)}</span></button>`).join('')}</div>`;
+      h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
-    else if(task==='cloze2'){const s2=blankOut(wOther(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">משפט חדש – איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" style="font-size:1.15rem;color:var(--ink)">${esc(s2)}</div>${wTrHtml(wOther(w),x,ex)}</div>`}
+    else if(task==='cloze2'){const s2=blankOut(wOther(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">משפט חדש – איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${SAYB(s2,'sm inl')}${tapEn(s2)}</div>${res?wTrHtml(wOther(w),x,ex):''}</div>`}
     else if(task==='en2he')h+=`<div class="am-card"><p class="hint center" style="margin:0">מה הפירוש בעברית?</p><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div>${ctx&&hint>0?`<div class="ctx">${esc(ctx)}</div>`:''}</div>`;
-    else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" style="font-size:1.15rem;color:var(--ink)">${esc(s||'_____')}</div>${s?wTrHtml(wCtx(w),x,ex):''}</div>`}
+    else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${s?SAYB(s,'sm inl')+tapEn(s):'_____'}</div>${s&&res?wTrHtml(wCtx(w),x,ex):''}</div>`}
     else h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
     /* hint ladder */
     const hs=[];if(hint>=1&&w.as)hs.push('💡 '+bdiEsc(w.as));if(hint>=2&&task!=='en2he')hs.push('האות הראשונה: <bdi dir="ltr" style="font-family:var(--en);font-size:1.2rem;letter-spacing:3px">'+esc(w.e[0]+w.e.slice(1).replace(/[A-Za-z]/g,'_ '))+'</bdi>');
@@ -4010,7 +4036,7 @@ function wBind(w,x){
     else{const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=w.e.toLowerCase(),dd=lev(a,e);const ok=a===e||dd<=(e.length>=6?1:0);WS.res={ok,near:ok&&a!==e,typed:v}}
     if(!WS.res.self)wAfter(w,WS.res.ok);wSave();draw()};
   const gv=$('wGive');if(gv)gv.onclick=()=>{WS.res={ok:false};wAfter(w,false);wSave();draw()};
-  app.querySelectorAll('[data-wmc]').forEach(b=>b.onclick=()=>{if(WS.res)return;const v=b.dataset.wmc,ok=v===w.e;WS.res={ok,typed:v};wAfter(w,ok);wSave();draw()});
+  app.querySelectorAll('[data-wmc]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(WS.res)return;const v=b.dataset.wmc,ok=v===w.e;WS.res={ok,typed:v};wAfter(w,ok);wSave();draw()});
   const sy=$('wSelfY');if(sy)sy.onclick=()=>{WS.res={ok:true,typed:WS.res.typed};wAfter(w,true);wSave();draw()};
   const sn=$('wSelfN');if(sn)sn.onclick=()=>{WS.res={ok:false,typed:WS.res.typed};wAfter(w,false);wSave();draw()};
   const cp=$('wCopy');if(cp){setTimeout(()=>{try{cp.focus({preventScroll:true})}catch(e){}},50);cp.oninput=()=>{if(cp.value.trim().toLowerCase()===w.e.toLowerCase()){WS.res.copied=true;wSave();draw()}}}

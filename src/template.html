@@ -579,7 +579,8 @@ function xfull(w){const x=EXTRA[w.xid||w.id]||{};let h='';
   if(x.use)h+=`<div class="xbox"><h4>📌 דגשים</h4>${xuse(x.use)}</div>`;
   return h?`<div class="xfull">${h}</div>`:''}
 /* Hebrew translation of the example sentence, behind a small button */
-function trPart(w){const tr=(EXTRA[w.xid||w.id]||{}).tr;return tr?`<button class="trbtn" data-tr="1">תרגום לעברית</button><span class="trans" hidden>${esc(tr)}</span>`:''}
+/* full sentence translation only once the answer is shown (rv===false = still solving – then each word is tapped for its meaning) */
+function trPart(w,rv){const tr=(EXTRA[w.xid||w.id]||{}).tr;if(rv===false)return '';return tr?`<button class="trbtn" data-tr="1">תרגום לעברית</button><span class="trans" hidden>${esc(tr)}</span>`:''}
 document.addEventListener('click',e=>{
   const b=e.target.closest('[data-xt]');
   if(b){const id=b.dataset.xid,k=b.dataset.xt,wrap=b.closest('[data-xw]');XO[id]=XO[id]===k?null:k;
@@ -1728,7 +1729,7 @@ function carScreen(){const n=CAR.deck.length;
     <p class="cartag">🚗 מצב רכב · ${esc(CAR.name||'')}</p>
     ${CAR.set?carSettings():''}
     <div class="word" data-cstep="w"><span class="w">${esc(w.e)}</span><button class="spk" id="say" aria-label="השמעת המילה">${SPK}</button></div>
-    ${w.s?`<div class="sentence" data-cstep="s"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(w.s,w.e)}</span>${trPart(w)}</div></div>`:''}
+    ${w.s?`<div class="sentence" data-cstep="s"><button class="spk sm" id="saySent" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(w.s,w.e)}</span>${trPart(w,rev)}</div></div>`:''}
     ${look?`<p class="carlook">מסתכלת על מילה ${CAR.i+1} · המילה שמתרגלים עכשיו: ${CAR.cur+1}</p>`:''}
     ${rev?`<div class="carmean" data-cstep="h"><p class="lbl">תרגום המילה</p><p class="cm">${w.h.map(esc).join('<br>')}</p>${w.others.length?`<p class="oth">פירושים נוספים: ${esc(numText(w.others))}</p>`:''}</div>
     <div data-cstep="t">${carX(w)}</div>`:`<div class="carmean think" data-cstep="p"><p class="lbl">תרגום המילה</p><p class="cm">🤔 מה הפירוש?</p><button class="link" id="cRev">הצגת התשובה</button></div>`}
