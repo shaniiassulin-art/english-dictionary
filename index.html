@@ -3882,11 +3882,12 @@ function sPoolX(){if(SPOOLX||!AMD)return SPOOLX;const out=[],seen=new Set(),set=
 const wHas=(t,w)=>!!blankOut(t,w.e)&&new RegExp('\\b'+w.e.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|es|ed|d|ing|ly)?\\b','i').test(t);
 /* the sentence of a review: chosen once per review (kept in w.rv until it is graded), never one she already had */
 const RVP={},RVERR={};
-function wRevSent(w){w=wLive(w);if(w.rv&&w.rv.st===w.st&&w.rv.en)return w.rv;const k=wK(w),lv=WLV[w.st]||2;if(RVP[k])return null;
+function wRevSent(w){w=wLive(w);const cu=WS&&WS.cur;if(cu&&cu.k===wK(w)&&cu.st===w.st&&cu.en){if(!w.rv||w.rv.en!==cu.en){w.rv={st:cu.st,en:cu.en,he:cu.he||'',src:cu.src,lab:cu.lab}}return w.rv}
+  if(w.rv&&w.rv.st===w.st&&w.rv.en){if(WS&&WS.list&&WS.list[WS.i]===wK(w)&&!WS.res)WS.cur=Object.assign({k:wK(w)},w.rv);return w.rv}const k=wK(w),lv=WLV[w.st]||2;if(RVP[k])return null;
   const c=wCard(w),used=new Set([...(w.used||[]),...(w.trs||[]).map(t=>t.en),c&&c.s].filter(Boolean)),P=(sPoolX()||[]).filter(p=>!used.has(p.t)&&wHas(p.t,w));
   const ex=P.filter(p=>QSRC[p.src]),at=l=>ex.filter(p=>p.lvl===l),rnd=a=>a[Math.floor(Math.random()*Math.min(a.length,6))];
   const order=lv===1?[at(1)]:lv===2?[at(2),at(1)]:[at(3),at(2)];
-  const set=p=>{const L=wLive(w);L.rv={st:L.st,en:p.t,he:p.he||'',src:p.src,lab:p.lab||''};if(p.he)TRC[p.t.toLowerCase()]={h:p.he,src:'הספר'};amSave();
+  const set=p=>{const L=wLive(w);L.rv={st:L.st,en:p.t,he:p.he||'',src:p.src,lab:p.lab||''};L.t=amNow();if(WS&&WS.list&&WS.list[WS.i]===k){WS.cur=Object.assign({k},L.rv);wSave()}if(p.he)TRC[p.t.toLowerCase()]={h:p.he,src:'הספר'};amSave();
     if(!p.he){amTrans(p.t).then(r=>{const L2=wLive(w);if(L2.rv&&L2.rv.en===p.t&&!L2.rv.he){L2.rv.he=r&&r.h||'';amSave();if(S.screen==='amwl')amRedrawKeep()}})}return L.rv};
   for(const a of order)if(a.length)return set(lv===1?rnd(a.slice().sort((x,y)=>x.t.length-y.t.length)):rnd(shuffle(a.slice())));
   const any=()=>{const a=P.filter(p=>Math.abs(p.lvl-lv)<=1);if(a.length)return set(rnd(shuffle(a.slice())));if(P.length)return set(P[0]);if(c&&c.s&&wHas(c.s,w))return set({t:c.s,src:'dict',he:(EXTRA[c.xid||c.id]||{}).tr||''});RVERR[k]='לא נמצא משפט למילה הזו.';return null};
@@ -4136,7 +4137,7 @@ function wBind(w,x){
     else{const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=w.e.toLowerCase(),dd=lev(a,e);const ok=a===e||dd<=(e.length>=6?1:0);WS.res={ok,near:ok&&a!==e,typed:v}}
     if(!WS.res.self)wAfter(w,WS.res.ok);wSave();draw()};
   const gv=$('wGive');if(gv)gv.onclick=()=>{WS.res={ok:false};wAfter(w,false);wSave();draw()};
-  app.querySelectorAll('[data-wmc]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(WS.res)return;const v=b.dataset.wmc,ok=v===w.e,rv=wRevNow(w)&&wLive(w).rv;WS.res={ok,typed:v};if(rv)Object.assign(WS.res,{en:rv.en,src:rv.src,lab:rv.lab});wAfter(w,ok);wSave();draw()});
+  app.querySelectorAll('[data-wmc]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(WS.res)return;const v=b.dataset.wmc,ok=v===w.e,rv=wRevNow(w)&&(WS.cur&&WS.cur.k===wK(w)?WS.cur:wLive(w).rv);WS.res={ok,typed:v};if(rv)Object.assign(WS.res,{en:rv.en,src:rv.src,lab:rv.lab});wAfter(w,ok);wSave();draw()});
   const sy=$('wSelfY');if(sy)sy.onclick=()=>{WS.res={ok:true,typed:WS.res.typed};wAfter(w,true);wSave();draw()};
   const sn=$('wSelfN');if(sn)sn.onclick=()=>{WS.res={ok:false,typed:WS.res.typed};wAfter(w,false);wSave();draw()};
   const cp=$('wCopy');if(cp){setTimeout(()=>{try{cp.focus({preventScroll:true})}catch(e){}},50);cp.oninput=()=>{if(cp.value.trim().toLowerCase()===w.e.toLowerCase()){WS.res.copied=true;wSave();draw()}}}
@@ -4146,7 +4147,7 @@ function wTrBind(w){
   const ti=$('trIn');if(ti){ti.oninput=()=>{WS.draft=ti.value;wSave()};if(!WS.draft&&!WS.busy)setTimeout(()=>{try{ti.focus({preventScroll:true})}catch(e){}},50)}
   const sk=$('trSkip');if(sk)sk.onclick=()=>{delete TRERR[wK(w)];if(wRevNow(w)){delete RVERR[wK(w)];WS.res={typed:'',rec:1};wNextWord();return}WS.res={typed:''};wTrDone(w,true);wNextWord()};
   /* the right translation shows at once; Gemini's feedback comes in when ready (she can also mark it herself meanwhile) */
-  const ck=$('trChk');if(ck)ck.onclick=()=>{const v=(WS.draft||'').trim(),t=wRevNow(w)?wLive(w).rv:w.trc;if(!v||!t){ti&&ti.focus();return}
+  const ck=$('trChk');if(ck)ck.onclick=()=>{const v=(WS.draft||'').trim(),t=wRevNow(w)?(WS.cur&&WS.cur.k===wK(w)?WS.cur:wLive(w).rv):w.trc;if(!v||!t){ti&&ti.focus();return}
     const key=wK(w);WS.draft='';WS.res={typed:v,en:t.en,he:t.he,src:t.src,lab:t.lab,task:'tr',pend:GKEY()?1:0};if(GKEY())TRLIVE[key]=1;if(!GKEY())WS.res.err='אין בדיקה חכמה – השווי לתרגום הנכון וסמני בעצמך.';
     wSave();draw();window.scrollTo(0,0);if(!GKEY())return;trCheck(w,v,t,key)};
   const rt=$('trRetry');if(rt)rt.onclick=()=>{const R=WS.res;if(!R||R.rec)return;const key=wK(w);R.err='';R.pend=1;TRLIVE[key]=1;wSave();amRedrawKeep();trCheck(w,R.typed,{en:R.en,he:R.he},key)};
@@ -4160,7 +4161,7 @@ function trCheck(w,v,t,key){
       let r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});if(!(r&&r.j&&typeof r.j.ok==='boolean'))r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
       if(r&&r.j&&typeof r.j.ok==='boolean'){R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
       wSave();if(S.screen==='amwl')amRedrawKeep()})()}
-function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;
+function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;WS.cur=null;
   /* remember the answered word, so she can go back to it */
   {const k=WS.list[WS.i],r=WS.res;if(k&&r&&(r.rec||r.ok!=null||r.ai)){WS.hist=(WS.hist||[]).concat({k,res:JSON.parse(JSON.stringify(r)),task:r.task,st:(AMS.w[k]||{}).st}).slice(-60)}WS.view=null}
   /* a review starts with round 1 for all its words (a new sentence each), then each word's own task */
