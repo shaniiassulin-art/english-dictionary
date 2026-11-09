@@ -171,6 +171,8 @@ const WREV=[null,['20 דקות','משפט בעברית','משפט בעברית �
 const WPN=WREV.map(r=>r?r[0]:'');
 const WTASKN={he2en:'עברית ← אנגלית',cloze:'השלמה במשפט',mc:'משפט באנגלית',hecl:'משפט בעברית',cloze2:'משפט חדש',en2he:'הפירוש בעברית',tr:'תרגום משפט',write:'משפט חדש',first:'שליפה ראשונה',r2:'סיבוב שני',learn:'למידה',known:'ידעתי מראש'};
 function amToast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),2600)}
+/* a sync replaces AMS with the merged copy – a word object held by an open page (or by a Gemini answer that comes back later) is then no longer the stored one, and a grade written to it would be lost. Always write to the stored word. */
+const wLive=w=>w&&AMS&&AMS.w&&AMS.w[wK(w)]||w;
 function wLog(w,task,res,hint){(w.log=w.log||[]).push([amNow(),task,res,hint||0]);if(w.log.length>40)w.log.shift()}
 function wKey(e){return String(e).toLowerCase().trim()}
 const wK=w=>w.k||wKey(w.e);
@@ -198,7 +200,7 @@ function wQueue(n){const out=[],seen=new Set(Object.keys(AMS.w).filter(k=>AMS.w[
   return out}
 function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w&&w.st===0&&wNewOk(w)).length;
   return n+DW.filter(w=>!isY(w)&&!k.has('c:'+w.id)&&!k.has(wKey(w.e))).length}
-function wMaster(w){w.st=WMAST;w.due=0;
+function wMaster(w){w=wLive(w);w.st=WMAST;w.due=0;
   if(w.src&&w.src.startsWith('dict:')){const c=W[w.src.slice(5)];if(c&&!isY(c))setKnow(c.id,'y');return}
   const d=dictFind(w.e);if(d)d.cards.forEach(c=>{if(!isY(c))setKnow(c.id,'y')})}
 /* the dictionary card behind a workshop word (for its tip, notes, sentence and translation) */
@@ -1790,9 +1792,11 @@ function trSent(w){if(w.trc&&w.trc.en)return w.trc;const k=wK(w),c=wCard(w),x=c?
 function trHtml(en,w,open){const st=w.e.toLowerCase().slice(0,Math.max(3,w.e.length-2)).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),m=new RegExp('\\b'+st+'[a-z]*','i').exec(en);if(!m)return tapEn(en);const i=m.index,L=m[0].length;
   return tapEn(en.slice(0,i))+`<button class="am-nw" id="trW">${esc(en.slice(i,i+L))}</button>`+tapEn(en.slice(i+L))+(open?`<span class="am-nwm">${esc(en.slice(i,i+L))} = <b>${esc(w.h)}</b></span>`:'')}
 /* a word's round-1 result: it enters the spaced path (learning) or is logged (review) */
-function wTrDone(w,ok){if(WS.res&&WS.res.rec)return;WS.res.ok=ok;WS.res.rec=1;const t=w.trc;if(t&&!WS.res.en){WS.res.en=t.en;WS.res.he=WS.res.he||t.he}if(t){w.trs=(w.trs||[]).concat({en:t.en,ok:ok?1:0,t:amNow()}).slice(-12);delete w.trc}
+function wTrDone(w,ok){w=wLive(w);if(WS.res&&WS.res.rec)return;WS.res.ok=ok;WS.res.rec=1;const t=w.trc;if(t&&!WS.res.en){WS.res.en=t.en;WS.res.he=WS.res.he||t.he}if(t){w.trs=(w.trs||[]).concat({en:t.en,ok:ok?1:0,t:amNow()}).slice(-12);delete w.trc}
   if(WS.mode==='new'){WS.step='first';wAfter(w,ok);WS.step='tr'}else if(WS.step==='recall')wAfter(w,ok);else{wLog(w,'tr',ok?1:0,0);w.t=amNow();amSave()}}
-function wTrPage(w,h){const k=wK(w),res=WS.res,t=res&&res.en?{en:res.en,he:res.he||(w.trc&&w.trc.he)||''}:trSent(w);
+const TRLIVE={};
+function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.res.rec){WS.res.pend=0;WS.res.err='הבדיקה החכמה נקטעה – השווי לתרגום הנכון וסמני בעצמך.'}
+  const k=wK(w),res=WS.res,t=res&&res.en?{en:res.en,he:res.he||(w.trc&&w.trc.he)||''}:trSent(w);
   /* the next sentences are made ahead, so there is no wait between words */
   if(WS.step==='tr')setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx)try{trSent(nx)}catch(e){}}},300);
   else setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx&&wTask(nx)==='tr')try{trSent(nx)}catch(e){}}},300);
@@ -1924,7 +1928,7 @@ const WSGEN={},WSGERR={};
 function wGenAssoc(w){const k=wK(w);if(WSGEN[k])return;WSGEN[k]=1;delete WSGERR[k];const seen=(w.asSeen||[]).concat(w.as?[w.as]:[]).slice(-8);if(S.screen==='amwl')amRedrawKeep();
   aiRun('','',null,{prompt:promptAssoc(w,seen),temp:1}).then(r=>{delete WSGEN[k];const j=r&&r.j;
     const id=j&&(j.ideas||[]).find(i=>i&&i.scene&&!seen.includes(i.scene));
-    if(id){const txt=String(id.scene).replace(/\s*\n+\s*/g,' ').trim()+(id.link?' ('+String(id.link).replace(/\s*\n+\s*/g,' ').trim()+')':'');
+    w=wLive(w);if(id){const txt=String(id.scene).replace(/\s*\n+\s*/g,' ').trim()+(id.link?' ('+String(id.link).replace(/\s*\n+\s*/g,' ').trim()+')':'');
       w.as=txt;w.asSeen=(w.asSeen||[]).filter(a=>a!==txt).concat(txt).slice(-10);w.t=amNow();if(j.method_tip){AMAI['as|'+k]=Object.assign(AMAI['as|'+k]||{},{method_tip:j.method_tip});amAiSave()}amSave()}
     else WSGERR[k]=r&&r.why?aiWhyText(r.why):'לא הצלחתי ליצור אסוציאציה עכשיו – אפשר לנסות שוב.';
     if(S.screen==='amwl'||S.screen==='amwd')amRedrawKeep()})}
@@ -1979,10 +1983,10 @@ function wTrBind(w){
   const sk=$('trSkip');if(sk)sk.onclick=()=>{delete TRERR[wK(w)];WS.res={typed:''};wTrDone(w,true);wNextWord()};
   /* the right translation shows at once; Gemini's feedback comes in when ready (she can also mark it herself meanwhile) */
   const ck=$('trChk');if(ck)ck.onclick=()=>{const v=(WS.draft||'').trim(),t=w.trc;if(!v||!t){ti&&ti.focus();return}
-    const key=wK(w);WS.draft='';WS.res={typed:v,en:t.en,he:t.he,pend:GKEY()?1:0};if(!GKEY())WS.res.err='אין בדיקה חכמה – השווי לתרגום הנכון וסמני בעצמך.';
+    const key=wK(w);WS.draft='';WS.res={typed:v,en:t.en,he:t.he,pend:GKEY()?1:0};if(GKEY())TRLIVE[key]=1;if(!GKEY())WS.res.err='אין בדיקה חכמה – השווי לתרגום הנכון וסמני בעצמך.';
     wSave();draw();window.scrollTo(0,0);if(!GKEY())return;
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';const R0=WS&&WS.res;if(R0&&WS.list[WS.i]===key&&!R0.he){R0.he=he;if(S.screen==='amwl')amRedrawKeep()}}
-      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
+      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
       if(r&&r.j&&typeof r.j.ok==='boolean'){R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון וסמני בעצמך.';
       wSave();if(S.screen==='amwl')amRedrawKeep()})()};
   const y=$('trY');if(y)y.onclick=()=>{wTrDone(w,true);wSave();amRedrawKeep()};
@@ -2010,13 +2014,13 @@ function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;
   if(WS.i>=WS.list.length&&WS.mode==='r2')WS.mode='rev';
   wSave();draw();window.scrollTo(0,0)}
 /* result of a recall: the stage goes up (a hint keeps it), a miss goes back and comes again at the end of this session */
-function wAfter(w,ok){
+function wAfter(w,ok){w=wLive(w);
   if(WS.mode==='r2'){/* second round of the new words, same session: practice only */wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   if(WS.step==='first'){/* the first recall right after learning */
     wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();if(!(WS.counted&&WS.counted.includes(wK(w)))&&WS.jr)jrCount(WS.jr);AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
     if(!ok){WS.again=(WS.again||[]).filter(k=>k!==wK(w)).concat(wK(w))}amSave();return}
   wGrade(w,ok,WS.hint||0)}
-function wGrade(w,ok,hint){const k=wK(w),task=wTask(w);
+function wGrade(w,ok,hint){w=wLive(w);const k=wK(w),task=wTask(w);
   if((WS.re||[]).includes(k)){wLog(w,'re',ok?1:0,hint);w.t=amNow();if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   wLog(w,task,ok?(hint?.5:1):0,hint);
   /* right without a hint: one stage up; with a hint: same stage again; wrong: two stages back and again in 20 minutes */
