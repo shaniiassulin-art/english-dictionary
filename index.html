@@ -2137,7 +2137,15 @@ function dictFind(e){let k=String(e||'').toLowerCase().replace(/[^a-z' \-]/g,'')
   if(k.endsWith('ly'))cand.push(k.slice(0,-2),k.slice(0,-2)+'e',k.slice(0,-3)+'y',k.slice(0,-3)+'le');
   for(const c of cand)if(DIX[c])return {e:DIX[c][0].e,cards:DIX[c],h:[...new Set(DIX[c].map(w=>w.h[0]))]};return null}
 const TRC={};
-async function amTrans(e){const k=e.toLowerCase();if(TRC[k])return TRC[k];const d=dictFind(e);if(d)return TRC[k]={h:d.h.join(' · '),src:'המילון שלך'};
+/* a word's meaning: every meaning in her dictionary; a word that isn't there – its meaning in this sentence (Gemini), else Google */
+const TRX={};
+async function amTrans(e,sent){const k=e.toLowerCase();const d=dictFind(e);if(d)return TRC[k]={h:d.h.join(' · '),hs:d.h,src:'המילון שלך'};
+  sent=String(sent||'').trim();
+  if(sent&&sent.split(/\s+/).length>=3&&!/\s/.test(e.trim())){const ck=k+'|'+sent;if(TRX[ck])return TRX[ck];
+    if(GKEY()){try{const r=await aiRun('','',null,{prompt:`An English word appears in a sentence. Give its Hebrew meaning IN THIS SENTENCE only – the one meaning that fits this context (1-4 Hebrew words, plain Hebrew letters, no explanations).\nWord: "${e}"\nSentence: «${sent}»\nReply as JSON: {"he":"..."}`,temp:.1});
+      const h=r&&r.j&&String(r.j.he||'').trim();if(h&&/[\u05d0-\u05ea]/.test(h)&&!/[\u0600-\u06ff\u0590-\u05cf\ufb1d-\ufb4f]/.test(h))return TRX[ck]={h,src:'לפי ההקשר במשפט'}}catch(x){}}
+    for(const f of [trGoogle,trMemory]){try{const r=await f(e,'en','he');if(r.main)return TRX[ck]={h:r.main,src:r.src}}catch(x){}}}
+  if(TRC[k])return TRC[k];
   for(const f of [trGoogle,trMemory,trGemini]){try{const r=await f(e,'en','he');const alt=(r.alts||[]).map(p=>p.w.slice(0,3).join(', ')).join(' · ');return TRC[k]={h:r.main+(alt?' ('+alt+')':''),src:r.src}}catch(x){}}
   return {h:'',src:''}}
 const STOP=new Set('a an the of to in on at by for and or but is are was were be been being it its this that these those he she they we you i his her their our your with as from not no so if than then there here have has had do does did can could will would shall should may might must also very more most much many such only just into about over under after before while when which who whom whose what where why how all any some each both other one two three'.split(' '));
@@ -2384,7 +2392,7 @@ ${AIHE}`}
 .am-in:focus{border-color:var(--accent);outline:none}.am-in.en{font-family:var(--en);direction:ltr;text-align:left}
 textarea.am-in{resize:vertical;min-height:70px}
 .am-opts{display:flex;flex-direction:column;gap:10px}
-.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
+.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
 .am-opt .k{flex:none;font-weight:700;color:var(--muted)}
 .am-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
 .am-opt.right{border-color:var(--ok);background:var(--ok-soft);border-width:3px}
@@ -2733,25 +2741,26 @@ function wordAt(x,y){let n,o;if(document.caretPositionFromPoint){const p=documen
   return {w,n}}
 function enSentOf(node,w){const el=node.parentElement&&node.parentElement.closest('p,li,div,td,blockquote')||node.parentElement;if(!el)return '';
   const segs=String(el.innerText||el.textContent||'').split(/[\u0590-\u05FF\n•·|]+/).map(x=>x.replace(/^[^A-Za-z]+|[^A-Za-z.!?'’"_)]+$/g,'').trim());
-  const s=segs.find(x=>new RegExp('(^|[^A-Za-z])'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'([^A-Za-z]|$)').test(x))||'';return s.split(/\s+/).length>=3?s:''}
+  const re=new RegExp('(^|[^A-Za-z])'+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'([^A-Za-z]|$)'),seg=segs.find(x=>re.test(x))||'';
+  const s=(seg.split(/(?<=[.!?])\s+(?=[A-Z"'(])/).find(x=>re.test(x))||seg).trim();return s.split(/\s+/).length>=3?s:''}
 /* on the #app element (iPhone sends taps on plain text only to an element that listens) */
 app.addEventListener('click',e=>{if(e.defaultPrevented||!(e.target instanceof Element))return;
   if(e.target.closest('button,a,input,textarea,select,summary,label,[data-tw],[data-amsay],[data-say],.am-pop,[contenteditable],#cTap'))return;
   if(window.getSelection&&String(getSelection()).length>1)return;
   const hit=wordAt(e.clientX,e.clientY);if(!hit)return;
-  amPop(hit.w,enSentOf(hit.n,hit.w),'')});
-function amPop(e,ctx,src){AMPOP={e,ctx,src,h:null};amPopDraw();amTrans(e).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
+  const sn=enSentOf(hit.n,hit.w);amPop(hit.w,sn,'',sn)});
+function amPop(e,ctx,src,sent){sent=sent||ctx||'';AMPOP={e,ctx,src,sent,h:null};amPopDraw();amTrans(e,sent).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
 function amPopDraw(){let el=$('amPop');if(!AMPOP){if(el)el.remove();return}
   if(!el){el=document.createElement('div');el.id='amPop';el.className='am-pop';document.body.appendChild(el)}
   const k=wKey(AMPOP.e),inW=AMS.w[k],d=dictFind(AMPOP.e);
   el.innerHTML=`<div class="e"><button class="spk" data-amsay="${esc(d?d.e:AMPOP.e)}" aria-label="השמעה">${SPK}</button>${esc(AMPOP.e)}${d&&d.e.toLowerCase()!==AMPOP.e.toLowerCase()?` <small style="font-size:.8rem;color:var(--muted)">(${esc(d.e)})</small>`:''}</div>
-    ${AMPOP.ctx&&AMPOP.ctx.split(/\s+/).length>=3?`<div class="am-popsent" dir="ltr">${SAYB(AMPOP.ctx,'sm inl')}<span>${esc(AMPOP.ctx)}</span></div>`:''}
-    <div>${popSecret(AMPOP.e)?'🔒 זו המילה שאת נבחנת עליה – הפירוש יופיע אחרי הבדיקה.':AMPOP.h?(AMPOP.h.h?esc(AMPOP.h.h)+` <small style="color:var(--muted)">· ${esc(AMPOP.h.src)}</small>`:'לא נמצא תרגום'):'⏳ מחפשת פירוש…'}${d&&d.cards.every(isY)?' · <b style="color:var(--ok)">✓ סימנת שאת יודעת</b>':''}</div>
+    ${AMPOP.sent&&AMPOP.sent.split(/\s+/).length>=3?`<div class="am-popsent" dir="ltr">${SAYB(AMPOP.sent,'sm inl')}<span>${esc(AMPOP.sent)}</span></div>`:''}
+    <div>${popSecret(AMPOP.e)?'🔒 זו המילה שאת נבחנת עליה – הפירוש יופיע אחרי הבדיקה.':AMPOP.h?(AMPOP.h.h?(AMPOP.h.hs&&AMPOP.h.hs.length>1?`<ol class="am-pophs">${AMPOP.h.hs.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:esc(AMPOP.h.h))+` <small style="color:var(--muted)">· ${esc(AMPOP.h.src)}</small>`:'לא נמצא תרגום'):'⏳ מחפשת פירוש…'}${d&&d.cards.every(isY)?' · <b style="color:var(--ok)">✓ סימנת שאת יודעת</b>':''}</div>
     <div class="row"><button class="btn${inW?' secondary':''}" id="popAdd">${inW?'✓ בסדנת המילים':'➕ ללמוד את המילה'}</button><button class="btn secondary" id="popX">סגירה</button></div>`;
     $('popX').onclick=()=>{AMPOP=null;amPopDraw()};
   $('popAdd').onclick=()=>{if(!inW){const cq=AQ&&AQ.cur&&AMD&&AMD.q[AQ.cur];wAdd(d?d.e:AMPOP.e,AMPOP.h&&AMPOP.h.src!=='המילון שלך'?AMPOP.h.h:'',AMPOP.ctx||(cq&&cq.x?amSentenceWith(cq,AMPOP.e):''),AMPOP.src||(AQ&&AQ.cur)||'');amPopDraw();const r=document.querySelector('.am-wordsbox');if(r)r.outerHTML=amWordsBox(AQ&&AQ.cur)}}}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tw]');if(t){e.preventDefault();document.querySelectorAll('.tw.on').forEach(x=>x.classList.remove('on'));t.classList.add('on');
-  const box=t.closest('[data-ctx]');amPop(t.dataset.tw,box?box.dataset.ctx:'',box?box.dataset.src:'');return}
+  const box=t.closest('[data-ctx]');amPop(t.dataset.tw,box?box.dataset.ctx:'',box?box.dataset.src:'',t.firstChild?enSentOf(t.firstChild,t.dataset.tw):'');return}
   const s=e.target.closest('[data-amsay]');if(s){e.preventDefault();amSay(s.dataset.amsay)}});
 
 
@@ -3873,10 +3882,10 @@ function wTrPage(w,h){const k=wK(w),res=WS.res,t=res&&res.en?{en:res.en,he:res.h
     ${WS.mode==='new'?'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>':''}`;return h+'</div>'}
   const ai=res.ai;
   if(ai)h+=`<p class="am-fb ${ai.ok?'ok':'bad'}">${ai.ok?'נכון! ✓':'לא לגמרי'}</p>${ai.feedback?`<div class="am-box ${ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(ai.feedback)}</p></div>`:''}`;
-  else if(res.pend)h+=`<p class="hint center" style="margin:0">⏳ בודקת את התרגום שלך…${res.rec?'':' (אפשר גם לסמן בעצמך למטה)'}</p>`;
+  else if(res.pend)h+=`<p class="hint center" style="margin:0">⏳ בודקת את התרגום שלך…</p>`;
   else if(res.err)h+=`<p class="hint center" style="margin:0">${esc(res.err)}</p>`;
   h+=`<div class="am-box"><h4>התרגום הנכון</h4><p style="margin:0">${t.he?esc(t.he):'⏳'}</p><p class="hint" style="margin:6px 0 0">התרגום שלך: ${esc(res.typed||'')}</p></div>`;
-  if(!res.rec)h+=`<p class="center" style="margin:0">התרגום שלך נכון?</p><div class="am-nav"><button class="btn" id="trY">✓ כן</button><button class="btn secondary" id="trN">✗ לא</button></div>`;
+  if(!res.rec&&!res.pend&&!ai)h+=`<p class="center" style="margin:0">התרגום שלך נכון?</p><div class="am-nav"><button class="btn" id="trY">✓ כן</button><button class="btn secondary" id="trN">✗ לא</button></div>`;
   h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="am-mean"><b>${esc(w.h)}</b></div>
     ${w.as?`<p class="am-as1">💡 ${bdiEsc(w.as)}</p>`:WSGEN[k]?'<p class="hint" style="margin:0">⏳ ממציאה אסוציאציה…</p>':''}${WSGERR[k]?`<p class="hint" style="margin:0">${esc(WSGERR[k])}</p>`:''}
     <div class="am-row2">${GKEY()?`<button class="am-pill" id="wGen1" ${WSGEN[k]?'disabled':''}>✨ אסוציאציה ${w.as?'אחרת':'למילה'}</button>`:''}${(w.asSeen||[]).length>1?'<button class="am-pill" id="wPrevAs">↩ הקודמת</button>':''}</div></div>`;
