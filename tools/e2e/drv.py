@@ -65,7 +65,7 @@ async def q_drive(pg,limit=300,log=None):
     if await pg.locator('.am-opt[data-k]').count():
       a=await pg.evaluate("AMD.q[AQ.cur||AQ.ids[AQ.i]].a");k+=1
       kk=a if (isinstance(a,int) and k%3) else 1
-      await tap(pg,f'.am-opt[data-k="{kk}"]');await tap(pg,'#amChk');continue
+      await tap(pg,f'.am-opt[data-k="{kk}"] .ax-rad');await tap(pg,'#amChk');continue
     if await pg.locator('#amTyped').count():await pg.fill('#amTyped','x');await tap(pg,'#amChk');continue
     if log is not None:log.append('q stuck: '+(await pg.evaluate("document.querySelector('.screen')&&document.querySelector('.screen').innerText.slice(0,200)")))
     break

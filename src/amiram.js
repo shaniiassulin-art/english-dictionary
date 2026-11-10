@@ -325,7 +325,7 @@ ${AIHE}`}
 .am-in:focus{border-color:var(--accent);outline:none}.am-in.en{font-family:var(--en);direction:ltr;text-align:left}
 textarea.am-in{resize:vertical;min-height:70px}
 .am-opts{display:flex;flex-direction:column;gap:10px}
-.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-fill{color:var(--ok);text-decoration:underline;text-underline-offset:3px}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-popss{display:block;margin:4px 0 2px;font-size:.85rem}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
+.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-fill{color:var(--ok);text-decoration:underline;text-underline-offset:3px}.am-qnav{display:flex;flex-direction:column;gap:6px}.am-qnums{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;direction:ltr}.am-qnums button{min-width:30px;height:30px;padding:0 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:.78rem;color:var(--muted)}.am-qnums button.on{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}.am-qnums button.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}.am-qnums button.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 50%,transparent)}.am-ohint{margin:0;font-size:.8rem;text-align:center}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-popss{display:block;margin:4px 0 2px;font-size:.85rem}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
 .am-opt .k{flex:none;font-weight:700;color:var(--muted)}
 .am-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
 .am-opt.right{border-color:var(--ok);background:var(--ok-soft);border-width:3px}
@@ -682,12 +682,25 @@ app.addEventListener('click',e=>{if(e.defaultPrevented||!(e.target instanceof El
   if(window.getSelection&&String(getSelection()).length>1)return;
   const hit=wordAt(e.clientX,e.clientY);if(!hit)return;
   const sn=enSentOf(hit.n,hit.w);amPop(hit.w,sn,'',sn)});
-function amPop(e,ctx,src,sent){sent=sent||ctx||'';AMPOP={e,ctx,src,sent,h:null};amPopDraw();amTrans(e,sent).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
+/* a hint for a word – never its meaning: her own association, the dictionary's tip with the meaning cut out, the word's parts; else Gemini makes one */
+const HINTC={};
+function wordHints(e){const lo=String(e).toLowerCase(),d=dictFind(e),out=[],seen=new Set(),means=d?d.h:[];
+  const cut=t=>{t=String(t||'').replace(/\s*=\s*[^=]*$/,'').trim();means.forEach(m=>String(m).split(/[,/]/).map(x=>x.trim()).filter(x=>x.length>=3).forEach(x=>{t=t.split(x).join('…')}));return t};
+  const add=(t,src)=>{t=cut(t);if(t&&t.length>4&&!seen.has(t)){seen.add(t);out.push({t,src})}};
+  Object.values(AMS.w).filter(w=>String(w.e).toLowerCase()===lo&&w.as).forEach(w=>add(w.as,'האסוציאציה שלך'));
+  (d?d.cards:[]).forEach(c=>add((EXTRA[c.xid||c.id]||{}).tip,'רמז מהמילון'));
+  const br=typeof amBreak==='function'?amBreak(e):'';if(br)out.push({t:br,src:'פירוק המילה',html:1});
+  return out}
+function amHintAI(e,sent){const k=String(e).toLowerCase()+'|'+(sent||'');if(HINTC[k]||!GKEY())return;HINTC[k]={pend:1};
+  aiRun('','',null,{prompt:`A Hebrew-speaking student meets the English word "${e}"${sent?` in the sentence: «${sent}»`:''}. Give ONE short memory hint in Hebrew (an association, a Hebrew sound-alike, a familiar loanword or a situation) that helps her GUESS what the word means – but do NOT write its Hebrew meaning, a translation or a synonym. Plain Hebrew letters. JSON: {"hint":"..."}`,temp:.7}).then(r=>{const h=r&&r.j&&String(r.j.hint||'').trim();HINTC[k]=h?{t:h}:{err:1};if(AMPOP&&AMPOP.mode==='hint'&&AMPOP.e===e)amPopDraw()})}
+function amPop(e,ctx,src,sent,mode){sent=sent||ctx||'';AMPOP={e,ctx,src,sent,h:null,mode:mode||''};if(mode==='hint'){if(!wordHints(e).length)amHintAI(e,sent);amPopDraw();return}amPopDraw();amTrans(e,sent).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
+function amHintHtml(){const H=wordHints(AMPOP.e),k=String(AMPOP.e).toLowerCase()+'|'+(AMPOP.sent||''),g=HINTC[k];
+  return `<p class="hint" style="margin:0 0 4px">💡 רמז – בלי הפירוש</p>`+(H.length?H.map(x=>`<p style="margin:2px 0">${x.html?x.t:bdiEsc(x.t)} <small style="color:var(--muted)">· ${x.src}</small></p>`).join(''):g&&g.t?`<p style="margin:2px 0">${bdiEsc(g.t)} <small style="color:var(--muted)">· רמז שנכתב עכשיו</small></p>`:g&&g.pend?'<p class="hint" style="margin:0">⏳ ממציאה רמז…</p>':'<p class="hint" style="margin:0">אין רמז למילה הזו.</p>')}
 function amPopDraw(){let el=$('amPop');if(!AMPOP){if(el)el.remove();return}
   if(!el){el=document.createElement('div');el.id='amPop';el.className='am-pop';document.body.appendChild(el)}
   const k=wKey(AMPOP.e),inW=AMS.w[k],d=dictFind(AMPOP.e);
   el.innerHTML=`<div class="e"><button class="spk" data-amsay="${esc(d?d.e:AMPOP.e)}" aria-label="השמעה">${SPK}</button>${esc(AMPOP.e)}${d&&d.e.toLowerCase()!==AMPOP.e.toLowerCase()?` <small style="font-size:.8rem;color:var(--muted)">(${esc(d.e)})</small>`:''}</div>
-        <div>${popSecret(AMPOP.e)?'🔒 זו המילה שאת נבחנת עליה – הפירוש יופיע אחרי הבדיקה.':AMPOP.h?(AMPOP.h.h?(AMPOP.h.hs&&AMPOP.h.hs.length>1?`<ol class="am-pophs">${AMPOP.h.hs.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:esc(AMPOP.h.h))+` <small style="color:var(--muted)">· ${esc(AMPOP.h.src)}</small>`:'לא נמצא תרגום'):'⏳ מחפשת פירוש…'}${d&&d.cards.every(isY)?' · <b style="color:var(--ok)">✓ סימנת שאת יודעת</b>':''}</div>
+        <div>${AMPOP.mode==='hint'?amHintHtml():popSecret(AMPOP.e)?'🔒 זו המילה שאת נבחנת עליה – הפירוש יופיע אחרי הבדיקה.':AMPOP.h?(AMPOP.h.h?(AMPOP.h.hs&&AMPOP.h.hs.length>1?`<ol class="am-pophs">${AMPOP.h.hs.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:esc(AMPOP.h.h))+` <small style="color:var(--muted)">· ${esc(AMPOP.h.src)}</small>`:'לא נמצא תרגום'):'⏳ מחפשת פירוש…'}${d&&d.cards.every(isY)?' · <b style="color:var(--ok)">✓ סימנת שאת יודעת</b>':''}</div>
     ${AMPOP.sent&&AMPOP.sent.split(/\s+/).length>=3?`<button class="link small-link am-popss" data-amsay="${esc(AMPOP.sent)}">🔊 השמעת המשפט כולו</button>`:''}
     <div class="row"><button class="btn${inW?' secondary':''}" id="popAdd">${inW?'✓ בסדנת המילים':'➕ ללמוד את המילה'}</button><button class="btn secondary" id="popX">סגירה</button></div>`;
     $('popX').onclick=()=>{AMPOP=null;amPopDraw()};
@@ -801,7 +814,7 @@ function amHub(){if(!AMD)return amLoading();
     <section class="am-hero2">
       <div class="hr-top"><svg class="am-ring" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="${r}" class="bg"/><circle cx="40" cy="40" r="${r}" class="fg" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}"/><text x="40" y="38" text-anchor="middle" style="font-size:15px">${mins}</text><text x="40" y="54" text-anchor="middle" style="font-size:10px;font-weight:600">מתוך ${goal} דק׳</text></svg>
         <div><p class="hr-k">${lbl}${ck<T?' · משלימה יום שפספסת':''}</p><h2>${nb?JB[nb.k][0]+' '+JB[nb.k][1]+(nb.x?' – עד היעד':''):ck===T?'סיימת את היום 🎉':'היום הזה הושלם ✓'}</h2><p class="hr-d">${nb?jrWhat(nb):`למדת היום ${mins} דקות${mins<goal?` · היעד ${goal}`:' ✓'}`}</p></div></div>
-      ${nb?`<button class="btn" id="jrGo">▶ ${jrOpen(nb)||nb.d||nb.used?'להמשיך':'להתחיל'}</button>`:ck===T||ck>T?`<button class="btn" id="jrNext">▶ להמשיך לתוכנית של מחר</button>`:''}
+      ${nb?`<button class="btn" id="jrGo">▶ ${jrOpen(nb)||nb.d||nb.used?'להמשיך':'להתחיל'}</button>`:ck===T||ck>T?`<button class="btn" id="jrNext">▶ להמשיך לתוכנית של מחר</button>`:''}${nb&&nb.x?'<button class="btn secondary" id="jrNext">⏭ לעבור לתוכנית של מחר בכל זאת</button>':''}
       ${ck!==T?`<button class="btn secondary" id="jrToday">← חזרה למסע של היום</button>`:''}
     </section>
     ${nb&&nb.x?`<div class="am-box"><p>⏱ הצעדים של התוכנית נגמרו מהר${wDue().length?'':' (לא היו מילים לחזרה)'}, אבל היעד היום הוא ${goal} דקות ולמדת ${mins}. לכן נוסף תרגול שאלות עד שתגיעי ליעד. רק אחרי שתשלימי את הזמן אפשר להמשיך לתוכנית של מחר.</p></div>`:''}
@@ -1167,6 +1180,15 @@ function amSaveQ(){try{LS.set('dictAmQ',JSON.stringify(AQ));amSessPut('aq',AQ)}c
 try{AQ=JSON.parse(LS.get('dictAmQ')||'null')}catch(e){}
 function aqSt(i){i=i??AQ.i;return AQ.st[i]=AQ.st[i]||{stage:'read',guess:'',sel:0,elim:{},done:false,ms:0,seen:amNow(),why:[],note:'',words:false,pass:true}}
 let AMTICK=null;
+/* free moving: every question of the series by its number, previous / next, and (in a unit) any other unit of the same kind */
+function amQNav(exam,ansd){const n=AQ.ids.length,u=AQ.unit&&(AMD.s||[]).find(x=>x.id===AQ.unit),sets=u?(AMD.s||[]).filter(x=>x.t===u.t&&!!x.b===!!u.b&&!!x.nt===!!u.nt):[];
+  return `<div class="am-qnav">${sets.length>1?`<select class="am-in" id="aqUnit">${sets.map(x=>`<option value="${x.id}" ${x.id===u.id?'selected':''}>${AMTN[x.t]||''} · ${x.b?'פרק':'יחידה'} ${x.u}</option>`).join('')}</select>`:''}
+    <div class="am-qnums">${AQ.ids.map((_,i)=>`<button data-qj="${i}" class="${i===AQ.i?'on':ansd(i)?(AQ.st[i]&&AQ.st[i].ok?'ok':'bad'):''}">${i+1}</button>`).join('')}</div>
+    <div class="am-nav"><button class="btn secondary" id="aqPrev" ${AQ.i?'':'disabled'}>→ הקודמת</button><button class="btn secondary" id="aqNext">${AQ.i+1<n?'הבאה ←':'לסיכום ←'}</button></div></div>`}
+function amQNavBind(){const mv=i=>{AQ.i=Math.max(0,Math.min(AQ.ids.length,i));if(AQ.i<AQ.ids.length)aqSt().seen=aqSt().seen||amNow();amSaveQ();draw();window.scrollTo(0,0)};
+  app.querySelectorAll('[data-qj]').forEach(b=>b.onclick=()=>mv(+b.dataset.qj));
+  const p=$('aqPrev');if(p)p.onclick=()=>mv(AQ.i-1);const nx=$('aqNext');if(nx)nx.onclick=()=>mv(AQ.i+1);
+  const us=$('aqUnit');if(us)us.onchange=()=>{const x=(AMD.s||[]).find(z=>z.id===us.value);if(!x)return;JRGO=AQ.jr||null;amStartUnit(x,(AMTN[x.t]||'')+' · '+(x.b?'פרק ':'יחידה ')+x.u,AQ.from,AQ.t)}}
 function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.ids.length){go({screen:'am'});return}
   if(AQ.i>=AQ.ids.length)return amResult();
   const id=AQ.ids[AQ.i],q=AMD.q[id],st=aqSt(),exam=AQ.mode==='exam';AQ.cur=id;
@@ -1180,6 +1202,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
     <div class="nav"><button class="back" id="bk">${exam?'עצירה':'יציאה'}</button><span class="nav-ic">${HOME}</span></div>
     <div class="am-bar"><span class="am-chip t">${AMTI[q.t]} ${AMTN[q.t]}</span><span>${esc(AQ.name)}</span><span>· ${AQ.i+1}/${AQ.ids.length}</span>${exam?'<span class="am-timer" id="amTm"></span>':''}</div>
     <div class="am-prog"><i style="width:${(AQ.i)/AQ.ids.length*100}%"></i></div>
+    ${amQNav(exam,ansd)}
     <h2 class="ax-qn" dir="ltr">Question ${qn}</h2>`;
   /* listening: play the recording (the transcript opens after answering) */
   const LS0=q.t==='lc'?q.say:q.t==='lq'&&T?T.say:'';
@@ -1212,7 +1235,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
     else{
     if(!st.done&&!exam&&q.t!=='yb')h+=amMethodNow(q,cs);
     if(!q.o.length){h+=st.done?`<div class="am-box ${st.ok?'good':'why'}"><p>כתבת: <bdi dir="ltr">${esc(st.sel||'')}</bdi></p><p>התשובה: <b><bdi dir="ltr">${esc([q.a,...(q.alt||[])].join(' / '))}</bdi></b> ${SAYB(q.a,'sm inl')}</p></div>`:`<input class="am-in en ax-in" id="amTyped" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${q.t==='wf'?'Type one word':'התשובה באנגלית'}" value="${esc(typeof st.sel==='string'?st.sel:'')}">`}
-    else h+=`<div class="ax-opts">${q.o.map((o,j)=>{const k=j+1,cl=st.done?(k===q.a?' right':k===st.sel?' wrong':''):(k===st.sel?' sel':'')+(st.elim[k]?' elim':'');
+    else h+=`${!exam&&!st.done?'<p class="hint am-ohint">💡 לא מכירה מילה בתשובה? לחיצה עליה נותנת רמז (לא את הפירוש). לבחירת תשובה – לחיצה על העיגול.</p>':''}<div class="ax-opts">${q.o.map((o,j)=>{const k=j+1,cl=st.done?(k===q.a?' right':k===st.sel?' wrong':''):(k===st.sel?' sel':'')+(st.elim[k]?' elim':'');
       const he=st.done&&!exam&&q.oh&&q.oh[j]?`<span class="he">${esc(q.oh[j])}</span>`:'';
       const elim=!st.done&&!exam&&['rs','rc','lq'].includes(q.t)?`<div class="am-elim">${(q.t==='rs'?[['add','מידע נוסף'],['rel','קשר אחר'],['ext','הקצנה'],['contra','סותר'],['miss','חסר']]:[['out',q.t==='lq'?'לא נאמר':'לא מהקטע'],['wrong',q.t==='lq'?'סותר את ההקלטה':'סותר את הקטע'],['nq','לא עונה לשאלה']]).map(([c,l])=>`<button data-el="${k}" data-r="${c}" aria-pressed="${st.elim[k]===c}">✗ ${l}</button>`).join('')}</div>`:'';
       return `<div class="ax-orow"><button class="am-opt ax-opt${cl}" data-k="${k}" ${st.done?'disabled':''} dir="ltr"><span class="ax-rad"><i></i></span><span class="ax-ot"><span>${esc(o)}</span>${he}</span></button><span class="ax-osp">${SAYB(o,'sm')}</span>${elim}</div>`}).join('')}</div>`;
@@ -1228,7 +1251,8 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   const hb=$('amHint');if(hb)hb.onclick=()=>{$('amHintBox').hidden=false;hb.remove()};
   const sh=$('amShow');if(sh)sh.onclick=()=>{st.stage='opts';amSaveQ();draw()};
   const pd=$('amPassD');if(pd)pd.ontoggle=()=>{st.pass=pd.open;amSaveQ()};
-  app.querySelectorAll('.am-opt[data-k]').forEach(b=>b.onclick=()=>{if(st.done)return;const k=+b.dataset.k;st.sel=k;if(st.elim[k])delete st.elim[k];amSaveQ();amRedrawKeep()});
+  amQNavBind();
+  app.querySelectorAll('.am-opt[data-k]').forEach(b=>b.onclick=ev=>{if(st.done)return;if(!exam&&ev.target.closest('.ax-ot')){const hit=wordAt(ev.clientX,ev.clientY);if(hit){amPop(hit.w,'','',enSentOf(hit.n,hit.w),'hint');return}}const k=+b.dataset.k;st.sel=k;if(st.elim[k])delete st.elim[k];amSaveQ();amRedrawKeep()});
   app.querySelectorAll('[data-el]').forEach(b=>b.onclick=()=>{const k=+b.dataset.el,r=b.dataset.r;st.elim[k]=st.elim[k]===r?undefined:r;if(!st.elim[k])delete st.elim[k];else if(st.sel===k)st.sel=0;amSaveQ();amRedrawKeep()});
   const ty=$('amTyped');if(ty){ty.oninput=()=>{st.sel=ty.value.trim();amSaveQ();const c=$('amChk');if(c)c.disabled=!st.sel};ty.onkeydown=e=>{if(e.key==='Enter')$('amChk')&&$('amChk').click()}}
   const ck=$('amChk');if(ck)ck.onclick=()=>{if(!st.sel)return;const ms=amNow()-st.seen;

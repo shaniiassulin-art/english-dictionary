@@ -96,7 +96,7 @@ async def main():
           await pg.click('#amNext');await pg.wait_for_timeout(200);continue
         if await pg.locator('.am-opt[data-k]').count():
           a=await E("AMD.q[AQ.cur].a");k=a if ans%3 else (a%4)+1;ans+=1
-          await pg.click(f'.am-opt[data-k="{k}"]');await pg.click('#amChk');await pg.wait_for_timeout(250);continue
+          await pg.click(f'.am-opt[data-k="{k}"] .ax-rad');await pg.click('#amChk');await pg.wait_for_timeout(250);continue
         await pg.screenshot(path=OUT+'stuckq.png',full_page=True);log.append('STUCK amq');break
       return n,ans
     r=await q_drive();log.append(f'q steps {r}; screen {await E("S.screen")}; plan '+await E("JSON.stringify(jrPlan().b.map(x=>x.k+':'+x.d+'/'+x.n+(x.done?'✓':'')))"))
@@ -121,7 +121,7 @@ async def main():
     # simulation
     await go("amStart(amExamIds(1,true),'sim','exam','am','ex',1,true)",400)
     for i in range(22):
-      if await pg.locator('.am-opt[data-k]').count():await pg.locator('.am-opt[data-k]').first.click();await pg.click('#amChk');await pg.wait_for_timeout(120)
+      if await pg.locator('.am-opt[data-k]').count():await pg.locator('.am-opt[data-k] .ax-rad').first.click();await pg.click('#amChk');await pg.wait_for_timeout(120)
     log.append('sim:'+await E("S.screen+' '+JSON.stringify(AMS.ex)"))
     await pg.screenshot(path=OUT+'simres.png',full_page=True)
     # every screen
