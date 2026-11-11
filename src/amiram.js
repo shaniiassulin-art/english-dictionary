@@ -701,6 +701,42 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .am-pop{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r-lg)!important;box-shadow:var(--sh2)!important}
 @media (prefers-reduced-motion:reduce){.item,.am-card2,.btn,.am-pill,.st-app,.today{transition:none!important}.item:active,.am-card2:active,.btn:active,.st-app:active{transform:none!important}}
 @media (max-width:420px){:root{--gap:14px;--pad:14px}}
+/* ===== ui-ux-pro-max design system (Nov 11, her request "redesign fully by the skill"): Minimalism & Swiss Style · study purple #7c3aed + correct green · Varela Round headings / Noto Sans Hebrew body / Nunito Sans English · Lucide line icons · flat (no soft shadows), hairline borders · hover/press 200 ms · subtle motion only ===== */
+:root{--sh1:none;--sh2:0 12px 32px -12px rgba(76,29,149,.28);--ease:cubic-bezier(.2,.7,.2,1)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sh1:none;--sh2:0 12px 32px -12px rgba(0,0,0,.8)}}
+:root[data-theme="dark"]{--sh1:none;--sh2:0 12px 32px -12px rgba(0,0,0,.8)}
+body{font-family:var(--he);line-height:1.6}
+h1,h2,h3,.am-title h2,.st-screen .st-t,.panel h3,.am-box h4,.home-head h1{font-family:var(--head)!important;font-weight:400!important;letter-spacing:-.005em!important}
+h1{font-size:1.55rem!important}h2,.am-title h2{font-size:1.25rem!important}h3,h4,.panel h3,.am-box h4{font-size:1.05rem!important}
+b,strong,.btn,.item .t,.am-card2 b{font-weight:700}
+/* flat Swiss cards: hairline only */
+.panel,.item,.today,.card,.am-box,.am-scr .am-box,.am-card,.am-card2,.am-gate,.am-meth,.am-step-box,.am-topic,.am-resume,.resume-card,.st-app,.am-hero2,.fav-btn,.fav-card,.opt,.xbox,.home-btn,.am-pop{box-shadow:none!important}
+.am-pop{box-shadow:var(--sh2)!important}
+.am-hero2{background:var(--accent-soft)!important;border-color:color-mix(in srgb,var(--accent) 22%,var(--line))!important}
+/* primary = purple, secondary = outlined */
+.btn:not(.secondary):not(.knowyes):not(.knowno):not([class*="cat-"]):not(.carbtn){background:var(--btn)!important;color:var(--btn-ink)!important;box-shadow:none!important}
+@media (hover:hover){.btn:not(.secondary):not(.knowyes):not(.knowno):not([class*="cat-"]):not(.carbtn):not(:disabled):hover{background:color-mix(in srgb,var(--btn) 88%,#000)!important}}
+.btn.secondary{color:var(--accent)!important;border-color:color-mix(in srgb,var(--accent) 30%,var(--line))!important}
+.back,.back::before{color:var(--accent)!important}
+a,.link,.small-link{color:var(--accent)}
+/* every clickable thing shows it */
+button,[role=button],summary,a,label[for],select,.tap,[data-jstep],[data-round]{cursor:pointer}
+button:disabled,[aria-disabled="true"]{cursor:not-allowed}
+.item,.am-card2,.am-pill,.am-plan2 li.tap,.am-unit,.st-app,.today,.fav-btn,.opt,.spk,.home-btn,.back,.btn,.seg button,.am-opt,.ax-opt{transition:transform .2s var(--ease),background-color .2s,border-color .2s,color .2s!important}
+:focus-visible{outline:2px solid var(--accent)!important;outline-offset:2px}
+/* the icons */
+.ic{display:inline-flex;width:1.15em;height:1.15em;vertical-align:-.2em;flex:none;color:inherit}.ic svg{width:100%;height:100%;stroke-width:2}.ic-t{display:none}
+.ic+.ic{margin-inline-start:2px}
+h1 .ic,h2 .ic,h3 .ic,h4 .ic,.am-title .ic{color:var(--accent)}
+.st-screen .st-i .ic,.st-i .ic{width:2.6rem;height:2.6rem;color:var(--accent)}.st-screen .st-i .ic svg{stroke-width:1.6}
+.gi .ic,.pi .ic{width:1.15rem;height:1.15rem}
+.am-plan2 li.on .pi .ic{color:var(--accent-ink)}
+.ic-8 svg,.ic-32 svg{fill:none}
+.fav-btn .ic,.fav-card .ic{color:#d97706}
+/* screen entrance: a short fade (only when the screen changes) */
+@keyframes scrIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.screen.enter{animation:scrIn .28s var(--ease)}
+@media (prefers-reduced-motion:reduce){.screen.enter{animation:none}.item,.am-card2,.btn,.am-pill,.st-app,.today,.opt{transition:none!important}}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */
