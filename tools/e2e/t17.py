@@ -32,7 +32,7 @@ async def main():
     if await btn.count():await btn.click();await pg.wait_for_timeout(300);log.append('cards:'+await E("S.screen"))
     await go("go({screen:'level',l:PL})");await go("go({screen:'sent'})",500);await go("go({screen:'tr'})");await pg.fill('#trQ','hello');await pg.wait_for_timeout(1200)
     await go("go({screen:'group',l:3,g:1})");await pg.click('#favBtn');await go("go({screen:'home'})");log.append('fav:'+str(await pg.locator('#favGo').count()))
-    await pg.fill('#srch','house');await pg.wait_for_timeout(500);log.append('search:'+str(await pg.locator('#srchRes li').count()))
+    await pg.click('#srchTog');await pg.wait_for_timeout(300);await pg.fill('#srch','house');await pg.wait_for_timeout(500);log.append('search:'+str(await pg.locator('#srchRes li').count()))
     # ---------- amiram: journey ----------
     await go("DW.slice(0,300).forEach((w,i)=>KNOW[w.id]=[i%4?'y':'n',Date.now()]);saveKnow();go({screen:'start'})")
     await pg.click('#stAm');await pg.wait_for_timeout(900)

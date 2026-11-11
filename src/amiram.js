@@ -723,7 +723,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .jh-st.done{opacity:.55;cursor:default}.jh-st.done .i{color:var(--ok);font-weight:800}
 .jh-st.skip{opacity:.5}.jh-st.skip .n{text-decoration:line-through}
 .jh-st:active:not(:disabled){transform:scale(.97)}
-.jh-foot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.screen.jh>.jh-foot{margin-top:auto!important}
+.jh-foot{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}.screen.jh>.jh-foot{margin-top:auto!important}
 .jh-foot button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 4px;border-radius:16px;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:.82rem;font-weight:700;color:var(--ink);cursor:pointer}
 .jh-foot .i{font-size:1.3rem;line-height:1.1}
 .jh-foot button.warn{border-color:color-mix(in srgb,var(--bad) 40%,var(--line));color:var(--bad)}
@@ -738,6 +738,45 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .am-sheet-b{overflow:auto;font-size:.92rem;line-height:1.6}.am-sheet-b h4{margin:12px 0 2px;font-size:.98rem}.am-sheet-b p{margin:0 0 6px}
 .jh-sheetb{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 @media (max-height:700px){.jh-ring{width:80px!important;height:80px!important}.jh-hero{padding:14px 14px 12px}.jh-st{padding:7px 3px 6px}.jh-foot button{padding:8px 4px}}
+/* one-screen dictionary pages */
+.dpage .jh-hero{align-items:stretch;text-align:right;gap:8px;padding:18px 16px 16px}
+.dpage .jh-hero>h2,.dpage .jh-hero>.jh-k,.dpage .jh-hero>.jh-d{text-align:center}
+.kbar{display:flex;height:6px;border-radius:999px;background:var(--fill);overflow:hidden;width:100%}.kbar i{display:block;height:100%}.kbar .y{background:var(--ok)}.kbar .n{background:var(--bad);opacity:.75}
+.dpage .panel.dq{border:0!important;background:none!important;box-shadow:none!important;padding:0!important;gap:10px;margin:0}
+.dpage .panel.dq>h3,.dpage .cat-panel>h3,.dpage .cartog,.dpage .qtype .lbl,.dpage .qtype .hint{display:none!important}
+.dpage .set-box{display:contents}.dpage .qtype{margin:0}
+.dpage .panel.dq .btn{min-height:52px;border-radius:16px!important;font-size:1.02rem!important}
+.dpage .resume-info{margin:0;text-align:center;font-size:.85rem;color:var(--muted)}
+.dpage .panel.dq .link{align-self:center;font-size:.85rem;color:var(--muted)}
+.dpage .cat-panel{border:0!important;background:none!important;box-shadow:none!important;padding:0!important;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:0}
+.dpage .cat-row{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0}
+.dpage .cat-row .btn{min-height:36px!important;width:auto!important;padding:4px 12px!important;font-size:.82rem!important;border-radius:999px!important}
+.dpage .cat-links{display:flex;gap:8px}.dpage .cat-links .link{font-size:.72rem;color:var(--muted)}
+.dpage .sbox{margin:0}.dpage #srchRes:empty{display:none}
+.dpage .fav-ic{font-size:1.05rem!important}.dpage .fav-ic.on{border-color:#e7b008!important}
+.dgrid{display:grid;gap:8px}.dgrid.g2{grid-template-columns:1fr 1fr}.dgrid.g3{grid-template-columns:repeat(3,1fr)}
+.dtile{display:flex;flex-direction:column;align-items:stretch;gap:6px;padding:10px 12px;border-radius:16px;border:1px solid var(--line);background:var(--surface);font:inherit;color:var(--ink);text-align:right;cursor:pointer;min-width:0}
+.dtile .dt-t{display:flex;flex-direction:column;min-width:0}.dtile b{font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dtile small{font-size:.74rem;color:var(--muted);white-space:nowrap}
+.dhome .dtile{flex-direction:row;flex-wrap:wrap;align-items:center;column-gap:8px}.dhome .dtile .dt-t{flex:1}.dhome .dtile .kbar{flex-basis:100%}
+.dt-n{width:28px;height:28px;border-radius:9px;background:var(--fill);display:inline-grid;place-items:center;font-weight:800;font-size:.85rem;flex:none}
+.dtile.done{border-color:color-mix(in srgb,var(--ok) 40%,var(--line))}
+.dtile:active{transform:scale(.97)}
+.dh-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.dh-chip{border:1px solid var(--line);background:var(--fill);border-radius:999px;padding:6px 12px;font:inherit;font-size:.82rem;color:var(--ink);cursor:pointer;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dhome .sync-state{text-align:center;margin:0;font-size:.75rem!important}
+.dh-all{align-self:center;border:0;background:none;color:var(--muted);font:inherit;font-size:.85rem;cursor:pointer}
+.dpage .sentgo{min-height:44px}
+.am-mlink{display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);font:inherit;font-size:.88rem;color:var(--ink);cursor:pointer;text-align:right}.am-mlink b{color:var(--accent)}.am-mlink span:last-child{color:var(--muted);font-size:1.1rem}
+.am-pills{display:flex;flex-wrap:wrap;gap:6px}.am-pills .am-pill{min-height:38px;font-size:.84rem}
+.jh .lbl{margin:2px 0 -6px!important;font-size:.78rem;font-weight:700;color:var(--muted)}
+.am-scr.jh .am-title h2{font-size:1.3rem}
+.am-sheet-b .am-m table{font-size:.75rem}
+.am-qnav{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.am-qnav #aqUnit{align-self:center;width:auto;min-height:34px;padding:4px 10px;font-size:.82rem;border-radius:999px!important;background:var(--fill)!important;border:0!important}
+.aq-row{display:flex;align-items:center;gap:6px}
+.aq-row .am-qnums{flex:1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;scrollbar-width:none;justify-content:flex-start;padding:2px}.aq-row .am-qnums::-webkit-scrollbar{display:none}
+.aq-row .am-qnums button{flex:none}
+.aq-a{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:1rem;color:var(--ink);cursor:pointer}.aq-a:disabled{opacity:.35}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */
@@ -758,7 +797,7 @@ document.addEventListener('click',e=>{const h=e.target.closest('[data-help]');if
   if(S.screen==='amq'&&AQ)amSaveQ();if(S.screen==='amwl')wSave();go({screen:'amhelp',hk:h.dataset.help,hfrom:S.screen==='amhelp'?S.hfrom:S.screen})});
 function amBindNav(){const b=$('bk');if(b)b.onclick=()=>go({screen:b.dataset.go});amBindML()}
 /* one look for every link to a method page (📘 השיטה · topic) – the same button on every screen */
-const MLINK=(k,sub)=>AMM[k]?`<button class="am-card2 am-ml" data-ml="${k}"><span class="gi">📘</span><span class="grow"><small class="mk">השיטה המלאה</small><b>${AMM[k][0]}</b>${sub?`<small>${sub}</small>`:''}</span><span class="go" aria-hidden="true">‹</span></button>`:'';
+const MLINK=(k,sub)=>AMM[k]?`<button class="am-mlink" data-ml="${k}"><span>📘</span><span class="grow">השיטה המלאה · <b>${AMM[k][0]}</b></span><span aria-hidden="true">‹</span></button>`:'';
 function amBindML(){app.querySelectorAll('[data-ml]').forEach(b=>b.onclick=()=>{const f=S.screen,k=b.dataset.ml;if(f==='amq')amSaveQ();if(k==='pre'){WP=null;go({screen:'amwp',mfrom:f})}else go({screen:'ammt',amTab:k,mfrom:f})})}
 /* the house inside the אמירנט section: back to its own main screen (from there, to the app chooser) */
 function amGoHome(){if(S.screen==='amq'&&AQ){if(AQ.mode==='exam'&&AQ.i<AQ.ids.length)AQ.paused=amNow();amSaveQ();clearInterval(AMTICK)}if(S.screen==='amwl')wSave();go({screen:S.screen==='am'?'start':'am'})}
@@ -1015,15 +1054,13 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
       ${left.length?`<button class="btn jh-go" id="nwGo">${open?`▶ להמשיך · סבב ${WS.round||1} · מילה ${WS.i+1}/${WS.list.length}`:`▶ ללמוד את המילים · ${left.length}`}</button>`:`<p class="jh-d">✓ כל המילים של היום נכנסו לחזרות</p><button class="btn jh-go" id="nwDone">סיום ← חזרה למסע</button>`}
     </section>
     <div class="jh-foot">
-      <button id="carTog2" class="${CARON?'on':''}"><span class="i">🚗</span>מצב רכב</button>
+      <button id="carTog" class="${CARON?'on':''}"><span class="i">🚗</span>${CARON?'מצב רכב פועל':'מצב רכב'}</button>
       <button id="list"><span class="i">📋</span>רשימה ✓/✗</button>
-      <button id="cardsGo"><span class="i">🃏</span>כרטיסיות</button>
+      <button id="fc"><span class="i">🃏</span>${cardSess(key)[1]?'המשך כרטיסיות':'כרטיסיות'}</button>
     </div>
-    <div hidden>${carToggle()}${cardsBtn(key,ws)}</div>
+    ${cardSess(key)[1]?'<button class="link dh-all" id="fcNew">כרטיסיות מההתחלה</button>':''}
   </div>`;
   $('jhHelp').onclick=()=>amSheet('מילים חדשות להיום',`<p>${ws.length} מילים מהמילון – מילים שסימנת ✗ או שעוד לא סימנת${x.theme?`, בקבוצה אחת: <b>${esc(x.theme)}</b>`:''}.</p>`+WLRN.map((r,i)=>`<h4>סבב ${i+1} · ${r[0]}</h4><p>${r[1]}</p>`).join('')+'<p>המספר מתחת לכל סבב = כמה מילים מחכות בו. לחיצה על סבב = ללמוד עכשיו את המילים שמחכות בו.</p><h4>🚗 מצב רכב</h4><p>מקריא את המילים של היום ברצף – להאזנה בנסיעה.</p>');
-  $('carTog2').onclick=()=>{const t=$('carTog');if(t)t.click()};
-  $('cardsGo').onclick=()=>{const c=$('fc');if(c)c.click()};
   $('bk').onclick=()=>go({screen:'am'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'jn'});
   bindSettings();bindQuizPanel(key,ws,name,'amnw');bindCards(key,ws);
@@ -1085,12 +1122,12 @@ function schHtml(){const {c,d,endK}=schPlan(),learnK=kAdd(endK,WLEARN),gap=jrGap
       <p class="hr-d">${c.left?`עוד ${c.left} פירושים · כ־${wk} שבועות · הכל נלמד עד הסוף (אחרי החזרה של 30 יום) בערך ב־${fmtD(learnK)}`:''}</p>
       <div><span class="am-mini big"><i style="width:${pc}%"></i></span><p class="hr-d">יודעת ${known.toLocaleString()} מתוך ${c.all.toLocaleString()} פירושים (${pc}%)</p></div></section>
     
-    <div class="am-box"><h4>מאיפה המספר הזה</h4>
+    <details class="am-box"><summary style="font-weight:800;cursor:pointer">מאיפה המספר הזה</summary>
       <div class="am-stat3"><div><b>${c.all}</b><small>פירושים במילון</small></div><div><b>${c.y}</b><small>✓ יודעת</small></div><div><b>${c.left}</b><small>לפנייך</small></div></div>
       <p>${c.n} סימנת ✗ · ${c.u} עוד לא סימנת · ${c.inW} בלמידה עכשיו · ${c.done} נלמדו כאן.</p>
       ${markY?`<p>✓ מאז תחילת התוכנית סימנת במילון ${markY} מילים שאת יודעת – זה קירב את הסיום בכ־${Math.round(markY/97*7)} ימים.</p>`:''}
-      ${base?`<p class="hint" style="margin:0">התוכנית המקורית (${fmtD(base.k,{day:'numeric',month:'numeric'})}): סיום ב־${fmtD(base.end)}</p>`:''}</div>
-    ${c.u?`<div class="am-box good"><h4>💡 איך לסיים מהר יותר</h4><p><b>${c.u} מילים עוד לא סומנו.</b> חלק מהן את בטח כבר יודעת. מבחן מהיר במילון על "לא סומנו" – כל ✓ מוריד מילה מהרשימה ומקרב את התאריך.</p></div>`:''}
+      ${base?`<p class="hint" style="margin:0">התוכנית המקורית (${fmtD(base.k,{day:'numeric',month:'numeric'})}): סיום ב־${fmtD(base.end)}</p>`:''}</details>
+    ${c.u?`<div class="xhelp"><h4>💡 איך לסיים מהר יותר</h4><p><b>${c.u} מילים עוד לא סומנו.</b> חלק מהן את בטח כבר יודעת. מבחן מהיר במילון על "לא סומנו" – כל ✓ מוריד מילה מהרשימה ומקרב את התאריך.</p></div>`:''}
     <details class="am-box"><summary style="font-weight:800;cursor:pointer">חודש אחרי חודש</summary><div class="am-mon">${Object.values(M).map(x=>`<div class="am-day"><span>${dayDate(x.m+'-15').toLocaleDateString('he-IL',{month:'long',year:'numeric'})}</span><span class="am-mini"><i style="width:${Math.round(x.acc/c.left*100)}%"></i></span><b>${x.acc}</b><small>${x.n} מילים חדשות בחודש · ${Math.round(x.acc/c.left*100)}% מהדרך</small></div>`).join('')}</div></details>
     ${AMS.na===0?`<div class="am-box bad"><p>בחרת ידנית ${AMS.n||8} מילים ביום, ולכן התאריך מחושב לפי זה. <button class="am-pill" id="schAuto">לחזור לאוטומטי</button></p></div>`:''}`}
 function amSchedule(){return go({screen:'amp'})}
@@ -1142,23 +1179,17 @@ function amQHub(){if(!AMD)return amLoading();
     rc:EX('קטע קריאה ו־5 שאלות עליו. לכל שאלה מופיע סוג השאלה והטכניקה לפתור אותה.','רשת של יחידות'),
     yb:EX('תרגילים קצרים מהספר "יסודות אנגלית" ורשימות מילים לכל נושא.','רשימת נושאים: תרגיל + רשימת מילים לכל נושא')};
   const row=(t,cls,i,title,d)=>{const ss=AMD.s.filter(s=>s.t===t);let dn=0,n=0,ok=0;ss.forEach(x=>{const y=amSetStat(x);dn+=y.done;n+=y.n;ok+=y.ok});
-    return `<button class="am-card2 ${cls}" data-t="${t}"><span class="gi">${i}</span><span class="grow"><b>${title}</b><small>${d}</small><span class="am-mini"><i style="width:${n?dn/n*100:0}%"></i></span><small>${dn}/${n} נפתרו${dn?' · '+Math.round(ok/dn*100)+'% נכון':''}</small>${XQ[t]||''}</span></button>`};
-  app.innerHTML=`<div class="screen am-scr">
+    return `<button class="dtile" data-t="${t}"><span class="dt-t"><b>${i} ${title}</b><small>${dn}/${n}${dn?' · '+Math.round(ok/dn*100)+'% נכון':''}</small></span><span class="kbar"><i class="y" style="width:${n?dn/n*100:0}%;background:var(--accent)"></i></span></button>`};
+  app.innerHTML=`<div class="screen am-scr jh">
     ${amNav('am','אמירנט')}
-    <div class="am-title"><span class="gi g-q">✏️</span><div><h2>תרגול שאלות</h2><p>בחרי סוג – כל שאלה עוברת לפי השיטה, צעד אחר צעד.</p></div></div>
-    ${row('sc','g-q','✏️','השלמת משפטים','משפט עם מילה חסרה')}
-    ${row('rs','g-q','🔁','ניסוח מחדש','איזה משפט אומר אותו דבר')}
-    ${row('rc','g-q','📖','הבנת הנקרא','קטע ו־5 שאלות')}
-    <p class="lbl" style="margin:6px 0 0">חלקים נוספים במבחן</p>
-    ${row('wf','g-q','🧬','יצירת מילים','Word Formation – יוצרים מילה מהמילה המודגשת')}
-    ${row('gc','g-q','🧩','דקדוק בהקשר','Grammar in Context – 4 אפשרויות דקדוקיות')}
-    ${row('lc','g-q','🎧','השלמת קטע שמיעה','Listening – מה ממשיך את המשפט האחרון')}
-    ${row('lq','g-q','🎙','הרצאה / שיחה','Lecture / Conversation – שומעים ועונים')}
-    ${row('wr','g-q','📝','משימת כתיבה','Writing – 90–120 מילים, בדיקה של ג׳מיני')}
-    <button class="am-card2 g-p" data-t="ex"><span class="gi">⏱</span><span class="grow"><b>סימולציה</b><small>פרק שלם: 22 שאלות ב־20 דקות, בלי עזרה</small></span></button>
-    <p class="lbl" style="margin:6px 0 0">📘 השיטה – לפני ואחרי השאלות</p>
-    ${MLINK('pre','הטבלה, השיטה ותרגול פעיל')}${['gen','score','conn','mem'].map(k=>MLINK(k,AMMD[k])).join('')}
-    <button class="am-card2 g-m" data-go2="amls"><span class="gi">📝</span><span class="grow"><b>הלקחים שלי</b><small>${Object.keys(AMS.ls||{}).length||'עוד אין'} כללים שלמדת מטעויות</small></span></button>
+    <div class="am-title"><div><h2>תרגול שאלות</h2></div></div>
+    <p class="xhelp">בחרי סוג – כל שאלה עוברת לפי השיטה, צעד אחר צעד. ${['sc','rs','rc','wf','gc','lc','lq','wr'].map(t=>`<br><b>${AMTN[t]||t}</b>${AMHOW[t]?' – '+AMHOW[t]:''}`).join('')}</p>
+    <p class="lbl">שאלות המבחן</p>
+    <div class="dgrid g2">${row('sc','','✏️','השלמת משפטים')}${row('rs','','🔁','ניסוח מחדש')}${row('rc','','📖','הבנת הנקרא')}<button class="dtile" data-t="ex"><span class="dt-t"><b>⏱ סימולציה</b><small>22 שאלות · 20 דק׳</small></span></button></div>
+    <p class="lbl">חלקים נוספים</p>
+    <div class="dgrid g2">${row('wf','','🧬','יצירת מילים')}${row('gc','','🧩','דקדוק בהקשר')}${row('lc','','🎧','השלמת שמיעה')}${row('lq','','🎙','הרצאה / שיחה')}${row('wr','','📝','משימת כתיבה')}<button class="dtile" data-go2="amls"><span class="dt-t"><b>📝 הלקחים שלי</b><small>${Object.keys(AMS.ls||{}).length||'עוד אין'} כללים</small></span></button></div>
+    <p class="lbl">השיטה</p>
+    <div class="am-pills">${['pre','gen','score','conn','mem'].filter(k=>AMM[k]).map(k=>`<button class="am-pill" data-ml="${k}">📘 ${AMM[k][0]}</button>`).join('')}</div>
   </div>`;
   amBindNav();app.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>go({screen:'amu',amt:b.dataset.t}));app.querySelectorAll('[data-go2]').forEach(b=>b.onclick=()=>go({screen:b.dataset.go2}));}
 function amTypeLine(t){const ss=AMD.s.filter(s=>s.t===t);let d=0,n=0,ok=0;ss.forEach(s=>{const x=amSetStat(s);d+=x.done;n+=x.n;ok+=x.ok});return d?`${d}/${n} · ${Math.round(ok/d*100)}% נכון`:`${n} שאלות`}
@@ -1303,8 +1334,7 @@ let AMTICK=null;
 /* free moving: every question of the series by its number, previous / next, and (in a unit) any other unit of the same kind */
 function amQNav(exam,ansd){const n=AQ.ids.length,u=AQ.unit&&(AMD.s||[]).find(x=>x.id===AQ.unit),sets=u?(AMD.s||[]).filter(x=>x.t===u.t&&!!x.b===!!u.b&&!!x.nt===!!u.nt):[];
   return `<div class="am-qnav">${sets.length>1?`<select class="am-in" id="aqUnit">${sets.map(x=>`<option value="${x.id}" ${x.id===u.id?'selected':''}>${AMTN[x.t]||''} · ${x.b?'פרק':'יחידה'} ${x.u}</option>`).join('')}</select>`:''}
-    <div class="am-qnums">${AQ.ids.map((_,i)=>`<button data-qj="${i}" class="${i===AQ.i?'on':ansd(i)?(AQ.st[i]&&AQ.st[i].ok?'ok':'bad'):''}">${i+1}</button>`).join('')}</div>
-    <div class="am-nav"><button class="btn secondary" id="aqPrev" ${AQ.i?'':'disabled'}>→ הקודמת</button><button class="btn secondary" id="aqNext">${AQ.i+1<n?'הבאה ←':'לסיכום ←'}</button></div></div>`}
+    <div class="aq-row"><button class="aq-a" id="aqPrev" ${AQ.i?'':'disabled'} aria-label="השאלה הקודמת">→</button><div class="am-qnums">${AQ.ids.map((_,i)=>`<button data-qj="${i}" class="${i===AQ.i?'on':ansd(i)?(AQ.st[i]&&AQ.st[i].ok?'ok':'bad'):''}">${i+1}</button>`).join('')}</div><button class="aq-a" id="aqNext" aria-label="${AQ.i+1<n?'השאלה הבאה':'לסיכום'}">←</button></div></div>`}
 function amQNavBind(){const mv=i=>{AQ.i=Math.max(0,Math.min(AQ.ids.length,i));if(AQ.i<AQ.ids.length)aqSt().seen=aqSt().seen||amNow();amSaveQ();draw();window.scrollTo(0,0)};
   app.querySelectorAll('[data-qj]').forEach(b=>b.onclick=()=>mv(+b.dataset.qj));
   const p=$('aqPrev');if(p)p.onclick=()=>mv(AQ.i-1);const nx=$('aqNext');if(nx)nx.onclick=()=>mv(AQ.i+1);
@@ -1355,7 +1385,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
     else{
     if(!st.done&&!exam&&q.t!=='yb')h+=amMethodNow(q,cs);
     if(!q.o.length){h+=st.done?`<div class="am-box ${st.ok?'good':'why'}"><p>כתבת: <bdi dir="ltr">${esc(st.sel||'')}</bdi></p><p>התשובה: <b><bdi dir="ltr">${esc([q.a,...(q.alt||[])].join(' / '))}</bdi></b> ${SAYB(q.a,'sm inl')}</p></div>`:`<input class="am-in en ax-in" id="amTyped" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="${q.t==='wf'?'Type one word':'התשובה באנגלית'}" value="${esc(typeof st.sel==='string'?st.sel:'')}">`}
-    else h+=`${!exam&&!st.done?'<p class="hint am-ohint">💡 לא מכירה מילה בתשובה? לחיצה עליה נותנת רמז (לא את הפירוש). לבחירת תשובה – לחיצה על העיגול.</p>':''}<div class="ax-opts">${q.o.map((o,j)=>{const k=j+1,cl=st.done?(k===q.a?' right':k===st.sel?' wrong':''):(k===st.sel?' sel':'')+(st.elim[k]?' elim':'');
+    else h+=`${!exam&&!st.done?'<p class="hint am-ohint xhelp">💡 לא מכירה מילה בתשובה? לחיצה עליה נותנת רמז (לא את הפירוש). לבחירת תשובה – לחיצה על העיגול.</p>':''}<div class="ax-opts">${q.o.map((o,j)=>{const k=j+1,cl=st.done?(k===q.a?' right':k===st.sel?' wrong':''):(k===st.sel?' sel':'')+(st.elim[k]?' elim':'');
       const he=st.done&&!exam&&q.oh&&q.oh[j]?`<span class="he">${esc(q.oh[j])}</span>`:'';
       const elim=!st.done&&!exam&&['rs','rc','lq'].includes(q.t)?`<div class="am-elim">${(q.t==='rs'?[['add','מידע נוסף'],['rel','קשר אחר'],['ext','הקצנה'],['contra','סותר'],['miss','חסר']]:[['out',q.t==='lq'?'לא נאמר':'לא מהקטע'],['wrong',q.t==='lq'?'סותר את ההקלטה':'סותר את הקטע'],['nq','לא עונה לשאלה']]).map(([c,l])=>`<button data-el="${k}" data-r="${c}" aria-pressed="${st.elim[k]===c}">✗ ${l}</button>`).join('')}</div>`:'';
       return `<div class="ax-orow"><button class="am-opt ax-opt${cl}" data-k="${k}" ${st.done?'disabled':''} dir="ltr"><span class="ax-rad"><i></i></span><span class="ax-ot"><span>${esc(o)}</span>${he}</span></button><span class="ax-osp">${SAYB(o,'sm')}</span>${elim}</div>`}).join('')}</div>`;
@@ -1649,14 +1679,14 @@ function amProgress(){if(!AMD)return amLoading();
     ${amNav('am','אמירנט')}
     <div class="am-title"><span class="gi g-p">📊</span><div><h2>התקדמות ולוח זמנים</h2><p>${streak?`🔥 ${streak} ימים ברצף`:'עוד לא תרגלת היום'} · ${days.size} ימי תרגול</p></div></div>
     ${schHtml()}
-    <button class="am-card2" data-go="amwm"><span class="gi">📒</span><span class="grow"><b>המילים שלי</b><small>${Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST).length} בלמידה · ${Object.values(AMS.w).filter(w=>w.st>=WMAST).length} נלמדו · כמה מילים חדשות ביום</small></span></button>
-    <button class="am-card2" data-go="amgap"><span class="grow"><b>⏳ השלמת המסע היומי</b><small>פערים בזמן ובשלבים, יום אחרי יום</small></span></button>
+    <div class="dgrid g2"><button class="dtile" data-go="amwm"><span class="dt-t"><b>📒 המילים שלי</b><small>${Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST).length} בלמידה · ${Object.values(AMS.w).filter(w=>w.st>=WMAST).length} נלמדו</small></span></button>
+    <button class="dtile" data-go="amgap"><span class="dt-t"><b>⏳ השלמת המסע</b><small>פערים, יום אחרי יום</small></span></button></div>
     <div class="am-box"><h4>שאלות</h4>${EXB('הפס = אחוז התשובות הנכונות. הזמן = ממוצע לשאלה מול היעד במבחן.')}${types.filter(x=>x.n).map(x=>`<div class="am-stat"><span>${AMTI[x.t]} ${AMTN[x.t]}</span><span class="am-mini"><i style="width:${x.ok/x.n*100}%"></i></span><b>${Math.round(x.ok/x.n*100)}%</b><small>${x.n} ניסיונות · ${Math.round(x.ms/1e3)} שנ׳ (יעד ${AMTARGET[x.t]})</small></div>`).join('')||'<p class="hint" style="margin:0">עוד לא פתרת שאלות.</p>'}</div>
     <div class="am-box"><h4>מילים לפי חזרה</h4><div class="am-bars">${st.map((n,i)=>`<div><span style="height:${Math.max(4,n/Math.max(1,...st)*80)}px" class="${i===7?'ok':''}"></span><b>${n}</b><small>${stN[i]}</small></div>`).join('')}</div></div>
     <div class="am-box"><h4>חזרות בשבוע הקרוב</h4>${EXB('כמה מילים יחכו לחזרה פעילה בכל יום. מעט היום = אפשר ללמוד יותר מילים חדשות.')}<div class="am-bars">${fc.map((n,d)=>`<div><span style="height:${Math.max(4,n/mx*80)}px"></span><b>${n}</b><small>${d?['א׳','ב׳','ג׳','ד׳','ה׳','ו׳','ש׳'][new Date(now+d*DAY).getDay()]:'היום'}</small></div>`).join('')}</div></div>
     ${top.length?`<div class="am-box why"><h4>למה אני טועה</h4>${top.map(([k,n])=>`<p>${(WHY.find(w=>w[0]===k)||[,k])[1]} – ${n}</p>`).join('')}<p class="hint" style="margin:0">💡 ${amAdvice(top[0][0])}</p></div>`:''}
     ${AMS.ex&&Object.keys(AMS.ex).length?`<div class="am-box"><h4>סימולציות</h4>${Object.entries(AMS.ex).map(([k,r])=>`<p>${k[0]==='b'?'ניהול זמנים פרק '+k.slice(1):'סימולציה '+k}: <b>${r.ok}/22</b> · ${Math.round(r.ms/6e4)} דק׳</p>`).join('')}</div>`:''}
-  </div>`;const sa=$('schAuto');if(sa)sa.onclick=()=>{AMS.na=1;amSave();draw()};app.querySelectorAll('.am-card2[data-go]').forEach(b=>b.onclick=()=>go({screen:b.dataset.go}));amBindNav()}
+  </div>`;const sa=$('schAuto');if(sa)sa.onclick=()=>{AMS.na=1;amSave();draw()};app.querySelectorAll('.am-card2[data-go],.dtile[data-go]').forEach(b=>b.onclick=()=>go({screen:b.dataset.go}));amBindNav()}
 /* ---------- 🧬 prefixes & suffixes: their own page – the method, the tables and active practice ----------
    Each affix has a streak in AMS.wpa['pre:i'|'suf:i'] = {s, n, ok, t}; 3 right in a row = mastered. Unmastered ones come first (weakest first),
    a mastered one sometimes comes back. Two kinds of question, mixed: "what does the prefix/suffix mean?" and "what does this word mean?" (the affix marked). */
@@ -1682,9 +1712,10 @@ function amParts(){if(!AMD)return amLoading();if(!WP)wpNext();if(!WP)return go({
     ${amNav(back,back==='amq'?'חזרה לשאלה':back==='amu'?'חזרה לתרגול':back==='amqh'?'תרגול שאלות':'המסע')}
     <div class="am-title"><div><h2>🧬 תחיליות וסופיות</h2><p>שולטת ב־${mastered} מתוך ${A.length} · 3 תשובות נכונות ברצף = נשלטה</p></div></div>
     <span class="am-mini big"><i style="width:${Math.round(mastered/A.length*100)}%"></i></span>
-    <div class="am-meth am-m"><h4>🧭 השיטה – איך משתמשים בזה במבחן</h4>${AMM.pre?`<div>${AMM.pre[1].replace(/<table[\s\S]*<\/table>/,'')}</div>`:''}
+    <div class="am-pills"><button class="am-pill" id="wpM">🧭 השיטה</button><button class="am-pill" id="wpT">📋 הטבלה המלאה</button></div>
+    <div hidden id="wpMx"><div class="am-m">${AMM.pre?`<div>${AMM.pre[1].replace(/<table[\s\S]*<\/table>/,'')}</div>`:''}
       <p>מילה לא מוכרת בשאלה? מפרקים אותה: <b>תחילית + שלד + סופית</b>. התחילית נותנת את הכיוון (לא, שוב, לפני…), הסופית אומרת איזה סוג מילה זו (שם עצם, תואר, פועל) – ולפעמים זה מספיק כדי לפסול תשובות.</p>
-      <p>את התחיליות כדאי <b>לדעת בעל פה</b>; את הסופיות מספיק <b>להכיר</b>.</p></div>
+      <p>את התחיליות כדאי <b>לדעת בעל פה</b>; את הסופיות מספיק <b>להכיר</b>.</p></div></div>
     <div class="am-card">
       ${kind==='aff'?`<p class="hint center" style="margin:0">מה אומרת ${name}?</p><div class="w" dir="ltr"><span>${esc(wpForm(a.k,E))}</span></div>`
         :`<p class="hint center" style="margin:0">מה פירוש המילה? ${name} מסומנת</p><div class="w" dir="ltr">${SAYB(WP.en)}<span>${mark}</span></div>
@@ -1694,9 +1725,8 @@ function amParts(){if(!AMD)return amLoading();if(!WP)wpNext();if(!WP)return go({
     ${done?`<p class="am-fb ${WP.sel===WP.ans?'ok':'bad'}">${WP.sel===WP.ans?'נכון! ✓':'לא נכון – התשובה מסומנת בירוק'}</p>
       <div class="am-box"><h4><bdi dir="ltr">${esc(wpForm(a.k,E))}</bdi> = ${esc(wPxH(E.h))}</h4><p class="hint" style="margin:0">רצף: ${Math.min(3,wpSt(a.key).s)}/3</p><div class="am-words">${E.ex.map(([en,he])=>amWordRow(en,he,'parts')).join('')}</div></div>
       <div class="am-cta"><button class="btn" id="wpNext">השאלה הבאה ←</button></div>`:''}
-    <div class="am-meth am-m"><h4>📋 הטבלה המלאה</h4>${amPxTables()}</div>
   </div>`;
-  amBindNav();const h=$('wpHint');if(h)h.onclick=()=>{WP.hint=true;draw()};
+  amBindNav();$('wpM').onclick=()=>amSheet('🧭 השיטה – תחיליות וסופיות',$('wpMx').innerHTML);$('wpT').onclick=()=>amSheet('📋 הטבלה המלאה','<div class="am-m">'+amPxTables()+'</div>');const h=$('wpHint');if(h)h.onclick=()=>{WP.hint=true;draw()};
   app.querySelectorAll('[data-wp]').forEach(b=>b.onclick=()=>{if(WP.sel!=null)return;WP.sel=WP.opts[+b.dataset.wp];const ok=WP.sel===WP.ans&&!WP.hint;AMS.wpa=AMS.wpa||{};const st=wpSt(a.key);
     AMS.wpa[a.key]={s:ok?st.s+1:0,n:st.n+1,ok:st.ok+(WP.sel===WP.ans?1:0),t:amNow()};if(kind==='word'){AMS.wp=AMS.wp||{};AMS.wp[WP.en]=[WP.sel===WP.ans?1:0,amNow()]}amSave();draw()});
   const nx=$('wpNext');if(nx)nx.onclick=()=>{wpNext();draw();window.scrollTo(0,0)};
@@ -2453,14 +2483,18 @@ const PAGEHELP={amnw:[],start:['overview'],amq:[],amwl:[],home:['dict'],am:[],am
 function amPageHelp(){if(S.screen==='amu')return [];return PAGEHELP[S.screen]||[]}
 /* after drawing: the page's explanation boxes right under its title (💬 hides them) */
 function amInjectHelp(){
-  app.querySelectorAll('.am-ex').forEach(x=>{const b=x.closest('button')||x.parentElement;const d=document.createElement('details');d.className='am-exb';
-    d.innerHTML='<summary>הסבר</summary><div>'+x.innerHTML+'</div>';x.remove();
-    const host=b.closest('.am-gates')?b.closest('.am-gates'):null;if(host){host.after(d)}else b.after(d)});
-  const ks=amPageHelp().filter(k=>AMHELP[k]);if(!ks.length)return;
-  const at=app.querySelector('.am-title')||app.querySelector('.am-hero2')||app.querySelector('.home-head')||app.querySelector('.nav');if(!at)return;
-  const box=document.createElement('div');box.className='am-pghelp';
-  box.innerHTML=ks.map(k=>{const [i,t,,b]=AMHELP[k];return `<details class="am-exb am-help"><summary>הסבר · ${i} ${t}</summary><div>${b}</div></details>`}).join('');
-  at.after(box)}
+  /* every explanation on a page goes into one "?" button in the top bar (a bottom sheet) – the page itself stays clean */
+  if($('jhHelp'))return;
+  const parts=[],T=x=>esc(String(x||'').replace(/\s+/g,' ').trim().slice(0,70));
+  amPageHelp().filter(k=>AMHELP[k]).forEach(k=>{const [i,t,,b]=AMHELP[k];parts.push(`<h4>${i} ${t}</h4>${b}`)});
+  app.querySelectorAll('.am-intro,.xhelp').forEach(e=>{parts.push(`<p>${e.innerHTML}</p>`);e.remove()});
+  app.querySelectorAll('.am-ex').forEach(x=>{const b=x.closest('button');const h=b&&(b.querySelector('b')||b);const t=h?[...h.childNodes].filter(n=>n.nodeType===3||!n.classList||!n.classList.contains('am-ex')).map(n=>n.textContent).join(' '):'';parts.push(`<h4>${T(t)}</h4>${x.innerHTML}`);x.remove()});
+  app.querySelectorAll('details.am-exb').forEach(d=>{const s=d.querySelector(':scope>summary');const t=s?s.textContent.replace(/^\s*הסבר\s*·?\s*/,''):'';const body=[...d.childNodes].filter(n=>n!==s).map(n=>n.nodeType===1?n.outerHTML:esc(n.textContent)).join('');parts.push((t.trim()?`<h4>${T(t)}</h4>`:'')+body);d.remove()});
+  if(!parts.length)return;
+  const nav=app.querySelector('.nav');if(!nav)return;
+  const b=document.createElement('button');b.className='home-btn jh-q';b.id='pgHelp';b.textContent='?';b.setAttribute('aria-label','הסבר על העמוד');
+  const h=app.querySelector('h1,h2');const title=h?h.textContent.replace(/\s+/g,' ').trim().slice(0,40):'הסבר';
+  b.onclick=()=>amSheet(title,parts.join(''));(nav.querySelector('.nav-ic')||nav).appendChild(b)}
 /* an explanation she closed stays closed next time */
 function amHelpSeen(k){try{return (JSON.parse(LS.get('dictHelpSeen')||'{}'))[k]}catch(e){return false}}
 function amHelpMark(k){try{const o=JSON.parse(LS.get('dictHelpSeen')||'{}');o[k]=1;LS.set('dictHelpSeen',JSON.stringify(o))}catch(e){}}
