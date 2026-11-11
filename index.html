@@ -2283,19 +2283,38 @@ function wDue(ahead){const now=amNow()+(ahead||0);return Object.values(AMS.w).fi
 const NAUTO={90:13,180:16};
 function wNPer(k=dayKey()){return AMS.na===0?(AMS.n||8):NAUTO[jrGoal(k)]}
 function wNewToday(){return AMS.nd[dayKey()]||0}
-/* the queue of words to learn: words she added from questions first, then dictionary cards marked ✗, then unmarked ones (easier levels first) */
+/* how often a word shows up in the exam's sample questions (Nov 11, her request): sentence completion, restatement and reading
+   comprehension – question text, the 4 options and the passages (the course book + the "חזרות וניהול זמנים" chapters). Word forms count too
+   (-s/-es/-ed/-ing/-ly/-er, y→ies, e→ing, doubled consonant); a phrase is counted as a phrase. Grammar words (STOP) are not counted. */
+let WFQ=null;
+function wFreqMap(){if(WFQ||!AMD)return WFQ;const tc=new Map();let all='';
+  const add=t=>{t=String(t||'');(t.toLowerCase().match(/[a-z]+(?:'[a-z]+)?/g)||[]).forEach(w=>tc.set(w,(tc.get(w)||0)+1));all+=' '+t};
+  Object.values(AMD.q||{}).forEach(q=>{if(!['sc','rs','rc'].includes(q.t))return;add(q.q);(q.o||[]).forEach(add)});
+  Object.values(AMD.x||{}).forEach(x=>add((x.l||[]).join(' ')));
+  WFQ={tc,all:' '+all.toLowerCase().replace(/[^a-z']+/g,' ').replace(/\s+/g,' ')+' ',m:new Map()};return WFQ}
+function wForms(w){const f=new Set([w,w+'s',w+'es',w+'ed',w+'d',w+'ing',w+'ly',w+'er',w+'est']);if(/e$/.test(w))f.add(w.slice(0,-1)+'ing');
+  if(/[^aeiou]y$/.test(w)){const b=w.slice(0,-1);['ies','ied','ier','iest','ily'].forEach(x=>f.add(b+x))}
+  if(/[^aeiou][aeiou][bdgkmnprt]$/.test(w)){const d=w+w.slice(-1);f.add(d+'ed');f.add(d+'ing');f.add(d+'er')}return f}
+function wFreq(e){const F=wFreqMap();if(!F)return 0;e=String(e||'').toLowerCase().replace(/\(.*?\)/g,'').replace(/[^a-z' ]/g,' ').replace(/\s+/g,' ').trim();if(!e)return 0;
+  if(F.m.has(e))return F.m.get(e);let n=0;const ws=e.split(' ');
+  if(ws.length===1){if(!STOP.has(e))for(const f of wForms(e))n+=F.tc.get(f)||0}
+  else{const re=new RegExp(' '+ws.map(w=>w.replace(/'/g,"'")).join(' ')+"(?:s|es|ed|d|ing)?(?= )",'g');n=(F.all.match(re)||[]).length}
+  F.m.set(e,n);return n}
+/* the queue of words to learn (Nov 11, her request): the words that appear most in the sample questions come first; among equally common words
+   (and all words that never appear in them) the old order stays – words she collected from questions, then dictionary cards marked ✗, then unmarked
+   ones, easier levels first. Only meanings marked ✗ or unmarked ever start (wNewOk). */
 /* a waiting word may start only if it is a dictionary meaning marked ✗ or not marked (never ✓, never outside the dictionary) */
 function wNewOk(w){if(!w||typeof w.e!=='string'||!w.e)return false;if(w.src&&String(w.src).startsWith('dict:')){const c=W[String(w.src).slice(5)];return !!c&&!isY(c)}
   const d=dictFind(w.e);return !!d&&d.cards.some(c=>!isY(c))}
 function wKnownCard(w){if(!w.src||!w.src.startsWith('dict:'))return false;const c=W[w.src.slice(5)];return !!(c&&isY(c))}
-function wQueue(n){const out=[],seen=new Set(Object.keys(AMS.w).filter(k=>AMS.w[k].st>0));
-  Object.values(AMS.w).filter(w=>w&&w.st===0&&wNewOk(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach(w=>{if(out.length<n){out.push(w);seen.add(wK(w))}});
-  for(const f of [isN,w=>!kst(w)]){if(out.length>=n)break;
-    for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||AMS.w[wKey(w.e)]||!f(w))continue;seen.add(k);
-      /* one card = one meaning: each meaning of a word is learned on its own */
-      out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}}
-  if(out.length<n)for(const f of [isN,w=>!isY(w)])for(const w of DW){if(out.length>=n)break;const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||!f(w))continue;seen.add(k);out.push({k,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1})}
-  return out}
+function wQueue(n){const seen=new Set(Object.keys(AMS.w).filter(k=>AMS.w[k].st>0)),cand=[],extra=[];
+  Object.values(AMS.w).filter(w=>w&&w.st===0&&wNewOk(w)).sort((a,b)=>(a.add||0)-(b.add||0)).forEach((w,i)=>{seen.add(wK(w));cand.push({w,f:wFreq(w.e),r:0,i})});
+  const mk=w=>({k:'c:'+w.id,e:w.e,h:w.h[0],c:w.s||'',src:'dict:'+w.id,st:0,fresh:1});
+  /* one card = one meaning: each meaning of a word is learned on its own */
+  DW.forEach((w,i)=>{const k='c:'+w.id;if(seen.has(k)||AMS.w[k]||isY(w))return;seen.add(k);
+    (AMS.w[wKey(w.e)]?extra:cand).push({w:mk(w),f:wFreq(w.e),r:isN(w)?1:2,i})});
+  cand.sort((a,b)=>b.f-a.f||a.r-b.r||a.i-b.i);
+  const out=cand.slice(0,n).map(x=>x.w);if(out.length<n)extra.sort((a,b)=>a.r-b.r||a.i-b.i).slice(0,n-out.length).forEach(x=>out.push(x.w));return out}
 function wQueueCount(){const k=new Set(Object.keys(AMS.w));let n=Object.values(AMS.w).filter(w=>w&&w.st===0&&wNewOk(w)).length;
   return n+DW.filter(w=>!isY(w)&&!k.has('c:'+w.id)&&!k.has(wKey(w.e))).length}
 function wMaster(w){w=wLive(w);w.st=WMAST;w.due=0;
