@@ -1126,17 +1126,18 @@ function home(){
       <h2>מילון אנגלית</h2>
       <p class="jh-d">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים · <b class="kn">יודעת ${k.toLocaleString()}</b></p>${knowBar(DW)}
       <p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p>
-      <div class="dh-row"><button class="dh-chip" id="today"><b>${dayCount(dayKey())}</b> היום · היסטוריה</button>${(()=>{const f=favCur();return favValid(f)?`<button class="dh-chip" id="favGo">⭐ ${esc(favName(f))}</button>`:''})()}</div>
-      ${rs?`<button class="btn jh-go" data-resume="${rk}">▶ להמשיך · ${esc(rs.name)} · ${Math.min(rs.i+1,rs.ids.length)}/${rs.ids.length}</button>`:`<button class="btn jh-go" id="allGo">▶ בוחן על כל המילים</button>`}
+      <div class="dh-row"><button class="dh-chip${CARON?' on':''}" id="carTile">🚗 ${CARON?'מצב רכב פועל':'מצב רכב'}</button><button class="dh-chip" id="today"><b>${dayCount(dayKey())}</b> היום · היסטוריה</button>${(()=>{const f=favCur();return favValid(f)?`<button class="dh-chip" id="favGo">⭐ ${esc(favName(f))}</button>`:''})()}${rs&&rk!=='ALL'?`<button class="dh-chip" data-resume="${rk}">▶ להמשיך · ${esc(rs.name)} · ${Math.min(rs.i+1,rs.ids.length)}/${rs.ids.length}</button>`:''}</div>
+      ${quizPanel('ALL',DW,'בוחן על כל המילים','כל המילים','home',false,'dq')}
+      ${catPanel('ALL',DW)}
     </section>
     <div class="dgrid g2">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
       return `<button class="dtile" data-l="${i+1}"><span class="dt-n">${i+1}</span><span class="dt-t"><b>${n}</b><small>${ws.length} מילים${kk?` · יודעת ${kk}`:''}</small></span>${knowBar(ws)}</button>`}).join('')}</div>
-    ${rs?'<button class="link dh-all" id="allGo">בוחן על כל המילים ›</button>':''}
   </div>`;
+  {const ct=app.querySelector('.panel .cartog');if(ct)ct.remove();$('carTile').id='carTog'}
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
-  const rc=app.querySelector('[data-resume]');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
-  $('allGo').onclick=()=>go({screen:'all'});
+  const rc=app.querySelector('.dh-chip[data-resume]');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
   $('today').onclick=()=>go({screen:'days'});$('toStart').onclick=()=>go({screen:'start'});favGoBind();$('privGo').onclick=()=>go({screen:'level',l:PL});
+  bindSettings();bindQuizPanel('ALL',DW,'כל המילים','home');bindCatPanel('ALL',DW,'כל המילים','home');
   srchBind();bindSearch(DW);
 }
 /* every word of the dictionary: the same one-screen page as a group */
@@ -2863,6 +2864,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .aq-row .am-qnums{flex:1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;scrollbar-width:none;justify-content:flex-start;padding:2px}.aq-row .am-qnums::-webkit-scrollbar{display:none}
 .aq-row .am-qnums button{flex:none}
 .aq-a{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:1rem;color:var(--ink);cursor:pointer}.aq-a:disabled{opacity:.35}
+.dh-chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */

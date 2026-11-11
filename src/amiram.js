@@ -777,6 +777,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .aq-row .am-qnums{flex:1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;scrollbar-width:none;justify-content:flex-start;padding:2px}.aq-row .am-qnums::-webkit-scrollbar{display:none}
 .aq-row .am-qnums button{flex:none}
 .aq-a{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:1rem;color:var(--ink);cursor:pointer}.aq-a:disabled{opacity:.35}
+.dh-chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */
