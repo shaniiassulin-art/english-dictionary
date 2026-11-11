@@ -15,18 +15,18 @@
 <style>
 /* Layout: one screen at a time, like an app — levels → groups → group → quiz. One accent, lots of space. */
 :root{
-  --bg:#f5f5f4; --surface:#ffffff; --ink:#18181b; --muted:#63636b; --line:#e4e4e7; --fill:#f1f1f2;
-  --accent:#3f4a5e; --accent-ink:#ffffff; --accent-soft:#eceef2; --btn:#1f2329; --btn-ink:#ffffff;
+  --bg:#f4f5f8; --surface:#ffffff; --ink:#1a1d26; --muted:#5f6475; --line:#e2e5ec; --fill:#eff1f5;
+  --accent:#44508f; --accent-ink:#ffffff; --accent-soft:#eceef7; --btn:#1e2230; --btn-ink:#ffffff;
   --ok:#2f7a57; --ok-soft:#e8f2ec; --bad:#b04646; --bad-soft:#f7e9e9;
   --he:"Heebo","Assistant",Arial,sans-serif; --en:"Inter","Helvetica Neue",Arial,sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#111113; --surface:#1a1a1d; --ink:#ededef; --muted:#a0a0a8; --line:#2c2c31; --fill:#222226;
-  --accent:#b9c0cc; --accent-ink:#111113; --accent-soft:#26272c; --btn:#ededef; --btn-ink:#111113;
+  --bg:#101218; --surface:#191c24; --ink:#eceef3; --muted:#9da2b1; --line:#2b2f3a; --fill:#21252e;
+  --accent:#aab3e6; --accent-ink:#101218; --accent-soft:#242938; --btn:#eceef3; --btn-ink:#101218;
   --ok:#8fc2a3; --ok-soft:#1c2620; --bad:#d9a0a0; --bad-soft:#2e2020; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#111113; --surface:#1a1a1d; --ink:#ededef; --muted:#a0a0a8; --line:#2c2c31; --fill:#222226;
-  --accent:#b9c0cc; --accent-ink:#111113; --accent-soft:#26272c; --btn:#ededef; --btn-ink:#111113;
+  --bg:#101218; --surface:#191c24; --ink:#eceef3; --muted:#9da2b1; --line:#2b2f3a; --fill:#21252e;
+  --accent:#aab3e6; --accent-ink:#101218; --accent-soft:#242938; --btn:#eceef3; --btn-ink:#101218;
   --ok:#8fc2a3; --ok-soft:#1c2620; --bad:#d9a0a0; --bad-soft:#2e2020; color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -2706,6 +2706,78 @@ h1,h2,h3,h4,h5,.t,.am-card2 b,.am-gate b,.btn,.am-title p,.st-t,.st-d{text-wrap:
 
 
 @media (max-width:420px){.am-units{grid-template-columns:repeat(4,1fr);gap:6px}.am-q{font-size:1.08rem;padding:12px}.am-opt{font-size:1rem;padding:10px 12px}.am-grid{gap:8px}.am-tile{padding:12px}}
+/* ===== harmony layer (Nov 11, her request "more harmonious" – ui-ux-pro-max: one temperature of greys tuned to the accent, one radius scale, one card, one inner fill, one type scale; styles only) ===== */
+:root{--r-lg:18px;--r-md:14px;--r-sm:10px;--gap:16px;--pad:16px;
+  --sh1:0 1px 2px rgba(26,29,38,.04),0 4px 14px -6px rgba(26,29,38,.10);--sh2:0 10px 28px -12px rgba(26,29,38,.24);--ease:cubic-bezier(.2,.7,.2,1)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sh1:0 1px 0 rgba(255,255,255,.03),0 6px 18px -10px rgba(0,0,0,.7)}}
+:root[data-theme="dark"]{--sh1:0 1px 0 rgba(255,255,255,.03),0 6px 18px -10px rgba(0,0,0,.7)}
+html{background:var(--bg)}
+/* spacing: one rhythm – 16 between blocks, 16 inside cards */
+.screen{gap:var(--gap)!important}
+/* type scale 13 · 14 · 15/16 · 18 · 23 (rem), headings tight, meta muted */
+h1{font-size:1.45rem!important;line-height:1.2;letter-spacing:-.018em;font-weight:750!important}
+h2,.am-title h2{font-size:1.2rem!important;line-height:1.25;letter-spacing:-.012em;font-weight:700}
+h3,h4,.panel h3,.am-box h4{font-size:1rem!important;line-height:1.3;font-weight:700;letter-spacing:-.005em}
+.sub,.am-title p,.hint,.am-card2 small,.item .d,.am-plan2 small{color:var(--muted)}
+.am-title p,.sub{font-size:.875rem!important;line-height:1.5}
+/* one card: white, hairline, soft shadow, 18 radius, 16 padding */
+.panel,.item,.today,.card,.am-box,.am-scr .am-box,.am-card,.am-card2,.am-gate,.am-meth,.am-step-box,.am-topic,.am-resume,.resume-card,.st-app,.am-hero2,.fav-btn,.fav-card{
+  background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r-lg)!important;box-shadow:var(--sh1)!important}
+.panel,.am-box,.am-scr .am-box,.am-hero2,.am-topic{padding:var(--pad)!important}
+.am-card2,.item,.today,.fav-btn{padding:14px var(--pad)!important}
+.fav-btn{border-style:solid!important}
+/* inside a card: flat grey fills, no second border or shadow (no card inside a card) */
+.panel .cartog,.am-box .am-plan2 li,.am-hero2 .am-box,.panel .am-box,.am-box .am-box,.am-intro,.am-unit,.am-as1,.am-mean,.am-exbox{
+  background:var(--fill)!important;border:1px solid transparent!important;box-shadow:none!important;border-radius:var(--r-md)!important}
+.am-box .am-plan2 li.on{background:var(--accent-soft)!important;border-color:color-mix(in srgb,var(--accent) 35%,transparent)!important}
+.am-plan2 li.on .pi{background:var(--accent)!important;color:var(--accent-ink)!important}
+.am-plan2 li.done,.am-plan2 li.skip{background:transparent!important}
+.am-intro{color:var(--ink)!important;padding:10px 14px!important}
+/* icon chips: one size, one shape */
+.am-plan2 .pi,.item .num,.gi{width:34px!important;height:34px!important;border-radius:var(--r-sm)!important;background:var(--fill)!important;color:var(--ink)!important;font-size:1rem!important;box-shadow:none!important}
+.am-plan2 li .pi{background:var(--surface)!important}
+/* buttons: one radius, one height, press feedback on touch-down */
+.btn,.am-pill,.seg,.am-tabs button,.am-fpg button{border-radius:var(--r-md)!important}
+.btn{min-height:48px;transition:transform .12s var(--ease),background-color .15s,box-shadow .15s}
+.btn.small{min-height:40px}
+.btn.secondary{background:var(--surface)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+.am-pill{background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+.seg{background:var(--fill)!important;padding:4px!important;border:0!important}.seg button{border-radius:var(--r-sm)!important;border:0!important}
+.seg button[aria-pressed="true"],.seg button.on{background:var(--surface)!important;color:var(--ink)!important;box-shadow:0 1px 3px rgba(26,29,38,.12)!important}
+.item,.am-card2,.am-pill,.am-plan2 li.tap,.am-unit,.st-app,.today,.fav-btn,.opt,.spk,.home-btn,.back{transition:transform .12s var(--ease),background-color .15s,border-color .15s}
+.item:active,.am-card2:active,.am-pill:active,.am-plan2 li.tap:active,.am-unit:active,.st-app:active,.today:active,.fav-btn:active,.home-btn:active{transform:scale(.98)}
+@media (hover:hover){.item:hover,.am-card2:hover,.st-app:hover,.today:hover,.fav-btn:hover{border-color:color-mix(in srgb,var(--accent) 30%,var(--line))!important}.btn.secondary:hover,.am-pill:hover{background:var(--fill)!important}.am-plan2 li.tap:hover,.am-unit:hover{background:var(--accent-soft)!important}}
+/* top bar: round icon buttons all alike */
+.home-btn,.reload-top,.x,.arr{width:40px!important;height:40px!important;border-radius:50%!important;background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:none!important;color:var(--ink)!important}
+.back{color:var(--ink)!important;font-weight:600!important;font-size:.94rem}.back::before{color:var(--accent)}
+/* speakers: one soft circle everywhere */
+.spk,.am-say{background:var(--fill)!important;border:1px solid transparent!important;color:var(--ink)}
+/* fields */
+.inp,input.am-in,textarea.am-in,select.am-in,.search,input[type=text],input[type=search],textarea{border-radius:var(--r-md)!important;border:1px solid var(--line)!important;background:var(--surface)!important}
+input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
+/* chips and badges: neutral pills */
+.am-chip,.gb{border-radius:999px!important}
+.gb{background:var(--accent)!important;color:var(--accent-ink)!important}
+/* explanations: one quiet line, no dashed frame */
+.am-exb{border:0!important;background:transparent!important;padding:2px 0!important;box-shadow:none!important}
+.am-exb>summary{color:var(--muted)!important;font-weight:600!important;font-size:.8rem!important}
+.am-exb>summary::before{background:var(--fill)!important;color:var(--muted)!important}
+.am-exb[open]{background:var(--fill)!important;padding:8px 12px 10px!important;border-radius:var(--r-md)!important}
+.am-exb,.am-gates+details.am-exb{margin-top:-6px!important}
+/* progress: thin, rounded, accent */
+.prog,.am-prog{height:6px;background:var(--fill)!important;border-radius:999px!important}.prog i,.am-prog i{background:var(--accent)!important}
+/* the "known" numbers use the green only as text */
+.ok-t,.known{color:var(--ok)}
+.autob{height:40px!important;border-radius:999px!important;background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:none!important;white-space:nowrap;padding-inline:10px!important;width:auto!important}.autob.on{background:var(--accent)!important;color:var(--accent-ink)!important;border-color:var(--accent)!important}
+.xbox{border:1px solid var(--line)!important;border-radius:var(--r-lg)!important;box-shadow:none!important}
+/* the car-mode switch */
+.cartog .sw{background:color-mix(in srgb,var(--muted) 45%,var(--fill))!important}.cartog.on .sw{background:var(--ok)!important}
+/* exam question keeps the test look, only rounded like the rest */
+.ax .ax-opt .ax-rad,.ax .ax-opt .ax-ot{border-radius:var(--r-sm)!important}
+/* popups and toasts float above: bigger shadow */
+.am-pop{background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:var(--r-lg)!important;box-shadow:var(--sh2)!important}
+@media (prefers-reduced-motion:reduce){.item,.am-card2,.btn,.am-pill,.st-app,.today{transition:none!important}.item:active,.am-card2:active,.btn:active,.st-app:active{transform:none!important}}
+@media (max-width:420px){:root{--gap:14px;--pad:14px}}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */
@@ -3925,7 +3997,7 @@ const wHas=(t,w)=>!!blankOut(t,w.e)&&new RegExp('\\b'+w.e.toLowerCase().replace(
 /* the sentence of a review: chosen once per review (kept in w.rv until it is graded), never one she already had */
 const RVP={},RVERR={};
 function wRevSent(w){w=wLive(w);const sm=wSM(w)||{tag:w.st,lv:WLV[w.st]||2},tg=sm.tag;const cu=WS&&WS.cur;if(cu&&cu.k===wK(w)&&cu.st===tg&&cu.en){if(!w.rv||w.rv.en!==cu.en){w.rv={st:cu.st,en:cu.en,he:cu.he||'',src:cu.src,lab:cu.lab}}return w.rv}
-  if(w.rv&&w.rv.st===tg&&w.rv.en){if(WS&&WS.list&&WS.list[WS.i]===wK(w)&&!WS.res)WS.cur=Object.assign({k:wK(w)},w.rv);return w.rv}const k=wK(w),lv=sm.lv;if(RVP[k])return null;
+  if(w.rv&&w.rv.st===tg&&w.rv.en){if(WS&&WS.list&&WS.list[WS.i]===wK(w)&&!WS.res)WS.cur=Object.assign({k:wK(w)},w.rv);return w.rv}const k=wK(w),lv=sm.lv;if(RVP[k]||RVERR[k])return null;
   const c=wCard(w),used=new Set([...(w.used||[]),...(w.trs||[]).map(t=>t.en),c&&c.s].filter(Boolean)),dd=dictFind(w.e),multi=dd&&dd.h.length>1,mt=heToks(w.h),P=(sPoolX()||[]).filter(p=>!used.has(p.t)&&wHas(p.t,w)&&(!multi||(p.he&&[...heToks(p.he)].some(t=>mt.has(t)))));
   const ex=P.filter(p=>QSRC[p.src]),at=l=>ex.filter(p=>p.lvl===l),rnd=a=>a[Math.floor(Math.random()*Math.min(a.length,6))];
   const order=lv===1?[at(1)]:lv===2?[at(2),at(1)]:[at(3),at(2)];
