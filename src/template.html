@@ -892,7 +892,8 @@ function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(
   $('bk').onclick=()=>go({screen:'home'})}
 function home(){
   const k=DW.filter(known).length;
-  const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2).sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0)),rk=ks[0],rs=rk&&SESS[rk];
+  /* journey quizzes (keys J… – today's new words, free practice) belong to the אמירנט part, not to the dictionary home */
+  const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2&&!/^J/.test(k)).sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0)),rk=ks[0],rs=rk&&SESS[rk];
   app.innerHTML=`<div class="screen jh dpage dhome">
     <div class="nav"><button class="back" id="toStart">בחירת אפליקציה</button><span class="nav-ic">${srchIc()}<button class="home-btn priv-ic" id="privGo" aria-label="${PNAME}" title="${PNAME}">✍</button>${RELOADBTN}</span></div>
     ${S.so||S.q?searchBox():''}
@@ -905,7 +906,7 @@ function home(){
       ${catPanel('ALL',DW)}
     </section>
     <div class="dgrid g2">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
-      return `<button class="dtile" data-l="${i+1}"><span class="dt-n">${i+1}</span><span class="dt-t"><b>${n}</b><small>${ws.length} מילים${kk?` · יודעת ${kk}`:''}</small></span>${knowBar(ws)}</button>`}).join('')}</div>
+      return `<button class="dtile" data-l="${i+1}"><span class="dt-n">${i+1}</span><span class="dt-t"><b>${n}</b><small>${kk?`${kk}/`:''}${ws.length}</small></span>${knowBar(ws)}</button>`}).join('')}</div>
   </div>`;
   {const ct=app.querySelector('.panel .cartog');if(ct)ct.remove();$('carTile').id='carTog'}
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
