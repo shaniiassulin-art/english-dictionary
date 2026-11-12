@@ -989,7 +989,7 @@ function drawFail(err){const m=String(err&&(err.stack||err.message)||err).split(
     <div class="panel"><h3 style="margin:0">משהו השתבש בעמוד הזה 😕</h3><p style="margin:0">אפשר לחזור ולנסות שוב. אם זה חוזר – צלמי את המסך הזה ושלחי לי.</p>
     <p dir="ltr" style="margin:0;font-size:.78rem;color:var(--muted);word-break:break-all;text-align:left">${esc(S.screen)}: ${esc(m)}</p></div></div>`;
   $('bk').onclick=()=>go({screen:/^am/.test(S.screen)?'am':'home'})}
-function draw(){const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
+function draw(){document.documentElement.classList.remove('noscroll');const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
   try{({home,all:allScreen,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords,amgap:amGaps,amfp:amFreePick,amfpl:amFreeRun,ampath:amPath})[S.screen]();}catch(err){drawFail(err)}
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
@@ -1117,6 +1117,7 @@ function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(
   </div>`;
   $('bk').onclick=()=>go({screen:'home'})}
 function home(){
+  if(!(S.so||S.q))document.documentElement.classList.add('noscroll');  /* no scrolling on the dictionary home (her request) – except while searching, the results may be long */
   const k=DW.filter(known).length;
   /* journey quizzes (keys J… – today's new words, free practice) belong to the אמירנט part, not to the dictionary home */
   const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2&&!/^J/.test(k)).sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0)),rk=ks[0],rs=rk&&SESS[rk];
@@ -1132,7 +1133,7 @@ function home(){
       ${catPanel('ALL',DW)}
     </section>
     <div class="dgrid g2">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
-      return `<button class="dtile" data-l="${i+1}"><span class="dt-n">${i+1}</span><span class="dt-t"><b>${n}</b><small>${kk?`${kk}/`:''}${ws.length}</small></span>${knowBar(ws)}</button>`}).join('')}</div>
+      return `<button class="dtile" data-l="${i+1}"><span class="dt-n">${i+1}</span><span class="dt-t"><b>${n}</b><small>${ws.length} מילים${kk?` · יודעת ${kk}`:''}</small></span>${knowBar(ws)}</button>`}).join('')}</div>
   </div>`;
   {const ct=app.querySelector('.panel .cartog');if(ct)ct.remove();$('carTile').id='carTog'}
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
@@ -2885,22 +2886,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .aq-row .am-qnums button{flex:none}
 .aq-a{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:1rem;color:var(--ink);cursor:pointer}.aq-a:disabled{opacity:.35}
 .dh-chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
-/* dictionary home fits one phone screen (Nov 12, her report: it still scrolled) */
-.dhome{min-height:0!important;gap:10px!important}
-.dhome .jh-hero{padding:12px 14px!important;gap:6px!important}
-.dhome .jh-hero h2{font-size:1.15rem!important}
-.dhome .jh-d{font-size:.84rem}
-.dhome .sync-state{min-height:0!important}.dhome .sync-state.ok,.dhome .sync-state.idle,.dhome .sync-state:empty{display:none}
-.dhome .dh-chip{padding:4px 10px;font-size:.78rem}
-.dhome .panel.dq{flex-direction:row!important;flex-wrap:wrap;align-items:center;gap:8px!important}
-.dhome .panel.dq .qtype{flex:0 0 auto}.dhome .panel.dq .seg{min-width:0}.dhome .panel.dq .seg button{padding:0 12px;min-height:44px}
-.dhome .panel.dq>.btn,.dhome .panel.dq [data-start],.dhome .panel.dq [data-resume]{flex:1 1 140px;min-height:48px!important;font-size:.92rem!important;white-space:nowrap;padding-inline:10px!important}
-.dhome .panel.dq .resume-info{flex-basis:100%}
-.dhome .dgrid{gap:6px}
-.dhome .dtile{position:relative;flex-wrap:nowrap!important;padding:8px 10px 10px;min-height:0;overflow:hidden}
-.dhome .dtile .dt-t{flex-direction:row;align-items:baseline;justify-content:space-between;gap:6px}
-.dhome .dtile .kbar{position:absolute;inset-inline:0;bottom:0;height:3px;border-radius:0;flex-basis:auto}
-.dhome .dt-n{width:24px;height:24px;font-size:.78rem;border-radius:7px}
+/* the dictionary home never scrolls (Nov 12, her request – everything fits) */
+html.noscroll,html.noscroll body{overflow:hidden;overscroll-behavior:none;height:100%}
+html.noscroll .dhome{min-height:0!important}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */

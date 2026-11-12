@@ -797,22 +797,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .aq-row .am-qnums button{flex:none}
 .aq-a{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:1rem;color:var(--ink);cursor:pointer}.aq-a:disabled{opacity:.35}
 .dh-chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
-/* dictionary home fits one phone screen (Nov 12, her report: it still scrolled) */
-.dhome{min-height:0!important;gap:10px!important}
-.dhome .jh-hero{padding:12px 14px!important;gap:6px!important}
-.dhome .jh-hero h2{font-size:1.15rem!important}
-.dhome .jh-d{font-size:.84rem}
-.dhome .sync-state{min-height:0!important}.dhome .sync-state.ok,.dhome .sync-state.idle,.dhome .sync-state:empty{display:none}
-.dhome .dh-chip{padding:4px 10px;font-size:.78rem}
-.dhome .panel.dq{flex-direction:row!important;flex-wrap:wrap;align-items:center;gap:8px!important}
-.dhome .panel.dq .qtype{flex:0 0 auto}.dhome .panel.dq .seg{min-width:0}.dhome .panel.dq .seg button{padding:0 12px;min-height:44px}
-.dhome .panel.dq>.btn,.dhome .panel.dq [data-start],.dhome .panel.dq [data-resume]{flex:1 1 140px;min-height:48px!important;font-size:.92rem!important;white-space:nowrap;padding-inline:10px!important}
-.dhome .panel.dq .resume-info{flex-basis:100%}
-.dhome .dgrid{gap:6px}
-.dhome .dtile{position:relative;flex-wrap:nowrap!important;padding:8px 10px 10px;min-height:0;overflow:hidden}
-.dhome .dtile .dt-t{flex-direction:row;align-items:baseline;justify-content:space-between;gap:6px}
-.dhome .dtile .kbar{position:absolute;inset-inline:0;bottom:0;height:3px;border-radius:0;flex-basis:auto}
-.dhome .dt-n{width:24px;height:24px;font-size:.78rem;border-radius:7px}
+/* the dictionary home never scrolls (Nov 12, her request – everything fits) */
+html.noscroll,html.noscroll body{overflow:hidden;overscroll-behavior:none;height:100%}
+html.noscroll .dhome{min-height:0!important}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */
