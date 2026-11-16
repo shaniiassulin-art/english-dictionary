@@ -4257,11 +4257,19 @@ function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.re
   return h+'</div>'}
 /* round 2: the dictionary quiz on the round's cards */
 const wDqKey=()=>'JW'+String(WS.t2||WS.t0||'').slice(-9);
-const wDqCards=()=>shuffle(WS.list.map(k=>AMS.w[k]&&wCard(AMS.w[k])).filter(Boolean));
+/* a word missed in round 2 comes back in a second quiz at the end of the round – with another sentence (an exam sentence with its book translation) */
+function wAltCard(w){const c=wCard(w);if(!c||!w.dqm)return c;const used=new Set([...(w.used||[]),c.s]),dd=dictFind(w.e),multi=dd&&dd.h.length>1,mt=heToks(w.h);
+  const P=(sPoolX()||[]).filter(p=>QSRC[p.src]&&p.he&&!used.has(p.t)&&wHas(p.t,w)&&(!multi||[...heToks(p.he)].some(t=>mt.has(t)))).sort((a,b)=>a.lvl-b.lvl||a.t.length-b.t.length);
+  const p=P[0];if(!p)return c;const L=wLive(w);L.used=(L.used||[]).concat(p.t).slice(-24);
+  EXTRA['dq:'+c.id]=Object.assign({},EXTRA[c.xid||c.id]||{},{tr:p.he});return Object.assign({},c,{s:p.t,xid:'dq:'+c.id})}
+const wDqCards=()=>shuffle(WS.list.map(k=>AMS.w[k]&&wAltCard(AMS.w[k])).filter(Boolean));
 function wDqStart(){const key=wDqKey(),m=S.mode;S.mode='read';try{if(SESS[key]&&SESS[key].kind==='quiz')resumeQuiz(key);else{const L=wDqCards();if(!L.length){WS.phase='he';WS.i=0;wSave();return draw()}startQuiz(L,'מילים חדשות · הפירוש בעברית','amwl',key)}}finally{S.mode=m}}
 /* called by the dictionary quiz when it ends: the learning round goes on with round 3 */
 function jwQuizDone(){if(!Q||!/^JW/.test(String(Q.key||''))||!WS||WS.phase!=='dq'||wDqKey()!==Q.key)return false;
-  WS.list.forEach(k=>{const w=AMS.w[k];if(w)w.lr=Math.max(lrOf(w),3)});amSave();wRoundNext(2);return true}
+  const M=Q.marks||{},miss=[];
+  WS.list.forEach(k=>{const w=AMS.w[k];if(!w)return;const c=wCard(w);if(c&&M[c.id]==='n'){w.lr=2;w.dqm=(w.dqm||0)+1;miss.push(k)}else{w.lr=Math.max(lrOf(w),3);delete w.dqm}});amSave();
+  /* words marked "לא ידעתי" stay in round 2 and come again in a quiz of their own, with other sentences */
+  if(miss.length&&wRound(2,miss,WS))return true;wRoundNext(2);return true}
 /* the words of this learning (all rounds) and how many wait in each round */
 const wAllK=()=>WS?(WS.all||(WS.jr&&jrBlock(WS.jr)&&Array.isArray(jrBlock(WS.jr).ws)?jrBlock(WS.jr).ws:WS.list)):[];
 /* the word on screen counts in the next round as soon as she answers (her request: the round counts update with every answer) */
@@ -4269,7 +4277,7 @@ const wInRound=(k,r)=>{const w=AMS.w[k];if(!w||w.st>=WMAST)return false;const c=
   return lrOf(w)===r};
 /* round 2 = the dictionary quiz: each card answered there moves its word on to round 3 at once */
 function jwWordDone(c){if(!c||!WS||!WS.list||!Q||!/^JW/.test(String(Q.key||'')))return;
-  const k=WS.list.find(x=>{const w=AMS.w[x];const cc=w&&wCard(w);return cc&&cc.id===c.id});const w=k&&AMS.w[k];if(w&&lrOf(w)===2){w.lr=3;w.t=amNow();amSave()}}
+  if((Q.marks||{})[c.id]==='n')return;const k=WS.list.find(x=>{const w=AMS.w[x];const cc=w&&wCard(w);return cc&&cc.id===c.id});const w=k&&AMS.w[k];if(w&&lrOf(w)===2){w.lr=3;delete w.dqm;w.t=amNow();amSave()}}
 const wRoundCounts=keys=>[1,2,3,4].map(r=>(keys||wAllK()).filter(k=>wInRound(k,r)).length);
 /* start one learning round on the words waiting in it (keeps the learning's other fields) */
 function wRound(r,keys,base){keys=(keys||[]).filter(k=>wInRound(k,r));if(!keys.length)return false;base=base||{};
