@@ -2294,7 +2294,7 @@ function wAdd(e,h,c,src,key){const k=key||wKey(e);if(!k)return;let w=AMS.w[k];if
   else{if(h&&!w.h)w.h=h;if(c&&!w.c)w.c=c;w.t=amNow()}
   amSave();return w}
 function wKnownDict(e){const d=dictFind(e);return d&&d.cards.every(isY)}
-function wDue(ahead){const now=amNow()+(ahead||0);return Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&w.due<=now).sort((a,b)=>a.due-b.due)}
+function wDue(ahead){const now=amNow()+(ahead||0);return Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&w.due<=now&&lrOf(w)>=5).sort((a,b)=>a.due-b.due)}
 const NAUTO={90:13,180:16};
 function wNPer(k=dayKey()){return AMS.na===0?(AMS.n||8):NAUTO[jrGoal(k)]}
 function wNewToday(){return AMS.nd[dayKey()]||0}
@@ -3163,7 +3163,9 @@ const jnCards=x=>jnBatch(x).map(jnCard).filter(Boolean);
 /* still to learn: not marked ✓ and not started yet */
 const jnLeft=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.st===0&&!(c&&isY(c))});
 /* still in the learning rounds (not started, or waiting in round 2–4) */
-const jnPend=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.st<WMAST&&!(c&&isY(c))&&lrOf(w)<5});
+const jnPend=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.st<WMAST&&!(c&&isY(c)&&!wLearning(w))&&lrOf(w)<5});
+/* a word already inside the 4 learning rounds (started, not finished): a ✓ from the round-2 dictionary quiz doesn't take it out */
+const wLearning=w=>!!w&&w.lr!=null&&w.lr>=1&&w.lr<5&&(w.lr>1||w.st>=1);
 const jnKey=x=>'J'+String(x.id).replace(/[^0-9a-z]/gi,'');
 /* called by the dictionary quiz after each word of a 'J' session: a word that isn't ✓ gets its step 2 at once (write it, then choose it in a sentence), then back to the quiz */
 function jnAfterWord(card,back){try{if(!Q||!/^J/.test(String(Q.key||'').replace(/^[NUY](?=J)/,''))||!card)return false;
@@ -3969,7 +3971,7 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
     <div class="am-box"><h4>בקצרה</h4><ol class="am-tl">${T.map(([d,t,x])=>`<li><span class="d">${d}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ol></div>
     <div class="am-box"><h4>1 · היום הראשון – למידה</h4>
       <p>4 סבבים (זו עוד לא חזרה). כל סבב נעשה לכל המילים של היום, ורק אחריו מתחיל הבא:</p>
-      <ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן.</p>
+      <ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה חוזרת לסבב 1 – כשכל הסבבים נגמרים, סבב 1 מתחיל שוב מעצמו עם המילים שטעית בהן (עם משפט אחר), והן עוברות שוב את כל הסבבים. המילים שענית נכון ממשיכות לסבב הבא.</p>
       <p class="hint" style="margin:0">מילה עם כמה פירושים – כל פירוש הוא כרטיס נפרד ועובר מסלול משלו.</p></div>
     <div class="am-box"><h4>2 · כל חזרה (חזרה 1–6)</h4>
       <p>כל מילה מקבלת רק את התרגיל של החזרה שלה (חזרה 1–6 ברשימה למעלה), והוא קובע מה יקרה למילה. אין חזרה שבה כותבים את המילה באנגלית.</p>
@@ -3999,8 +4001,8 @@ const wRevLbl=s=>s>=WMAST?'🏆 נלמדה':s>=1?`חזרה ${s} · ${WREV[s][1]}
 const wFb=(w,s)=>{const t=wTask(w),n=WTN[t];return n&&t!==WPATH[s]?` (במילה הזו: ${n} – אין לה משפט מתאים)`:''};
 /* the learning round a word is in: 1–4 = סבב 1–4, 5 = finished learning (in the reviews) */
 const lrOf=w=>w?(w.lr!=null?w.lr:(w.st===0?1:5)):1;
-/* a word missed in a learning round stays in that round and comes again at the end of it, with another question (Nov 16, her request) */
-function wRequeue(w){if(!WS||!WS.perWord)return;const k=wK(w),L=wLive(w);L.lr=WS.round||lrOf(L);if(WS.list.indexOf(k,WS.i+1)<0)WS.list.push(k);wSave()}
+/* a word missed in any learning round goes back to round 1; it starts round 1 again by itself once all the rounds are over (Nov 16, her request) */
+function wRequeue(w){if(!WS||!WS.perWord)return;const L=wLive(w);L.lr=1;L.t=amNow();wSave()}
 /* ONE look for a word's path everywhere: learning rounds 1–4 · reviews 1–6 · 🏆
    o.counts = how many of the round's words wait in each learning round (tap = go there), o.free = free practice */
 function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&WS.list&&WS.list[WS.i]===wK(w));const lr=pw?WS.round:w?lrOf(w):(o.cur||1),s=w?Math.min(w.st,WMAST):0,inRev=!pw&&w&&lr>=5&&s>=1,ch=(t,cls,i)=>o.counts?`<button class="${cls}" data-round="${i}">${t}<small>${o.counts[i-1]}</small></button>`:`<span class="${cls}">${t}</span>`;
@@ -4012,9 +4014,9 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   else if(w&&inRev)now=res?`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
   else if(pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend){const R=WS.res;
     now=R.ok?(lr<4?`✓ נכון – המילה עוברת לסבב ${lr+1} · ${WLRN[lr][0]}`:`✓ נכון – המילה סיימה את הלמידה ועוברת לחזרה 1 (${wWhen(w.due)})`)
-      :`✗ המילה נשארת בסבב ${lr} · ${WLRN[lr-1][0]} – תחזור אלייך בסוף הסבב עם שאלה אחרת`}
+      :`✗ המילה חוזרת לסבב 1 · ${WLRN[0][0]} – תתחיל אותו שוב אחרי שתסיימי את כל הסבבים, עם משפט אחר`}
   else if(pw&&WS.res&&WS.res.pend)now=`סבב ${lr} מתוך 4 · ⏳ בודקת את התשובה…`;
-  else if(w)now=`סבב ${lr} מתוך 4 · ${WLRN[lr-1][0]}${lr<4?` ← אם נכון: סבב ${lr+1} · ${WLRN[lr][0]}`:' ← אם נכון: חזרה 1'} · אם לא: שוב בסוף הסבב`;
+  else if(w)now=`סבב ${lr} מתוך 4 · ${WLRN[lr-1][0]}${lr<4?` ← אם נכון: סבב ${lr+1} · ${WLRN[lr][0]}`:' ← אם נכון: חזרה 1'} · אם לא: חוזרת לסבב 1 אחרי כל הסבבים`;
   else now=`סבב ${o.cur} · ${WLRN[(o.cur||1)-1][0]}`;
   if(o.free)now='תרגול חופשי – לא משנה את המסלול · '+now;
   const oth=w&&res&&inRev?Object.values(AMS.w).filter(x=>x!==w&&wK(x)!==wK(w)&&String(x.e).toLowerCase()===String(w.e).toLowerCase()&&x.st>=1):[];
@@ -4275,17 +4277,17 @@ function wDqStart(){const key=wDqKey(),m=S.mode;S.mode='read';try{if(SESS[key]&&
 /* called by the dictionary quiz when it ends: the learning round goes on with round 3 */
 function jwQuizDone(){if(!Q||!/^JW/.test(String(Q.key||''))||!WS||WS.phase!=='dq'||wDqKey()!==Q.key)return false;
   const M=Q.marks||{},miss=[];
-  WS.list.forEach(k=>{const w=AMS.w[k];if(!w)return;const c=wCard(w);if(c&&M[c.id]==='n'){w.lr=2;w.dqm=(w.dqm||0)+1;miss.push(k)}else{w.lr=Math.max(lrOf(w),3);delete w.dqm}});amSave();
-  /* words marked "לא ידעתי" stay in round 2 and come again in a quiz of their own, with other sentences */
-  if(miss.length&&wRound(2,miss,WS))return true;wRoundNext(2);return true}
+  WS.list.forEach(k=>{const w=AMS.w[k];if(!w)return;const c=wCard(w);if(lrOf(w)!==2)return;if(c&&M[c.id]==='n'){w.lr=1;w.dqm=(w.dqm||0)+1;miss.push(k)}else{w.lr=3;delete w.dqm}});amSave();
+  /* words marked "לא ידעתי" go back to round 1 – they start it again after rounds 3–4 */
+  wRoundNext(2);return true}
 /* the words of this learning (all rounds) and how many wait in each round */
 const wAllK=()=>WS?(WS.all||(WS.jr&&jrBlock(WS.jr)&&Array.isArray(jrBlock(WS.jr).ws)?jrBlock(WS.jr).ws:WS.list)):[];
 /* the word on screen counts in the next round as soon as she answers (her request: the round counts update with every answer) */
-const wInRound=(k,r)=>{const w=AMS.w[k];if(!w||w.st>=WMAST)return false;const c=wCard(w);if(c&&isY(c))return false;
+const wInRound=(k,r)=>{const w=AMS.w[k];if(!w||w.st>=WMAST)return false;const c=wCard(w);if(c&&isY(c)&&!wLearning(w))return false;
   return lrOf(w)===r};
 /* round 2 = the dictionary quiz: each card answered there moves its word on to round 3 at once */
 function jwWordDone(c){if(!c||!WS||!WS.list||!Q||!/^JW/.test(String(Q.key||'')))return;
-  if((Q.marks||{})[c.id]==='n')return;const k=WS.list.find(x=>{const w=AMS.w[x];const cc=w&&wCard(w);return cc&&cc.id===c.id});const w=k&&AMS.w[k];if(w&&lrOf(w)===2){w.lr=3;delete w.dqm;w.t=amNow();amSave()}}
+  const k=WS.list.find(x=>{const w=AMS.w[x];const cc=w&&wCard(w);return cc&&cc.id===c.id});const w=k&&AMS.w[k];if(w&&lrOf(w)===2){if((Q.marks||{})[c.id]==='n'){w.lr=1;w.dqm=(w.dqm||0)+1}else{w.lr=3;delete w.dqm}w.t=amNow();amSave()}}
 const wRoundCounts=keys=>[1,2,3,4].map(r=>(keys||wAllK()).filter(k=>wInRound(k,r)).length);
 /* start one learning round on the words waiting in it (keeps the learning's other fields) */
 function wRound(r,keys,base){keys=(keys||[]).filter(k=>wInRound(k,r));if(!keys.length)return false;base=base||{};
@@ -4295,6 +4297,8 @@ function wRound(r,keys,base){keys=(keys||[]).filter(k=>wInRound(k,r));if(!keys.l
 const wDqPageGo=()=>{go({screen:'amwl'});draw();return true};
 /* after a round: the next round that has words waiting, else back to the page of the day's words */
 function wRoundNext(r){const all=wAllK(),base=WS;for(let n=r+1;n<=4;n++)if(wRound(n,all,base))return;
+  /* all rounds done: missed words (back in round 1) start round 1 again by themselves */
+  for(let n=1;n<=r;n++)if(wRound(n,all,base))return;
   const jr=WS&&WS.jr,x=jr&&jrBlock(jr);if(!x||x.k!=='new'||!jnPend(x).length){WS.i=WS.list.length;wSave();return wDone()}
   /* some words still wait in an earlier round – back to the day's words page, where each round shows its count */
   WS=null;wSave();go({screen:'amnw',jb:jr})}
@@ -4696,7 +4700,7 @@ const AMHELP={
   <ol><li><b>סבב 1 · תרגום משפט</b> – משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה.</li>
   <li><b>סבב 2 · הפירוש בעברית</b> – הבוחן של המילון: כותבים את הפירוש, אפשרויות, ידעתי / לא ידעתי.</li>
   <li><b>סבב 3 · משפט בעברית</b> – בוחרים את המילה באנגלית שחסרה.</li>
-  <li><b>סבב 4 · משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן.</p>
+  <li><b>סבב 4 · משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה חוזרת לסבב 1 – כשכל הסבבים נגמרים, סבב 1 מתחיל שוב מעצמו עם המילים שטעית בהן (עם משפט אחר), והן עוברות שוב את כל הסבבים. המילים שענית נכון ממשיכות לסבב הבא.</p>
   <p><b>מילה עם כמה פירושים</b> – כל פירוש נלמד בנפרד.</p>`],
  journey:['🛤','המסלול של מילה','אמירנט',`<p><b>למידה (באותו יום) – 4 סבבים, כל סבב לכל המילים לפני הבא:</b></p><ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol>
   <p><b>חזרות – 6 חזרות במרווחים שגדלים (אין חזרה שבה כותבים את המילה באנגלית). חזרה 1 היא 20 דקות אחרי הסבבים:</b></p>
