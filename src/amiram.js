@@ -1990,7 +1990,8 @@ function wStart(mode,keys,cnt){
 const WPATH=[null,'hecl','mc','en2he','tr','mc','tr'];
 const WPATHN=WREV.map(r=>r?r[1]:'');
 /* a choosing task for the word (never writing it in English): Hebrew sentence → English sentence → its meaning in Hebrew */
-const wPick=(w,he)=>he&&wHeOk(w)?'hecl':(wCtx(w)||wOther(w))?'mc':wHeOk(w)?'hecl':'en2he';
+/* a Hebrew-sentence task stays Hebrew – never switched to an English sentence (Nov 16, her request) */
+const wPick=(w,he)=>he?'hecl':(wCtx(w)||wOther(w))?'mc':wHeOk(w)?'hecl':'en2he';
 function wTask(w){let t=WPATH[w.st]||'mc';
   if(t==='hecl')t=wPick(w,1);
   else if(t==='mc')t=wPick(w,0);
@@ -2244,7 +2245,14 @@ function amWordLearn(){wRoundMigrate();if(!WS||!WS.list||WS.i>=WS.list.length)re
     let task=(WS.res&&WS.res.task)||wTaskNow(w);const hint=WS.hint||0,res=WS.res;
     let heR=null;if(task==='hecl'){heR=res&&res.he?{he:res.he,en:res.en||''}:wHeRev(w);
       if(heR===null){h+=`<div class="am-card"><p class="hint center" style="margin:0">⏳ מכינה משפט בעברית עם המילה…</p></div>`;app.innerHTML=h+'</div>';$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};return}
-      if(heR===false){task=wPick(w,0);heR=null}}
+      if(heR===false){const kk=wK(w),r2=WS.mode==='r2';
+        h+=`<div class="am-card"><p class="center" style="margin:0;font-weight:700">לא הצלחתי להכין משפט בעברית למילה הזו</p><p class="hint center" style="margin:6px 0 0">${GKEY()?'הבדיקה החכמה לא ענתה עכשיו – אפשר לנסות שוב.':'אין חיבור לבדיקה החכמה (ג׳מיני).'}</p></div>
+          <div class="am-cta"><button class="btn" id="heRetry">🔄 לנסות שוב</button></div>
+          <button class="link" id="heSkip" style="align-self:center">${r2?'לדלג – המילה עוברת לסבב הבא':'לדלג בינתיים – המילה תחזור בחזרה הבאה'}</button>`;
+        app.innerHTML=h+'</div>';$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};
+        $('heRetry').onclick=()=>{delete HEERR[kk];draw()};
+        $('heSkip').onclick=()=>{if(r2){WS.res={ok:true,typed:'',task:'hecl',skip:1};wAfter(w,true)}else WS.res={typed:'',rec:1,skip:1,task:'hecl'};wNextWord()};
+        return}}
     const rvS=task==='mc'&&wRevNow(w)?(res&&res.en?{en:res.en,src:res.src,lab:res.lab}:wRevSent(w)):null;
     if(task==='mc'&&wRevNow(w)&&!rvS){const kk=wK(w);setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx&&['tr','mc'].includes(wTask(nx)))try{wRevSent(nx)}catch(e){}}},300);
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${RVERR[kk]?esc(RVERR[kk]):'⏳ מכינה משפט עם המילה…'}</p></div>`;if(!RVERR[kk]){app.innerHTML=h+'</div>';$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};return}}
