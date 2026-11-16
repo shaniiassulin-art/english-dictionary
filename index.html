@@ -4011,7 +4011,7 @@ function wTrack(w,o){o=o||{};const lr=w?lrOf(w):(o.cur||1),s=w?Math.min(w.st,WMA
   else now=`סבב ${o.cur} · ${WLRN[(o.cur||1)-1][0]}`;
   if(o.free)now='תרגול חופשי – לא משנה את המסלול · '+now;
   const oth=w&&res&&inRev?Object.values(AMS.w).filter(x=>x!==w&&wK(x)!==wK(w)&&String(x.e).toLowerCase()===String(w.e).toLowerCase()&&x.st>=1):[];
-  return `<div class="am-mpath"><div class="am-trk"><div class="g g1"><b>למידה${o.counts?' · מילים בכל סבב':''}</b><div class="am-path">${rd}</div></div><div class="g g2"><b>חזרות</b><div class="am-path">${rv}</div></div></div>
+  return `<div class="am-mpath"><div class="am-trk"><div class="g g1"><b>למידה${o.counts?' · מילים בכל סבב':''}</b><div class="am-path">${rd}</div></div>${!o.free&&!inRev&&!(w&&s>=WMAST)?'':`<div class="g g2"><b>חזרות</b><div class="am-path">${rv}</div></div>`}</div>
     <p>${now} · <button class="link small-link" data-path="1">🛤 המסלול</button></p>${oth.length?`<p class="hint" style="margin:2px 0 0">הפירוש שתרגלת עכשיו: <b>${esc(w.h)}</b>. ל־<bdi>${esc(w.e)}</bdi> יש אצלך עוד ${oth.length>1?'פירושים':'פירוש'} במסלול, וכל פירוש עובר מסלול משלו: ${oth.map(x=>`${esc(x.h)} (${x.st>=WMAST?'🏆':'חזרה '+x.st})`).join(' · ')}</p>`:''}</div>`}
 const wMiniPath=w=>wTrack(w,{});
 const wWhen=t=>{const d=t-amNow();if(d<=0)return 'עכשיו';if(d<36e5)return 'בעוד '+Math.max(1,Math.round(d/6e4))+' דק׳';if(d<DAY)return 'בעוד '+Math.round(d/36e5)+' שע׳';return 'בעוד '+Math.round(d/DAY)+' ימים'};
