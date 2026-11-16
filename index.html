@@ -3950,7 +3950,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
     if(st==='he2en'){const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=c.e.toLowerCase();s.ok=a===e||lev(a,e)<=(e.length>=6?1:0);s.done=1;fpSave();return draw()}
     const t=s.alt||{en:c.s,he:x.tr||''},idx=FP.i;s.done=1;s.pend=GKEY()?1:0;if(!GKEY())s.err='אין בדיקה חכמה – השווי לתרגום הנכון.';fpSave();draw();window.scrollTo(0,0);if(!GKEY())return;
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';if(!s.alt&&!x.tr)s.alt={en:t.en,he}}
-      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});s.pend=0;if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;s.ai=r.j}else s.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון.';
+      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});s.pend=0;if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;trMeanFix(r.j,w,v);s.ai=r.j}else s.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון.';
       fpSave();if(S.screen==='amfpl'&&FP&&FP.i===idx)amRedrawKeep()})()};
   const gv=$('fpGive');if(gv)gv.onclick=()=>{s.done=1;s.ok=false;fpSave();draw()};
   app.querySelectorAll('[data-fpo]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(s.done)return;s.sel=b.dataset.fpo;s.ok=s.sel===c.e;s.done=1;fpSave();amRedrawKeep()});
@@ -4227,7 +4227,15 @@ function trSent(w){if(wRevNow(w))return wRevSent(w);if(w.trc&&w.trc.en)return w.
     if(j&&j.en&&j.he&&blankOut(String(j.en),w.e)&&!used.includes(String(j.en).trim())){w.trc={en:String(j.en).trim(),he:String(j.he).trim(),src:'ai'};amSave()}else other();
     if(S.screen==='amwl')amRedrawKeep()});return null}
 /* the sentence with the new word as a button (tap = its meaning), other words tappable as everywhere */
-function trHtml(en,w,open){const st=w.e.toLowerCase().slice(0,Math.max(3,w.e.length-2)).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),m=new RegExp('\\b'+st+'[a-z]*','i').exec(en);if(!m)return tapEn(en);const i=m.index,L=m[0].length;
+/* the meaning written in her translation counts even if the smart check said otherwise (her report: "even" = זוגי, she wrote זוגי and got ✗) */
+function trMeanFix(j,w,v){if(!j||j.ok)return;const H=' '+String(v||'').replace(/[^\u05D0-\u05EA ]+/g,' ')+' ';
+  const toks=String(w.h||'').replace(/\([^)]*\)/g,' ').split(/[,/;·]+|\s+/).map(t=>t.replace(/[^\u05D0-\u05EA]/g,'')).filter(t=>t.length>=3);
+  const hit=toks.find(t=>new RegExp('[ ](?:[והבלמשכ]{0,2})'+t+'[ ]').test(H));if(!hit)return;
+  j.ok=true;j.word_ok=true;j.feedback='✓ תרגמת את המילה נכון ("'+hit+'").'+(j.feedback?'\n'+j.feedback:'')}
+/* the word in the sentence: its own forms first (even ≠ every), then a stem of 4+ letters */
+function trHtml(en,w,open){const esc2=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),lw=w.e.toLowerCase();
+  let m=new RegExp('\\b(?:'+[...wForms(lw)].sort((a,b)=>b.length-a.length).map(esc2).join('|')+')\\b','i').exec(en);
+  if(!m&&lw.length>=6)m=new RegExp('\\b'+esc2(lw.slice(0,lw.length-2))+'[a-z]*','i').exec(en);if(!m)return tapEn(en);const i=m.index,L=m[0].length;
   return tapEn(en.slice(0,i))+`<button class="am-nw" id="trW">${esc(en.slice(i,i+L))}</button>`+tapEn(en.slice(i+L))+(open?`<span class="am-nwm">${esc(en.slice(i,i+L))} = <b>${esc(w.h)}</b></span>`:'')}
 /* a word's round-1 result: it enters the spaced path (learning) or is logged (review) */
 function wTrDone(w,ok){w=wLive(w);if(WS.res&&WS.res.rec)return;if(w.rv&&WS.mode==='new'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}WS.res.ok=ok;WS.res.rec=1;const t=w.trc;if(t&&!WS.res.en){WS.res.en=t.en;WS.res.he=WS.res.he||t.he}if(t){w.trs=(w.trs||[]).concat({en:t.en,ok:ok?1:0,t:amNow()}).slice(-12);delete w.trc}
@@ -4518,7 +4526,7 @@ function wTrBind(w){
 function trCheck(w,v,t,key){
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';const R0=WS&&WS.res;if(R0&&WS.list[WS.i]===key&&!R0.he){R0.he=he;if(S.screen==='amwl')amRedrawKeep()}}
       let r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});if(!(r&&r.j&&typeof r.j.ok==='boolean'))r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
-      if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
+      if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;trMeanFix(r.j,w,v);R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
       wSave();if(S.screen==='amwl')amRedrawKeep()})()}
 /* the answered page as she saw it, for "→ למילה הקודמת" (Nov 16, her request): saved on this device only (localStorage dictWsHistH, last 40) */
 let WHH=null;const whh=()=>{if(!WHH){try{WHH=JSON.parse(localStorage.getItem('dictWsHistH')||'{}')||{}}catch(e){WHH={}}}return WHH};
