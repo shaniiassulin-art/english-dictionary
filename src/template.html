@@ -1413,7 +1413,7 @@ function qMark(v){const w=Q.list[Q.i];setKnow(w.id,v);Q.marks=Q.marks||{};Q.mark
   /* marked before answering: open the answer (options with the right ones, tip, notes) as if checked, and stay on the word */
   if(!Q.checked&&!V.on){if(!Q.opts)Q.opts=buildOpts(w);Q.stage='pick';Q.sel=[];Q.checked=true;Q.skip=true;Q.sent=Q.sent;saveQ();draw();window.scrollTo(0,0);return false}
   return qNext()}
-function qNext(){const n=Q.list.length,wPrev=Q.list[Q.i];
+function qNext(){const n=Q.list.length,wPrev=Q.list[Q.i];if(typeof jwWordDone==='function'&&wPrev&&/^JW/.test(String(Q.key||'')))try{const cs=curState();if(cs.checked||cs.skip)jwWordDone(wPrev)}catch(e){}
   Q.st=Q.st||{};Q.st[Q.i]=curState();
   /* on to the next word not marked yet; when none is left after this one, the quiz is done */
   let j=Q.i+1;while(j<n&&Q.marks[Q.list[j].id])j++;

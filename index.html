@@ -1639,7 +1639,7 @@ function qMark(v){const w=Q.list[Q.i];setKnow(w.id,v);Q.marks=Q.marks||{};Q.mark
   /* marked before answering: open the answer (options with the right ones, tip, notes) as if checked, and stay on the word */
   if(!Q.checked&&!V.on){if(!Q.opts)Q.opts=buildOpts(w);Q.stage='pick';Q.sel=[];Q.checked=true;Q.skip=true;Q.sent=Q.sent;saveQ();draw();window.scrollTo(0,0);return false}
   return qNext()}
-function qNext(){const n=Q.list.length,wPrev=Q.list[Q.i];
+function qNext(){const n=Q.list.length,wPrev=Q.list[Q.i];if(typeof jwWordDone==='function'&&wPrev&&/^JW/.test(String(Q.key||'')))try{const cs=curState();if(cs.checked||cs.skip)jwWordDone(wPrev)}catch(e){}
   Q.st=Q.st||{};Q.st[Q.i]=curState();
   /* on to the next word not marked yet; when none is left after this one, the quiz is done */
   let j=Q.i+1;while(j<n&&Q.marks[Q.list[j].id])j++;
@@ -2408,8 +2408,9 @@ function promptTr(w,en,he,mine){return `A Hebrew-speaking learner translated an 
 English: «${en}»
 Reference translation: «${he}»
 Her translation: «${mine}»
-Judge the meaning, not the wording: any natural Hebrew that keeps the meaning is right, and small spelling slips are fine. Check especially that "${w.e}" was translated in the right meaning.
-JSON: {"ok":true if the meaning of the whole sentence is right,"word_ok":true if "${w.e}" was translated correctly,"feedback":"1–2 short Hebrew lines: what was right and what to fix (if ok – a short praise)"}
+What counts is the word: word_ok is true only if she translated "${w.e}" in exactly this meaning ("${w.h}") – a Hebrew word with this meaning or a close synonym. If she left it out, used another meaning, or wrote something only vaguely related, word_ok is false (say which Hebrew word was expected).
+The rest of the sentence does not decide the answer: when word_ok is true, ok is true even if other parts are inaccurate – then point out exactly where the rest of her translation is wrong or inexact and how to fix it. Small spelling slips are fine.
+JSON: {"ok":same as word_ok,"word_ok":true or false,"feedback":"1–3 short Hebrew lines: about the word first, then every other mistake in the sentence and its fix (if all is right – a short praise)"}
 ${AIHE}`}
 function promptSent(w,t){return `A Hebrew-speaking English learner wrote a sentence to practise the word "${w.e}" (meaning: ${w.h}).
 Sentence: «${t}»
@@ -3923,7 +3924,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
       <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,s.open||s.done)}</div>
       ${GKEY()&&!s.done?`<button class="link small-link" id="fpAlt" style="align-self:center">${s.altP?'⏳ מכינה משפט אחר…':'✨ משפט אחר'}</button>`:''}</div>`;
     if(!s.done)h+=`<textarea class="am-in" id="fpIn" rows="2" placeholder="התרגום שלי לעברית" dir="rtl">${esc(s.typed||'')}</textarea><div class="am-cta"><button class="btn" id="fpChk">בדיקה</button></div>`;
-    else{if(s.ai)h+=`<p class="am-fb ${s.ai.ok?'ok':'bad'}">${s.ai.ok?'נכון! ✓':'לא לגמרי'}</p>${s.ai.feedback?`<div class="am-box ${s.ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(s.ai.feedback)}</p></div>`:''}`;
+    else{if(s.ai)h+=`<p class="am-fb ${s.ai.ok?'ok':'bad'}">${s.ai.ok?'נכון! ✓':'לא נכון – המילה לא תורגמה בפירוש הנכון'}</p>${s.ai.feedback?`<div class="am-box ${s.ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(s.ai.feedback)}</p></div>`:''}`;
       else if(s.pend)h+='<p class="hint center" style="margin:0">⏳ בודקת את התרגום שלך…</p>';else if(s.err)h+=`<p class="hint center" style="margin:0">${esc(s.err)}</p>`;
       h+=`<div class="am-box"><h4>התרגום הנכון</h4><p style="margin:0">${t.he?esc(t.he):'⏳'}</p><p class="hint" style="margin:6px 0 0">התרגום שלך: ${esc(s.typed||'')}</p></div>`}}
   else if(st==='he2en'){h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
@@ -3949,7 +3950,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
     if(st==='he2en'){const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=c.e.toLowerCase();s.ok=a===e||lev(a,e)<=(e.length>=6?1:0);s.done=1;fpSave();return draw()}
     const t=s.alt||{en:c.s,he:x.tr||''},idx=FP.i;s.done=1;s.pend=GKEY()?1:0;if(!GKEY())s.err='אין בדיקה חכמה – השווי לתרגום הנכון.';fpSave();draw();window.scrollTo(0,0);if(!GKEY())return;
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';if(!s.alt&&!x.tr)s.alt={en:t.en,he}}
-      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});s.pend=0;if(r&&r.j&&typeof r.j.ok==='boolean')s.ai=r.j;else s.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון.';
+      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});s.pend=0;if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;s.ai=r.j}else s.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון.';
       fpSave();if(S.screen==='amfpl'&&FP&&FP.i===idx)amRedrawKeep()})()};
   const gv=$('fpGive');if(gv)gv.onclick=()=>{s.done=1;s.ok=false;fpSave();draw()};
   app.querySelectorAll('[data-fpo]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(s.done)return;s.sel=b.dataset.fpo;s.ok=s.sel===c.e;s.done=1;fpSave();amRedrawKeep()});
@@ -4238,7 +4239,7 @@ function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.re
     ${WS.busy?'<p class="hint center">⏳ בודקת את התרגום…</p>':''}<div class="am-cta"><button class="btn" id="trChk" ${WS.busy?'disabled':''}>בדיקה</button></div>
     ${WS.mode==='new'?'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>':''}`;return h+'</div>'}
   const ai=res.ai;
-  if(ai)h+=`<p class="am-fb ${ai.ok?'ok':'bad'}">${ai.ok?'נכון! ✓':'לא לגמרי'}</p>${ai.feedback?`<div class="am-box ${ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(ai.feedback)}</p></div>`:''}`;
+  if(ai)h+=`<p class="am-fb ${ai.ok?'ok':'bad'}">${ai.ok?'נכון! ✓':'לא נכון – המילה לא תורגמה בפירוש הנכון'}</p>${ai.feedback?`<div class="am-box ${ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(ai.feedback)}</p></div>`:''}`;
   else if(res.pend)h+=`<p class="hint center" style="margin:0">⏳ בודקת את התרגום שלך…</p>`;
   else if(res.err)h+=`<p class="hint center" style="margin:0">${esc(res.err)}</p>`;
   h+=`<div class="am-box"><h4>התרגום הנכון</h4><p style="margin:0">${t.he?esc(t.he):'⏳'}</p><p class="hint" style="margin:6px 0 0">התרגום שלך: ${esc(res.typed||'')}</p></div>`;
@@ -4257,7 +4258,12 @@ function jwQuizDone(){if(!Q||!/^JW/.test(String(Q.key||''))||!WS||WS.phase!=='dq
   WS.list.forEach(k=>{const w=AMS.w[k];if(w)w.lr=Math.max(lrOf(w),3)});amSave();wRoundNext(2);return true}
 /* the words of this learning (all rounds) and how many wait in each round */
 const wAllK=()=>WS?(WS.all||(WS.jr&&jrBlock(WS.jr)&&Array.isArray(jrBlock(WS.jr).ws)?jrBlock(WS.jr).ws:WS.list)):[];
-const wInRound=(k,r)=>{const w=AMS.w[k];if(!w||w.st>=WMAST)return false;const c=wCard(w);if(c&&isY(c))return false;return lrOf(w)===r};
+/* the word on screen counts in the next round as soon as she answers (her request: the round counts update with every answer) */
+const wInRound=(k,r)=>{const w=AMS.w[k];if(!w||w.st>=WMAST)return false;const c=wCard(w);if(c&&isY(c))return false;
+  let l=lrOf(w);if(WS&&WS.res&&WS.list&&WS.list[WS.i]===k&&WS.mode==='new'&&WS.step==='tr'&&l<2)l=2;return l===r};
+/* round 2 = the dictionary quiz: each card answered there moves its word on to round 3 at once */
+function jwWordDone(c){if(!c||!WS||!WS.list||!Q||!/^JW/.test(String(Q.key||'')))return;
+  const k=WS.list.find(x=>{const w=AMS.w[x];const cc=w&&wCard(w);return cc&&cc.id===c.id});const w=k&&AMS.w[k];if(w&&lrOf(w)===2){w.lr=3;w.t=amNow();amSave()}}
 const wRoundCounts=keys=>[1,2,3,4].map(r=>(keys||wAllK()).filter(k=>wInRound(k,r)).length);
 /* start one learning round on the words waiting in it (keeps the learning's other fields) */
 function wRound(r,keys,base){keys=(keys||[]).filter(k=>wInRound(k,r));if(!keys.length)return false;base=base||{};
@@ -4300,7 +4306,7 @@ function wHistPage(){const H=WS.hist||[],v=Math.max(0,Math.min(WS.view,H.length-
       <p class="hint center" style="margin:0">${esc(nm)}${it.st?` · עכשיו ${wRevLbl(it.st)}`:''}</p></div>`;
   if(t==='hecl'&&r.he)h+=`<div class="am-card"><div class="m" style="font-weight:600;line-height:1.6">${heGapHtml(r.he,w.e,1)}</div></div>`;
   if(r.en&&t!=='hecl'){const b=blankOut(r.en,w.e);h+=`<div class="am-card"><div class="ctx" dir="ltr" style="font-size:1.05rem;color:var(--ink)">${SAYB(r.en,'sm inl')}${t==='tr'?tapEn(r.en):mcFilled(r.en,b||r.en)}</div>${srcLab(r)}</div>`}
-  if(r.ai)h+=`<p class="am-fb ${r.ai.ok?'ok':'bad'}">${r.ai.ok?'נכון ✓':'לא לגמרי'}</p>${r.ai.feedback?`<div class="am-box ${r.ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(r.ai.feedback)}</p></div>`:''}`;
+  if(r.ai)h+=`<p class="am-fb ${r.ai.ok?'ok':'bad'}">${r.ai.ok?'נכון ✓':'לא נכון – המילה לא תורגמה בפירוש הנכון'}</p>${r.ai.feedback?`<div class="am-box ${r.ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(r.ai.feedback)}</p></div>`:''}`;
   else if(r.ok!=null)h+=`<p class="am-fb ${r.ok?'ok':'bad'}">${r.skip?'דילגת בלי בדיקה':r.ok?'נכון ✓':'טעית'}</p>`;
   if(t==='tr'&&r.he)h+=`<div class="am-box"><h4>התרגום הנכון</h4><p style="margin:0">${esc(r.he)}</p></div>`;
   if(r.typed)h+=`<p class="hint center" style="margin:0">${t==='tr'?'התרגום שלך':'בחרת / כתבת'}: <bdi>${esc(r.typed)}</bdi></p>`}
@@ -4486,7 +4492,7 @@ function wTrBind(w){
 function trCheck(w,v,t,key){
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';const R0=WS&&WS.res;if(R0&&WS.list[WS.i]===key&&!R0.he){R0.he=he;if(S.screen==='amwl')amRedrawKeep()}}
       let r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});if(!(r&&r.j&&typeof r.j.ok==='boolean'))r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
-      if(r&&r.j&&typeof r.j.ok==='boolean'){R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
+      if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
       wSave();if(S.screen==='amwl')amRedrawKeep()})()}
 /* the answered page as she saw it, for "→ למילה הקודמת" (Nov 16, her request): saved on this device only (localStorage dictWsHistH, last 40) */
 let WHH=null;const whh=()=>{if(!WHH){try{WHH=JSON.parse(localStorage.getItem('dictWsHistH')||'{}')||{}}catch(e){WHH={}}}return WHH};
