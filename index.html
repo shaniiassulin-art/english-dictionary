@@ -1116,8 +1116,14 @@ function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(
     <ul class="days">${ks.map(k=>{const n=dayCount(k);return `<li><span class="dd">${k===today?'<b>היום</b> · ':''}${esc(dayLabel(k))}</span><span class="dn">${n}</span><span class="bar2"><i style="width:${n/mx*100}%"></i></span></li>`}).join('')}</ul>
   </div>`;
   $('bk').onclick=()=>go({screen:'home'})}
+/* the 10 levels always fit under the card (Nov 16, her report: only 6 showed and the page couldn't scroll): the grid takes the rest of the screen,
+   5 rows; if a row would be too small to tap, the page scrolls instead of hiding levels */
+function homeFit(){const g=$('dlv');if(!g)return;g.style.height='';g.classList.remove('fit','tight');const H=document.documentElement;
+  if(S.so||S.q){H.classList.remove('noscroll');return}
+  const av=innerHeight-g.getBoundingClientRect().top-(parseFloat(getComputedStyle(document.querySelector('.app')||document.body).paddingBottom)||0)-10;
+  g.classList.toggle('tight',av/5<58);if(av/5>=36){g.style.height=av+'px';g.classList.add('fit');H.classList.add('noscroll')}else{g.classList.remove('tight');H.classList.remove('noscroll')}}
+addEventListener('resize',()=>{if(S.screen==='home')homeFit()});
 function home(){
-  if(!(S.so||S.q))document.documentElement.classList.add('noscroll');  /* no scrolling on the dictionary home (her request) – except while searching, the results may be long */
   const k=DW.filter(known).length;
   /* journey quizzes (keys J… – today's new words, free practice) belong to the אמירנט part, not to the dictionary home */
   const ks=Object.keys(SESS).filter(k=>SESS[k]&&SESS[k].kind==='quiz'&&SESS[k].v===2&&!/^J/.test(k)).sort((a,b)=>(SESS[b].t||0)-(SESS[a].t||0)),rk=ks[0],rs=rk&&SESS[rk];
@@ -1132,10 +1138,12 @@ function home(){
       ${quizPanel('ALL',DW,'בוחן על כל המילים','כל המילים','home',false,'dq')}
       ${catPanel('ALL',DW)}
     </section>
-    <div class="dgrid g2">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
-      return `<button class="dtile" data-l="${i+1}"><span class="dt-n">${i+1}</span><span class="dt-t"><b>${n}</b><small>${ws.length} מילים${kk?` · יודעת ${kk}`:''}</small></span>${knowBar(ws)}</button>`}).join('')}</div>
+    <div class="dgrid g2 dlv" id="dlv">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
+      return `<button class="dtile" data-l="${i+1}"><span class="dt-n">${i+1}</span><span class="dt-t"><b>${n}</b><small>${ws.length} מילים${kk?`<span class="kk"> · יודעת ${kk}</span>`:''}</small></span>${knowBar(ws)}</button>`}).join('')}</div>
   </div>`;
   {const ct=app.querySelector('.panel .cartog');if(ct)ct.remove();$('carTile').id='carTog'}
+  app.querySelectorAll('.cat-row .btn').forEach(x=>{x.textContent=x.textContent.replace(/ · ([\d,]+) מילים$/,' · $1')});
+  homeFit();
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.dh-chip[data-resume]');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
   $('today').onclick=()=>go({screen:'days'});$('toStart').onclick=()=>go({screen:'start'});favGoBind();$('privGo').onclick=()=>go({screen:'level',l:PL});
@@ -2891,6 +2899,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 /* the dictionary home never scrolls (Nov 12, her request – everything fits) */
 html.noscroll,html.noscroll body{overflow:hidden;overscroll-behavior:none;height:100%}
 html.noscroll .dhome{min-height:0!important}
+.dlv.fit{grid-template-rows:repeat(5,minmax(0,1fr))}.dlv .dtile{padding:6px 10px;gap:3px;min-height:0;overflow:hidden}.dlv .dt-n{width:24px;height:24px;font-size:.8rem}.dlv .dtile b{font-size:.86rem}.dlv .dtile small{font-size:.7rem}.dlv .dtile .dt-t small{overflow:hidden;text-overflow:ellipsis;line-height:1.2}.dlv .dtile b{line-height:1.25}.dlv .dtile .kbar{margin:0}.dlv .dtile b{flex:none;white-space:nowrap!important}.dlv.tight .dtile{padding:4px 10px}.dlv.tight .dt-t{flex-direction:row;align-items:baseline;gap:6px}.dlv.tight .kk{display:none}.dlv.tight .dt-n{width:22px;height:22px;font-size:.75rem}.dhome .cat-panel{gap:4px;flex-direction:row!important;flex-wrap:nowrap!important}.dhome .jh-hero{gap:8px!important;padding-top:12px!important;padding-bottom:12px!important}.dhome .jh-hero h2{margin:0;font-size:1.3rem}.dhome .cat-row{width:auto!important;flex:0 1 auto!important}.dhome .cat-row .btn{min-height:30px!important;padding:3px 8px!important;font-size:.72rem!important;white-space:nowrap}
 /* history: the answered page as she saw it – read only, speakers still play */
 .am-histsnap{display:flex;flex-direction:column;gap:12px}
 .am-histsnap button:not([data-amsay]),.am-histsnap [role=button]:not([data-amsay]),.am-histsnap a,.am-histsnap summary{pointer-events:none}
