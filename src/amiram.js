@@ -1830,7 +1830,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
     else h+=`<p class="am-fb ${s.ok?'ok':'bad'}">${s.ok?'נכון! ✓':'התשובה:'}</p>`}
   else{const heS=st==='hecl'?wHeSent(w):'',enS=st==='mc'?blankOut(c.s,c.e):'',O=fpOpts(c,s);
     h+=`<div class="am-card"><p class="hint center" style="margin:0">${st==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-      <div class="${st==='hecl'?'m':'ctx'}" ${st==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${st==='hecl'?'font-weight:600':''}">${st==='hecl'?esc(heS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>'):SAYB(enS,'sm inl')+tapEn(enS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${st==='mc'&&s.done?wTrHtml(c.s,x,c.s):''}</div>
+      <div class="${st==='hecl'?'m':'ctx'}" ${st==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${st==='hecl'?'font-weight:600':''}">${st==='hecl'?heGapHtml(heS,w.e,s.done):SAYB(enS,'sm inl')+tapEn(enS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${st==='mc'&&s.done?wTrHtml(c.s,x,c.s):''}</div>
       <div class="am-opts">${O.map(o=>`<button class="am-opt${s.done?(o===c.e?' right':o===s.sel?' wrong':''):''}" data-fpo="${esc(o)}" ${s.done?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
     if(s.done)h+=`<p class="am-fb ${s.ok?'ok':'bad'}">${s.ok?'נכון! ✓':'לא נכון – התשובה מסומנת בירוק'}</p><div class="am-box"><p dir="ltr" style="margin:0;text-align:left;font-family:var(--en)">${SAYB(c.s,'sm inl')}${esc(c.s)}</p>${x.tr?`<p style="margin:6px 0 0">${esc(x.tr)}</p>`:''}</div>`}
   if(s.done)h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(c.e)}">${SPK}</button><span>${esc(c.e)}</span></div><div class="am-mean"><b>${esc(w.h)}</b></div>${x.tip?`<p class="am-as1">💡 ${bdiEsc(x.tip)}</p>`:''}</div>
@@ -2003,7 +2003,12 @@ function heBlank(tr,h){if(!tr||!h)return '';const vs=String(h).replace(/\(.*?\)/
   const E=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
   for(const v of vs){for(const pat of [E(v),v.length>3?E(v.slice(0,-1))+'[א-ת]{0,3}':null]){if(!pat)continue;
     const m=new RegExp('(^|[^א-ת])([ובכלהמש]{0,2})('+pat+')(?![א-ת])').exec(tr);if(m){const at=m.index+m[1].length+m[2].length;return tr.slice(0,at)+'_____'+tr.slice(at+m[3].length)}}}return ''}
-function wHeSent(w){const c=wCard(w);if(!c||!c.s)return '';const tr=(EXTRA[c.xid||c.id]||{}).tr;return heBlank(tr,w.h)}
+function wHeSent(w){const c=wCard(w);if(!c||!c.s)return '';const x=EXTRA[c.xid||c.id]||{};
+  /* trm = the translation with the word(s) for this meaning marked [[…]] (Nov 16: every card whose translation can't be blanked automatically) */
+  if(x.trm&&/\[\[[^\]]+\]\]/.test(x.trm))return x.trm.replace(/\[\[[^\]]+\]\]/g,'_____');return heBlank(x.tr,w.h)}
+/* a Hebrew sentence with gaps → html: '?' gaps before answering; after, each gap gets its part of the English word ("both... and" → both / and) */
+function heGapHtml(he,e,fill){const n=(String(he).match(/_{4,}/g)||[]).length,ps=String(e).split(/\s*(?:\.\.\.|…)\s*/).map(x=>x.trim()).filter(Boolean);let i=0;
+  return esc(he).replace(/_{4,}/g,()=>{const k=i++;if(!fill)return '<span class="am-gap">&nbsp;?&nbsp;</span>';const t=n>1&&ps.length===n?ps[k]:k?'…':e;return '<span class="am-fill">'+esc(t)+'</span>'})}
 /* a Hebrew sentence with the word's place empty, for "משפט בעברית" (Nov 16, her report: review 1 sometimes showed an English sentence –
    the card's translated example often doesn't contain the meaning word as written, so the task fell back to an English one).
    Order: the card's example → an exam sentence whose book translation has the meaning → a sentence Gemini writes (the Hebrew word
@@ -2181,7 +2186,7 @@ function wHistPage(){const H=WS.hist||[],v=Math.max(0,Math.min(WS.view,H.length-
   if(snap){h+=`<div class="am-histsnap">${snap}</div>${it.st?`<p class="hint center" style="margin:0">איפה המילה עכשיו: ${esc(wRevLbl(it.st))}</p>`:''}`}
   else{h+=`<div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>
       <p class="hint center" style="margin:0">${esc(nm)}${it.st?` · עכשיו ${wRevLbl(it.st)}`:''}</p></div>`;
-  if(t==='hecl'&&r.he)h+=`<div class="am-card"><div class="m" style="font-weight:600;line-height:1.6">${esc(r.he).replace(/_{4,}/,'<span class="am-fill">'+esc(w.e)+'</span>')}</div></div>`;
+  if(t==='hecl'&&r.he)h+=`<div class="am-card"><div class="m" style="font-weight:600;line-height:1.6">${heGapHtml(r.he,w.e,1)}</div></div>`;
   if(r.en&&t!=='hecl'){const b=blankOut(r.en,w.e);h+=`<div class="am-card"><div class="ctx" dir="ltr" style="font-size:1.05rem;color:var(--ink)">${SAYB(r.en,'sm inl')}${t==='tr'?tapEn(r.en):mcFilled(r.en,b||r.en)}</div>${srcLab(r)}</div>`}
   if(r.ai)h+=`<p class="am-fb ${r.ai.ok?'ok':'bad'}">${r.ai.ok?'נכון ✓':'לא לגמרי'}</p>${r.ai.feedback?`<div class="am-box ${r.ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(r.ai.feedback)}</p></div>`:''}`;
   else if(r.ok!=null)h+=`<p class="am-fb ${r.ok?'ok':'bad'}">${r.skip?'דילגת בלי בדיקה':r.ok?'נכון ✓':'טעית'}</p>`;
@@ -2245,13 +2250,12 @@ function amWordLearn(){wRoundMigrate();if(!WS||!WS.list||WS.i>=WS.list.length)re
     let task=(WS.res&&WS.res.task)||wTaskNow(w);const hint=WS.hint||0,res=WS.res;
     let heR=null;if(task==='hecl'){heR=res&&res.he?{he:res.he,en:res.en||''}:wHeRev(w);
       if(heR===null){h+=`<div class="am-card"><p class="hint center" style="margin:0">⏳ מכינה משפט בעברית עם המילה…</p></div>`;app.innerHTML=h+'</div>';$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};return}
-      if(heR===false){const kk=wK(w),r2=WS.mode==='r2';
+      if(heR===false){const kk=wK(w);
         h+=`<div class="am-card"><p class="center" style="margin:0;font-weight:700">לא הצלחתי להכין משפט בעברית למילה הזו</p><p class="hint center" style="margin:6px 0 0">${GKEY()?'הבדיקה החכמה לא ענתה עכשיו – אפשר לנסות שוב.':'אין חיבור לבדיקה החכמה (ג׳מיני).'}</p></div>
           <div class="am-cta"><button class="btn" id="heRetry">🔄 לנסות שוב</button></div>
-          <button class="link" id="heSkip" style="align-self:center">${r2?'לדלג – המילה עוברת לסבב הבא':'לדלג בינתיים – המילה תחזור בחזרה הבאה'}</button>`;
+`;
         app.innerHTML=h+'</div>';$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};
         $('heRetry').onclick=()=>{delete HEERR[kk];draw()};
-        $('heSkip').onclick=()=>{if(r2){WS.res={ok:true,typed:'',task:'hecl',skip:1};wAfter(w,true)}else WS.res={typed:'',rec:1,skip:1,task:'hecl'};wNextWord()};
         return}}
     const rvS=task==='mc'&&wRevNow(w)?(res&&res.en?{en:res.en,src:res.src,lab:res.lab}:wRevSent(w)):null;
     if(task==='mc'&&wRevNow(w)&&!rvS){const kk=wK(w);setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx&&['tr','mc'].includes(wTask(nx)))try{wRevSent(nx)}catch(e){}}},300);
@@ -2260,7 +2264,7 @@ function amWordLearn(){wRoundMigrate();if(!WS||!WS.list||WS.i>=WS.list.length)re
     const mcS=task==='mc'?blankOut(mcF,w.e):'',heS=task==='hecl'&&heR?heR.he:'';
     if(task==='mc'||task==='hecl'){
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${task==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-        <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?esc(heS).replace(/_{4,}/,res?'<span class="am-fill">'+esc(w.e)+'</span>':'<span class="am-gap">&nbsp;?&nbsp;</span>'):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):''}${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
+        <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?heGapHtml(heS,w.e,!!res):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):''}${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
       const O=res&&res.opts&&res.opts.length?res.opts:wOpts(w);
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
