@@ -14,7 +14,7 @@ function amLoad(){if(AMD)return Promise.resolve(AMD);if(AMDP)return AMDP;
   AMDP=(async()=>{for(const u of AMSRC){try{const r=await fetch(u+(u==='amiram.json'?'?v='+AMV:''));if(r.ok){AMD=await r.json();return AMD}}catch(e){}}AMDP=null;throw 0})();return AMDP}
 const AMV='1';
 let AMS={a:{},w:{},n:8,nd:{},t:0};try{Object.assign(AMS,JSON.parse(LS.get('dictAm')||'{}'))}catch(e){}
-try{setTimeout(()=>{amFixW&&amFixW()},0)}catch(e){}
+try{setTimeout(()=>{amFixW&&amFixW();try{wLrUnmark()}catch(e){}},0)}catch(e){}
 function amSave(){AMS.t=Date.now();LS.set('dictAm',JSON.stringify(AMS));dirty()}
 let AMAI={};try{AMAI=JSON.parse(LS.get('dictAmAi')||'{}')}catch(e){}
 const amAiSave=()=>LS.set('dictAmAi',JSON.stringify(AMAI));
@@ -1065,6 +1065,11 @@ const jnLeft=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.s
 /* still in the learning rounds (not started, or waiting in round 2–4) */
 const jnPend=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.st<WMAST&&!(c&&isY(c)&&!wLearning(w))&&lrOf(w)<5});
 /* a word already inside the 4 learning rounds (started, not finished): a ✓ from the round-2 dictionary quiz doesn't take it out */
+/* the word finished all 4 learning rounds → its card is marked ✓ ידעתי in the dictionary (only now – not from the round-2 quiz) */
+function wLrDoneMark(w){const c=wCard(w);if(c&&!isY(c))setKnow(c.id,'y')}
+/* one-time: cards marked ✓ by the round-2 quiz while their word is still in learning go back to unmarked (they get ✓ when the rounds end) */
+function wLrUnmark(){try{if(localStorage.getItem('dictLrFix1'))return;localStorage.setItem('dictLrFix1','1')}catch(e){return}
+  Object.values(AMS.w||{}).forEach(w=>{if(!wLearning(w)||w.lr<3)return;const c=wCard(w);if(!c||!isY(c))return;const t=(KNOW[c.id]||[])[1]||0,t0=Math.min(...(w.log||[]).map(l=>l[0]).filter(Boolean),Infinity);if(t>=t0)setKnow(c.id,null)})}
 const wLearning=w=>!!w&&w.lr!=null&&w.lr>=1&&w.lr<5&&(w.lr>1||w.st>=1);
 const jnKey=x=>'J'+String(x.id).replace(/[^0-9a-z]/gi,'');
 /* called by the dictionary quiz after each word of a 'J' session: a word that isn't ✓ gets its step 2 at once (write it, then choose it in a sentence), then back to the quiz */
@@ -2463,7 +2468,7 @@ function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;WS.cur=null;
   wSave();draw();window.scrollTo(0,0)}
 /* result of a recall: the stage goes up (a hint keeps it), a miss goes back and comes again at the end of this session */
 function wAfter(w,ok){w=wLive(w);if(WS.res&&!WS.res.task)WS.res.task=wTaskNow(w);if(!ok)wMiss(w);/* the answered task stays on screen even after the stage changes */
-  if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round){if(ok){w.lr=Math.max(lrOf(w),WS.round+1);if(w.lr>=5&&w.st>=1&&w.st<WMAST)w.due=amNow()+WINT[1]/* review 1 = 20 minutes after the learning ends */}else wRequeue(w)}if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
+  if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round){if(ok){w.lr=Math.max(lrOf(w),WS.round+1);if(w.lr>=5)wLrDoneMark(w);if(w.lr>=5&&w.st>=1&&w.st<WMAST)w.due=amNow()+WINT[1]/* review 1 = 20 minutes after the learning ends */}else wRequeue(w)}if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   if(WS.step==='first'){/* the first recall right after learning */
     wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();if(!(WS.counted&&WS.counted.includes(wK(w)))&&WS.jr)jrCount(WS.jr);AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
     if(!ok){WS.again=(WS.again||[]).filter(k=>k!==wK(w)).concat(wK(w))}amSave();return}

@@ -1371,7 +1371,7 @@ function loadQ(key){const s=SESS[key];if(!s||s.kind!=='quiz'||s.v!==2)return fal
     stage:s.stage||'write',mine:Array.isArray(s.mine)?s.mine:[],opts:s.opts||null,sel:s.sel||[],checked:!!s.checked,shown:!!s.shown,sent:!!s.sent,skip:!!s.skip};
   if(Q.stage==='pick'&&!Q.opts){Q.stage='write';Q.checked=false}
   /* sessions saved before words kept their own state: words already passed count as marked with their saved mark */
-  if(!s.st)Q.list.slice(0,Q.i).forEach(w=>{if(!Q.marks[w.id]&&kst(w))Q.marks[w.id]=kst(w)});
+  if(!s.st&&!/^JW/.test(String(Q.key||'')))Q.list.slice(0,Q.i).forEach(w=>{if(!Q.marks[w.id]&&kst(w))Q.marks[w.id]=kst(w)});
   /* a saved question whose meanings changed since (e.g. a meaning was split): ask it again with fresh options */
   const w=Q.list[Q.i];if(w&&Q.opts){const right=Q.opts.filter(o=>o[1]).map(o=>o[0]),M=meanings(w);
     if(right.length!==M.length||right.some(r=>!M.includes(r))){Object.assign(Q,blankQ(),{mine:Q.mine})}}
@@ -1409,7 +1409,7 @@ function enterWord(j){Q.i=j;const s=(Q.st||{})[j],w=Q.list[j];Object.assign(Q,bl
   if(!s&&w&&(Q.marks||{})[w.id])Object.assign(Q,{stage:'pick',opts:buildOpts(w),sel:[],checked:true,old:true})}
 function goTo(j){if(j<0||j>=Q.list.length)return;Q.st=Q.st||{};Q.st[Q.i]=curState();enterWord(j);saveQ();draw();window.scrollTo(0,0);if(!Q.checked)autoSay()}
 function recount(){const m=Q.marks||{};Q.score=(Q.base||0)+Q.list.filter(w=>m[w.id]==='y').length;Q.mist=Q.list.filter(w=>m[w.id]==='n')}
-function qMark(v){const w=Q.list[Q.i];setKnow(w.id,v);Q.marks=Q.marks||{};Q.marks[w.id]=v;recount();
+function qMark(v){const w=Q.list[Q.i];/* the learning rounds' quiz (JW…): the mark only moves the word in the rounds – the dictionary gets ✓ when it finishes all 4 */if(!/^JW/.test(String(Q.key||'')))setKnow(w.id,v);Q.marks=Q.marks||{};Q.marks[w.id]=v;recount();
   /* marked before answering: open the answer (options with the right ones, tip, notes) as if checked, and stay on the word */
   if(!Q.checked&&!V.on){if(!Q.opts)Q.opts=buildOpts(w);Q.stage='pick';Q.sel=[];Q.checked=true;Q.skip=true;Q.sent=Q.sent;saveQ();draw();window.scrollTo(0,0);return false}
   return qNext()}
