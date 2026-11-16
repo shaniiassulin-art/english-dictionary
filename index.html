@@ -2941,8 +2941,8 @@ function popSecret(e){e=String(e||'').toLowerCase();const is=x=>x&&e===String(x)
   if(S.screen==='quiz'&&Q){const w=Q.list[Q.i];return is(w.e)&&!(Q.checked||(Q.marks||{})[w.id])}
   if(S.screen==='car'&&CAR){const w=CAR.deck[CAR.i];return is(w.e)&&!(CAR.rev||(CAR.cur!=null&&CAR.i!==CAR.cur))}
   if(S.screen==='cards'&&C){const w=C.deck[C.i];return is(w.e)&&!C.open}
-  if(S.screen==='amwl'&&WS&&WS.list){const w=AMS.w[WS.list[WS.i]];return w&&is(w.e)&&!WS.res&&WS.step!=='tr'}
-  if(S.screen==='amfpl'&&FP){const c=W[FP.ids[FP.i]],st=FP.st[FP.i]||{};return c&&is(c.e)&&!st.done&&FP.stage!=='tr'}
+  if(S.screen==='amwl'&&WS&&WS.list){const w=AMS.w[WS.list[WS.i]];return w&&is(w.e)&&!WS.res}
+  if(S.screen==='amfpl'&&FP){const c=W[FP.ids[FP.i]],st=FP.st[FP.i]||{};return c&&is(c.e)&&!st.done}
   }catch(err){}return false}
 /* tap any English word anywhere (outside buttons and fields) → the same popup: 🔊 the word, 🔊 its sentence, its meaning */
 function wordAt(x,y){let n,o;if(document.caretPositionFromPoint){const p=document.caretPositionFromPoint(x,y);if(!p)return null;n=p.offsetNode;o=p.offset}
@@ -3920,7 +3920,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
     <div class="am-prog"><i style="width:${FP.i/n*100}%"></i></div>
     <div class="am-fpnav"><button class="btn secondary" id="fpPrev" ${FP.i?'':'disabled'} aria-label="המילה הקודמת">→ הקודמת</button><button class="btn secondary" id="fpNext" ${FP.i+1<n?'':'disabled'} aria-label="המילה הבאה">הבאה ←</button></div>`;
   if(st==='tr'){const t=s.alt||{en:c.s,he:x.tr||''};
-    h+=`<div class="am-card"><p class="hint center" style="margin:0">תרגמי את המשפט לעברית. לחיצה על המילה המודגשת מראה את הפירוש.</p>
+    h+=`<div class="am-card"><p class="hint center" style="margin:0">תרגמי את המשפט לעברית. את פירוש המילה המודגשת תראי אחרי שתכתבי; את שאר המילים אפשר ללחוץ ולתרגם.</p>
       <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,s.open||s.done)}</div>
       ${GKEY()&&!s.done?`<button class="link small-link" id="fpAlt" style="align-self:center">${s.altP?'⏳ מכינה משפט אחר…':'✨ משפט אחר'}</button>`:''}</div>`;
     if(!s.done)h+=`<textarea class="am-in" id="fpIn" rows="2" placeholder="התרגום שלי לעברית" dir="rtl">${esc(s.typed||'')}</textarea><div class="am-cta"><button class="btn" id="fpChk">בדיקה</button></div>`;
@@ -3942,7 +3942,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
   $('bk').onclick=()=>{fpSave();go({screen:'amfp'})};
   const pv=$('fpPrev');if(pv)pv.onclick=()=>go2(FP.i-1);const nx=$('fpNext');if(nx)nx.onclick=()=>go2(FP.i+1);
   const on=$('fpOn');if(on)on.onclick=()=>{if(FP.i+1<n)go2(FP.i+1);else{FP=null;fpSave();go({screen:'amfp'})}};
-  const tw=$('trW');if(tw)tw.onclick=()=>{s.open=1;fpSave();amRedrawKeep()};
+  const tw=$('trW');if(tw)tw.onclick=()=>{if(!s.done)return amToast('את הפירוש של המילה תראי אחרי שתכתבי את התרגום – אפשר ללחוץ על שאר המילים');s.open=1;fpSave();amRedrawKeep()};
   const inp=$('fpIn')||$('fpAns');if(inp){inp.oninput=()=>{s.typed=inp.value;fpSave()};if(!s.typed)setTimeout(()=>{try{inp.focus({preventScroll:true})}catch(e){}},50);if(inp.id==='fpAns')inp.onkeydown=e=>{if(e.key==='Enter')$('fpChk').click()}}
   const al=$('fpAlt');if(al)al.onclick=()=>{if(s.altP)return;s.altP=1;amRedrawKeep();const used=[c.s].concat(s.alt?[s.alt.en]:[]);
     aiRun('','',null,{prompt:promptTrSent(w,used),temp:.9}).then(r=>{s.altP=0;const j=r&&r.j;if(j&&j.en&&j.he&&blankOut(String(j.en),c.e)){s.alt={en:String(j.en).trim(),he:String(j.he).trim()}}else amToast('לא הצלחתי ליצור משפט אחר עכשיו');fpSave();if(S.screen==='amfpl')amRedrawKeep()})};
@@ -4247,7 +4247,7 @@ function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.re
   if(WS.step==='tr')setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx)try{trSent(nx)}catch(e){}}},300);
   else setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx&&['tr','mc'].includes(wTask(nx)))try{wRevNow(nx)?wRevSent(nx):trSent(nx)}catch(e){}}},300);
   if(!t){h+=`<div class="am-card"><p class="hint center" style="margin:0">${TRERR[k]||RVERR[k]?esc(TRERR[k]||RVERR[k]):'⏳ מכינה משפט עם המילה…'}</p></div>${TRERR[k]||RVERR[k]?'<div class="am-cta"><button class="btn" id="trSkip">המשך ←</button></div>':''}`;return h+'</div>'}
-  h+=`<div class="am-card"><p class="hint center" style="margin:0">תרגמי את המשפט לעברית. ${WS.mode==='new'?'המילה החדשה':'המילה'} מודגשת – לחיצה עליה מראה את הפירוש.</p>
+  h+=`<div class="am-card"><p class="hint center" style="margin:0">תרגמי את המשפט לעברית. ${WS.mode==='new'?'המילה החדשה':'המילה'} מודגשת – את הפירוש שלה תראי אחרי שתכתבי; את שאר המילים אפשר ללחוץ ולתרגם.</p>
     <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,WS.nwOpen||res)}</div>${srcLab(t)}</div>`;
   if(!res){h+=`<textarea class="am-in" id="trIn" rows="2" placeholder="התרגום שלי לעברית" dir="rtl">${esc(WS.draft||'')}</textarea>
     ${WS.busy?'<p class="hint center">⏳ בודקת את התרגום…</p>':''}<div class="am-cta"><button class="btn" id="trChk" ${WS.busy?'disabled':''}>בדיקה</button></div>
@@ -4510,7 +4510,7 @@ function wBind(w,x){
   const cp=$('wCopy');if(cp){setTimeout(()=>{try{cp.focus({preventScroll:true})}catch(e){}},50);cp.oninput=()=>{if(cp.value.trim().toLowerCase()===w.e.toLowerCase()){WS.res.copied=true;wSave();draw()}}}
   const on=$('wOn');if(on)on.onclick=wNextWord}
 function wTrBind(w){
-  const tw=$('trW');if(tw)tw.onclick=()=>{WS.nwOpen=1;wSave();amRedrawKeep()};
+  const tw=$('trW');if(tw)tw.onclick=()=>{if(!WS.res)return amToast('את הפירוש של המילה תראי אחרי שתכתבי את התרגום – אפשר ללחוץ על שאר המילים');WS.nwOpen=1;wSave();amRedrawKeep()};
   const ti=$('trIn');if(ti){ti.oninput=()=>{WS.draft=ti.value;wSave()};if(!WS.draft&&!WS.busy)setTimeout(()=>{try{ti.focus({preventScroll:true})}catch(e){}},50)}
   const sk=$('trSkip');if(sk)sk.onclick=()=>{delete TRERR[wK(w)];if(WS.mode==='rev'){delete RVERR[wK(w)];WS.res={typed:'',rec:1};wNextWord();return}delete RVERR[wK(w)];WS.res={typed:''};wTrDone(w,true);wNextWord()};
   /* the right translation shows at once; Gemini's feedback comes in when ready (she can also mark it herself meanwhile) */
