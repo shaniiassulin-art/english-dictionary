@@ -1899,16 +1899,22 @@ const wRevLbl=s=>s>=WMAST?'🏆 נלמדה':s>=1?`חזרה ${s} · ${WREV[s][1]}
 const wFb=(w,s)=>{const t=wTask(w),n=WTN[t];return n&&t!==WPATH[s]?` (במילה הזו: ${n} – אין לה משפט מתאים)`:''};
 /* the learning round a word is in: 1–4 = סבב 1–4, 5 = finished learning (in the reviews) */
 const lrOf=w=>w?(w.lr!=null?w.lr:(w.st===0?1:5)):1;
+/* a word missed in a learning round stays in that round and comes again at the end of it, with another question (Nov 16, her request) */
+function wRequeue(w){if(!WS||!WS.perWord)return;const k=wK(w),L=wLive(w);L.lr=WS.round||lrOf(L);if(WS.list.indexOf(k,WS.i+1)<0)WS.list.push(k);wSave()}
 /* ONE look for a word's path everywhere: learning rounds 1–4 · reviews 1–6 · 🏆
    o.counts = how many of the round's words wait in each learning round (tap = go there), o.free = free practice */
-function wTrack(w,o){o=o||{};const lr=w?lrOf(w):(o.cur||1),s=w?Math.min(w.st,WMAST):0,inRev=w&&lr>=5&&s>=1,ch=(t,cls,i)=>o.counts?`<button class="${cls}" data-round="${i}">${t}<small>${o.counts[i-1]}</small></button>`:`<span class="${cls}">${t}</span>`;
+function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&WS.list&&WS.list[WS.i]===wK(w));const lr=pw?WS.round:w?lrOf(w):(o.cur||1),s=w?Math.min(w.st,WMAST):0,inRev=!pw&&w&&lr>=5&&s>=1,ch=(t,cls,i)=>o.counts?`<button class="${cls}" data-round="${i}">${t}<small>${o.counts[i-1]}</small></button>`:`<span class="${cls}">${t}</span>`;
   const rd=[1,2,3,4].map(i=>ch(i,(w&&(inRev||lr>i))?'done':(lr===i&&!inRev&&(w||o.cur))?'on':'',i)).join('');
   const rv=[1,2,3,4,5,6].map(i=>`<span class="${inRev?(i<s?'done':i===s?'on':''):''}">${i}</span>`).join('')+`<span class="${s>=WMAST?'on':''}">🏆</span>`;
   const res=WS&&WS.res&&WS.step!=='tr'&&!o.free;let now='';
   if(w&&!w.k&&o.free)now='המילה עוד לא נכנסה ללמידה';
   else if(w&&s>=WMAST)now='🏆 המילה נלמדה';
   else if(w&&inRev)now=res?`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
-  else if(w)now=`סבב ${lr} מתוך 4 · ${WLRN[lr-1][0]}${lr<4?` ← סבב ${lr+1} · ${WLRN[lr][0]}`:' ← אחר כך חזרה 1 בעוד 20 דק׳'}`;
+  else if(pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend){const R=WS.res;
+    now=R.ok?(lr<4?`✓ נכון – המילה עוברת לסבב ${lr+1} · ${WLRN[lr][0]}`:`✓ נכון – המילה סיימה את הלמידה ועוברת לחזרה 1 (${wWhen(w.due)})`)
+      :`✗ המילה נשארת בסבב ${lr} · ${WLRN[lr-1][0]} – תחזור אלייך בסוף הסבב עם שאלה אחרת`}
+  else if(pw&&WS.res&&WS.res.pend)now=`סבב ${lr} מתוך 4 · ⏳ בודקת את התשובה…`;
+  else if(w)now=`סבב ${lr} מתוך 4 · ${WLRN[lr-1][0]}${lr<4?` ← אם נכון: סבב ${lr+1} · ${WLRN[lr][0]}`:' ← אם נכון: חזרה 1'} · אם לא: שוב בסוף הסבב`;
   else now=`סבב ${o.cur} · ${WLRN[(o.cur||1)-1][0]}`;
   if(o.free)now='תרגול חופשי – לא משנה את המסלול · '+now;
   const oth=w&&res&&inRev?Object.values(AMS.w).filter(x=>x!==w&&wK(x)!==wK(w)&&String(x.e).toLowerCase()===String(w.e).toLowerCase()&&x.st>=1):[];
@@ -2125,7 +2131,7 @@ function trHtml(en,w,open){const st=w.e.toLowerCase().slice(0,Math.max(3,w.e.len
   return tapEn(en.slice(0,i))+`<button class="am-nw" id="trW">${esc(en.slice(i,i+L))}</button>`+tapEn(en.slice(i+L))+(open?`<span class="am-nwm">${esc(en.slice(i,i+L))} = <b>${esc(w.h)}</b></span>`:'')}
 /* a word's round-1 result: it enters the spaced path (learning) or is logged (review) */
 function wTrDone(w,ok){w=wLive(w);if(WS.res&&WS.res.rec)return;if(w.rv&&WS.mode==='new'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}WS.res.ok=ok;WS.res.rec=1;const t=w.trc;if(t&&!WS.res.en){WS.res.en=t.en;WS.res.he=WS.res.he||t.he}if(t){w.trs=(w.trs||[]).concat({en:t.en,ok:ok?1:0,t:amNow()}).slice(-12);delete w.trc}
-  if(WS.mode==='new'){WS.step='first';wAfter(w,ok);WS.step='tr';w.lr=Math.max(lrOf(w),2);amSave()}else if(WS.step==='recall')wAfter(w,ok);else{wLog(w,'tr',ok?1:0,0);w.t=amNow();amSave()}}
+  if(WS.mode==='new'){WS.step='first';wAfter(w,ok);WS.step='tr';if(ok)w.lr=Math.max(w.lr!=null?w.lr:1,2);else wRequeue(w);amSave()}else if(WS.step==='recall')wAfter(w,ok);else{wLog(w,'tr',ok?1:0,0);w.t=amNow();amSave()}}
 const TRLIVE={};
 function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.res.rec){if(GKEY()){TRLIVE[wK(w)]=1;trCheck(w,WS.res.typed,{en:WS.res.en,he:WS.res.he},wK(w))}else{WS.res.pend=0;WS.res.err='אין בדיקה חכמה – השווי לתרגום הנכון וסמני בעצמך.'}}
   const k=wK(w),res=WS.res,t=res&&res.en?{en:res.en,he:res.he||(w.rv&&w.rv.en===res.en&&w.rv.he)||(w.trc&&w.trc.he)||'',src:res.src,lab:res.lab}:trSent(w);
@@ -2160,7 +2166,7 @@ function jwQuizDone(){if(!Q||!/^JW/.test(String(Q.key||''))||!WS||WS.phase!=='dq
 const wAllK=()=>WS?(WS.all||(WS.jr&&jrBlock(WS.jr)&&Array.isArray(jrBlock(WS.jr).ws)?jrBlock(WS.jr).ws:WS.list)):[];
 /* the word on screen counts in the next round as soon as she answers (her request: the round counts update with every answer) */
 const wInRound=(k,r)=>{const w=AMS.w[k];if(!w||w.st>=WMAST)return false;const c=wCard(w);if(c&&isY(c))return false;
-  let l=lrOf(w);if(WS&&WS.res&&WS.list&&WS.list[WS.i]===k&&WS.mode==='new'&&WS.step==='tr'&&l<2)l=2;return l===r};
+  return lrOf(w)===r};
 /* round 2 = the dictionary quiz: each card answered there moves its word on to round 3 at once */
 function jwWordDone(c){if(!c||!WS||!WS.list||!Q||!/^JW/.test(String(Q.key||'')))return;
   const k=WS.list.find(x=>{const w=AMS.w[x];const cc=w&&wCard(w);return cc&&cc.id===c.id});const w=k&&AMS.w[k];if(w&&lrOf(w)===2){w.lr=3;w.t=amNow();amSave()}}
@@ -2425,7 +2431,7 @@ function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;WS.cur=null;
   wSave();draw();window.scrollTo(0,0)}
 /* result of a recall: the stage goes up (a hint keeps it), a miss goes back and comes again at the end of this session */
 function wAfter(w,ok){w=wLive(w);if(WS.res&&!WS.res.task)WS.res.task=wTaskNow(w);if(!ok)wMiss(w);/* the answered task stays on screen even after the stage changes */
-  if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round)w.lr=Math.max(lrOf(w),WS.round+1);if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
+  if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round){if(ok){w.lr=Math.max(lrOf(w),WS.round+1);if(w.lr>=5&&w.st>=1&&w.st<WMAST)w.due=amNow()+WINT[1]/* review 1 = 20 minutes after the learning ends */}else wRequeue(w)}if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   if(WS.step==='first'){/* the first recall right after learning */
     wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();if(!(WS.counted&&WS.counted.includes(wK(w)))&&WS.jr)jrCount(WS.jr);AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
     if(!ok){WS.again=(WS.again||[]).filter(k=>k!==wK(w)).concat(wK(w))}amSave();return}

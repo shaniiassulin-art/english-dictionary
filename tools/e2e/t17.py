@@ -40,10 +40,11 @@ async def main():
     await pg.click('#jrGo');await pg.wait_for_timeout(300);log.append('block:'+await E("S.jb"));await (pg.click('#jbGo') if await pg.locator('#jbGo').count() else pg.wait_for_timeout(10));await pg.wait_for_timeout(500)
     log.append('new page:'+await E("S.screen"));await pg.click('#nwGo');await pg.wait_for_timeout(300)
     # workshop driver
-    async def ws_drive(limit=200,wrong_every=4):
+    async def ws_drive(limit=500,wrong_every=4):
       n=0
       while n<limit and await E("S.screen") in ('amwl','quiz') and await E("S.screen!=='quiz'||/^JW/.test(Q.key)"):
         n+=1
+        if await pg.locator('#wBack').count():await pg.click('#wBack');await pg.wait_for_timeout(300);break
         if await pg.evaluate("S.screen")=='quiz':
           if await pg.locator('#inp0').count():await pg.fill('#inp0','x')
           for _s in ['#show','.opt','#check']:
