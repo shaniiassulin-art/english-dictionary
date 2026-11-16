@@ -892,11 +892,15 @@ function daysScreen(){const today=dayKey(),ks=[...new Set([today,...Object.keys(
   $('bk').onclick=()=>go({screen:'home'})}
 /* the 10 levels always fit under the card (Nov 16, her report: only 6 showed and the page couldn't scroll): the grid takes the rest of the screen,
    5 rows; if a row would be too small to tap, the page scrolls instead of hiding levels */
-function homeFit(){const g=$('dlv');if(!g)return;g.style.height='';g.classList.remove('fit','tight');const H=document.documentElement;
+function homeFit(){const g=$('dlv');if(!g)return;const H=document.documentElement;g.style.height='';g.style.gridTemplateRows='';g.classList.remove('fit','tight');
   if(S.so||S.q){H.classList.remove('noscroll');return}
-  const av=innerHeight-g.getBoundingClientRect().top-(parseFloat(getComputedStyle(document.querySelector('.app')||document.body).paddingBottom)||0)-10;
-  g.classList.toggle('tight',av/5<58);if(av/5>=36){g.style.height=av+'px';g.classList.add('fit');H.classList.add('noscroll')}else{g.classList.remove('tight');H.classList.remove('noscroll')}}
-addEventListener('resize',()=>{if(S.screen==='home')homeFit()});
+  const rows=+g.dataset.rows||5,sc=g.closest('.screen');H.classList.add('noscroll');g.classList.add('fit');g.style.height='0px';
+  const pb=parseFloat(getComputedStyle(document.querySelector('.app')||document.body).paddingBottom)||0,
+    gap=parseFloat(getComputedStyle(sc).rowGap)||0;let after=0;for(let e=g.nextElementSibling;e;e=e.nextElementSibling)if(e.offsetHeight)after+=e.offsetHeight+gap;
+    const av=innerHeight-g.getBoundingClientRect().top-after-pb-4;
+  g.classList.toggle('tight',av/rows<58);
+  if(av/rows>=36){g.style.height=av+'px';g.style.gridTemplateRows=`repeat(${rows},minmax(0,1fr))`;H.classList.add('noscroll')}else{g.style.height='';g.classList.remove('fit','tight')}}
+addEventListener('resize',()=>{if(S.screen==='home'||S.screen==='level')homeFit()});
 function home(){
   const k=DW.filter(known).length;
   /* journey quizzes (keys J… – today's new words, free practice) belong to the אמירנט part, not to the dictionary home */
@@ -912,12 +916,11 @@ function home(){
       ${quizPanel('ALL',DW,'בוחן על כל המילים','כל המילים','home',false,'dq')}
       ${catPanel('ALL',DW)}
     </section>
-    <div class="dgrid g2 dlv" id="dlv">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
+    <div class="dgrid g2 dlv" id="dlv" data-rows="5">${LVN.map((n,i)=>{const ws=byLv(i+1),kk=ws.filter(known).length;
       return `<button class="dtile" data-l="${i+1}"><span class="dt-n">${i+1}</span><span class="dt-t"><b>${n}</b><small>${ws.length} מילים${kk?`<span class="kk"> · יודעת ${kk}</span>`:''}</small></span>${knowBar(ws)}</button>`}).join('')}</div>
   </div>`;
   {const ct=app.querySelector('.panel .cartog');if(ct)ct.remove();$('carTile').id='carTog'}
-  app.querySelectorAll('.cat-row .btn').forEach(x=>{x.textContent=x.textContent.replace(/ · ([\d,]+) מילים$/,' · $1')});
-  homeFit();
+  app.querySelectorAll('.cat-row .btn').forEach(x=>{x.textContent=x.textContent.replace(/ · ([\d,]+) מילים$/,' · $1')});homeFit();
   app.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>go({screen:'level',l:+b.dataset.l}));
   const rc=app.querySelector('.dh-chip[data-resume]');if(rc)rc.onclick=()=>resumeQuiz(rc.dataset.resume);
   $('today').onclick=()=>go({screen:'days'});$('toStart').onclick=()=>go({screen:'start'});favGoBind();$('privGo').onclick=()=>go({screen:'level',l:PL});
@@ -953,7 +956,7 @@ function dPage(o){const ws=o.ws;
     </div>
     ${cardSess(o.key)[1]?'<button class="link dh-all" id="fcNew">כרטיסיות מההתחלה</button>':''}
   </div>`}
-function dBind(o){const ct=app.querySelector('.panel .cartog');if(ct)ct.remove();$('carTile').id='carTog';$('bk').onclick=o.backFn;srchBind();if(o.fav)favBind(...o.fav);
+function dBind(o){app.querySelectorAll('.cat-row .btn').forEach(x=>{x.textContent=x.textContent.replace(/ · ([\d,]+) מילים$/,' · $1')});const ct=app.querySelector('.panel .cartog');if(ct)ct.remove();$('carTile').id='carTog';$('bk').onclick=o.backFn;srchBind();if(o.fav)favBind(...o.fav);
   bindSearch(o.ws);bindSettings();bindQuizPanel(o.key,o.ws,o.name,o.from);bindCatPanel(o.key,o.ws,o.name,o.from);bindCards(o.key,o.ws);
   const l=$('list');if(l&&o.listFn)l.onclick=o.listFn}
 
@@ -965,9 +968,9 @@ function level(){
   const o={backLbl:S.l===PL?'מילון אנגלית':'כל הרמות',backFn:()=>go({screen:'home'}),kicker:S.l===PL?'':`רמה ${S.l}`,title:S.l===PL?lvFull(S.l):LVN[S.l-1]||lvFull(S.l),ws,key:lkey(S.l),
     qtitle:S.l===PL?'בוחן על כל המילים':'בוחן על כל הרמה',name:lvName(S.l),from:'level',fav:[S.l],top:S.l===PL?sentBtn():'',
     listFn:()=>go({screen:'words',filter:'all',wl:'level'}),
-    extra:`<div class="dgrid ${S.l===PL?'g2':'g3'}">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
+    extra:`<div class="dgrid dlv ${S.l===PL?'g2':'g3'}" id="dlv" data-rows="${Math.ceil(n/(S.l===PL?2:3))}">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
       return `<button class="dtile${done?' done':''}" data-g="${g}"><span class="dt-t"><b>${gName(S.l,g)}</b><small>${done?'✓ הכל':`${gw.filter(isY).length}/${gw.length}`}</small></span>${knowBar(gw)}</button>`}).join('')}</div>`};
-  app.innerHTML=dPage(o);dBind(o);
+  app.innerHTML=dPage(o);dBind(o);homeFit();
   const sb=$('sentGo');if(sb)sb.onclick=()=>go({screen:'sent'});
   app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>go({screen:'group',g:+b.dataset.g}));
 }
