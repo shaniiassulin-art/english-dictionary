@@ -2230,7 +2230,7 @@ function wHistPage(){const H=WS.hist||[],v=Math.max(0,Math.min(WS.view,H.length-
   const mv=d=>{WS.view=v+d;wSave();draw();window.scrollTo(0,0)};
   const p=$('hPrev');if(p)p.onclick=()=>mv(-1);const n=$('hNext');if(n)n.onclick=()=>mv(1);
   $('hBack').onclick=()=>{WS.view=null;wSave();draw();window.scrollTo(0,0)}}
-function amWordLearn(){wRoundMigrate();if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
+function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   if(WS.view!=null&&(WS.hist||[]).length)return wHistPage();
   if(WS.mode==='r2'&&WS.phase==='dq')return wDqPage();
   const w=AMS.w[WS.list[WS.i]];if(!w){WS.i++;wSave();return draw()}
@@ -2241,7 +2241,7 @@ function amWordLearn(){wRoundMigrate();if(!WS||!WS.list||WS.i>=WS.list.length)re
   if(WS.perWord&&WS.mode==='new'&&WS.step==='meet'){WS.step='tr';WS.res=null;wSave()}
   const ctx=w.c||ex||'';
   let h=`<div class="screen qz am-scr">
-    <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${HOME}${INFOB()}</span></div>
+    <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${AUTOBTN()}${HOME}${INFOB()}</span></div>
     <div class="am-bar"><span class="am-chip t">${WS.step==='tr'?(WS.mode==='new'?'🌱 סבב 1 – תרגום משפט':'🌐 חזרה · תרגום משפט חדש'):WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'&&WS.perWord?(WS.phase==='he'?'🇮🇱 סבב 3 – משפט בעברית':'🔁 סבב 4 – משפט באנגלית'):WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 משפט בעברית':'🔁 בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span>${w.st?`<span class="am-timer">${wStageDots(w)}</span>`:''}</div>
     <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>${(WS.hist||[]).length?'<button class="link small-link" id="wPrev" style="align-self:flex-start">→ למילה הקודמת</button>':''}`;
   h+=WS.perWord?wTrack(w,{counts:wRoundCounts()}):wMiniPath(w);
@@ -2329,6 +2329,18 @@ function amWordLearn(){wRoundMigrate();if(!WS||!WS.list||WS.i>=WS.list.length)re
 /* "תרגום לעברית" under an English sentence in a review (same button as in the dictionary): the card's own translation when it is
    the example sentence, else translated when opened (Google → MyMemory → Gemini); stays open across redraws */
 const WTRO={};
+/* מצב רץ in learning rounds and reviews (Nov 16, her request – like the dictionary's, same switch AUTO / dictAuto):
+   a new question reads what it shows in English without giving the answer away (the sentence to translate, the word whose meaning is asked);
+   after answering it reads the word and its English sentence. Each state is read once (WAUTOK), not again on redraws. */
+let WAUTOK='';
+function wAutoTick(){const b=$('autoBtn');if(b&&!b._w){b._w=1;b.onclick=()=>{AUTO=!AUTO;LS.set('dictAuto',AUTO?'1':'0');WAUTOK='';draw()}}
+  if(!AUTO||S.screen!=='amwl'||!WS||!WS.list)return;const k=WS.list[WS.i],w=AMS.w[k];if(!w)return;const R=WS.res,ans=!!(R&&!R.pend&&(R.rec||R.ok!=null||R.self));
+  const key=k+'|'+WS.step+'|'+(WS.round||WS.phase||'')+'|'+(ans?'a':'q');if(key===WAUTOK)return;
+  let t='';const trs=app.querySelector('.am-trs [data-amsay]'),wd=app.querySelector('.am-card .w [data-amsay]');
+  if(!ans){if(trs)t=trs.dataset.amsay;else if(wd)t=wd.dataset.amsay}
+  else{const en=R.en||(WS.cur&&WS.cur.en)||'';t=trs?'':(w.e+(en?'. '+en:''))}
+  if(!t&&!ans&&app.querySelector('[data-wmc],#wAns,#trIn')){WAUTOK=key;return}
+  if(!t)return;WAUTOK=key;try{amSay(t)}catch(e){}}
 function wTrHtml(s,x,ex){if(!s)return '';const t=x&&x.tr&&s===ex?x.tr:((TRC[s.toLowerCase()]||{}).h||''),op=WTRO[s];
   return `<div class="center"><button class="trbtn" data-wtr="${esc(s)}">${op?'הסתרת התרגום':'תרגום לעברית'}</button><span class="trans" ${op?'':'hidden'}>${op?(t?esc(t):'⏳ מתרגמת…'):esc(t)}</span></div>`}
 function wStageDots(w){return [1,2,3,4,5,6].map(i=>w.st>i?'●':w.st===i?'◉':'○').join('')}
