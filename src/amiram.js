@@ -1876,8 +1876,8 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
     <div class="am-box"><h4>3 · מה קובע אם מתקדמים</h4>
       <ul><li><b>נכון</b> – המילה עוברת לחזרה הבאה, שרחוקה יותר בזמן.</li>
       <li><b>רמז</b> – יש רק בחזרה 3 (${WREV[3][1]}): נכון עם רמז = אותה חזרה שוב, באותו מרווח.</li>
-      <li><b>טעות</b> – חוזרת שתי חזרות אחורה (לא לפני חזרה 1), מופיעה שוב בעוד 20 דקות, וגם מופיעה שוב בסוף אותו סבב.</li></ul>
-      <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 2 – כלומר שוב "${WREV[2][1]}", בעוד 20 דקות.</p></div>
+      <li><b>טעות</b> – חוזרת שתי חזרות אחורה (לא לפני חזרה 1), מופיעה שוב מיד בסוף אותו סבב לתרגול, והחזרה הבאה שלה מחר.</li></ul>
+      <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 2 – כלומר שוב "${WREV[2][1]}", מחר (ובסוף הסבב עוד פעם לתרגול).</p></div>
     <div class="am-box"><h4>4 · מתי המילים מופיעות</h4>
       <ul><li><b>במסע היומי:</b> "חזרה על מילים" בתחילת היום (כל מה שהגיע זמנו) ו"חזרה על המילים של היום" בסוף (20 דקות אחרי הלמידה).</li>
       <li><b>במילים שלי</b> (בעמוד ההתקדמות): כל מילה עם החזרה שהיא נמצאת בה, מתי החזרה הבאה, והיומן של כל תרגול.</li></ul></div>
@@ -2009,7 +2009,10 @@ function wHeSent(w){const c=wCard(w);if(!c||!c.s)return '';const x=EXTRA[c.xid||
   if(x.trm&&/\[\[[^\]]+\]\]/.test(x.trm))return x.trm.replace(/\[\[[^\]]+\]\]/g,'_____');return heBlank(x.tr,w.h)}
 /* a Hebrew sentence with gaps → html: '?' gaps before answering; after, each gap gets its part of the English word ("both... and" → both / and) */
 function heGapHtml(he,e,fill){const n=(String(he).match(/_{4,}/g)||[]).length,ps=String(e).split(/\s*(?:\.\.\.|…)\s*/).map(x=>x.trim()).filter(Boolean);let i=0;
-  return esc(he).replace(/_{4,}/g,()=>{const k=i++;if(!fill)return '<span class="am-gap">&nbsp;?&nbsp;</span>';const t=n>1&&ps.length===n?ps[k]:k?'…':e;return '<span class="am-fill">'+esc(t)+'</span>'})}
+  /* a space between the English word and a Hebrew letter glued to the gap ("חוץ מ___טום" → "חוץ מ but טום", her screenshot) */
+  const L=/[\u0590-\u05FFA-Za-z0-9]/;
+  return esc(he).replace(/_{4,}/g,(m,o,str)=>{const k=i++;if(!fill)return '<span class="am-gap">&nbsp;?&nbsp;</span>';const t=n>1&&ps.length===n?ps[k]:k?'…':e;
+    return (L.test(str[o-1]||'')?' ':'')+'<bdi class="am-fill">'+esc(t)+'</bdi>'+(L.test(str[o+m.length]||'')?' ':'')})}
 /* a Hebrew sentence with the word's place empty, for "משפט בעברית" (Nov 16, her report: review 1 sometimes showed an English sentence –
    the card's translated example often doesn't contain the meaning word as written, so the task fell back to an English one).
    Order: the card's example → an exam sentence whose book translation has the meaning → a sentence Gemini writes (the Hebrew word
@@ -2418,7 +2421,7 @@ function wGrade(w,ok,hint){w=wLive(w);const k=wK(w),task=wTask(w);
   wLog(w,task,ok?(hint?.5:1):0,hint);
   /* right without a hint: one stage up; with a hint: same stage again; wrong: two stages back and again in 20 minutes */
   if(ok){w.ok=(w.ok||0)+1;if(!hint)w.st=Math.min(WMAST,w.st+1);if(w.st>=WMAST)wMaster(w);else w.due=amNow()+WINT[w.st]}
-  else{w.bad=(w.bad||0)+1;w.st=Math.max(1,w.st-2);w.due=amNow()+WINT[1];if(!(WS.again||[]).includes(k))WS.again=(WS.again||[]).concat(k)}
+  else{/* wrong: two reviews back, practised again at the end of this round (WS.again), next review tomorrow – not again 20 min after the round (Nov 16, her request) */w.bad=(w.bad||0)+1;w.st=Math.max(1,w.st-2);w.due=amNow()+DAY;if(!(WS.again||[]).includes(k))WS.again=(WS.again||[]).concat(k)}
   if(w.rv){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}
   if(w.rvh){if(w.rvh.en)w.used=(w.used||[]).filter(x=>x!==w.rvh.en).concat(w.rvh.en).slice(-24);delete w.rvh}
   w.t=amNow();if(ok)WS.ok=(WS.ok||0)+1;else WS.bad=(WS.bad||0)+1;amSave()}
@@ -2550,7 +2553,7 @@ const AMHELP={
  journey:['🛤','המסלול של מילה','אמירנט',`<p><b>למידה (באותו יום) – 4 סבבים, כל סבב לכל המילים לפני הבא:</b></p><ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol>
   <p><b>חזרות – 6 חזרות במרווחים שגדלים (אין חזרה שבה כותבים את המילה באנגלית). חזרה 1 היא 20 דקות אחרי הסבבים:</b></p>
   <ol>${[1,2,3,4,5,6].map(i=>`<li><b>חזרה ${i} · אחרי ${WREV[i][0]} · ${WREV[i][1]}</b> – ${WREV[i][2]}${i===6?' הצלחה = 🏆 נלמדה, וסימון ✓ במילון.':''}</li>`).join('')}</ol>
-  <p>נכון = לחזרה הבאה · עם רמז (יש רק בחזרה 3) = אותה חזרה שוב · טעות = שתי חזרות אחורה ושוב בעוד 20 דקות (וגם בסוף הסבב). האפשרויות בבחירה הן מילים אחרות שאת לומדת – כך לומדים להבחין ביניהן.</p>`],
+  <p>נכון = לחזרה הבאה · עם רמז (יש רק בחזרה 3) = אותה חזרה שוב · טעות = שתי חזרות אחורה, עוד פעם בסוף הסבב והחזרה הבאה מחר. האפשרויות בבחירה הן מילים אחרות שאת לומדת – כך לומדים להבחין ביניהן.</p>`],
  mywords:['📒','המילים שלי','אמירנט',`<p>כל המילים שלך, עם לשוניות: <b>לחזרה</b> (הגיע זמנן), <b>בלמידה</b>, <b>קשות</b>, <b>נלמדו</b>, <b>מחכות</b>. ליד כל מילה כתוב באיזו חזרה היא (חזרה 1–6) ומתי החזרה הבאה.</p>
   <p>לחיצה על מילה פותחת את העמוד שלה: מסלול החזרות ומתי הבאה, <b>היומן</b> (כל תרגול: מתי, איזה תרגיל, הצלחה / טעות / עם רמז), אחוז הצלחה, <b>המלצה אישית</b>, האסוציאציה (אפשר להחליף), משפט משלך (לא חובה), איפה פגשת אותה, ו"תרגול עכשיו".</p>
   <p>למטה בעמוד הרשימה: כמה מילים חדשות ביום.</p>`],
