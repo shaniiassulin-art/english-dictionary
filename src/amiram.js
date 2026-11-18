@@ -478,6 +478,10 @@ body:has(.am-cta) .totop{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .am-ex .to{color:var(--accent);font-weight:700}.am-ex .fx{display:flex;flex-direction:column;color:var(--muted)}
 .am-gate .am-ex{font-size:.78rem}
 .am-exb{margin:0;padding:8px 12px;border-radius:14px;background:color-mix(in srgb,var(--cp) 11%,var(--card));font-size:.86rem;line-height:1.5;color:var(--ink)}
+.am-ask{display:flex;flex-direction:column;gap:8px}
+.am-askq{background:var(--fill,#eff1f5);border-radius:14px;padding:10px 12px}.am-askq p{margin:0;line-height:1.55}.am-askq .am-askt{font-weight:600;margin-bottom:4px}
+.am-askd>summary{cursor:pointer;color:var(--accent);font-weight:600;list-style:none;text-align:center;padding:6px}.am-askd>summary::-webkit-details-marker{display:none}
+.am-askd[open]{display:flex;flex-direction:column;gap:8px}
 .am-exbox{display:flex;flex-direction:column;gap:5px;padding:12px 14px;border-radius:18px;background:color-mix(in srgb,var(--cp) 11%,var(--card));font-size:.88rem;line-height:1.5}
 .am-extog{font-size:1.05rem}.am-extog.on{background:color-mix(in srgb,var(--cp) 25%,var(--surface))}
 .am-pghelp{display:flex;flex-direction:column;gap:8px}.am-pghelp summary{font-weight:800;cursor:pointer;color:var(--cp)}.am-pghelp details[open] summary{margin-bottom:6px}
@@ -1563,6 +1567,22 @@ function amWriteBind(id,st){const q=AMD.q[id];
     amSaveQ();if(S.screen==='amq')amRedrawKeep()};
   const ag=$('axWAgain');if(ag)ag.onclick=()=>{st.done=false;st.ev=null;st.seen=amNow();amSaveQ();amRedrawKeep()}}
 function amRedrawKeep(){const y=window.scrollY;draw();window.scrollTo(0,y)}
+/* ❓ ask Gemini a question about the feedback she got (her request): one box under every Gemini feedback; questions + answers kept on this device (dictAsk) */
+let ASKS={};try{ASKS=JSON.parse(localStorage.getItem('dictAsk')||'{}')||{}}catch(e){}
+const ASKCTX={},ASKLIVE={};const askSave=()=>{try{const ks=Object.keys(ASKS);ks.slice(0,Math.max(0,ks.length-200)).forEach(k=>delete ASKS[k]);localStorage.setItem('dictAsk',JSON.stringify(ASKS))}catch(e){}};
+function askBox(id,ctx){if(!GKEY())return '';ASKCTX[id]=ctx;const L=ASKS[id]||[];
+  return `<div class="am-ask" data-askid="${esc(id)}">${L.map((x,i)=>`<div class="am-askq"><p class="am-askt">❓ ${esc(x.q)}</p><p>${x.a?bdiEsc(x.a).replace(/\n/g,'<br>'):ASKLIVE[id+'|'+i]?'⏳ חושבת על תשובה…':`${esc(x.err||'התשובה לא הגיעה.')} <button class="link small-link" data-askre="${i}">לנסות שוב</button>`}</p></div>`).join('')}
+    <details class="am-askd"${L.length&&!L[L.length-1].a?'':''}><summary>❓ ${L.length?'לשאול עוד שאלה':'לשאול שאלה על ההערות'}</summary>
+    <textarea class="am-in" rows="2" dir="rtl" placeholder="למשל: למה כאן צריך את המילה הזו ולא אחרת?"></textarea><button class="btn secondary" data-askgo>לשאול</button></details></div>`}
+function askRun(id,i){const x=(ASKS[id]||[])[i],ctx=ASKCTX[id];if(!x||!ctx)return;const lk=id+'|'+i;ASKLIVE[lk]=1;delete x.err;askSave();amRedrawKeep();
+  const prev=(ASKS[id]||[]).slice(0,i).filter(y=>y.a).map(y=>`Q: ${y.q}\nA: ${y.a}`).join('\n');
+  const pr=`You are a warm, clear English teacher for a Hebrew-speaking student preparing for the Amirnet exam. Here is the exercise she did and the feedback she got:\n${ctx}\n${prev?`Earlier questions in this conversation:\n${prev}\n`:''}Her question about it: «${x.q}»\nAnswer her question directly in Hebrew – short and clear (2–6 sentences), with a small example when it helps. JSON: {"answer":"..."}\n${AIHE}`;
+  Promise.race([aiRun('','',null,{prompt:pr,temp:.4}),new Promise(r=>setTimeout(()=>r(null),30000))]).then(r=>{delete ASKLIVE[lk];const a=r&&r.j&&String(r.j.answer||'').trim();
+    if(a)x.a=a;else x.err=r&&r.why==='quota'?'נגמרה המכסה של ג׳מיני להיום.':'לא הצלחתי לקבל תשובה.';askSave();if(S.screen.startsWith('am'))amRedrawKeep()}).catch(()=>{delete ASKLIVE[lk];x.err='לא הצלחתי לקבל תשובה.';askSave();amRedrawKeep()})}
+document.addEventListener('click',ev=>{const g=ev.target.closest('[data-askgo],[data-askre]');if(!g)return;const box=g.closest('[data-askid]');if(!box)return;const id=box.dataset.askid;
+  if(g.dataset.askre!=null)return askRun(id,+g.dataset.askre);
+  const ta=box.querySelector('textarea'),q=ta&&ta.value.trim();if(!q){ta&&ta.focus();return}
+  ASKS[id]=(ASKS[id]||[]).concat({q,t:Date.now()});askSave();askRun(id,ASKS[id].length-1)});
 function amFinishExam(){AQ.i=AQ.ids.length;AQ.ids.forEach((id,i)=>{const s=AQ.st[i];if(s&&s.ans&&!s.rec){s.rec=1;s.sel=s.ans;s.done=true;s.ok=amRecord(id,s.ans,s.ms)}});
   if(AQ.u){const ok=AQ.ids.filter((id,i)=>AQ.st[i]&&AQ.st[i].ok).length;AMS.ex=AMS.ex||{};AMS.ex[(AQ.b?'b':'')+AQ.u]={ok,t:amNow(),ms:amNow()-AQ.t0};amSave()}
   amSaveQ();draw()}
@@ -1612,7 +1632,7 @@ function amWhyBox(id,st){const q=AMD.q[id],a=AMS.a[id]||{},key='why|'+id+'|'+st.
     <div class="am-box" id="amAna"><h4>2 · הניתוח</h4>`;
   if(ai&&!ai.err)h+=`<p class="am-tag">${esc(ai.title||'')}</p>
       ${ai.why_wrong?`<p><b>למה בחירתך לא נכונה:</b> ${bdiEsc(ai.why_wrong)}</p>`:''}${ai.why_right?`<p><b>למה הנכונה נכונה:</b> ${bdiEsc(ai.why_right)}</p>`:''}
-      ${ai.method?`<p><b>🧭 מה היה מציל אותי:</b> ${bdiEsc(ai.method)}</p>`:''}`;
+      ${ai.method?`<p><b>🧭 מה היה מציל אותי:</b> ${bdiEsc(ai.method)}</p>`:''}${askBox(key,`Exam question (${AMTN[q.t]||q.t}): ${q.q}\nOptions: ${(q.o||[]).map((o,i)=>(i+1)+') '+o).join(' | ')}\nRight answer: ${q.a}) ${(q.o||[])[q.a-1]||''}\nHer answer: ${st.sel}) ${(q.o||[])[st.sel-1]||''}\nAnalysis she got: ${ai.title||''} – why her choice is wrong: ${ai.why_wrong||''} – why the right one is right: ${ai.why_right||''} – method: ${ai.method||''}`)}`;
   else if(ai&&ai.err)h+=`<p class="hint">${esc(ai.err)}</p>`;
   else if(!AIP[key])h+=`<p class="hint" style="margin:0">ג׳מיני ינתח את הטעות לפי מה שסימנת: למה התשובה שלך לא נכונה, ואיזה שלב בשיטה היה מונע אותה.</p>`;
   h+=AIP[key]?`<p class="hint">⏳ מנתחת את הטעות…</p>`:`<button class="btn secondary" id="amWhyGo">${ai&&!ai.err?'🔄 ניתוח מחדש':'🧠 לנתח את הטעות'}</button>${aiNeedKey()}`;
@@ -1838,7 +1858,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
       <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,s.open||s.done)}</div>
       ${GKEY()&&!s.done?`<button class="link small-link" id="fpAlt" style="align-self:center">${s.altP?'⏳ מכינה משפט אחר…':'✨ משפט אחר'}</button>`:''}</div>`;
     if(!s.done)h+=`<textarea class="am-in" id="fpIn" rows="2" placeholder="התרגום שלי לעברית" dir="rtl">${esc(s.typed||'')}</textarea><div class="am-cta"><button class="btn" id="fpChk">בדיקה</button></div>`;
-    else{if(s.ai)h+=`<p class="am-fb ${s.ai.ok?'ok':'bad'}">${s.ai.ok?'נכון! ✓':'לא נכון – המילה לא תורגמה בפירוש הנכון'}</p>${s.ai.feedback?`<div class="am-box ${s.ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(s.ai.feedback)}</p></div>`:''}`;
+    else{if(s.ai)h+=`<p class="am-fb ${s.ai.ok?'ok':'bad'}">${s.ai.ok?'נכון! ✓':'לא נכון – המילה לא תורגמה בפירוש הנכון'}</p>${s.ai.feedback?`<div class="am-box ${s.ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(s.ai.feedback)}</p></div>`:''}${askBox('fp|'+c.id+'|'+t.en,`Task: translate the English sentence into Hebrew. The word: "${c.e}" = "${c.h[0]}".\nEnglish sentence: ${t.en}\nCorrect Hebrew translation: ${t.he||''}\nHer translation: ${s.typed||''}\nVerdict: ${s.ai.ok?'correct':'wrong'}\nFeedback she got: ${s.ai.feedback||''}`)}`;
       else if(s.pend)h+='<p class="hint center" style="margin:0">⏳ בודקת את התרגום שלך…</p>';else if(s.err)h+=`<p class="hint center" style="margin:0">${esc(s.err)}</p>`;
       h+=`<div class="am-box"><h4>התרגום הנכון</h4><p style="margin:0">${t.he?esc(t.he):'⏳'}</p><p class="hint" style="margin:6px 0 0">התרגום שלך: ${esc(s.typed||'')}</p></div>`}}
   else if(st==='he2en'){h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
@@ -2085,11 +2105,11 @@ function sLvl(t,src){const ws=t.split(/\s+/),n=ws.length,L=ws.reduce((a,x)=>a+x.
   return n<=12&&L<=5.4&&src!=='rc'?1:(n>=20||L>=6.2)?3:2}
 function sPoolX(){if(SPOOLX||!AMD)return SPOOLX;const out=[],seen=new Set(),set={};(AMD.s||[]).forEach(x=>(x.ids||[]).forEach(id=>set[id]=x));
   const add=(t,src,he,lab)=>{t=String(t||'').replace(/\s+/g,' ').trim();if(t.length<=20||t.length>=260||seen.has(t))return;seen.add(t);out.push({t,src,he:String(he||'').replace(/\s*\([^)]*\)/g,'').trim(),lab,lvl:sLvl(t,src)})};
-  const labOf=(id,src)=>{const x=set[id];return QSRC[src]+(x&&x.u?(x.b?` · פרק ${x.u} בספר החזרות`:` · יחידה ${x.u}`):'')};
+  const labOf=(id,src,opt)=>{const x=set[id],n=String(id).split('-').pop();return QSRC[src]+(x&&x.u?(x.b?` · פרק ${x.u} בספר החזרות`:` · יחידה ${x.u}`):'')+(/^\d+$/.test(n)?` · שאלה ${n}${opt?' (התשובה הנכונה)':''}`:'')};
   Object.entries(AMD.q).forEach(([id,q])=>{if(q.nt)return;
     if(q.t==='sc'&&Array.isArray(q.o)&&q.a)add(q.q.replace(/_{3,}/g,q.o[q.a-1]),'sc',q.he,labOf(id,'sc'));
-    else if(q.t==='rs'){add(q.q,'rs',q.he,labOf(id,'rs'));if(Array.isArray(q.o)&&q.a)add(q.o[q.a-1],'rs',(q.oh||[])[q.a-1],labOf(id,'rs'))}});
-  Object.entries(AMD.x).forEach(([id,T])=>(T.l.filter(Boolean).join(' ').match(/[^.!?]+[.!?]+/g)||[]).forEach(t=>add(t,'rc','',QSRC.rc+(set[id]&&set[id].u?' · יחידה '+set[id].u:''))));
+    else if(q.t==='rs'){add(q.q,'rs',q.he,labOf(id,'rs'));if(Array.isArray(q.o)&&q.a)add(q.o[q.a-1],'rs',(q.oh||[])[q.a-1],labOf(id,'rs',1))}});
+  Object.entries(AMD.x).forEach(([id,T])=>(T.l.filter(Boolean).join(' ').match(/[^.!?]+[.!?]+/g)||[]).forEach(t=>add(t,'rc','',QSRC.rc+(set[id]&&set[id].u?' · יחידה '+set[id].u:'')+(/^\d+$/.test(String(id).split('-').pop())?' · קטע '+String(id).split('-').pop():''))));
   (AMD.rd||[]).forEach(T=>T.en.forEach(p=>(p.match(/[^.!?]+[.!?]+/g)||[]).forEach(t=>add(t,'rd','',''))));
   Object.values(AMD.lists||{}).forEach(L=>L.forEach(x=>add(x.s,'list','','')));return SPOOLX=out}
 const wHas=(t,w)=>!!blankOut(t,w.e)&&new RegExp('\\b'+w.e.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|es|ed|d|ing|ly)?\\b','i').test(t);
@@ -2114,7 +2134,8 @@ function mcFilled(full,blank){const i=blank.search(/_{4,}/);if(i<0)return tapEn(
 const wSM=w=>{if(!WS||!w)return null;if(WS.mode==='rev'&&WS.step==='recall'&&w.st>=1&&w.st<WMAST)return {tag:w.st,lv:WLV[w.st]||2};
   if(WS.perWord&&WS.mode==='new'&&WS.step==='tr')return {tag:'L1',lv:1};if(WS.perWord&&WS.mode==='r2'&&WS.phase==='mc')return {tag:'L4',lv:1};return null};
 const wRevNow=w=>!!wSM(w);
-function srcLab(t){return t&&QSRC[t.src]?`<p class="am-srcl">📘 מתוך שאלות האמירנט · ${esc(t.lab||QSRC[t.src])}</p>`:t&&t.src==='rd'?'<p class="am-srcl">📖 מתוך קטעי הקריאה בספר</p>':''}
+let SPXL=null;const srcLabOf=t=>{const e=t&&(t.en||t.t);if(!e||!sPoolX())return t.lab;if(!SPXL){SPXL={};SPOOLX.forEach(p=>SPXL[p.t]=p.lab)}return SPXL[String(e).replace(/\s+/g,' ').trim()]||t.lab};
+function srcLab(t){return t&&QSRC[t.src]?`<p class="am-srcl">📘 מתוך שאלות האמירנט · ${esc(srcLabOf(t)||QSRC[t.src])}</p>`:t&&t.src==='rd'?'<p class="am-srcl">📖 מתוך קטעי הקריאה בספר</p>':''}
 const WOC={};
 function wOther(w){const k=wK(w);if(k in WOC)return WOC[k];const P=sPool();if(!P)return '';const own=[w.my,w.c,(wCard(w)||{}).s].filter(Boolean);
   const c=P.filter(t=>!own.includes(t)&&blankOut(t,w.e)&&new RegExp('\\b'+w.e.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|es|ed|d|ing|ly)?\\b','i').test(t)).sort((a,b)=>a.length-b.length).slice(0,6);
@@ -2172,7 +2193,7 @@ function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.re
     ${WS.busy?'<p class="hint center">⏳ בודקת את התרגום…</p>':''}<div class="am-cta"><button class="btn" id="trChk" ${WS.busy?'disabled':''}>בדיקה</button></div>
     ${WS.mode==='new'?'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>':''}`;return h+'</div>'}
   const ai=res.ai;
-  if(ai)h+=`<p class="am-fb ${ai.ok?'ok':'bad'}">${ai.ok?'נכון! ✓':'לא נכון – המילה לא תורגמה בפירוש הנכון'}</p>${ai.feedback?`<div class="am-box ${ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(ai.feedback)}</p></div>`:''}`;
+  if(ai)h+=`<p class="am-fb ${ai.ok?'ok':'bad'}">${ai.ok?'נכון! ✓':'לא נכון – המילה לא תורגמה בפירוש הנכון'}</p>${ai.feedback?`<div class="am-box ${ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(ai.feedback)}</p></div>`:''}${askBox('tr|'+k+'|'+t.en,`Task: translate the English sentence into Hebrew. The learned word: "${w.e}" = "${w.h}".\nEnglish sentence: ${t.en}\nCorrect Hebrew translation: ${t.he||''}\nHer translation: ${res.typed||''}\nVerdict: ${ai.ok?'correct':'wrong'}\nFeedback she got: ${ai.feedback||''}`)}`;
   else if(res.pend)h+=`<p class="hint center" style="margin:0">⏳ בודקת את התרגום שלך…</p>`;
   else if(res.err)h+=`<p class="hint center" style="margin:0">${esc(res.err)}</p>`;
   h+=`<div class="am-box"><h4>התרגום הנכון</h4><p style="margin:0">${t.he?esc(t.he):'⏳'}</p><p class="hint" style="margin:6px 0 0">התרגום שלך: ${esc(res.typed||'')}</p></div>`;
