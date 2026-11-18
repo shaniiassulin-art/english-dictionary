@@ -2401,7 +2401,7 @@ Also, ONLY if it truly applies to this word, add "method_tip": one short Hebrew 
 JSON: {"method_tip":"","ideas":[{"sound":"the sound-alike in Hebrew letters and which part of the English word it matches, e.g. 'אבנדון ← abandon'","scene":"the scene in Hebrew","link":"one short line: «${w.e}» נשמע כמו ... ← ..."},{...},{...}]} – exactly 3 different ideas. ${AIHE}`}
 function promptTrSent(w,old,lv){return `Write ONE English sentence for a Hebrew-speaking learner preparing for the Amirnet / psychometric English exam. It must use the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew).
 ${lv===3?'Level: HARD – like a sentence in the exam itself: academic register, 18–30 words, two clauses joined by a connector (although, whereas, however, because, despite…), CEFR B2–C1.':lv===2?'Level: MEDIUM – CEFR B1, 10–16 words, a natural sentence like in a simple article, may have one connector.':'Level: EASY – every other word very common and simple (CEFR A1–A2, 5–12 words), so the learner understands everything except "'+w.e+'". Everyday situation, concrete, natural.'}
-It must be different from these sentences: ${JSON.stringify(old||[])}.
+It must be COMPLETELY different from these sentences – another situation, other people, another place, other words (not a variation of them): ${JSON.stringify(old||[])}.
 JSON: {"en":"the sentence","he":"a natural Hebrew translation of the whole sentence"}
 ${AIHE}`}
 function promptTr(w,en,he,mine){return `A Hebrew-speaking learner translated an English sentence into Hebrew, to practise the word "${w.e}" (meaning here: ${w.h}).
@@ -4023,7 +4023,7 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   const res=WS&&WS.res&&WS.step!=='tr'&&!o.free;let now='';
   if(w&&!w.k&&o.free)now='המילה עוד לא נכנסה ללמידה';
   else if(w&&s>=WMAST)now='🏆 המילה נלמדה';
-  else if(w&&inRev)now=res?`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
+  else if(w&&inRev)now=res?(WS.res.ok===false?`✗ המילה תחזור שוב היום, בסוף הסבב, עם משפט אחר – עד שתעני נכון · עכשיו חזרה ${s} מתוך 6`:(WS.re||[]).includes(wK(w))&&WS.res.ok?`✓ נכון – המילה עוברת · עכשיו חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`):`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
   else if(pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend){const R=WS.res;
     now=R.ok?(lr<4?`✓ נכון – המילה עוברת לסבב ${lr+1} · ${WLRN[lr][0]}`:`✓ נכון – המילה סיימה את הלמידה ועוברת לחזרה 1 (${wWhen(w.due)})`)
       :`✗ המילה חוזרת לסבב 1 · ${WLRN[0][0]} – תתחיל אותו שוב אחרי שתסיימי את כל הסבבים, עם משפט אחר`}
@@ -4148,8 +4148,13 @@ function heGapHtml(he,e,fill){const n=(String(he).match(/_{4,}/g)||[]).length,ps
    for the meaning marked) – kept in w.rvh until the review is graded. Returns {he,en,src,lab} | null (being made) | false (none). */
 const HEP={},HEERR={};
 /* an exam sentence with the word in this meaning (book translation checked for a word with several meanings), easiest first */
+/* sentences the word already had (to keep the next one really different – her request: not similar to the previous one) */
+function wSeenEn(w){const c=wCard(w),o=[...(w.used||[]).filter(x=>!String(x).startsWith('he:')),...(w.trs||[]).map(t=>t&&t.en),c&&c.s,w.rv&&w.rv.en,w.rvh&&w.rvh.en,w.trc&&w.trc.en];return [...new Set(o.filter(Boolean).map(String))]}
+const sToks=(t,w)=>{const f=new Set(wForms(String(w.e).toLowerCase()));return new Set(String(t).toLowerCase().match(/[a-z]+/g)?.filter(x=>x.length>2&&!STOP.has(x)&&!f.has(x))||[])};
+function sSim(a,b,w){const A=sToks(a,w),B=sToks(b,w);if(!A.size||!B.size)return false;let n=0;A.forEach(x=>{if(B.has(x))n++});const mn=Math.min(A.size,B.size);return n/(A.size+B.size-n)>=.3||(mn>=2&&n/mn>=.5)}
+const wTooSim=(w,t)=>wSeenEn(w).some(o=>o!==t&&sSim(o,t,w));
 function wHePick(w){const used=new Set([...(w.used||[]),...(w.heTried||[])]),c=wCard(w),dd=dictFind(w.e),multi=dd&&dd.h.length>1,mt=heToks(w.h);
-  return (sPoolX()||[]).filter(p=>QSRC[p.src]&&!used.has(p.t)&&!(c&&p.t===c.s)&&wHas(p.t,w)&&(!multi||(p.he&&[...heToks(p.he)].some(t=>mt.has(t))))).sort((a,b)=>a.lvl-b.lvl||a.t.length-b.t.length)[0]||null}
+  return (sPoolX()||[]).filter(p=>QSRC[p.src]&&!used.has(p.t)&&!(c&&p.t===c.s)&&!wTooSim(w,p.t)&&wHas(p.t,w)&&(!multi||(p.he&&[...heToks(p.he)].some(t=>mt.has(t))))).sort((a,b)=>a.lvl-b.lvl||a.t.length-b.t.length)[0]||null}
 const wHeOk=w=>{const s=wHeSent(w);return !!((s&&!(w.used||[]).includes('he:'+s))||(w.rvh&&w.rvh.he)||(GKEY()&&!HEERR[wK(w)]))};
 /* the Hebrew sentence of the task. Only the card's own translated example is blanked directly; any other sentence is translated by Gemini,
    which marks the exact Hebrew word(s) for this English word – an exam sentence first (Gemini also says whether the word has this meaning
@@ -4159,13 +4164,13 @@ function wHeRev(w){const s=wHeSent(w),c=wCard(w);if(s&&!(w.used||[]).includes('h
   if(HEERR[k]||!GKEY())return false;if(HEP[k])return null;HEP[k]=1;
   const P=wHePick(w),mark=`In the Hebrew translation wrap the Hebrew word(s) that translate "${w.e}" in double square brackets, e.g. [[מילה]] – exactly once, and nothing else in brackets.`;
   const pIn=P?`Here is an English sentence: "${P.t}"\nDoes the word "${w.e}" in it have exactly this meaning: "${w.h}" (Hebrew)? Then translate the sentence into natural Hebrew. ${mark}\nJSON: {"fits":true or false,"he":"the Hebrew translation with [[...]]"}\n${AIHE}`:null;
-  const pNew=`Write ONE short, easy English sentence (CEFR A2–B1, 6–14 words, everyday situation) that uses the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew), and its natural Hebrew translation. ${mark}\nJSON: {"en":"the English sentence","he":"the Hebrew translation with [[...]]"}\n${AIHE}`;
+  const seen=wSeenEn(w).slice(-8),pNew=`Write ONE short, easy English sentence (CEFR A2–B1, 6–14 words, everyday situation) that uses the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew), and its natural Hebrew translation. ${mark}${seen.length?`\nIt must be COMPLETELY different from these sentences – another situation, other people, another place, other words (not a variation of them): ${JSON.stringify(seen)}`:''}\nJSON: {"en":"the English sentence","he":"the Hebrew translation with [[...]]"}\n${AIHE}`;
   const ask=pr=>Promise.race([aiRun('','',null,{prompt:pr,temp:.6}),new Promise(r=>setTimeout(()=>r(null),25000))]);
-  const take=(he,en,src,lab)=>{const m=/\[\[([^\]]+)\]\]/.exec(he||'');if(!m||!en||!wHas(en,w)||/\[\[/.test(he.replace(m[0],'')))return false;const L=wLive(w);L.rvh={he:he.replace(m[0],'_____').trim(),en,src,lab:lab||'',g:1};L.t=amNow();amSave();return true};
+  const take=(he,en,src,lab)=>{const m=/\[\[([^\]]+)\]\]/.exec(he||'');if(!m||!en||!wHas(en,w)||wTooSim(w,en)||/\[\[/.test(he.replace(m[0],'')))return false;const L=wLive(w);L.rvh={he:he.replace(m[0],'_____').trim(),en,src,lab:lab||'',g:1};L.t=amNow();amSave();return true};
   const done=()=>{delete HEP[k];if(S.screen==='amwl')amRedrawKeep()};
   (async()=>{try{
     if(pIn){const r=await ask(pIn),j=r&&r.j;if(j&&j.fits!==false&&take(String(j.he||''),P.t,P.src,P.lab))return done();const L=wLive(w);L.heTried=(L.heTried||[]).concat(P.t).slice(-12)}
-    const r=await ask(pNew),j=r&&r.j;if(j&&take(String(j.he||''),String(j.en||'').trim(),'ai'))return done();HEERR[k]=1;done()}catch(e){HEERR[k]=1;done()}})();
+    for(let a=0;a<2;a++){const r=await ask(pNew),j=r&&r.j;if(j&&take(String(j.he||''),String(j.en||'').trim(),'ai'))return done()}HEERR[k]=1;done()}catch(e){HEERR[k]=1;done()}})();
   return null}
 /* another English sentence with the word: from the exam questions, passages and books (not the one she learned with) */
 let SPOOL=null;
@@ -4192,7 +4197,7 @@ const wHas=(t,w)=>!!blankOut(t,w.e)&&new RegExp('\\b'+w.e.toLowerCase().replace(
 const RVP={},RVERR={};
 function wRevSent(w){w=wLive(w);const sm=wSM(w)||{tag:w.st,lv:WLV[w.st]||2},tg=sm.tag;const cu=WS&&WS.cur;if(cu&&cu.k===wK(w)&&cu.st===tg&&cu.en){if(!w.rv||w.rv.en!==cu.en){w.rv={st:cu.st,en:cu.en,he:cu.he||'',src:cu.src,lab:cu.lab}}return w.rv}
   if(w.rv&&w.rv.st===tg&&w.rv.en){if(WS&&WS.list&&WS.list[WS.i]===wK(w)&&!WS.res)WS.cur=Object.assign({k:wK(w)},w.rv);return w.rv}const k=wK(w),lv=sm.lv;if(RVP[k]||RVERR[k])return null;
-  const c=wCard(w),used=new Set([...(w.used||[]),...(w.trs||[]).map(t=>t.en),c&&c.s].filter(Boolean)),dd=dictFind(w.e),multi=dd&&dd.h.length>1,mt=heToks(w.h),P=(sPoolX()||[]).filter(p=>!used.has(p.t)&&wHas(p.t,w)&&(!multi||(p.he&&[...heToks(p.he)].some(t=>mt.has(t)))));
+  const c=wCard(w),used=new Set([...(w.used||[]),...(w.trs||[]).map(t=>t.en),c&&c.s].filter(Boolean)),dd=dictFind(w.e),multi=dd&&dd.h.length>1,mt=heToks(w.h),P=(sPoolX()||[]).filter(p=>!used.has(p.t)&&!wTooSim(w,p.t)&&wHas(p.t,w)&&(!multi||(p.he&&[...heToks(p.he)].some(t=>mt.has(t)))));
   const ex=P.filter(p=>QSRC[p.src]),at=l=>ex.filter(p=>p.lvl===l),rnd=a=>a[Math.floor(Math.random()*Math.min(a.length,6))];
   const order=lv===1?[at(1)]:lv===2?[at(2),at(1)]:[at(3),at(2)];
   const set=p=>{const L=wLive(w);L.rv={st:tg,en:p.t,he:p.he||'',src:p.src,lab:p.lab||''};L.t=amNow();if(WS&&WS.list&&WS.list[WS.i]===k){WS.cur=Object.assign({k},L.rv);wSave()}if(p.he)TRC[p.t.toLowerCase()]={h:p.he,src:'הספר'};amSave();
@@ -4200,8 +4205,8 @@ function wRevSent(w){w=wLive(w);const sm=wSM(w)||{tag:w.st,lv:WLV[w.st]||2},tg=s
   for(const a of order)if(a.length)return set(lv===1?rnd(a.slice().sort((x,y)=>x.t.length-y.t.length)):rnd(shuffle(a.slice())));
   const any=()=>{const a=P.filter(p=>Math.abs(p.lvl-lv)<=1);if(a.length)return set(rnd(shuffle(a.slice())));if(P.length)return set(P[0]);if(c&&c.s&&wHas(c.s,w))return set({t:c.s,src:'dict',he:(EXTRA[c.xid||c.id]||{}).tr||''});RVERR[k]='לא נמצא משפט למילה הזו.';return null};
   if(!GKEY())return any();
-  RVP[k]=1;aiRun('','',null,{prompt:promptTrSent(w,[...used].slice(-8),lv),temp:.9}).then(r=>{delete RVP[k];const j=r&&r.j,en=j&&String(j.en||'').trim();
-    if(en&&j.he&&wHas(en,w)&&!used.has(en))set({t:en,he:String(j.he).trim(),src:'ai'});else any();if(S.screen==='amwl')amRedrawKeep()});return null}
+  RVP[k]=1;aiRun('','',null,{prompt:promptTrSent(w,[...new Set([...used,...wSeenEn(w)])].slice(-8),lv),temp:.9}).then(r=>{delete RVP[k];const j=r&&r.j,en=j&&String(j.en||'').trim();
+    if(en&&j.he&&wHas(en,w)&&!used.has(en)&&!wTooSim(w,en))set({t:en,he:String(j.he).trim(),src:'ai'});else any();if(S.screen==='amwl')amRedrawKeep()});return null}
 /* the sentence with the missing word put back and marked */
 function mcFilled(full,blank){const i=blank.search(/_{4,}/);if(i<0)return tapEn(full);const m=/_{4,}/.exec(blank),tail=blank.slice(i+m[0].length),j=full.length-tail.length;
   return tapEn(full.slice(0,i))+`<b class="am-fill">${esc(full.slice(i,j))}</b>`+tapEn(full.slice(j))}
@@ -4583,14 +4588,18 @@ function wAfter(w,ok){w=wLive(w);if(WS.res&&!WS.res.task)WS.res.task=wTaskNow(w)
     if(!ok){WS.again=(WS.again||[]).filter(k=>k!==wK(w)).concat(wK(w))}amSave();return}
   wGrade(w,ok,WS.hint||0)}
 function wGrade(w,ok,hint){w=wLive(w);const k=wK(w),task=WS&&WS.res&&WS.res.task||wTask(w);
-  if((WS.re||[]).includes(k)){wLog(w,'re',ok?1:0,hint);w.t=amNow();if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
+  if((WS.re||[]).includes(k)){wLog(w,'re',ok?1:0,hint);wSentUsed(w);w.t=amNow();if(ok)WS.ok=(WS.ok||0)+1;
+    /* wrong again: once more at the end of this round, with another sentence – the word moves on only when she gets it right (her request) */
+    else if(!(WS.again||[]).includes(k))WS.again=(WS.again||[]).concat(k);amSave();return}
   wLog(w,task,ok?(hint?.5:1):0,hint);
   /* right without a hint: one stage up; with a hint: same stage again; wrong: two stages back and again in 20 minutes */
   if(ok){w.ok=(w.ok||0)+1;if(task==='en2he')delete w.e2hBad;if(!hint)w.st=Math.min(WMAST,w.st+1);if(w.st>=WMAST)wMaster(w);else w.due=amNow()+WINT[w.st]}
   else{/* wrong: two reviews back, practised again at the end of this round (WS.again), next review tomorrow – not again 20 min after the round (Nov 16, her request) */w.bad=(w.bad||0)+1;w.st=Math.max(1,w.st-2);w.due=amNow()+DAY;if(!(WS.again||[]).includes(k))WS.again=(WS.again||[]).concat(k)}
-  if(w.rv){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}
-  if(w.rvh){if(w.rvh.en)w.used=(w.used||[]).filter(x=>x!==w.rvh.en).concat(w.rvh.en).slice(-24);delete w.rvh}
+  wSentUsed(w);
   w.t=amNow();if(ok)WS.ok=(WS.ok||0)+1;else WS.bad=(WS.bad||0)+1;amSave()}
+/* the sentence just answered goes to the used ones, so the next question has another one */
+function wSentUsed(w){if(w.rv){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}
+  if(w.rvh){if(w.rvh.en)w.used=(w.used||[]).filter(x=>x!==w.rvh.en).concat(w.rvh.en).slice(-24);delete w.rvh}}
 function wDone(){const n=WS?WS.list.length:0;
   app.innerHTML=`<div class="screen">${amNav(WS&&WS.from||'amw','חזרה')}
     <p class="am-big">🎉</p><h2 class="center">סיימת את הסבב!</h2>
