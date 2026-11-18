@@ -3758,23 +3758,23 @@ function amQPath(st,ok){const P=[['res','✓ תשובה'],...(ok?[]:[['why','�
 const XPLO={};
 /* the explanations are made ahead (her request – no waiting): the question on screen and the next 3, one after another, in the background */
 let XPLQ=[],XPLRUN=false;
-function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x|'+id]&&!AMAI['x|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
-function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
+function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x2|'+id]&&!AMAI['x2|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
+function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x2|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
   aiCached(key,promptXpl(AMD.q[id]),.2).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
     if(r&&r.err&&/מכסה/.test(r.err)){XPLQ=[];XPLRUN=false;return}setTimeout(amXplNext,1200)})}
 
 function promptXpl(q){return `You are teaching a Hebrew-speaking student who knows almost NO English words, for the Amiram English exam. Explain this question after she answered it, in detail, so she understands the sentence and every answer option.
 ${qText(q)}
-Rules: assume she does not know any word. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
-JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","words":[{"en":"English word or short phrase, in sentence order, every word that carries meaning","he":"its Hebrew meaning here"}],"understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit"}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
+Rules: assume she does not know any word. Do NOT give a word-by-word glossary – for the hard words, teach HOW to guess the meaning from context and word parts. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
+JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","decode":[{"en":"a word she probably does not know – the hard words of the sentence and of the options (up to 8)","how":"Hebrew: how she could work out its meaning WITHOUT knowing the word – clues from the sentence around it (what comes before/after, connectors like but/because, positive or negative tone, what makes sense logically), prefix / suffix / root she may know, a similar word in Hebrew or a loanword, its part of speech from its place in the sentence","meaning":"the meaning she reaches in the end, 1-3 Hebrew words"}],"understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit"}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
 ${AIHE}`}
-function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x|'+id,ai=AMAI[key],open=!!XPLO[id];
+function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x2|'+id,ai=AMAI[key],open=!!XPLO[id];
   let b='';
   if(open&&!ai&&!AIP[key]){const p=aiCached(key,promptXpl(q),.2);p.then(()=>{if(S.screen==='amq'&&AQ.cur===id)amRedrawKeep()})}
   if(ai&&!ai.err){const L=(a,f)=>(a||[]).map(f).join('');
     const outer=q.he&&/^(sc|wf|gc)$/.test(q.t);/* the translation box above already shows the corrected one */
     if(!outer){b+=ai.translation?`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(ai.translation)}</p>`:'';b+=ai.book_wrong?`<p class="am-xw">⚠️ ${bdiEsc(ai.book_wrong)}</p>`:''}
-    b+=(ai.words||[]).length?`<h5>מילה אחר מילה</h5><div class="am-xwords">${L(ai.words,w=>`<span><bdi dir="ltr" class="en">${esc(w.en||'')}</bdi><small>${esc(w.he||'')}</small></span>`)}</div>`:'';
+    b+=(ai.decode||[]).length?`<h5>איך מבינים מילה שלא מכירים</h5><ul class="am-xopts">${L(ai.decode,d=>`<li><b><bdi dir="ltr">${esc(d.en||'')}</bdi></b> – ${bdiEsc(d.how||'')}${d.meaning?` <span>← ${esc(d.meaning)}</span>`:''}</li>`)}</ul>`:'';
     b+=(ai.understand||[]).length?`<h5>איך מבינים את המשפט</h5><ol>${L(ai.understand,x=>`<li>${bdiEsc(x)}</li>`)}</ol>`:'';
     b+=(ai.passage||[]).length?`<h5>איפה התשובה בקטע</h5>${L(ai.passage,x=>`<p dir="ltr" class="en">${esc(x.en||'')}</p><p>${bdiEsc(x.he||'')}</p>`)}`:'';
     b+=(ai.options||[]).length?`<h5>התשובות</h5><ul class="am-xopts">${L(ai.options,(o,i)=>`<li class="${o.ok?'ok':''}"><b>(${i+1}) <bdi dir="ltr">${esc(o.en||'')}</bdi></b> = ${esc(o.he||'')} ${o.ok?'✓':'✗'}<br><span>${bdiEsc(o.why||'')}</span></li>`)}</ul>`:'';
@@ -3785,10 +3785,10 @@ function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x|'+id,ai=AMAI
   else b+=`<p class="hint">⏳ ההסבר כמעט מוכן…</p>`;
   return `<details class="am-box am-xpl" data-xpl="${esc(id)}" ${open?'open':''}><summary>📖 הסבר מפורט – איך להבין את המשפט והתשובות</summary>${open?b:''}</details>`}
 document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.am-xpl'))return;const id=d.dataset.xpl;const was=!!XPLO[id];XPLO[id]=d.open;if(d.open&&!was)amRedrawKeep()},true);
-document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
+document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x2|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
 function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   let h=amQPath(st,ok)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
-  const xai=AMAI['x|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
+  const xai=AMAI['x2|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
   const heBox=(t)=>`<div class="am-box good"><h4>${xfix?'תרגום המשפט (מתוקן)':t}</h4><p>${esc(xfix?xai.translation:q.he)}</p>${xfix?`<p class="hint" style="margin:0">בתרגום של הספר הייתה טעות: ${bdiEsc(xai.book_wrong)}</p>`:GKEY()&&!xai?`<button class="small-link" data-xplfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">⚠️ יש טעות בתרגום? לבדוק ולתקן</button>`:''}</div>`;
   if(q.t==='sc'&&q.he)h+=heBox('תרגום המשפט');
   if(q.t==='rs'&&q.he)h+=`<div class="am-box"><h4>המשפט המקורי בעברית</h4><p>${esc(q.he)}</p><p class="hint" style="margin:0">ליד כל תשובה למעלה: התרגום שלה וההסבר מהספר.</p></div>`;
