@@ -11,7 +11,7 @@ with sync_playwright() as p:
   pg.locator('[data-wmc]').first.click();pg.wait_for_timeout(400)
   pg.click('#wOn');pg.wait_for_timeout(800)
   print('prev link:',pg.locator('#wPrev').count())
-  pg.click('#wPrev');pg.wait_for_timeout(500);print('HIST:',T(pg)[:400])
+  pg.wait_for_timeout(1500);pg.click('#wPrev');pg.wait_for_timeout(500);print('HIST:',T(pg)[:400])
   pg.screenshot(path='hist.png')
   pg.click('#hBack');pg.wait_for_timeout(500);print('BACK:',T(pg)[60:200])
   print(errs);b.close()
