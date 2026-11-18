@@ -3764,7 +3764,7 @@ function qTrFix(id){const q=AMD.q[id];if(!q||QTRP[id])return;const xai=AMAI['x2|
   QTRP[id]=1;amRedrawKeep();
   const pr=`English sentence: "${en}"\nA Hebrew translation of it: "${old}"\nThe student says the translation has a mistake. Check it very carefully: meaning of every word, verb forms, gender, prepositions, numbers, natural Israeli Hebrew. Return the correct, natural Hebrew translation (keep numbers as digits).\nJSON: {"he":"...","changed":true or false,"why":"if changed – a very short Hebrew note on what was wrong"}\n${AIHE}`;
   Promise.race([aiRun('','',null,{prompt:pr,temp:.1}),new Promise(r=>setTimeout(()=>r(null),20000))]).then(r=>{delete QTRP[id];const jj=r&&r.j,h=jj&&String(jj.he||'').trim();
-    if(h){AMAI['qtr|'+id]={he:h,changed:jj.changed!==false||!!(qfx&&qfx.changed)||!!(xai&&xai.book_wrong),why:jj.why||(qfx&&qfx.why)||'',t:amNow()};amAiSave();amToast(jj.changed===false?'התרגום נבדק – הוא נכון':'✓ התרגום תוקן'+(jj.why?' – '+jj.why:''))}
+    if(h){AMAI['qtr|'+id]={he:h,changed:jj.changed!==false||!!(qfx&&qfx.changed)||!!(xai&&xai.book_wrong),why:jj.why||(qfx&&qfx.why)||'',t:amNow()};amAiSave();amToast(jj.changed===false?'התרגום נבדק – הוא נכון':'✓ התרגום תוקן')}
     else amToast('לא הצלחתי לבדוק את התרגום עכשיו');amRedrawKeep()}).catch(()=>{delete QTRP[id];amToast('לא הצלחתי לבדוק את התרגום עכשיו');amRedrawKeep()})}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-qtrfix]');if(b)qTrFix(b.dataset.qtrfix)});
 const XPLO={};
@@ -3785,7 +3785,7 @@ function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x2|'+id,ai=AMA
   if(open&&!ai&&!AIP[key]){const p=aiCached(key,promptXpl(q),.2);p.then(()=>{if(S.screen==='amq'&&AQ.cur===id)amRedrawKeep()})}
   if(ai&&!ai.err){const L=(a,f)=>(a||[]).map(f).join('');
     const outer=q.he&&/^(sc|wf|gc)$/.test(q.t);/* the translation box above already shows the corrected one */
-    if(!outer){b+=ai.translation?`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(ai.translation)}</p>`:'';b+=ai.book_wrong?`<p class="am-xw">⚠️ ${bdiEsc(ai.book_wrong)}</p>`:''}
+    if(!outer){b+=ai.translation?`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(ai.translation)}</p>`:'';b+=''}
     b+=(ai.decode||[]).length?`<h5>איך מבינים מילה שלא מכירים</h5><ul class="am-xopts">${L(ai.decode,d=>`<li><b><bdi dir="ltr">${esc(d.en||'')}</bdi></b> – ${bdiEsc(d.how||'')}${d.meaning?` <span>← ${esc(d.meaning)}</span>`:''}</li>`)}</ul>`:'';
     b+=(ai.understand||[]).length?`<h5>איך מבינים את המשפט</h5><ol>${L(ai.understand,x=>`<li>${bdiEsc(x)}</li>`)}</ol>`:'';
     b+=(ai.passage||[]).length?`<h5>איפה התשובה בקטע</h5>${L(ai.passage,x=>`<p dir="ltr" class="en">${esc(x.en||'')}</p><p>${bdiEsc(x.he||'')}</p>`)}`:'';
@@ -3802,7 +3802,7 @@ function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   let h=amQPath(st,ok)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
   const xai=AMAI['x2|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
   const heNow=qfx&&qfx.he||(xfix?xai.translation:q.he),fixed=!!(qfx&&qfx.he&&qfx.changed!==false)||!!xfix,why=qfx&&qfx.he?qfx.why:xfix?xai.book_wrong:'';
-  const heBox=(t)=>`<div class="am-box good"><h4>${fixed?t+' (מתוקן)':t}</h4><p>${bdiEsc(heNow)}</p>${fixed&&why?`<p class="hint" style="margin:0">מה היה לא נכון: ${bdiEsc(why)}</p>`:''}${GKEY()?`<button class="small-link" data-qtrfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">${QTRP[id]?'⏳ בודקת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`;
+  const heBox=(t)=>`<div class="am-box good"><h4>${t}</h4><p>${bdiEsc(heNow)}</p>${GKEY()?`<button class="small-link" data-qtrfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">${QTRP[id]?'⏳ בודקת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`;
   if(q.t==='sc'&&q.he)h+=heBox('תרגום המשפט');
   if(q.t==='rs'&&q.he)h+=`<div class="am-box"><h4>המשפט המקורי בעברית</h4><p>${esc(q.he)}</p><p class="hint" style="margin:0">ליד כל תשובה למעלה: התרגום שלה וההסבר מהספר.</p></div>`;
   if((q.t==='wf'||q.t==='gc')&&q.he)h+=heBox('תרגום המשפט');
@@ -4628,7 +4628,7 @@ const TRFIXP={};
 function trFix(en){const c=TRC[en.toLowerCase()],cd=DW.find(d=>d.s===en),old=(c&&c.h)||(WS&&WS.res&&WS.res.en===en&&WS.res.he)||(cd&&(EXTRA[cd.xid||cd.id]||{}).tr)||'';if(!old||TRFIXP[en])return;TRFIXP[en]=1;if(S.screen.startsWith('am'))amRedrawKeep();
   const pr=`English sentence: "${en}"\nA Hebrew translation of it: "${old}"\nCheck the Hebrew translation very carefully: verb forms and conjugation, gender, prepositions, word choice, natural Israeli Hebrew. Return the correct, natural Hebrew translation (fix every mistake; if it is already fully correct, return it unchanged).\nJSON: {"he":"...","changed":true or false,"why":"if changed – a very short Hebrew note on what was wrong"}\n${AIHE}`;
   Promise.race([aiRun('','',null,{prompt:pr,temp:.1}),new Promise(r=>setTimeout(()=>r(null),20000))]).then(r=>{delete TRFIXP[en];const j=r&&r.j,h=j&&String(j.he||'').trim();
-    if(h){TRC[en.toLowerCase()]={h,src:'תוקן'};if(WS&&WS.res&&WS.res.en===en)WS.res.he=h;Object.values(AMS.w).forEach(w=>{for(const f of ['rv','trc'])if(w[f]&&w[f].en===en)w[f].he=h});amSave();if(WS)wSave();amToast(j.changed===false?'התרגום נבדק – הוא נכון':'✓ התרגום תוקן'+(j.why?' – '+j.why:''))}
+    if(h){TRC[en.toLowerCase()]={h,src:'תוקן'};if(WS&&WS.res&&WS.res.en===en)WS.res.he=h;Object.values(AMS.w).forEach(w=>{for(const f of ['rv','trc'])if(w[f]&&w[f].en===en)w[f].he=h});amSave();if(WS)wSave();amToast(j.changed===false?'התרגום נבדק – הוא נכון':'✓ התרגום תוקן')}
     else amToast('לא הצלחתי לבדוק את התרגום עכשיו');if(S.screen.startsWith('am'))amRedrawKeep()}).catch(()=>{delete TRFIXP[en];amToast('לא הצלחתי לבדוק את התרגום עכשיו')})}
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-trfix]');if(b)trFix(b.dataset.trfix)});
 function wStageDots(w){return [1,2,3,4,5,6].map(i=>w.st>i?'●':w.st===i?'◉':'○').join('')}

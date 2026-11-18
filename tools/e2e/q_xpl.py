@@ -20,7 +20,7 @@ with sync_playwright() as p:
   pg.locator('.am-xpl>summary').click();pg.wait_for_timeout(500)
   t=pg.locator('.am-xpl').inner_text();print(t[:300])
   assert 'איך מבינים מילה' in t and 'facial' in t and 'כיווץ' in pg.locator('.am-box.good').first.inner_text()
-  assert 'מתוקן' in pg.locator('.am-box.good').first.inner_text()
+  assert 'מתוקן' not in pg.locator('.am-box.good').first.inner_text() and 'כיווץ' in pg.locator('.am-box.good').first.inner_text()
   assert 'כמעט מוכן' not in t
   pg.locator('[data-qtrfix]').click();pg.wait_for_timeout(2000)
   assert 'וזעף' in pg.locator('.am-box.good').first.inner_text(),'fixed on request'
