@@ -165,3 +165,4 @@
 - Translation open after answering (Nov 18, her request): the "תרגום לעברית" of an English sentence after answering (`wTrHtml`, reviews / learning / free practice) is open by default (`WTRO[s]!==false`; "הסתרת התרגום" hides it, remembered per sentence); an open one without a stored translation is fetched at once (`amTrans`).
 - Word popup (Nov 18, her request): no "🔊 השמעת המשפט כולו" link any more – the popup of a tapped word plays only the word.
 - Word popup plays the word by itself (Nov 18, her request): `amPop` calls `amSay(e)` when it opens for a translation (not in hint mode).
+- Round chips follow the answer (Nov 18, her request): in a learning round, once the word on screen is answered, `wTrack` marks the round the word is in now (`lrOf(w)`): a miss moves the mark back to round 1, a right answer to the next round (all four done after round 4); before answering it marks the round being played.
