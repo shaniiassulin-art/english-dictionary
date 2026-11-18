@@ -2408,9 +2408,10 @@ function promptTr(w,en,he,mine){return `A Hebrew-speaking learner translated an 
 English: «${en}»
 Reference translation: «${he}»
 Her translation: «${mine}»
-What counts is the word: word_ok is true only if she translated "${w.e}" in exactly this meaning ("${w.h}") – a Hebrew word with this meaning or a close synonym. If she left it out, used another meaning, or wrote something only vaguely related, word_ok is false (say which Hebrew word was expected).
-The rest of the sentence does not decide the answer: when word_ok is true, ok is true even if other parts are inaccurate – then point out exactly where the rest of her translation is wrong or inexact and how to fix it. Small spelling slips are fine.
-JSON: {"ok":same as word_ok,"word_ok":true or false,"feedback":"1–3 short Hebrew lines: about the word first, then every other mistake in the sentence and its fix (if all is right – a short praise)"}
+What counts is the word: word_ok is true if her Hebrew shows she understood "${w.e}" in this meaning ("${w.h}") – the same idea counts: a synonym, a related verb or form, an everyday / spoken way of saying it, even if its grammar is not perfect (e.g. for increase: לעלות / להעלות / להגדיל / להגביר / להוסיף are all right). word_ok is false only if she left the word out, gave it another meaning, or wrote something with a different meaning – then say which Hebrew word was expected.
+The rest of the sentence does not decide the answer: when word_ok is true, ok is true. Mention ONLY real mistakes – a wrong meaning, a word left out, or wrong Hebrew grammar – each with its fix; if the word's Hebrew form is a bit off (e.g. לעלות instead of להעלות) say so gently as a small note. NEVER call a correct alternative a mistake: other word order, a synonym, "כל יום" vs "בכל יום", with or without "את", spelling slips – all fine, don't mention them. Don't invent mistakes: if her translation is fine, the feedback is a short praise only.
+If the reference translation itself has a spelling mistake, give it corrected in reference_fixed (same words, only the spelling fixed); else reference_fixed is empty.
+JSON: {"ok":same as word_ok,"word_ok":true or false,"feedback":"1–3 short Hebrew lines: about the word first, then only real mistakes and their fixes (if all is right – a short praise)","reference_fixed":""}
 ${AIHE}`}
 function promptSent(w,t){return `A Hebrew-speaking English learner wrote a sentence to practise the word "${w.e}" (meaning: ${w.h}).
 Sentence: «${t}»
@@ -3953,7 +3954,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
     ${wTrack(AMS.w['c:'+c.id]||AMS.w[wKey(c.e)]||{e:c.e,h:c.h[0],st:0,lr:0},{free:1})}
     <div class="am-prog"><i style="width:${FP.i/n*100}%"></i></div>
     <div class="am-fpnav"><button class="btn secondary" id="fpPrev" ${FP.i?'':'disabled'} aria-label="המילה הקודמת">→ הקודמת</button><button class="btn secondary" id="fpNext" ${FP.i+1<n?'':'disabled'} aria-label="המילה הבאה">הבאה ←</button></div>`;
-  if(st==='tr'){const t=s.alt||{en:c.s,he:x.tr||''};
+  if(st==='tr'){const t=s.alt||{en:c.s,he:s.refHe||x.tr||''};
     h+=`<div class="am-card"><p class="hint center" style="margin:0">תרגמי את המשפט לעברית. את פירוש המילה המודגשת תראי אחרי שתכתבי; את שאר המילים אפשר ללחוץ ולתרגם.</p>
       <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,s.open||s.done)}</div>
       ${GKEY()&&!s.done?`<button class="link small-link" id="fpAlt" style="align-self:center">${s.altP?'⏳ מכינה משפט אחר…':'✨ משפט אחר'}</button>`:''}</div>`;
@@ -3984,7 +3985,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
     if(st==='he2en'){const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=c.e.toLowerCase();s.ok=a===e||lev(a,e)<=(e.length>=6?1:0);s.done=1;fpSave();return draw()}
     const t=s.alt||{en:c.s,he:x.tr||''},idx=FP.i;s.done=1;s.pend=GKEY()?1:0;if(!GKEY())s.err='אין בדיקה חכמה – השווי לתרגום הנכון.';fpSave();draw();window.scrollTo(0,0);if(!GKEY())return;
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';if(!s.alt&&!x.tr)s.alt={en:t.en,he}}
-      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});s.pend=0;if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;trMeanFix(r.j,w,v);s.ai=r.j}else s.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון.';
+      const r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});s.pend=0;if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;trMeanFix(r.j,w,v);s.ai=r.j;const rf=trRefFix(r.j,he);if(rf){if(s.alt)s.alt.he=rf;else s.refHe=rf}}else s.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+') – השווי לתרגום הנכון.';
       fpSave();if(S.screen==='amfpl'&&FP&&FP.i===idx)amRedrawKeep()})()};
   const gv=$('fpGive');if(gv)gv.onclick=()=>{s.done=1;s.ok=false;fpSave();draw()};
   app.querySelectorAll('[data-fpo]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(s.done)return;s.sel=b.dataset.fpo;s.ok=s.sel===c.e;s.done=1;fpSave();amRedrawKeep()});
@@ -4205,7 +4206,7 @@ function sLvl(t,src){const ws=t.split(/\s+/),n=ws.length,L=ws.reduce((a,x)=>a+x.
   return n<=12&&L<=5.4&&src!=='rc'?1:(n>=20||L>=6.2)?3:2}
 function sPoolX(){if(SPOOLX||!AMD)return SPOOLX;const out=[],seen=new Set(),set={};(AMD.s||[]).forEach(x=>(x.ids||[]).forEach(id=>set[id]=x));
   const add=(t,src,he,lab)=>{t=String(t||'').replace(/\s+/g,' ').trim();if(t.length<=20||t.length>=260||seen.has(t))return;seen.add(t);out.push({t,src,he:String(he||'').replace(/\s*\([^)]*\)/g,'').trim(),lab,lvl:sLvl(t,src)})};
-  const labOf=(id,src,opt)=>{const x=set[id],n=String(id).split('-').pop();return QSRC[src]+(x&&x.u?(x.b?` · פרק ${x.u} בספר החזרות`:` · יחידה ${x.u}`):'')+(/^\d+$/.test(n)?` · שאלה ${n}${opt?' (התשובה הנכונה)':''}`:'')};
+  const labOf=(id,src,opt)=>{const x=set[id],n=String(id).split('-').pop();return QSRC[src]+(x&&x.u?(x.b?` · פרק ${x.u} בספר החזרות`:` · יחידה ${x.u}`):'')+(/^\d+$/.test(n)?` · שאלה ${n}`:'')};
   Object.entries(AMD.q).forEach(([id,q])=>{if(q.nt)return;
     if(q.t==='sc'&&Array.isArray(q.o)&&q.a)add(q.q.replace(/_{3,}/g,q.o[q.a-1]),'sc',q.he,labOf(id,'sc'));
     else if(q.t==='rs'){add(q.q,'rs',q.he,labOf(id,'rs'));if(Array.isArray(q.o)&&q.a)add(q.o[q.a-1],'rs',(q.oh||[])[q.a-1],labOf(id,'rs',1))}});
@@ -4268,6 +4269,8 @@ function trSent(w){if(wRevNow(w))return wRevSent(w);if(w.trc&&w.trc.en)return w.
     if(S.screen==='amwl')amRedrawKeep()});return null}
 /* the sentence with the new word as a button (tap = its meaning), other words tappable as everywhere */
 /* the meaning written in her translation counts even if the smart check said otherwise (her report: "even" = זוגי, she wrote זוגי and got ✗) */
+/* a spelling slip in the reference translation, fixed by the check (only a small change is taken) */
+function trRefFix(j,he){const f=String(j&&j.reference_fixed||'').trim();if(!f||!he||f===he)return '';return Math.abs(f.length-he.length)<=4&&lev(f,he)<=4?f:''}
 function trMeanFix(j,w,v){if(!j||j.ok)return;const H=' '+String(v||'').replace(/[^\u05D0-\u05EA ]+/g,' ')+' ';
   const toks=String(w.h||'').replace(/\([^)]*\)/g,' ').split(/[,/;·]+|\s+/).map(t=>t.replace(/[^\u05D0-\u05EA]/g,'')).filter(t=>t.length>=3);
   const hit=toks.find(t=>new RegExp('[ ](?:[והבלמשכ]{0,2})'+t+'[ ]').test(H));if(!hit)return;
@@ -4570,7 +4573,7 @@ function wTrBind(w){
 function trCheck(w,v,t,key){
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';const R0=WS&&WS.res;if(R0&&WS.list[WS.i]===key&&!R0.he){R0.he=he;if(S.screen==='amwl')amRedrawKeep()}}
       let r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});if(!(r&&r.j&&typeof r.j.ok==='boolean'))r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
-      if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;trMeanFix(r.j,w,v);R.ai=r.j;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
+      if(r&&r.j&&typeof r.j.ok==='boolean'){if(typeof r.j.word_ok==='boolean')r.j.ok=r.j.word_ok;trMeanFix(r.j,w,v);R.ai=r.j;const rf=trRefFix(r.j,he);if(rf)R.he=rf;if(!R.rec)wTrDone(w,!!r.j.ok)}else R.err='הבדיקה החכמה לא הצליחה ('+aiWhyText(r&&r.why)+').';
       wSave();if(S.screen==='amwl')amRedrawKeep()})()}
 /* the answered page as she saw it, for "→ למילה הקודמת" (Nov 16, her request): saved on this device only (localStorage dictWsHistH, last 40) */
 let WHH=null;const whh=()=>{if(!WHH){try{WHH=JSON.parse(localStorage.getItem('dictWsHistH')||'{}')||{}}catch(e){WHH={}}}return WHH};
