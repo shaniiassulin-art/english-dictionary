@@ -966,9 +966,9 @@ const jrCount=id=>{const x=jrBlock(id);if(x){x.d=(x.d||0)+1;AMS.jp[id.split('|')
 function jrWhat(x){if(x.k==='rev2'&&!x.done){const n=wDue(x.go?0:18e5).length;if(n)return n+' מילים מחכות לחזרה';const nx=Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&lrOf(w)>=5).map(w=>w.due).sort((a,b)=>a-b)[0],m=nx?Math.ceil((nx-amNow())/6e4):0;return m>0&&m<=60?'תידלק בעוד '+m+' דק׳':'כבוי עכשיו – יידלק 20 דק׳ אחרי שתלמדי מילים'}
   if(x.k==='rev'||x.k==='rev2'){const n=wDue(x.k==='rev2'&&!x.go?18e5:0).length;return x.done?'':n?n+' מילים מחכות לחזרה':'אין מילים לחזרה כרגע'}
   if(x.k==='new')return `${x.d}/${x.n} מילים חדשות`+(Array.isArray(x.ws)&&!x.done?` · ${jnPend(x).length} עוד בסבבים`:'');if(x.k==='q')return `${Math.min(x.d,x.n)}/${x.n} שאלות`;if(x.k==='sim')return '22 שאלות ב־20 דקות';if(x.k==='meth')return 'נושא אחד מהשיטה';return '10 דקות'}
-/* study time: counted every 15 s while the page is visible, on an אמירנט screen, and she did something in the last 2 minutes */
+/* study time: counted every 15 s while the page is visible, on an אמירנט screen, and she did something in the last 5 minutes (Nov 18, her request – reading and thinking count) */
 let JACT=Date.now(),JTICK=0;['pointerdown','keydown','scroll','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{JACT=Date.now()},{passive:true,capture:true}));
-setInterval(()=>{const jnS=['quiz','cards','car'].includes(S.screen)&&/^[FC]?J/.test(String(S.active||''));if(document.visibilityState!=='visible'||!(/^am/.test(S.screen)||jnS)||S.screen==='amhelp'||Date.now()-JACT>120e3)return;
+setInterval(()=>{const jnS=['quiz','cards','car'].includes(S.screen)&&/^[FC]?J/.test(String(S.active||''));if(document.visibilityState!=='visible'||!(/^am/.test(S.screen)||jnS)||S.screen==='amhelp'||Date.now()-JACT>300e3)return;
   const k=dayKey();AMS.tm=AMS.tm||{};AMS.tm[k]=(AMS.tm[k]||0)+15e3;const ck=jrCurKey(),P=ck&&AMS.jp[ck],cur=P&&jrCur(P);
   if(cur&&cur.k!=='brk'){const act=(S.screen==='amq'&&AQ&&AQ.jr===cur.id)||(S.screen==='amwl'&&WS&&WS.jr===cur.id)||S.screen==='amjb'||(cur.k==='new'&&(S.screen==='amnw'||jnS));if(act)cur.used=(cur.used||0)+15e3}
   LS.set('dictAm',JSON.stringify(AMS));if(++JTICK%8===0){AMS.t=amNow();amSave()}},15e3);
