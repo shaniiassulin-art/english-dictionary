@@ -2110,7 +2110,7 @@ function sPoolX(){if(SPOOLX||!AMD)return SPOOLX;const out=[],seen=new Set(),set=
   Object.entries(AMD.q).forEach(([id,q])=>{if(q.nt)return;
     if(q.t==='sc'&&Array.isArray(q.o)&&q.a)add(q.q.replace(/_{3,}/g,q.o[q.a-1]),'sc',q.he,labOf(id,'sc'));
     else if(q.t==='rs'){add(q.q,'rs',q.he,labOf(id,'rs'));if(Array.isArray(q.o)&&q.a)add(q.o[q.a-1],'rs',(q.oh||[])[q.a-1],labOf(id,'rs',1))}});
-  Object.entries(AMD.x).forEach(([id,T])=>(T.l.filter(Boolean).join(' ').match(/[^.!?]+[.!?]+/g)||[]).forEach(t=>add(t,'rc','',QSRC.rc+(set[id]&&set[id].u?' · יחידה '+set[id].u:'')+(/^\d+$/.test(String(id).split('-').pop())?' · קטע '+String(id).split('-').pop():''))));
+  Object.entries(AMD.x).forEach(([id,T])=>(T.l.filter(Boolean).join(' ').match(/[^.!?]+[.!?]+/g)||[]).forEach(t=>add(t,'rc','',QSRC.rc+(set[id]&&set[id].u?' · יחידה '+set[id].u:/^b(\d+)-/.test(id)?' · פרק '+id.match(/^b(\d+)-/)[1]+' בספר החזרות':'')+(/^\d+$/.test(String(id).split('-').pop())?' · קטע '+String(id).split('-').pop():''))));
   (AMD.rd||[]).forEach(T=>T.en.forEach(p=>(p.match(/[^.!?]+[.!?]+/g)||[]).forEach(t=>add(t,'rd','',''))));
   Object.values(AMD.lists||{}).forEach(L=>L.forEach(x=>add(x.s,'list','','')));return SPOOLX=out}
 const wHas=(t,w)=>!!blankOut(t,w.e)&&new RegExp('\\b'+w.e.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(s|es|ed|d|ing|ly)?\\b','i').test(t);
@@ -2335,7 +2335,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
       ${aiNeedKey()}`}
   else{ /* recall tasks */
     let task=(WS.res&&WS.res.task)||wTaskNow(w);const hint=WS.hint||0,res=WS.res;
-    let heR=null;if(task==='hecl'){heR=res&&res.he?{he:res.he,en:res.en||''}:wHeRev(w);
+    let heR=null;if(task==='hecl'){heR=res&&res.he?{he:res.he,en:res.en||'',src:res.src,lab:res.lab}:wHeRev(w);
       if(heR===null){h+=`<div class="am-card"><p class="hint center" style="margin:0">⏳ מכינה משפט בעברית עם המילה…</p></div>`;app.innerHTML=h+'</div>';$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};return}
       if(heR===false){const kk=wK(w);
         h+=`<div class="am-card"><p class="center" style="margin:0;font-weight:700">לא הצלחתי להכין משפט בעברית למילה הזו</p><p class="hint center" style="margin:6px 0 0">${GKEY()?'הבדיקה החכמה לא ענתה עכשיו – אפשר לנסות שוב.':'אין חיבור לבדיקה החכמה (ג׳מיני).'}</p></div>
@@ -2351,7 +2351,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
     const mcS=task==='mc'?blankOut(mcF,w.e):'',heS=task==='hecl'&&heR?heR.he:'';
     if(task==='mc'||task==='hecl'){
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${task==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-        <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?heGapHtml(heS,w.e,!!res):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):''}${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
+        <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?heGapHtml(heS,w.e,!!res):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):task==='hecl'?srcLab(heR):''}${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
       const O=res&&res.opts&&res.opts.length?res.opts:wOpts(w);
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
@@ -2451,7 +2451,7 @@ function wBind(w,x){
     else{const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=w.e.toLowerCase(),dd=lev(a,e);const ok=a===e||dd<=(e.length>=6?1:0);WS.res={ok,near:ok&&a!==e,typed:v}}
     if(!WS.res.self)wAfter(w,WS.res.ok);wSave();draw()};
   const gv=$('wGive');if(gv)gv.onclick=()=>{WS.res={ok:false};wAfter(w,false);wSave();draw()};
-  app.querySelectorAll('[data-wmc]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(WS.res)return;const v=b.dataset.wmc,ok=v===w.e,isHe=!!app.querySelector('[data-task="hecl"]'),hr=isHe?wHeRev(w):null,rv=!isHe&&wRevNow(w)&&(WS.cur&&WS.cur.k===wK(w)?WS.cur:wLive(w).rv);WS.res={ok,typed:v,opts:[...app.querySelectorAll('[data-wmc]')].map(x=>x.dataset.wmc)};if(isHe){WS.res.task='hecl';if(hr){WS.res.he=hr.he;WS.res.en=hr.en||''}}else if(rv)Object.assign(WS.res,{en:rv.en,src:rv.src,lab:rv.lab});wAfter(w,ok);wSave();draw()});
+  app.querySelectorAll('[data-wmc]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(WS.res)return;const v=b.dataset.wmc,ok=v===w.e,isHe=!!app.querySelector('[data-task="hecl"]'),hr=isHe?wHeRev(w):null,rv=!isHe&&wRevNow(w)&&(WS.cur&&WS.cur.k===wK(w)?WS.cur:wLive(w).rv);WS.res={ok,typed:v,opts:[...app.querySelectorAll('[data-wmc]')].map(x=>x.dataset.wmc)};if(isHe){WS.res.task='hecl';if(hr){WS.res.he=hr.he;WS.res.en=hr.en||'';WS.res.src=hr.src;WS.res.lab=hr.lab}}else if(rv)Object.assign(WS.res,{en:rv.en,src:rv.src,lab:rv.lab});wAfter(w,ok);wSave();draw()});
   const sy=$('wSelfY');if(sy)sy.onclick=()=>{WS.res={ok:true,typed:WS.res.typed};wAfter(w,true);wSave();draw()};
   const sn=$('wSelfN');if(sn)sn.onclick=()=>{WS.res={ok:false,typed:WS.res.typed};wAfter(w,false);wSave();draw()};
   const cp=$('wCopy');if(cp){setTimeout(()=>{try{cp.focus({preventScroll:true})}catch(e){}},50);cp.oninput=()=>{if(cp.value.trim().toLowerCase()===w.e.toLowerCase()){WS.res.copied=true;wSave();draw()}}}
