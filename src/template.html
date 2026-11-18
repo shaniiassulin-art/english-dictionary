@@ -699,7 +699,10 @@ function stopAudio(){const a=AU.el;if(a){try{a.pause()}catch(e){}}if(AU.end){con
 /* play audio/<kind>/<hash>.mp3; resolves true when it played to the end, false if no file could be played, null if stopped */
 /* when the last piece of audio started (used to ignore iPhone's automatic pause between parts in מצב רכב) */
 var AUDT=0;
-function playFile(kind,text,rate){AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
+/* sound mode (her request): 'auto' = מצב רץ (default – whatever has a sound plays by itself), 'off' = only when a speaker is tapped (and a tapped word), 'mute' = nothing plays at all. localStorage dictSnd */
+var SNDM=(()=>{try{const v=localStorage.getItem('dictSnd');return v==='off'||v==='mute'?v:'auto'}catch(e){return 'auto'}})();
+const MUTED=()=>SNDM==='mute';
+function playFile(kind,text,rate){if(MUTED())return Promise.resolve(true);AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
   const pre=PRE.get(kind+h);
   return new Promise(res=>{let i=pre?-1:AU.base,timer=null;
     const fin=ok=>{if(AU.end!==done)return;AU.end=null;clearTimeout(timer);a.onended=a.onerror=a.onplaying=a.onpause=null;res(ok)};
@@ -714,7 +717,7 @@ function playFile(kind,text,rate){AUDT=Date.now();stopAudio();const a=audioEl(),
       const p=a.play();p&&p.catch(e=>{if(AU.end!==done)return;if(e&&e.name==='NotAllowedError')fin(false)})};
     next()})}
 function cleanEn(t){return t.replace(/\s*\(.*?\)/g,'').replace(/…|\.\.\./g,', ').replace(/^\d+(st|nd|rd|th)\s*-\s*/,'').replace(/\s*-\s*10th$/,'')}
-function ttsEn(t,rate){if(!TTS)return;try{if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel();
+function ttsEn(t,rate){if(!TTS||MUTED())return;try{if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(cleanEn(t));u.lang='en-US';u.volume=1;if(voice)u.voice=voice;u.rate=rate||.85;speechSynthesis.speak(u)}catch(e){}}
 /* word (or example sentence) button: recorded file first, device voice only if the file can't play */
 function speak(t,rate){if(!t)return;unlockAudio();try{if(TTS&&(speechSynthesis.speaking||speechSynthesis.pending))speechSynthesis.cancel()}catch(e){}
@@ -1141,7 +1144,7 @@ function gemAudio(text,v=heGem,en=false){const k=v+'|'+(en?'en|':'')+text;if(!v|
     return null}finally{GTTS.busy--;gemStatus()}})();
   GEMP.set(k,p);p.finally(()=>GEMP.delete(k));return p}
 /* resolves false when there is no Gemini clip (the caller then uses the phone's voice) */
-async function gemSay(text,rate,v=heGem,en=false){const b=await Promise.race([gemAudio(text,v,en),wait(9000).then(()=>null)]);if(!b)return false;
+async function gemSay(text,rate,v=heGem,en=false){if(MUTED())return true;const b=await Promise.race([gemAudio(text,v,en),wait(9000).then(()=>null)]);if(!b)return false;
   const h=fnv(text);PRE.set('g'+h,URL.createObjectURL(b));return(await playFile('g',text,Math.max(.7,Math.min(1.3,(rate||.95)/.95))))!==false}
 function gemStatus(){const el=document.getElementById('gemSt');if(el)el.textContent=heGem||enGem?(GTTS.busy?'⏳ מכין את הקול של ג׳מיני…':GTTS.err):''}
 /* the key is saved on this device and in the account, so every device has it */
@@ -1364,9 +1367,12 @@ let Q=null;
 const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false,skip:false});
 /* outside voice mode words are read only when a speaker button is pressed, except in the listening quiz, where the word is hidden */
 /* "מצב רץ" auto-play mode (button in the quiz / cards top bar, remembered on this device): read each new word aloud */
-let AUTO=LS.get('dictAuto')==='1';
-const AUTOBTN=()=>`<button class="autob${AUTO?' on':''}" id="autoBtn" aria-pressed="${AUTO}" aria-label="מצב רץ: השמעה אוטומטית של כל מילה">${SPK}<span>${AUTO?'מצב רץ פועל':'מצב רץ'}</span></button>`;
-function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>{AUTO=!AUTO;LS.set('dictAuto',AUTO?'1':'0');draw();if(AUTO&&cur)speak(cur)}}
+let AUTO=SNDM==='auto';
+/* one button cycles the three sound modes: מצב רץ → רגיל → שקט */
+function sndNext(){SNDM=SNDM==='auto'?'off':SNDM==='off'?'mute':'auto';AUTO=SNDM==='auto';LS.set('dictSnd',SNDM);if(SNDM==='mute'){try{stopAudio()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
+  try{amToast(SNDM==='auto'?'🔊 מצב רץ – כל שמע מושמע מעצמו':SNDM==='off'?'🔈 רגיל – שמע רק כשלוחצים':'🔇 שקט – שום דבר לא נשמע')}catch(e){}}
+const AUTOBTN=()=>`<button class="autob${SNDM==='auto'?' on':''}${SNDM==='mute'?' mute':''}" id="autoBtn" aria-label="מצב שמע: ${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'} – לחיצה מחליפה">${SNDM==='mute'?'🔇':SPK}<span>${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'}</span></button>`;
+function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>{sndNext();draw();if(AUTO&&cur)speak(cur)}}
 function autoSay(){if(Q&&(Q.mode==='listen'||AUTO)&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
 function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},st:{},base:0,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});autoSay()}
 function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),marks:Q.marks||{},st:Q.st||{},base:Q.base||0,name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent,skip:Q.skip};saveSess()}
@@ -1436,7 +1442,7 @@ let V={on:false,token:0,status:'',lock:null,ac:null,miss:0};
 function setStatus(t){V.status=t;const el=$('vbarTxt');if(el)el.textContent=t}
 /* iOS: speech only plays if the first utterance starts inside the tap, never right after cancel(), and not while the mic is still closing */
 /* iOS sometimes leaves the speech queue stuck after other audio played: if nothing starts within 1.5 s, reset and try once more */
-function sayNow(text,lang,res,retry,rate){AUDT=Date.now();try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;if(lang==='he-IL'&&heVoice)u.voice=heVoice;u.rate=rate||(lang==='he-IL'?1.1:.85);
+function sayNow(text,lang,res,retry,rate){if(MUTED()){res&&res();return}AUDT=Date.now();try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;if(lang==='he-IL'&&heVoice)u.voice=heVoice;u.rate=rate||(lang==='he-IL'?1.1:.85);
     let done=false,started=false;const fin=()=>{if(!done){done=true;clearTimeout(t1);clearTimeout(t2);res()}};u.onstart=()=>{started=true};u.onend=fin;u.onerror=fin;
     const t1=setTimeout(()=>{if(!started&&!done&&!retry&&!speechSynthesis.speaking){done=true;clearTimeout(t2);try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>sayNow(text,lang,res,true,rate),100)}},1500);
     const t2=setTimeout(fin,text.length*300/Math.min(1,rate||1)+5000);try{speechSynthesis.resume()}catch(e){}speechSynthesis.speak(u)}catch(e){res()}}
@@ -1447,7 +1453,7 @@ async function sayAll(parts,alive,rate){if(gemOn()&&S.screen==='car'){await say(
   for(const c of chunks){await say(c,'he-IL',rate);if(alive&&!alive())return false}return true}
 const HNUM=['אחד','שתיים','שלוש','ארבע','חמש','שש','שבע','שמונה','תשע','עשר'];
 const heOpt=o=>o.replace(/ \/ /g,', ');
-async function say(text,lang,rate){if(!text)return;AUDT=Date.now();
+async function say(text,lang,rate){if(!text||MUTED())return;AUDT=Date.now();
   /* give the phone time to switch from the microphone back to the speaker, or the start of the speech is cut */
   const gap=200-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
   /* English word or sentence: recorded file (audible even on silent); Hebrew and missing files: device voice */

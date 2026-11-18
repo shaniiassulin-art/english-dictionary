@@ -925,7 +925,10 @@ function stopAudio(){const a=AU.el;if(a){try{a.pause()}catch(e){}}if(AU.end){con
 /* play audio/<kind>/<hash>.mp3; resolves true when it played to the end, false if no file could be played, null if stopped */
 /* when the last piece of audio started (used to ignore iPhone's automatic pause between parts in מצב רכב) */
 var AUDT=0;
-function playFile(kind,text,rate){AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
+/* sound mode (her request): 'auto' = מצב רץ (default – whatever has a sound plays by itself), 'off' = only when a speaker is tapped (and a tapped word), 'mute' = nothing plays at all. localStorage dictSnd */
+var SNDM=(()=>{try{const v=localStorage.getItem('dictSnd');return v==='off'||v==='mute'?v:'auto'}catch(e){return 'auto'}})();
+const MUTED=()=>SNDM==='mute';
+function playFile(kind,text,rate){if(MUTED())return Promise.resolve(true);AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
   const pre=PRE.get(kind+h);
   return new Promise(res=>{let i=pre?-1:AU.base,timer=null;
     const fin=ok=>{if(AU.end!==done)return;AU.end=null;clearTimeout(timer);a.onended=a.onerror=a.onplaying=a.onpause=null;res(ok)};
@@ -940,7 +943,7 @@ function playFile(kind,text,rate){AUDT=Date.now();stopAudio();const a=audioEl(),
       const p=a.play();p&&p.catch(e=>{if(AU.end!==done)return;if(e&&e.name==='NotAllowedError')fin(false)})};
     next()})}
 function cleanEn(t){return t.replace(/\s*\(.*?\)/g,'').replace(/…|\.\.\./g,', ').replace(/^\d+(st|nd|rd|th)\s*-\s*/,'').replace(/\s*-\s*10th$/,'')}
-function ttsEn(t,rate){if(!TTS)return;try{if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel();
+function ttsEn(t,rate){if(!TTS||MUTED())return;try{if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(cleanEn(t));u.lang='en-US';u.volume=1;if(voice)u.voice=voice;u.rate=rate||.85;speechSynthesis.speak(u)}catch(e){}}
 /* word (or example sentence) button: recorded file first, device voice only if the file can't play */
 function speak(t,rate){if(!t)return;unlockAudio();try{if(TTS&&(speechSynthesis.speaking||speechSynthesis.pending))speechSynthesis.cancel()}catch(e){}
@@ -1367,7 +1370,7 @@ function gemAudio(text,v=heGem,en=false){const k=v+'|'+(en?'en|':'')+text;if(!v|
     return null}finally{GTTS.busy--;gemStatus()}})();
   GEMP.set(k,p);p.finally(()=>GEMP.delete(k));return p}
 /* resolves false when there is no Gemini clip (the caller then uses the phone's voice) */
-async function gemSay(text,rate,v=heGem,en=false){const b=await Promise.race([gemAudio(text,v,en),wait(9000).then(()=>null)]);if(!b)return false;
+async function gemSay(text,rate,v=heGem,en=false){if(MUTED())return true;const b=await Promise.race([gemAudio(text,v,en),wait(9000).then(()=>null)]);if(!b)return false;
   const h=fnv(text);PRE.set('g'+h,URL.createObjectURL(b));return(await playFile('g',text,Math.max(.7,Math.min(1.3,(rate||.95)/.95))))!==false}
 function gemStatus(){const el=document.getElementById('gemSt');if(el)el.textContent=heGem||enGem?(GTTS.busy?'⏳ מכין את הקול של ג׳מיני…':GTTS.err):''}
 /* the key is saved on this device and in the account, so every device has it */
@@ -1590,9 +1593,12 @@ let Q=null;
 const blankQ=()=>({stage:'write',mine:[],opts:null,sel:[],checked:false,shown:false,sent:false,skip:false});
 /* outside voice mode words are read only when a speaker button is pressed, except in the listening quiz, where the word is hidden */
 /* "מצב רץ" auto-play mode (button in the quiz / cards top bar, remembered on this device): read each new word aloud */
-let AUTO=LS.get('dictAuto')==='1';
-const AUTOBTN=()=>`<button class="autob${AUTO?' on':''}" id="autoBtn" aria-pressed="${AUTO}" aria-label="מצב רץ: השמעה אוטומטית של כל מילה">${SPK}<span>${AUTO?'מצב רץ פועל':'מצב רץ'}</span></button>`;
-function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>{AUTO=!AUTO;LS.set('dictAuto',AUTO?'1':'0');draw();if(AUTO&&cur)speak(cur)}}
+let AUTO=SNDM==='auto';
+/* one button cycles the three sound modes: מצב רץ → רגיל → שקט */
+function sndNext(){SNDM=SNDM==='auto'?'off':SNDM==='off'?'mute':'auto';AUTO=SNDM==='auto';LS.set('dictSnd',SNDM);if(SNDM==='mute'){try{stopAudio()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
+  try{amToast(SNDM==='auto'?'🔊 מצב רץ – כל שמע מושמע מעצמו':SNDM==='off'?'🔈 רגיל – שמע רק כשלוחצים':'🔇 שקט – שום דבר לא נשמע')}catch(e){}}
+const AUTOBTN=()=>`<button class="autob${SNDM==='auto'?' on':''}${SNDM==='mute'?' mute':''}" id="autoBtn" aria-label="מצב שמע: ${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'} – לחיצה מחליפה">${SNDM==='mute'?'🔇':SPK}<span>${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'}</span></button>`;
+function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>{sndNext();draw();if(AUTO&&cur)speak(cur)}}
 function autoSay(){if(Q&&(Q.mode==='listen'||AUTO)&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
 function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},st:{},base:0,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});autoSay()}
 function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),marks:Q.marks||{},st:Q.st||{},base:Q.base||0,name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent,skip:Q.skip};saveSess()}
@@ -1662,7 +1668,7 @@ let V={on:false,token:0,status:'',lock:null,ac:null,miss:0};
 function setStatus(t){V.status=t;const el=$('vbarTxt');if(el)el.textContent=t}
 /* iOS: speech only plays if the first utterance starts inside the tap, never right after cancel(), and not while the mic is still closing */
 /* iOS sometimes leaves the speech queue stuck after other audio played: if nothing starts within 1.5 s, reset and try once more */
-function sayNow(text,lang,res,retry,rate){AUDT=Date.now();try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;if(lang==='he-IL'&&heVoice)u.voice=heVoice;u.rate=rate||(lang==='he-IL'?1.1:.85);
+function sayNow(text,lang,res,retry,rate){if(MUTED()){res&&res();return}AUDT=Date.now();try{const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.volume=1;if(lang!=='he-IL'&&voice)u.voice=voice;if(lang==='he-IL'&&heVoice)u.voice=heVoice;u.rate=rate||(lang==='he-IL'?1.1:.85);
     let done=false,started=false;const fin=()=>{if(!done){done=true;clearTimeout(t1);clearTimeout(t2);res()}};u.onstart=()=>{started=true};u.onend=fin;u.onerror=fin;
     const t1=setTimeout(()=>{if(!started&&!done&&!retry&&!speechSynthesis.speaking){done=true;clearTimeout(t2);try{speechSynthesis.cancel()}catch(e){}setTimeout(()=>sayNow(text,lang,res,true,rate),100)}},1500);
     const t2=setTimeout(fin,text.length*300/Math.min(1,rate||1)+5000);try{speechSynthesis.resume()}catch(e){}speechSynthesis.speak(u)}catch(e){res()}}
@@ -1673,7 +1679,7 @@ async function sayAll(parts,alive,rate){if(gemOn()&&S.screen==='car'){await say(
   for(const c of chunks){await say(c,'he-IL',rate);if(alive&&!alive())return false}return true}
 const HNUM=['אחד','שתיים','שלוש','ארבע','חמש','שש','שבע','שמונה','תשע','עשר'];
 const heOpt=o=>o.replace(/ \/ /g,', ');
-async function say(text,lang,rate){if(!text)return;AUDT=Date.now();
+async function say(text,lang,rate){if(!text||MUTED())return;AUDT=Date.now();
   /* give the phone time to switch from the microphone back to the speaker, or the start of the speech is cut */
   const gap=200-(Date.now()-(V.micOff||0));if(gap>0)await wait(gap);playbackSession();if(V.on)keepAlive(true);await waitQuiet();
   /* English word or sentence: recorded file (audible even on silent); Hebrew and missing files: device voice */
@@ -2200,7 +2206,7 @@ function tapEn(t,cs){t=String(t);const ph=[];
   (cs||[]).forEach(c=>c.ws.slice().sort((a,b)=>b.length-a.length).forEach(w=>{t=t.replace(new RegExp('(^|[^A-Za-z\u0001])('+w.replace(/ /g,'\\s+')+')(?=[^A-Za-z]|$)','gi'),(m,a,b)=>{ph.push('<b class="cn cn-'+c.k+'">'+esc(b)+'</b>');return a+'\u0001'+(ph.length-1)+'\u0002'})}));
   return t.split(/(\u0001\d+\u0002|[A-Za-z][A-Za-z'\-]*[A-Za-z]|[A-Za-z])/).map((x,i)=>{if(!(i%2))return esc(x);
     const m=x.match(/^\u0001(\d+)\u0002$/);if(m)return ph[+m[1]];
-    if(STOP.has(x.toLowerCase())||x.length<3)return esc(x);const db=TAPDB&&dictFind(x),kn=db&&db.cards&&db.cards.length&&db.cards.every(isY);return `<span class="tw${db?' db':''}${kn?' kn':''}" data-tw="${esc(x)}">${esc(x)}</span>`}).join('')}
+    if(STOP.has(x.toLowerCase())||x.length<3)return esc(x);const db=TAPDB&&dictFind(x),kn=db&&db.cards&&db.cards.length&&db.cards.every(isY);return `<span class="tw${db?' db':''}" data-tw="${esc(x)}">${esc(x)}</span>`}).join('')}
 let TAPDB=false;
 /* ---------- connectors: detected in the sentence, with what they tell us ---------- */
 const CONN=[
@@ -2686,7 +2692,10 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .ax .ax-qn{font-size:1.12rem!important}.ax .ax-q{font-size:.92rem!important;line-height:1.65!important}.ax .ax-opt .ax-ot{font-size:.9rem!important;padding:9px 12px!important}.ax .ax-opt{min-height:46px!important;grid-template-columns:42px 1fr!important}.ax .ax-opt .ax-rad i{width:20px!important;height:20px!important}
 /* dictionary words in a question: underline in the accent colour like the "→ למילה הקודמת" link; words she already knows (✓) highlighted like the word in the learning step */
 .ax .tw.db,.tw.db{text-decoration:underline!important;-webkit-text-decoration-line:underline!important;text-decoration-color:var(--accent)!important;-webkit-text-decoration-color:var(--accent)!important;text-decoration-thickness:auto!important;text-underline-offset:3px!important}
-.ax .tw.db.kn,.tw.db.kn{text-decoration:none!important;-webkit-text-decoration-line:none!important;font-weight:800;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:0 4px}
+/* no other marks inside the question (her request): connectors, known words and tapped words look like plain text */
+.ax .ax-q .cn,.ax .ax-q .cn *{color:inherit!important;background:none!important;text-decoration:none!important;border:0!important;font-weight:inherit!important}.ax .ax-q .tw.on{background:none!important}.ax .ax-q .tw:not(.db){text-decoration:none!important}
+.ax .tw.unk{background:color-mix(in srgb,var(--bad) 14%,transparent)!important;border-radius:4px}
+.autob.mute{color:var(--muted)}
 .ax .cn{background:none!important;filter:none!important;font-weight:inherit!important;padding:0!important;color:inherit!important;border-bottom:1.5px solid color-mix(in srgb,var(--accent) 35%,transparent)}
 /* option speaker sits inside the option row, at its end */
 .ax .ax-orow{position:relative}.ax .ax-osp{position:absolute;right:6px;top:6px;z-index:1}.ax .ax-osp .spk{width:30px;height:30px;min-width:30px}.ax .ax-opt .ax-ot{padding-right:42px!important}
@@ -2915,7 +2924,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .am-sheet-b .am-m table{font-size:.75rem}
 .am-qnav{display:flex;flex-direction:column;gap:6px;align-items:stretch}
 .am-qnav #aqUnit{align-self:center;width:auto;min-height:34px;padding:4px 10px;font-size:.82rem;border-radius:999px!important;background:var(--fill)!important;border:0!important}
-.aq-row{display:flex;align-items:center;gap:6px;direction:ltr}.am-indict{display:block;font-size:.72rem;color:var(--muted)}.am-wbtns{display:flex;flex-direction:column;gap:4px}.am-xpl>summary{cursor:pointer;font-weight:700;list-style:none}.am-xpl>summary::-webkit-details-marker{display:none}.am-xpl>summary::after{content:' ▾';color:var(--muted)}.am-xpl[open]>summary::after{content:' ▴'}.am-xpl h5{margin:12px 0 4px;font-size:.88rem}.am-xpl p{margin:2px 0}.am-xpl .en{font-family:var(--en)}.am-xw{color:var(--bad);font-size:.85rem}.am-xwords{display:flex;flex-wrap:wrap;gap:6px;direction:ltr;justify-content:flex-start}.am-xwords span{display:flex;flex-direction:column;align-items:center;background:var(--fill);border-radius:10px;padding:4px 8px}.am-xwords small{direction:rtl;color:var(--muted);font-size:.78rem}.am-xopts{padding-inline-start:18px;margin:4px 0}.am-xopts li{margin:4px 0}.am-xopts li.ok b{color:var(--ok)}.am-xopts li span{color:var(--muted);font-size:.86rem}.am-qlv{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:2px 0 0;font-size:.78rem}.am-lvc{padding:2px 10px;border-radius:999px;background:var(--fill);color:var(--muted);font-weight:600}.am-lvc.l1,.am-lvc.l2{color:var(--ok)}.am-lvc.l4,.am-lvc.l5{color:var(--bad)}.am-qsrc{color:var(--muted)}
+.aq-row{display:flex;align-items:center;gap:6px;direction:ltr}.am-wls{display:flex;flex-direction:column}.am-xow{margin:4px 0 2px;padding-inline-start:16px;font-size:.84rem}.am-xow li{margin:2px 0}.am-wl{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;padding:7px 0;border-top:1px solid var(--line)}.am-wl:first-child{border-top:0}.am-wl .e{font-family:var(--en);font-weight:700;font-size:.9rem}.am-wl .h{color:var(--muted);font-size:.82rem;min-width:0}.am-wl .a{display:flex;gap:4px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.am-wl small{color:var(--muted);font-size:.72rem}.am-wl{grid-template-columns:auto 1fr auto!important}.am-wl>*{grid-column:auto!important;grid-row:1!important}.am-sb{display:inline-flex!important;width:auto!important;min-height:0!important;height:auto!important;margin:0!important;font:inherit;font-size:.72rem!important;font-weight:600!important;padding:3px 9px!important;border-radius:999px!important;border:1px solid var(--line)!important;background:var(--surface)!important;color:var(--accent)!important;cursor:pointer;white-space:nowrap;box-shadow:none!important}.am-sb:disabled{opacity:.45}.am-wlh{margin:10px 0 2px;font-size:.78rem;color:var(--muted);font-weight:600}.am-xpl>summary{cursor:pointer;font-weight:700;list-style:none}.am-xpl>summary::-webkit-details-marker{display:none}.am-xpl>summary::after{content:' ▾';color:var(--muted)}.am-xpl[open]>summary::after{content:' ▴'}.am-xpl h5{margin:12px 0 4px;font-size:.88rem}.am-xpl p{margin:2px 0}.am-xpl .en{font-family:var(--en)}.am-xw{color:var(--bad);font-size:.85rem}.am-xwords{display:flex;flex-wrap:wrap;gap:6px;direction:ltr;justify-content:flex-start}.am-xwords span{display:flex;flex-direction:column;align-items:center;background:var(--fill);border-radius:10px;padding:4px 8px}.am-xwords small{direction:rtl;color:var(--muted);font-size:.78rem}.am-xopts{padding-inline-start:18px;margin:4px 0}.am-xopts li{margin:4px 0}.am-xopts li.ok b{color:var(--ok)}.am-xopts li span{color:var(--muted);font-size:.86rem}.am-qlv{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:2px 0 0;font-size:.78rem}.am-lvc{padding:2px 10px;border-radius:999px;background:var(--fill);color:var(--muted);font-weight:600}.am-lvc.l1,.am-lvc.l2{color:var(--ok)}.am-lvc.l4,.am-lvc.l5{color:var(--bad)}.am-qsrc{color:var(--muted)}
 .aq-row .am-qnums{flex:1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;scrollbar-width:none;justify-content:flex-start;padding:2px}.aq-row .am-qnums::-webkit-scrollbar{display:none}
 .aq-row .am-qnums button{flex:none}.aq-row .am-qnums button:first-child{margin-left:auto}.aq-row .am-qnums button:last-child{margin-right:auto}
 .aq-a{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:1rem;color:var(--ink);cursor:pointer}.aq-a:disabled{opacity:.35}
@@ -2992,19 +3001,25 @@ function wordHints(e){const lo=String(e).toLowerCase(),d=dictFind(e),out=[],seen
   return out}
 function amHintAI(e,sent){const k=String(e).toLowerCase()+'|'+(sent||'');if(HINTC[k]||!GKEY())return;HINTC[k]={pend:1};
   aiRun('','',null,{prompt:`A Hebrew-speaking student meets the English word "${e}"${sent?` in the sentence: «${sent}»`:''}. Give ONE short memory hint in Hebrew (an association, a Hebrew sound-alike, a familiar loanword or a situation) that helps her GUESS what the word means – but do NOT write its Hebrew meaning, a translation or a synonym. Plain Hebrew letters. JSON: {"hint":"..."}`,temp:.7}).then(r=>{const h=r&&r.j&&String(r.j.hint||'').trim();HINTC[k]=h?{t:h}:{err:1};if(AMPOP&&AMPOP.mode==='hint'&&AMPOP.e===e)amPopDraw()})}
-function amPop(e,ctx,src,sent,mode){sent=sent||ctx||'';AMPOP={e,ctx,src,sent,h:null,mode:mode||''};if(mode==='hint'){if(!wordHints(e).length)amHintAI(e,sent);amPopDraw();return}amPopDraw();/* the word is played at once (her request) – the tap is a user gesture, so iPhone lets it sound */try{amSay(e)}catch(x){}amTrans(e,sent).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
+function amPop(e,ctx,src,sent,mode){sent=sent||ctx||'';if(!mode&&amPopRsLock())mode='hint';AMPOP={e,ctx,src,sent,h:null,mode:mode||''};if(mode==='hint'){if(!wordHints(e).length)amHintAI(e,sent);amPopDraw();return}amPopDraw();/* the word is played at once (her request) – the tap is a user gesture, so iPhone lets it sound */try{amSay(e)}catch(x){}amTrans(e,sent).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
 function amHintHtml(){const H=wordHints(AMPOP.e),k=String(AMPOP.e).toLowerCase()+'|'+(AMPOP.sent||''),g=HINTC[k];
   return `<p class="hint" style="margin:0 0 4px">💡 רמז – בלי הפירוש</p>`+(H.length?H.map(x=>`<p style="margin:2px 0">${x.html?x.t:bdiEsc(x.t)} <small style="color:var(--muted)">· ${x.src}</small></p>`).join(''):g&&g.t?`<p style="margin:2px 0">${bdiEsc(g.t)} <small style="color:var(--muted)">· רמז שנכתב עכשיו</small></p>`:g&&g.pend?'<p class="hint" style="margin:0">⏳ ממציאה רמז…</p>':'<p class="hint" style="margin:0">אין רמז למילה הזו.</p>')}
+/* restatement: before answering, a tapped word shows only a hint, never its meaning (her request) */
+function amPopRsLock(){if(S.screen!=='amq'||!AQ||AQ.mode==='exam'||!AMD)return false;const q=AMD.q[AQ.cur],st=AQ.st&&AQ.st[AQ.i];return !!(q&&q.t==='rs'&&!(st&&st.done))}
+/* 🔖 words she marks as unknown in a question (her request) – explained with a hint after answering */
+function amUnk(){if(S.screen!=='amq'||!AQ||AQ.mode==='exam')return null;const st=AQ.st[AQ.i]=AQ.st[AQ.i]||{};return st.unk=st.unk||[]}
+function amUnkMark(){app.querySelectorAll('.ax-q .tw').forEach(t=>t.classList.toggle('unk',!!(amUnk()||[]).includes(String(t.dataset.tw||'').toLowerCase())))}
 function amPopDraw(){let el=$('amPop');if(!AMPOP){if(el)el.remove();return}
   if(!el){el=document.createElement('div');el.id='amPop';el.className='am-pop';document.body.appendChild(el)}
   const k=wKey(AMPOP.e),inW=AMS.w[k],d=dictFind(AMPOP.e),dq=d&&d.cards.some(c=>!isY(c)&&(AMS.w['c:'+c.id]||AMS.w[wKey(c.e)]));
   el.innerHTML=`<div class="e"><button class="spk" data-amsay="${esc(d?d.e:AMPOP.e)}" aria-label="השמעה">${SPK}</button>${esc(AMPOP.e)}${d&&d.e.toLowerCase()!==AMPOP.e.toLowerCase()?` <small style="font-size:.8rem;color:var(--muted)">(${esc(d.e)})</small>`:''}</div>
         <div>${AMPOP.mode==='hint'?amHintHtml():popSecret(AMPOP.e)?'🔒 זו המילה שאת נבחנת עליה – הפירוש יופיע אחרי הבדיקה.':AMPOP.h?(AMPOP.h.h?(AMPOP.h.hs&&AMPOP.h.hs.length>1?`<ol class="am-pophs">${AMPOP.h.hs.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:esc(AMPOP.h.h))+` <small style="color:var(--muted)">· ${esc(AMPOP.h.src)}</small>`:'לא נמצא תרגום'):'⏳ מחפשת פירוש…'}${d&&d.cards.every(isY)?' · <b style="color:var(--ok)">✓ סימנת שאת יודעת</b>':''}</div>
-    <div class="row">${d?(d.cards.every(isY)?'':`<button class="btn${dq?' secondary':''}" id="popSoon">${dq?'⏩ בתור ללמידה':'⏩ ללמידה בקרוב'}</button>`):AMPOP.mode==='hint'?'':`<button class="btn secondary" id="popUw" ${AMPOP.h&&AMPOP.h.h?'':'disabled'}>➕ למילון</button><button class="btn" id="popUwS" ${AMPOP.h&&AMPOP.h.h?'':'disabled'}>⏩ ללמידה בקרוב</button>`}<button class="btn secondary" id="popX">סגירה</button></div>`;
+    <div class="row">${d?(d.cards.every(isY)?'':`<button class="btn${dq?' secondary':''}" id="popSoon">${dq?'⏩ בתור ללמידה':'⏩ ללמידה בקרוב'}</button>`):AMPOP.mode==='hint'?'':`<button class="btn secondary" id="popUw" ${AMPOP.h&&AMPOP.h.h?'':'disabled'}>➕ למילון</button><button class="btn" id="popUwS" ${AMPOP.h&&AMPOP.h.h?'':'disabled'}>⏩ ללמידה בקרוב</button>`}<button class="btn secondary" id="popX">סגירה</button></div>${amUnk()?`<button class="am-sb" id="popUnk" style="margin-top:6px">${amUnk().includes(AMPOP.e.toLowerCase())?'✓ סומנה כמילה שלא ידעתי – ביטול':'🔖 לא ידעתי את המילה – להסביר אחרי התשובה'}</button>`:''}`;
     $('popX').onclick=()=>{AMPOP=null;amPopDraw()};
   const popCtx=()=>{const cq=AQ&&AQ.cur&&AMD&&AMD.q[AQ.cur];return AMPOP.ctx||AMPOP.sent||(cq?amQCtx(cq,AMPOP.e):'')};
   const queue=dd=>{const ctx=popCtx();dd.cards.filter(c=>!isY(c)&&!AMS.w['c:'+c.id]).forEach(c=>wAdd(c.e,c.h[0],ctx,'dict:'+c.id,'c:'+c.id))};
   const after=()=>{amPopDraw();const r=document.querySelector('.am-wordsbox');if(r&&AQ&&AQ.cur)r.outerHTML=amWordsBox(AQ.cur)};
+  const pk=$('popUnk');if(pk)pk.onclick=()=>{const U=amUnk(),w=AMPOP.e.toLowerCase(),i=U.indexOf(w);if(i<0)U.push(w);else U.splice(i,1);amSaveQ();amUnkMark();amPopDraw()};
   const ps=$('popSoon');if(ps)ps.onclick=()=>{if(dq)return;queue(d);amToast('✓ תילמד בקרוב');after()};
   const pu=(soon)=>{if(!AMPOP.h||!AMPOP.h.h)return;const c=uwAdd(AMPOP.e.toLowerCase(),AMPOP.h.h,popCtx(),'');if(!c)return;if(soon)queue(dictFind(AMPOP.e));amToast(soon?'✓ נוספה למילון ותילמד בקרוב':'✓ נוספה למילון · מילים שהוספתי');after()};
   const pa=$('popUw');if(pa)pa.onclick=()=>pu(false);const pb=$('popUwS');if(pb)pb.onclick=()=>pu(true)}
@@ -3120,7 +3135,7 @@ function jrRun(x){
     go({screen:'amnw',jb:x.id})}
   else if(x.k==='q'||x.k==='sim'){if(x.k==='q'&&x.qs&&x.qv!==2){x.qs=null;if(AQ&&AQ.jr===x.id){AQ=null;amSaveQ()}}/* sets made before 'easy first' are rebuilt */
     if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
-    if(x.k==='q'){let ids=(Array.isArray(x.qs)?x.qs:[]).filter(id=>!amLast(id));if(!ids.length){ids=amDayIds(Math.max(1,x.n-x.d),x.qt);x.qs=ids.slice();x.qv=2;amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,x.qt?AMTN[x.qt]+' · שאלות היום':'שאלות היום','learn','am',x.qt||'mix')}
+    if(x.k==='q'){const t0=x.qt0||0,todo=id=>{const l=amLast(id);return !l||(l[3]||0)<=t0};let ids=(Array.isArray(x.qs)?x.qs:[]).filter(todo);if(!ids.length){ids=amDayIds(Math.max(1,x.n-x.d),x.qt);x.qs=ids.slice();x.qv=2;x.qt0=amNow();amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,x.qt?AMTN[x.qt]+' · שאלות היום':'שאלות היום','learn','am',x.qt||'mix')}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
       if(!u){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}}
   else go({screen:'amjb',jb:x.id})}
@@ -3533,8 +3548,11 @@ function amLvMap(){if(QLV)return QLV;QLV={};if(!AMD)return QLV;const by={sc:[],r
   return QLV}
 const amLv=id=>(amLvMap()[id]||{}).lv||0;
 /* the day's questions: never-answered course questions, mixed – sc / rs / rc in exam proportions, from different units, the easiest ones left first (all the easy questions in the first days, then the level goes up), ordered easy → hard; a passage's questions stay together */
-function amDayIds(n,qt){if(!AMD)return [];const M=amLvMap(),un=id=>!amLast(id)&&M[id],sets=(AMD.s||[]).filter(x=>amCourse(x)&&(x.t==='sc'||x.t==='rs'||x.t==='rc'));
-  const uOf={};sets.forEach(x=>x.ids.forEach(id=>uOf[id]=x.u));const pool=t=>sets.filter(x=>x.t===t).flatMap(x=>x.ids).filter(un).sort((a,b)=>M[a].sc-M[b].sc);
+/* a question answered wrong comes back in the journey only after QBACK days (she should have forgotten the answer); answered right – never */
+const QBACK=21;
+const amQBack=id=>{const l=amLast(id);return !!(l&&!l[1]&&amNow()-(l[3]||0)>QBACK*864e5)};
+function amDayIds(n,qt){if(!AMD)return [];const M=amLvMap(),un=id=>M[id]&&(!amLast(id)||amQBack(id)),sets=(AMD.s||[]).filter(x=>amCourse(x)&&(x.t==='sc'||x.t==='rs'||x.t==='rc'));
+  const uOf={};sets.forEach(x=>x.ids.forEach(id=>uOf[id]=x.u));const pool=t=>sets.filter(x=>x.t===t).flatMap(x=>x.ids).filter(un).sort((a,b)=>(amQBack(b)?1:0)-(amQBack(a)?1:0)||M[a].sc-M[b].sc);
   const spread=(L,k,uf=id=>uOf[id])=>{/* the easiest first (L is sorted easy → hard), from different units: one per unit, then two, then any */if(k<=0||!L.length)return [];const out=[],used={};for(let pass=0;pass<3&&out.length<k;pass++)for(const id of L){if(out.length>=k)break;if(out.includes(id))continue;if(pass<2&&(used[uf(id)]||0)>pass)continue;out.push(id);used[uf(id)]=(used[uf(id)]||0)+1}return out};
   let nsc=Math.round(n*8/22),nrs=Math.round(n*4/22),nrc=n-nsc-nrs;if(qt){nsc=qt==='sc'?n:0;nrs=qt==='rs'?n:0;nrc=qt==='rc'?n:0}
   /* passages: group the unanswered rc questions by passage, choose passages spread over the levels */
@@ -3563,6 +3581,10 @@ function amQNavBind(){const mv=i=>{AQ.i=Math.max(0,Math.min(AQ.ids.length,i));if
   app.querySelectorAll('[data-qj]').forEach(b=>b.onclick=()=>mv(+b.dataset.qj));
   const p=$('aqPrev');if(p)p.onclick=()=>mv(AQ.i-1);const nx=$('aqNext');if(nx)nx.onclick=()=>mv(AQ.i+1);
   const us=$('aqUnit');if(us)us.onchange=()=>{const x=(AMD.s||[]).find(z=>z.id===us.value);if(!x)return;JRGO=AQ.jr||null;amStartUnit(x,(AMTN[x.t]||'')+' · '+(x.b?'פרק ':'יחידה ')+x.u,AQ.from,AQ.t)}}
+/* מצב רץ in questions: the question's sentence is read once when it appears (not the reading passage; listening items read themselves) */
+let AQAUTO='';
+function amAutoQ(id,q,st){const b=$('autoBtn');if(b&&!b._q){b._q=1;b.onclick=()=>{sndNext();AQAUTO='';amRedrawKeep()}}
+  if(!AUTO||!q||st.done||st.ans!=null||AQAUTO===id)return;AQAUTO=id;if(/^(lc|lq|wr)$/.test(q.t))return;setTimeout(()=>{if(AQ&&AQ.cur===id)amSay(q.q)},250)}
 function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.ids.length){go({screen:'am'});return}
   if(AQ.i>=AQ.ids.length)return amResult();
   const id=AQ.ids[AQ.i],q=AMD.q[id],st=aqSt(),exam=AQ.mode==='exam';AQ.cur=id;if(!exam)amXplPre(AQ.ids.slice(AQ.i,AQ.i+4));
@@ -3573,7 +3595,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   const ri=Math.max(0,runs.findIndex(r=>AQ.i>=r.s&&AQ.i<=r.e)),run=runs[ri],qn=AQ.i-run.s+1;
   const ansd=i=>{const x=AQ.st[i];return !!(x&&(x.done||x.ans))};AQ.flag=AQ.flag||{};const INS=AMINS[q.t]||AMINS.sc;
   let h=`<div class="screen qz am-scr ax">
-    <div class="nav"><button class="back" id="bk">${exam?'עצירה':'יציאה'}</button><span class="nav-ic">${HOME}</span></div>
+    <div class="nav"><button class="back" id="bk">${exam?'עצירה':'יציאה'}</button><span class="nav-ic">${exam?'':AUTOBTN()}${HOME}</span></div>
     <div class="am-bar"><span class="am-chip t">${AMTI[q.t]} ${AMTN[q.t]}</span><span>${esc(AQ.name)}</span><span>· ${AQ.i+1}/${AQ.ids.length}</span>${exam?'<span class="am-timer" id="amTm"></span>':''}</div>
     <div class="am-prog"><i style="width:${(AQ.i)/AQ.ids.length*100}%"></i></div>
     ${amQNav(exam,ansd)}
@@ -3625,7 +3647,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   const hb=$('amHint');if(hb)hb.onclick=()=>{$('amHintBox').hidden=false;hb.remove()};
   const sh=$('amShow');if(sh)sh.onclick=()=>{st.stage='opts';amSaveQ();draw()};
   const pd=$('amPassD');if(pd)pd.ontoggle=()=>{st.pass=pd.open;amSaveQ()};
-  amQNavBind();
+  amQNavBind();try{amAutoQ(id,q,st)}catch(e){}try{amUnkMark()}catch(e){}
   app.querySelectorAll('.am-opt[data-k]').forEach(b=>b.onclick=ev=>{if(st.done)return;if(!exam&&ev.target.closest('.ax-ot')){const hit=wordAt(ev.clientX,ev.clientY);if(hit){amPop(hit.w,'','',enSentOf(hit.n,hit.w),'hint');return}}const k=+b.dataset.k;st.sel=k;if(st.elim[k])delete st.elim[k];amSaveQ();amRedrawKeep()});
   app.querySelectorAll('[data-el]').forEach(b=>b.onclick=()=>{const k=+b.dataset.el,r=b.dataset.r;st.elim[k]=st.elim[k]===r?undefined:r;if(!st.elim[k])delete st.elim[k];else if(st.sel===k)st.sel=0;amSaveQ();amRedrawKeep()});
   const ty=$('amTyped');if(ty){ty.oninput=()=>{st.sel=ty.value.trim();amSaveQ();const c=$('amChk');if(c)c.disabled=!st.sel};ty.onkeydown=e=>{if(e.key==='Enter')$('amChk')&&$('amChk').click()}}
@@ -3775,7 +3797,7 @@ function amQPath(st,ok){const P=[['res','✓ תשובה'],...(ok?[]:[['why','�
 
 /* fixing a question's Hebrew translation on request (always offered, also after the explanation corrected it) */
 const QTRP={};
-function qTrFix(id){const q=AMD.q[id];if(!q||QTRP[id])return;const xai=AMAI['x2|'+id],qfx=AMAI['qtr|'+id];
+function qTrFix(id){const q=AMD.q[id];if(!q||QTRP[id])return;const xai=AMAI['x3|'+id],qfx=AMAI['qtr|'+id];
   const old=qfx&&qfx.he||(xai&&!xai.err&&xai.book_wrong&&xai.translation)||q.he||'';let en=q.q;if(q.t==='sc'&&typeof q.a!=='string'&&q.o)en=en.replace(/_{2,}/,q.o[q.a-1]);else if(typeof q.a==='string')en=en.replace(/_{2,}/,q.a);
   QTRP[id]=1;amRedrawKeep();
   const pr=`English sentence: "${en}"\nA Hebrew translation of it: "${old}"\nThe student says the translation has a mistake. Check it very carefully: meaning of every word, verb forms, gender, prepositions, numbers, natural Israeli Hebrew. Return the correct, natural Hebrew translation (keep numbers as digits).\nJSON: {"he":"...","changed":true or false,"why":"if changed – a very short Hebrew note on what was wrong"}\n${AIHE}`;
@@ -3786,17 +3808,25 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 const XPLO={};
 /* the explanations are made ahead (her request – no waiting): the question on screen and the next 3, one after another, in the background */
 let XPLQ=[],XPLRUN=false;
-function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x2|'+id]&&!AMAI['x2|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
-function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x2|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
+function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x3|'+id]&&!AMAI['x3|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
+function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x3|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
   aiCached(key,promptXpl(AMD.q[id]),.2).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
     if(r&&r.err&&/מכסה/.test(r.err)){XPLQ=[];XPLRUN=false;return}setTimeout(amXplNext,1200)})}
 
 function promptXpl(q){return `You are teaching a Hebrew-speaking student who knows almost NO English words, for the Amiram English exam. Explain this question after she answered it, in detail, so she understands the sentence and every answer option.
 ${qText(q)}
 Rules: assume she does not know any word. Do NOT give a word-by-word glossary – for the hard words, teach HOW to guess the meaning from context and word parts. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
-JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","decode":[{"en":"a word she probably does not know – the hard words of the sentence and of the options (up to 8)","how":"Hebrew: how she could work out its meaning WITHOUT knowing the word – clues from the sentence around it (what comes before/after, connectors like but/because, positive or negative tone, what makes sense logically), prefix / suffix / root she may know, a similar word in Hebrew or a loanword, its part of speech from its place in the sentence","meaning":"the meaning she reaches in the end, 1-3 Hebrew words"}],"understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit"}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
+JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","decode":[{"en":"a word she probably does not know – the hard words of the sentence and of the options (up to 8)","how":"Hebrew: how she could work out its meaning WITHOUT knowing the word – clues from the sentence around it (what comes before/after, connectors like but/because, positive or negative tone, what makes sense logically), prefix / suffix / root she may know, a similar word in Hebrew or a loanword, its part of speech from its place in the sentence","meaning":"the meaning she reaches in the end, 1-3 Hebrew words"}],"understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit","words":[{"en":"each word of the option that carries meaning","hint":"Hebrew: a hint how to understand this word without knowing it (context, word parts, a Hebrew look-alike or loanword, its place in the sentence) – then its meaning in a few words"}]}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
 ${AIHE}`}
-function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x2|'+id,ai=AMAI[key],open=!!XPLO[id];
+function promptUnk(q,ws){return `A Hebrew-speaking student who knows almost no English marked words she did not know in this exam question. For EACH marked word explain in Hebrew how she could understand it without knowing it (clues from the sentence, connectors, tone, word parts – prefix / suffix / root, a Hebrew look-alike or loanword, its part of speech from its place), then its meaning here.
+${qText(q)}
+Marked words: ${ws.join(', ')}
+JSON: {"words":[{"en":"the word","how":"Hebrew explanation + hint","meaning":"its meaning here, 1-3 Hebrew words"}]}
+${AIHE}`}
+function amUnkBox(id,st){const U=st&&st.unk||[];if(!U.length||!GKEY())return '';const key='xu|'+id+'|'+U.slice().sort().join(','),ai=AMAI[key];
+  if(!ai&&!AIP[key])aiCached(key,promptUnk(AMD.q[id],U),.2).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()});
+  return `<div class="am-box am-xpl am-unkbox"><h5 style="margin-top:0">🔖 המילים שסימנת</h5>${ai&&!ai.err?`<ul class="am-xopts">${(ai.words||[]).map(d=>`<li><b><bdi dir="ltr">${esc(d.en||'')}</bdi></b> – ${bdiEsc(d.how||'')}${d.meaning?` <span>← ${esc(d.meaning)}</span>`:''}</li>`).join('')}</ul>`:ai&&ai.err?`<p class="hint">${esc(ai.err)}</p>`:'<p class="hint">⏳ מכינה הסבר למילים שסימנת…</p>'}</div>`}
+function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x3|'+id,ai=AMAI[key],open=!!XPLO[id];
   let b='';
   if(open&&!ai&&!AIP[key]){const p=aiCached(key,promptXpl(q),.2);p.then(()=>{if(S.screen==='amq'&&AQ.cur===id)amRedrawKeep()})}
   if(ai&&!ai.err){const L=(a,f)=>(a||[]).map(f).join('');
@@ -3805,7 +3835,7 @@ function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x2|'+id,ai=AMA
     b+=(ai.decode||[]).length?`<h5>איך מבינים מילה שלא מכירים</h5><ul class="am-xopts">${L(ai.decode,d=>`<li><b><bdi dir="ltr">${esc(d.en||'')}</bdi></b> – ${bdiEsc(d.how||'')}${d.meaning?` <span>← ${esc(d.meaning)}</span>`:''}</li>`)}</ul>`:'';
     b+=(ai.understand||[]).length?`<h5>איך מבינים את המשפט</h5><ol>${L(ai.understand,x=>`<li>${bdiEsc(x)}</li>`)}</ol>`:'';
     b+=(ai.passage||[]).length?`<h5>איפה התשובה בקטע</h5>${L(ai.passage,x=>`<p dir="ltr" class="en">${esc(x.en||'')}</p><p>${bdiEsc(x.he||'')}</p>`)}`:'';
-    b+=(ai.options||[]).length?`<h5>התשובות</h5><ul class="am-xopts">${L(ai.options,(o,i)=>`<li class="${o.ok?'ok':''}"><b>(${i+1}) <bdi dir="ltr">${esc(o.en||'')}</bdi></b> = ${esc(o.he||'')} ${o.ok?'✓':'✗'}<br><span>${bdiEsc(o.why||'')}</span></li>`)}</ul>`:'';
+    b+=(ai.options||[]).length?`<h5>התשובות</h5><ul class="am-xopts">${L(ai.options,(o,i)=>`<li class="${o.ok?'ok':''}"><b>(${i+1}) <bdi dir="ltr">${esc(o.en||'')}</bdi></b> = ${esc(o.he||'')} ${o.ok?'✓':'✗'}<br><span>${bdiEsc(o.why||'')}</span>${(o.words||[]).length?`<ul class="am-xow">${(o.words||[]).map(w=>`<li><bdi dir="ltr"><b>${esc(w.en||'')}</b></bdi> – ${bdiEsc(w.hint||'')}</li>`).join('')}</ul>`:''}</li>`)}</ul>`:'';
     b+=ai.answer?`<h5>למה זו התשובה</h5><p>${bdiEsc(ai.answer)}</p>`:'';
     b+=ai.tip?`<p><b>📌 ${bdiEsc(ai.tip)}</b></p>`:'';
     b+=askBox('xpl|'+id,qText(q)+'\nDetailed explanation she got: '+JSON.stringify(ai).slice(0,2500));
@@ -3813,17 +3843,17 @@ function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x2|'+id,ai=AMA
   else b+=`<p class="hint">⏳ ההסבר כמעט מוכן…</p>`;
   return `<details class="am-box am-xpl" data-xpl="${esc(id)}" ${open?'open':''}><summary>📖 הסבר מפורט – איך להבין את המשפט והתשובות</summary>${open?b:''}</details>`}
 document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.am-xpl'))return;const id=d.dataset.xpl;const was=!!XPLO[id];XPLO[id]=d.open;if(d.open&&!was)amRedrawKeep()},true);
-document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x2|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
+document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x3|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
 function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   let h=amQPath(st,ok)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
-  const xai=AMAI['x2|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
+  const xai=AMAI['x3|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
   const heNow=qfx&&qfx.he||(xfix?xai.translation:q.he),fixed=!!(qfx&&qfx.he&&qfx.changed!==false)||!!xfix,why=qfx&&qfx.he?qfx.why:xfix?xai.book_wrong:'';
   const heBox=(t)=>`<div class="am-box good"><h4>${t}</h4><p>${bdiEsc(heNow)}</p>${GKEY()?`<button class="small-link" data-qtrfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">${QTRP[id]?'⏳ בודקת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`;
   if(q.t==='sc'&&q.he)h+=heBox('תרגום המשפט');
   if(q.t==='rs'&&q.he)h+=`<div class="am-box"><h4>המשפט המקורי בעברית</h4><p>${esc(q.he)}</p><p class="hint" style="margin:0">ליד כל תשובה למעלה: התרגום שלה וההסבר מהספר.</p></div>`;
   if((q.t==='wf'||q.t==='gc')&&q.he)h+=heBox('תרגום המשפט');
   if(q.t==='lq'&&q.he)h+=`<div class="am-box"><h4>השאלה בעברית</h4><p>${esc(q.he)}</p></div>`;
-  h+=amXplBox(id);
+  h+=amUnkBox(id,st);h+=amXplBox(id);
   if(q.ex)h+=`<div class="am-box"><h4>📗 ההסבר</h4><div class="exl">${esc(q.ex)}</div></div>`;
   h+=EXB(!ok?'הטעות מטופלת עכשיו, לא מחכה לאחר כך: הכפתור למטה ממשיך ל<b>חקירת הטעות</b>, אחריה <b>איך פותרים לפי השיטה</b>, ואז <b>המילים מהשאלה</b>.':'הכפתור למטה ממשיך ל<b>איך פותרים לפי השיטה</b> – גם כשצדקת, כדי לוודא שזה לא היה מזל – ואז <b>המילים מהשאלה</b>.');
   h+=`<div class="am-cta">${AQ.i?'<button class="btn secondary" id="amPrev2" aria-label="השאלה הקודמת">→</button>':''}<button class="btn" id="amNext" data-fb="${!ok?'why':'words'}">${!ok?'🔍 לחקור את הטעות':'📚 המילים מהשאלה'} ←</button></div>`;
@@ -3880,12 +3910,11 @@ const UWP={};
 function amWordsBox(id){if(!id||!AMD)return '';const q=AMD.q[id],R=amQWords(id),N=amQNew(id),add=R.filter(d=>!amDbStatus(d)).length;
   const need=N.filter(e=>!TRX[e+'|'+amQCtx(q,e).trim()]&&!UWP[e+'|'+id]);
   if(need.length){need.forEach(e=>UWP[e+'|'+id]=1);Promise.all(need.map(e=>amTrans(e,amQCtx(q,e)).catch(()=>null))).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()})}
-  const rowD=d=>{const st=amDbStatus(d);return `<div class="am-wrow"><button class="spk" data-amsay="${esc(d.e)}" aria-label="השמעה" style="width:34px;height:34px">${SPK}</button><span class="e">${esc(d.e)}</span><span class="h">${esc(d.cards.map(c=>c.h[0]).filter((v,i,a)=>a.indexOf(v)===i).join(' · '))}<small class="am-indict">${st==='y'?'✓ יודעת':'📘 במילון'}</small></span>${st==='y'?'':`<button class="${st?'in':''}" data-dbadd="${esc(d.e)}">${st==='w'?'⏩ בתור ללמידה':'⏩ ללמידה בקרוב'}</button>`}</div>`};
-  const rowN=e=>{const t=TRX[e+'|'+amQCtx(q,e).trim()],h=t&&t.h||'';return `<div class="am-wrow"><button class="spk" data-amsay="${esc(e)}" aria-label="השמעה" style="width:34px;height:34px">${SPK}</button><span class="e">${esc(e)}</span><span class="h">${h?esc(h):'…'}<small class="am-indict">לא במילון</small></span><span class="am-wbtns"><button data-uwadd="${esc(e)}" ${h?'':'disabled'}>➕ למילון</button><button data-uwsoon="${esc(e)}" ${h?'':'disabled'}>⏩ ללמידה בקרוב</button></span></div>`};
-  return `<div class="am-box am-wordsbox"><h4>📚 מילים מהשאלה</h4>${R.length?`<div class="am-words">${R.map(rowD).join('')}</div>`:''}
-    ${N.length?`<h5 style="margin:10px 0 4px">מילים שלא במילון שלך</h5><div class="am-words">${N.map(rowN).join('')}</div>`:''}
-    ${!R.length&&!N.length?'<p class="hint" style="margin:0">אין בשאלה מילים חדשות.</p>':''}
-    ${add>1?`<button class="btn secondary" id="amAddAll">⏩ כל ${add} המילים מהמילון ללמידה בקרוב</button>`:''}</div>`}
+  const rowD=d=>{const st=amDbStatus(d);return `<div class="am-wl"><span class="e" dir="ltr">${esc(d.e)}</span><span class="h">${esc(d.cards.map(c=>c.h[0]).filter((v,i,a)=>a.indexOf(v)===i).join(' · '))}</span><span class="a">${st==='y'?'<small>✓ יודעת</small>':st==='w'?'<small>בתור ללמידה</small>':`<small>במילון</small><button class="am-sb" data-dbadd="${esc(d.e)}">ללמידה בקרוב</button>`}</span></div>`};
+  const rowN=e=>{const t=TRX[e+'|'+amQCtx(q,e).trim()],h=t&&t.h||'';return `<div class="am-wl"><span class="e" dir="ltr">${esc(e)}</span><span class="h">${h?esc(h):'…'}</span><span class="a"><button class="am-sb" data-uwadd="${esc(e)}" ${h?'':'disabled'}>למילון</button><button class="am-sb" data-uwsoon="${esc(e)}" ${h?'':'disabled'}>ללמידה בקרוב</button></span></div>`};
+  return `<div class="am-box am-wordsbox"><h4>מילים מהשאלה</h4>${R.length?`<div class="am-wls">${R.map(rowD).join('')}</div>`:''}
+    ${N.length?`<h5 class="am-wlh">לא במילון</h5><div class="am-wls">${N.map(rowN).join('')}</div>`:''}
+    ${!R.length&&!N.length?'<p class="hint" style="margin:0">אין בשאלה מילים חדשות.</p>':''}</div>`}
 function amBindFeedback(id,st){const q=AMD.q[id];
   const nx=$('amNext');if(nx)nx.onclick=()=>{const f=nx.dataset.fb;if(f){st.fb=f;amSaveQ();draw();window.scrollTo(0,0);
       if(f==='why'&&GKEY()&&!AMAI['why|'+id+'|'+st.sel]){}return}
@@ -3903,7 +3932,7 @@ function amBindWordBtns(id){const q=id&&AMD.q[id];
   const addD=e=>{const d=dictFind(e);if(!d)return;const ctx=q?(q.t==='rc'?amSentenceWith(q,e):q.t==='sc'?q.q.replace(/_{3,}/g,q.o[q.a-1]):q.q):'';
     /* every meaning she does not know yet joins the queue; the sentence from the question is kept as the place she met it */
     d.cards.filter(c=>!isY(c)&&!AMS.w['c:'+c.id]).forEach(c=>wAdd(c.e,c.h[0],ctx,'dict:'+c.id,'c:'+c.id))};
-  app.querySelectorAll('[data-dbadd]').forEach(b=>b.onclick=()=>{if(b.classList.contains('in'))return;addD(b.dataset.dbadd);b.classList.add('in');b.textContent='⏩ בתור ללמידה'});
+  app.querySelectorAll('[data-dbadd]').forEach(b=>b.onclick=()=>{if(b.classList.contains('in'))return;addD(b.dataset.dbadd);b.closest('.a').innerHTML='<small>בתור ללמידה</small>'});
   const uw=(e,soon)=>{const ctx=amQCtx(q,e).trim(),t=TRX[e+'|'+ctx];if(!t||!t.h)return;const tr=q&&q.t==='sc'?((AMAI['qtr|'+id]||{}).he||q.he||''):'';
     const c=uwAdd(e,t.h,ctx,tr);if(!c)return;if(soon)addD(e);amToast(soon?'✓ נוספה למילון ותילמד בקרוב':'✓ נוספה למילון · מילים שהוספתי');amRedrawKeep()};
   app.querySelectorAll('[data-uwadd]').forEach(b=>b.onclick=()=>uw(b.dataset.uwadd,false));
@@ -4644,7 +4673,7 @@ const WTRO={};
    a new question reads what it shows in English without giving the answer away (the sentence to translate, the word whose meaning is asked);
    after answering it reads the word and its English sentence. Each state is read once (WAUTOK), not again on redraws. */
 let WAUTOK='';
-function wAutoTick(){const b=$('autoBtn');if(b&&!b._w){b._w=1;b.onclick=()=>{AUTO=!AUTO;LS.set('dictAuto',AUTO?'1':'0');WAUTOK='';draw()}}
+function wAutoTick(){const b=$('autoBtn');if(b&&!b._w){b._w=1;b.onclick=()=>{sndNext();WAUTOK='';draw()}}
   if(!AUTO||S.screen!=='amwl'||!WS||!WS.list)return;const k=WS.list[WS.i],w=AMS.w[k];if(!w)return;const R=WS.res,ans=!!(R&&!R.pend&&(R.rec||R.ok!=null||R.self));
   const key=k+'|'+WS.step+'|'+(WS.round||WS.phase||'')+'|'+(ans?'a':'q');if(key===WAUTOK)return;
   let t='';const trs=app.querySelector('.am-trs [data-amsay]'),wd=app.querySelector('.am-card .w [data-amsay]');
