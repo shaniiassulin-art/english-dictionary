@@ -10,7 +10,7 @@ with sync_playwright() as p:
     const ids=amDayIds(20);const t={},u=new Set();ids.forEach(id=>{const q=AMD.q[id];t[q.t]=(t[q.t]||0)+1;u.add(amSrcOf(id).split(' · ')[0])});
     return {lv:c,n:ids.length,types:t,units:u.size,lvs:ids.map(amLv),sc:ids.map(id=>M[id].sc)}})()""")
   print(r)
-  assert r['n']==20 and len(r['types'])==3 and r['units']>=6
+  assert r['n']==20 and len(r['types'])==3 and r['units']>=6 and max(r['lvs'])<=2,'easy first'
   # answer some, they never come back
   pg.evaluate("go({screen:'am'});const k=jrCurKey(),P=AMS.jp[k];const x=P.b.find(x=>x.k==='q');for(const y of P.b){if(y===x)break;y.done=1;y.skip=1}amSave();jrRun(x)");pg.wait_for_timeout(1500)
   print(pg.evaluate("S.screen"),pg.locator('.am-qlv').inner_text())

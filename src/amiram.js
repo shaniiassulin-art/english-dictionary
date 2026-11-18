@@ -981,8 +981,9 @@ function jrRun(x){
     if(x.d>=x.n&&!jnPend(x).length){jrFinish(x.id,1);go({screen:'am'});return}
     if(!jnBatch(x).length){const y=DW.filter(isY).length,nn=DW.filter(isN).length;amToast(`לא נמצאו מילים חדשות: במילון ${DW.length} פירושים – ${y} סימנת ✓, ${nn} ✗, ${DW.length-y-nn} לא סומנו`);go({screen:'am'});return}
     go({screen:'amnw',jb:x.id})}
-  else if(x.k==='q'||x.k==='sim'){if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
-    if(x.k==='q'){let ids=(Array.isArray(x.qs)?x.qs:[]).filter(id=>!amLast(id));if(!ids.length){ids=amDayIds(Math.max(1,x.n-x.d));x.qs=ids.slice();amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,'שאלות היום','learn','am','mix')}
+  else if(x.k==='q'||x.k==='sim'){if(x.k==='q'&&x.qs&&x.qv!==2){x.qs=null;if(AQ&&AQ.jr===x.id){AQ=null;amSaveQ()}}/* sets made before 'easy first' are rebuilt */
+    if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
+    if(x.k==='q'){let ids=(Array.isArray(x.qs)?x.qs:[]).filter(id=>!amLast(id));if(!ids.length){ids=amDayIds(Math.max(1,x.n-x.d));x.qs=ids.slice();x.qv=2;amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,'שאלות היום','learn','am','mix')}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
       if(!u){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}}
   else go({screen:'amjb',jb:x.id})}
@@ -1394,11 +1395,10 @@ function amLvMap(){if(QLV)return QLV;QLV={};if(!AMD)return QLV;const by={sc:[],r
     const v=L.map(x=>x.sc).sort((a,b)=>a-b);L.forEach(x=>{const r=v.indexOf(x.sc)/Math.max(1,v.length-1);QLV[x.id]={lv:Math.min(5,1+Math.floor(r*5)),sc:x.sc}})}
   return QLV}
 const amLv=id=>(amLvMap()[id]||{}).lv||0;
-/* the day's questions: never-answered course questions, mixed – sc / rs / rc in exam proportions, from different units, a spread of levels (easiest of each level band), ordered easy → hard; a passage's questions stay together */
+/* the day's questions: never-answered course questions, mixed – sc / rs / rc in exam proportions, from different units, the easiest ones left first (all the easy questions in the first days, then the level goes up), ordered easy → hard; a passage's questions stay together */
 function amDayIds(n){if(!AMD)return [];const M=amLvMap(),un=id=>!amLast(id)&&M[id],sets=(AMD.s||[]).filter(x=>amCourse(x)&&(x.t==='sc'||x.t==='rs'||x.t==='rc'));
   const uOf={};sets.forEach(x=>x.ids.forEach(id=>uOf[id]=x.u));const pool=t=>sets.filter(x=>x.t===t).flatMap(x=>x.ids).filter(un).sort((a,b)=>M[a].sc-M[b].sc);
-  const spread=(L,k,uf=id=>uOf[id])=>{if(k<=0||!L.length)return [];if(L.length<=k)return L.slice();const out=[],used={};for(let pass=0;pass<3&&out.length<k;pass++)for(let b=0;b<k&&out.length<k;b++){const s0=Math.floor(b*L.length/k),e0=Math.floor((b+1)*L.length/k);for(let i=s0;i<e0;i++){const id=L[i];if(out.includes(id))continue;if(pass<2&&(used[uf(id)]||0)>pass)continue;out.push(id);used[uf(id)]=(used[uf(id)]||0)+1;break}}
-    for(const id of L){if(out.length>=k)break;if(!out.includes(id))out.push(id)}return out};
+  const spread=(L,k,uf=id=>uOf[id])=>{/* the easiest first (L is sorted easy → hard), from different units: one per unit, then two, then any */if(k<=0||!L.length)return [];const out=[],used={};for(let pass=0;pass<3&&out.length<k;pass++)for(const id of L){if(out.length>=k)break;if(out.includes(id))continue;if(pass<2&&(used[uf(id)]||0)>pass)continue;out.push(id);used[uf(id)]=(used[uf(id)]||0)+1}return out};
   let nsc=Math.round(n*8/22),nrs=Math.round(n*4/22),nrc=n-nsc-nrs;
   /* passages: group the unanswered rc questions by passage, choose passages spread over the levels */
   const P={};pool('rc').forEach(id=>{const k=AMD.q[id].x||id;(P[k]=P[k]||[]).push(id)});const ps=Object.values(P).map(ids=>({ids:ids.sort((a,b)=>{const A=+a.split('-').pop(),B=+b.split('-').pop();return A-B}),sc:ids.reduce((a,id)=>a+M[id].sc,0)/ids.length})).sort((a,b)=>a.sc-b.sc);
