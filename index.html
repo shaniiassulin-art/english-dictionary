@@ -2402,7 +2402,7 @@ JSON: {"method_tip":"","ideas":[{"sound":"the sound-alike in Hebrew letters and 
 function promptTrSent(w,old,lv){return `Write ONE English sentence for a Hebrew-speaking learner preparing for the Amirnet / psychometric English exam. It must use the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew).
 ${lv===3?'Level: HARD – like a sentence in the exam itself: academic register, 18–30 words, two clauses joined by a connector (although, whereas, however, because, despite…), CEFR B2–C1.':lv===2?'Level: MEDIUM – CEFR B1, 10–16 words, a natural sentence like in a simple article, may have one connector.':'Level: EASY – every other word very common and simple (CEFR A1–A2, 5–12 words), so the learner understands everything except "'+w.e+'". Everyday situation, concrete, natural.'}
 It must be COMPLETELY different from these sentences – another situation, other people, another place, other words (not a variation of them): ${JSON.stringify(old||[])}.
-JSON: {"en":"the sentence","he":"a natural Hebrew translation of the whole sentence"}
+JSON: {"en":"the sentence","he":"a natural, grammatically correct Hebrew translation of the whole sentence – correct verb forms (e.g. command: השווי / תשווי, never a made-up form like תשוות), correct prepositions (compare X with Y = להשוות את X ל-Y), as an Israeli would say it; read it again and fix any mistake before answering"}
 ${AIHE}`}
 function promptTr(w,en,he,mine){return `A Hebrew-speaking learner translated an English sentence into Hebrew, to practise the word "${w.e}" (meaning here: ${w.h}).
 English: «${en}»
@@ -4516,8 +4516,16 @@ function wAutoTick(){const b=$('autoBtn');if(b&&!b._w){b._w=1;b.onclick=()=>{AUT
   else{const en=R.en||(WS.cur&&WS.cur.en)||'';t=trs?'':(w.e+(en?'. '+en:''))}
   if(!t&&!ans&&app.querySelector('[data-wmc],#wAns,#trIn')){WAUTOK=key;return}
   if(!t)return;WAUTOK=key;try{amSay(t)}catch(e){}}
-function wTrHtml(s,x,ex){if(!s)return '';const t=x&&x.tr&&s===ex?x.tr:((TRC[s.toLowerCase()]||{}).h||''),op=WTRO[s]!==false;/* open by default after answering (her request) – she can hide it */
-  return `<div class="center"><button class="trbtn" data-wtr="${esc(s)}">${op?'הסתרת התרגום':'תרגום לעברית'}</button><span class="trans" ${op?'':'hidden'}>${op?(t?esc(t):'⏳ מתרגמת…'):esc(t)}</span></div>`}
+function wTrHtml(s,x,ex){if(!s)return '';const fx=TRC[s.toLowerCase()],t=fx&&fx.src==='תוקן'?fx.h:x&&x.tr&&s===ex?x.tr:((fx||{}).h||''),op=WTRO[s]!==false;/* open by default after answering (her request) – she can hide it */
+  return `<div class="center"><button class="trbtn" data-wtr="${esc(s)}">${op?'הסתרת התרגום':'תרגום לעברית'}</button><span class="trans" ${op?'':'hidden'}>${op?(t?esc(t):'⏳ מתרגמת…'):esc(t)}</span>${op&&t&&GKEY()?`<button class="link small-link am-trfix" data-trfix="${esc(s)}">${TRFIXP[s]?'⏳ מתקנת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`}
+/* "⚠️ יש טעות בתרגום" (her report: a Gemini translation with a wrong verb form): Gemini checks and corrects the translation; the fix replaces it everywhere (TRC, the word's sentence, the answered page) */
+const TRFIXP={};
+function trFix(en){const c=TRC[en.toLowerCase()],cd=DW.find(d=>d.s===en),old=(c&&c.h)||(WS&&WS.res&&WS.res.en===en&&WS.res.he)||(cd&&(EXTRA[cd.xid||cd.id]||{}).tr)||'';if(!old||TRFIXP[en])return;TRFIXP[en]=1;if(S.screen.startsWith('am'))amRedrawKeep();
+  const pr=`English sentence: "${en}"\nA Hebrew translation of it: "${old}"\nCheck the Hebrew translation very carefully: verb forms and conjugation, gender, prepositions, word choice, natural Israeli Hebrew. Return the correct, natural Hebrew translation (fix every mistake; if it is already fully correct, return it unchanged).\nJSON: {"he":"...","changed":true or false,"why":"if changed – a very short Hebrew note on what was wrong"}\n${AIHE}`;
+  Promise.race([aiRun('','',null,{prompt:pr,temp:.1}),new Promise(r=>setTimeout(()=>r(null),20000))]).then(r=>{delete TRFIXP[en];const j=r&&r.j,h=j&&String(j.he||'').trim();
+    if(h){TRC[en.toLowerCase()]={h,src:'תוקן'};if(WS&&WS.res&&WS.res.en===en)WS.res.he=h;Object.values(AMS.w).forEach(w=>{for(const f of ['rv','trc'])if(w[f]&&w[f].en===en)w[f].he=h});amSave();if(WS)wSave();amToast(j.changed===false?'התרגום נבדק – הוא נכון':'✓ התרגום תוקן'+(j.why?' – '+j.why:''))}
+    else amToast('לא הצלחתי לבדוק את התרגום עכשיו');if(S.screen.startsWith('am'))amRedrawKeep()}).catch(()=>{delete TRFIXP[en];amToast('לא הצלחתי לבדוק את התרגום עכשיו')})}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-trfix]');if(b)trFix(b.dataset.trfix)});
 function wStageDots(w){return [1,2,3,4,5,6].map(i=>w.st>i?'●':w.st===i?'◉':'○').join('')}
 /* is there anything to choose from (the dictionary tip or Gemini ideas, or Gemini still working on them) */
 /* one association at a time: ✨ asks Gemini for a new one (not like the earlier ones), ↩ goes back to the previous one */
