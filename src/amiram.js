@@ -945,7 +945,12 @@ function jrNorm(k,P){let ch=false;if(!Array.isArray(P.b)){P.b=[];ch=true}{let se
    const i=P.b.findIndex(x=>x.k==='rev2'&&!x.done),nx=P.b.filter(x=>!x.x);if(i>=0&&nx[nx.length-1]!==P.b[i]){const [r]=P.b.splice(i,1),j=P.b.findIndex(x=>x.x);if(j<0)P.b.push(r);else P.b.splice(j,0,r);ch=true}}
   {const qs=P.b.filter(x=>x.k==='q'&&!x.qt&&!x.x),simU=P.b.filter(x=>x.k==='sim'&&!x.done&&!x.d&&!x.used);
    if(simU.length){P.b=P.b.filter(x=>!simU.includes(x));ch=true}
-   if(qs.length&&qs.every(x=>!x.done&&!x.d&&!x.used&&!(AQ&&AQ.jr===x.id))){const i=P.b.indexOf(qs[0]);let n=0;const nb=jrQB(k,jrGoal(k)===180,()=>n++);P.b=P.b.filter(x=>!qs.includes(x));P.b.splice(i,0,...nb);ch=true}}
+   /* generic question steps → one step per type (her request); answers already given that day count for their type's step */
+   if(qs.length&&!qs.every(x=>x.done)){const i=P.b.indexOf(qs[0]);let n=0;const nb=jrQB(k,jrGoal(k)===180,()=>n++);
+     if(qs.some(x=>x.d||x.used)){const per={sc:0,rs:0,rc:0};Object.keys(AMS.a||{}).forEach(id=>{const h=(AMS.a[id]||{}).h||[],t=/^[cb](sc|rs|rc)\d/.exec(id);if(t&&h.some(r=>r&&r[3]&&dayKey(r[3])===k))per[t[1]]++});
+       nb.forEach(y=>{y.d=Math.min(y.n,per[y.qt]||0);y.used=0;if(y.d>=y.n)y.done=amNow()})}
+     if(AQ&&qs.some(x=>AQ.jr===x.id)){AQ=null;try{LS.set('dictAmQ','null')}catch(e){}}
+     P.b=P.b.filter(x=>!qs.includes(x));P.b.splice(i,0,...nb);ch=true}}
   if(ch){P.t=amNow();amSave()}return P}
 /* a review step with no words due is skipped (shown greyed, not "done"), so the day starts with what there is */
 function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==='rev'||x.k==='rev2')&&!x.go&&!wDue(x.k==='rev2'?18e5:0).length&&!(WS&&WS.jr===x.id&&WS.i<WS.list.length)){x.done=amNow();x.skip=1;ch=true;continue}break}if(ch){P.t=amNow();amSave()}return P}
