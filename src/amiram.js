@@ -803,7 +803,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .am-sheet-b .am-m table{font-size:.75rem}
 .am-qnav{display:flex;flex-direction:column;gap:6px;align-items:stretch}
 .am-qnav #aqUnit{align-self:center;width:auto;min-height:34px;padding:4px 10px;font-size:.82rem;border-radius:999px!important;background:var(--fill)!important;border:0!important}
-.aq-row{display:flex;align-items:center;gap:6px;direction:ltr}.am-qlv{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:2px 0 0;font-size:.78rem}.am-lvc{padding:2px 10px;border-radius:999px;background:var(--fill);color:var(--muted);font-weight:600}.am-lvc.l1,.am-lvc.l2{color:var(--ok)}.am-lvc.l4,.am-lvc.l5{color:var(--bad)}.am-qsrc{color:var(--muted)}
+.aq-row{display:flex;align-items:center;gap:6px;direction:ltr}.am-xpl>summary{cursor:pointer;font-weight:700;list-style:none}.am-xpl>summary::-webkit-details-marker{display:none}.am-xpl>summary::after{content:' ▾';color:var(--muted)}.am-xpl[open]>summary::after{content:' ▴'}.am-xpl h5{margin:12px 0 4px;font-size:.88rem}.am-xpl p{margin:2px 0}.am-xpl .en{font-family:var(--en)}.am-xw{color:var(--bad);font-size:.85rem}.am-xwords{display:flex;flex-wrap:wrap;gap:6px;direction:ltr;justify-content:flex-start}.am-xwords span{display:flex;flex-direction:column;align-items:center;background:var(--fill);border-radius:10px;padding:4px 8px}.am-xwords small{direction:rtl;color:var(--muted);font-size:.78rem}.am-xopts{padding-inline-start:18px;margin:4px 0}.am-xopts li{margin:4px 0}.am-xopts li.ok b{color:var(--ok)}.am-xopts li span{color:var(--muted);font-size:.86rem}.am-qlv{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:2px 0 0;font-size:.78rem}.am-lvc{padding:2px 10px;border-radius:999px;background:var(--fill);color:var(--muted);font-weight:600}.am-lvc.l1,.am-lvc.l2{color:var(--ok)}.am-lvc.l4,.am-lvc.l5{color:var(--bad)}.am-qsrc{color:var(--muted)}
 .aq-row .am-qnums{flex:1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;scrollbar-width:none;justify-content:flex-start;padding:2px}.aq-row .am-qnums::-webkit-scrollbar{display:none}
 .aq-row .am-qnums button{flex:none}.aq-row .am-qnums button:first-child{margin-left:auto}.aq-row .am-qnums button:last-child{margin-right:auto}
 .aq-a{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:1rem;color:var(--ink);cursor:pointer}.aq-a:disabled{opacity:.35}
@@ -1653,12 +1653,41 @@ function amQWords(id){const q=AMD.q[id],rows=[],seen=new Set();
 function amDbStatus(d){if(d.cards.every(isY))return 'y';if(d.cards.some(c=>AMS.w['c:'+c.id])||AMS.w[wKey(d.e)])return 'w';return ''}
 function amQPath(st,ok){const P=[['res','✓ תשובה'],...(ok?[]:[['why','🔍 חקירה']]),['words','📚 מילים']];const cur=st.fb||'res',ci=P.findIndex(x=>x[0]===cur);
   return `<div class="am-path">${P.map(([k,t],i)=>`<span class="${i<ci?'done':i===ci?'on':''}">${t}</span>`).join('')}</div>`}
+
+/* 📖 detailed explanation after answering (her request): folded; opened → Gemini explains the sentence word by word and every option, assuming she knows no English; also a correct translation (the book's may be wrong) */
+const XPLO={};
+function promptXpl(q){return `You are teaching a Hebrew-speaking student who knows almost NO English words, for the Amiram English exam. Explain this question after she answered it, in detail, so she understands the sentence and every answer option.
+${qText(q)}
+Rules: assume she does not know any word. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
+JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","words":[{"en":"English word or short phrase, in sentence order, every word that carries meaning","he":"its Hebrew meaning here"}],"understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit"}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
+${AIHE}`}
+function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x|'+id,ai=AMAI[key],open=!!XPLO[id];
+  let b='';
+  if(open&&!ai&&!AIP[key]){const p=aiCached(key,promptXpl(q),.2);p.then(()=>{if(S.screen==='amq'&&AQ.cur===id)amRedrawKeep()})}
+  if(ai&&!ai.err){const L=(a,f)=>(a||[]).map(f).join('');
+    const outer=q.he&&/^(sc|wf|gc)$/.test(q.t);/* the translation box above already shows the corrected one */
+    if(!outer){b+=ai.translation?`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(ai.translation)}</p>`:'';b+=ai.book_wrong?`<p class="am-xw">⚠️ ${bdiEsc(ai.book_wrong)}</p>`:''}
+    b+=(ai.words||[]).length?`<h5>מילה אחר מילה</h5><div class="am-xwords">${L(ai.words,w=>`<span><bdi dir="ltr" class="en">${esc(w.en||'')}</bdi><small>${esc(w.he||'')}</small></span>`)}</div>`:'';
+    b+=(ai.understand||[]).length?`<h5>איך מבינים את המשפט</h5><ol>${L(ai.understand,x=>`<li>${bdiEsc(x)}</li>`)}</ol>`:'';
+    b+=(ai.passage||[]).length?`<h5>איפה התשובה בקטע</h5>${L(ai.passage,x=>`<p dir="ltr" class="en">${esc(x.en||'')}</p><p>${bdiEsc(x.he||'')}</p>`)}`:'';
+    b+=(ai.options||[]).length?`<h5>התשובות</h5><ul class="am-xopts">${L(ai.options,(o,i)=>`<li class="${o.ok?'ok':''}"><b>(${i+1}) <bdi dir="ltr">${esc(o.en||'')}</bdi></b> = ${esc(o.he||'')} ${o.ok?'✓':'✗'}<br><span>${bdiEsc(o.why||'')}</span></li>`)}</ul>`:'';
+    b+=ai.answer?`<h5>למה זו התשובה</h5><p>${bdiEsc(ai.answer)}</p>`:'';
+    b+=ai.tip?`<p><b>📌 ${bdiEsc(ai.tip)}</b></p>`:'';
+    b+=askBox('xpl|'+id,qText(q)+'\nDetailed explanation she got: '+JSON.stringify(ai).slice(0,2500));
+  }else if(ai&&ai.err)b+=`<p class="hint">${esc(ai.err)}</p><button class="btn secondary" data-xplre="${esc(id)}">🔄 לנסות שוב</button>`;
+  else b+=`<p class="hint">⏳ מכינה הסבר מפורט…</p>`;
+  return `<details class="am-box am-xpl" data-xpl="${esc(id)}" ${open?'open':''}><summary>📖 הסבר מפורט – איך להבין את המשפט והתשובות</summary>${open?b:''}</details>`}
+document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.am-xpl'))return;const id=d.dataset.xpl;const was=!!XPLO[id];XPLO[id]=d.open;if(d.open&&!was)amRedrawKeep()},true);
+document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
 function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   let h=amQPath(st,ok)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
-  if(q.t==='sc'&&q.he)h+=`<div class="am-box good"><h4>תרגום המשפט</h4><p>${esc(q.he)}</p></div>`;
+  const xai=AMAI['x|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
+  const heBox=(t)=>`<div class="am-box good"><h4>${xfix?'תרגום המשפט (מתוקן)':t}</h4><p>${esc(xfix?xai.translation:q.he)}</p>${xfix?`<p class="hint" style="margin:0">בתרגום של הספר הייתה טעות: ${bdiEsc(xai.book_wrong)}</p>`:GKEY()&&!xai?`<button class="small-link" data-xplfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">⚠️ יש טעות בתרגום? לבדוק ולתקן</button>`:''}</div>`;
+  if(q.t==='sc'&&q.he)h+=heBox('תרגום המשפט');
   if(q.t==='rs'&&q.he)h+=`<div class="am-box"><h4>המשפט המקורי בעברית</h4><p>${esc(q.he)}</p><p class="hint" style="margin:0">ליד כל תשובה למעלה: התרגום שלה וההסבר מהספר.</p></div>`;
-  if((q.t==='wf'||q.t==='gc')&&q.he)h+=`<div class="am-box good"><h4>תרגום המשפט</h4><p>${esc(q.he)}</p></div>`;
+  if((q.t==='wf'||q.t==='gc')&&q.he)h+=heBox('תרגום המשפט');
   if(q.t==='lq'&&q.he)h+=`<div class="am-box"><h4>השאלה בעברית</h4><p>${esc(q.he)}</p></div>`;
+  h+=amXplBox(id);
   if(q.ex)h+=`<div class="am-box"><h4>📗 ההסבר</h4><div class="exl">${esc(q.ex)}</div></div>`;
   h+=EXB(!ok?'הטעות מטופלת עכשיו, לא מחכה לאחר כך: הכפתור למטה ממשיך ל<b>חקירת הטעות</b>, אחריה <b>איך פותרים לפי השיטה</b>, ואז <b>המילים מהשאלה</b>.':'הכפתור למטה ממשיך ל<b>איך פותרים לפי השיטה</b> – גם כשצדקת, כדי לוודא שזה לא היה מזל – ואז <b>המילים מהשאלה</b>.');
   h+=`<div class="am-cta">${AQ.i?'<button class="btn secondary" id="amPrev2" aria-label="השאלה הקודמת">→</button>':''}<button class="btn" id="amNext" data-fb="${!ok?'why':'words'}">${!ok?'🔍 לחקור את הטעות':'📚 המילים מהשאלה'} ←</button></div>`;
