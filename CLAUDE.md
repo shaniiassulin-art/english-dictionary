@@ -166,3 +166,4 @@
 - Word popup (Nov 18, her request): no "🔊 השמעת המשפט כולו" link any more – the popup of a tapped word plays only the word.
 - Word popup plays the word by itself (Nov 18, her request): `amPop` calls `amSay(e)` when it opens for a translation (not in hint mode).
 - Round chips follow the answer (Nov 18, her request): in a learning round, once the word on screen is answered, `wTrack` marks the round the word is in now (`lrOf(w)`): a miss moves the mark back to round 1, a right answer to the next round (all four done after round 4); before answering it marks the round being played.
+- Sentence lines aligned (Nov 18, her screenshot – the 3rd line of an English sentence wrapped under its speaker): an LTR block whose first child is an inline speaker (`.spk.inl`, from `SAYB(…,'sm inl')`) gets a 40px left column with the speaker positioned in it (CSS `:has`), so every line starts at the same place.

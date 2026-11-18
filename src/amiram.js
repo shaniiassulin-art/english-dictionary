@@ -361,6 +361,9 @@ textarea.am-in{resize:vertical;min-height:70px}
 .am-opt.right .he{color:var(--ok)}
 .am-orow{display:flex;flex-direction:column;gap:4px}.am-oline{display:flex;gap:6px;align-items:center}.am-oline .am-opt{flex:1;min-width:0}
 .spk.sm{width:34px;height:34px}.spk.sm svg{width:16px;height:16px}.spk.inl{width:28px;height:28px;vertical-align:middle;margin-inline-end:6px;float:left}.spk.inl svg{width:14px;height:14px}
+/* a sentence with its speaker at the start: the speaker sits in its own column and every line of the sentence starts under the first one (her request) */
+:is(.ctx,p,div)[dir=ltr]:has(>.spk.inl:first-child){position:relative;padding-left:40px!important;text-align:left}
+:is(.ctx,p,div)[dir=ltr]:has(>.spk.inl:first-child)>.spk.inl:first-child{position:absolute;left:0;top:.15em;float:none;margin:0}
 .am-qw{position:relative}.am-qw .am-q{padding-right:52px}.spk.corner{position:absolute;right:8px;bottom:8px;width:36px;height:36px}.spk.corner svg{width:17px;height:17px}
 .am-intro{background:var(--accent-soft);border-radius:14px;padding:10px 14px;line-height:1.55;font-size:.95rem;margin:0}.am-intro b{color:var(--accent)}
 .am-elim{display:flex;gap:5px;direction:rtl;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.am-elim::-webkit-scrollbar{display:none}
