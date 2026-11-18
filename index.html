@@ -789,7 +789,8 @@ function xlines(t,tip){const s=String(t);const raw=(tip?s.replace(/(\.)\s+(?=\S)
 /* usage notes: one numbered point per line */
 /* escape a line and set its English runs in <bdi> (escaping after the split, so &quot; etc. stay intact) */
 const RTLAR={'→':'←','⇒':'⇐','➡':'⬅','⟶':'⟵'};
-const bdiEsc=x=>String(x).split(/([A-Za-z][A-Za-z' \-]*[A-Za-z]|[A-Za-z])/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p).replace(/[→⇒➡⟶]/g,c=>RTLAR[c])).join('');
+/* English runs (with the numbers / punctuation inside them, and a number right before them) are isolated, so mixed Hebrew + English + numbers keep their order */
+const bdiEsc=x=>String(x).split(/((?:\d[\d.,%]*\s+)?[A-Za-z](?:[A-Za-z0-9'’\-.,%$ ]*[A-Za-z0-9%])?)/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p).replace(/[→⇒➡⟶]/g,c=>RTLAR[c])).join('');
 function xuse(t){const L=String(t).split('\n').map(x=>x.trim().replace(/^\d+[.)]\s*/,'')).filter(Boolean);
   return '<ol class="num">'+L.map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ol>'}
 function xfmt(t,tip){return '<ul>'+xlines(t,tip).map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ul>'}
@@ -3755,6 +3756,17 @@ function amQPath(st,ok){const P=[['res','✓ תשובה'],...(ok?[]:[['why','�
   return `<div class="am-path">${P.map(([k,t],i)=>`<span class="${i<ci?'done':i===ci?'on':''}">${t}</span>`).join('')}</div>`}
 
 /* 📖 detailed explanation after answering (her request): folded; opened → Gemini explains the sentence word by word and every option, assuming she knows no English; also a correct translation (the book's may be wrong) */
+
+/* fixing a question's Hebrew translation on request (always offered, also after the explanation corrected it) */
+const QTRP={};
+function qTrFix(id){const q=AMD.q[id];if(!q||QTRP[id])return;const xai=AMAI['x2|'+id],qfx=AMAI['qtr|'+id];
+  const old=qfx&&qfx.he||(xai&&!xai.err&&xai.book_wrong&&xai.translation)||q.he||'';let en=q.q;if(q.t==='sc'&&typeof q.a!=='string'&&q.o)en=en.replace(/_{2,}/,q.o[q.a-1]);else if(typeof q.a==='string')en=en.replace(/_{2,}/,q.a);
+  QTRP[id]=1;amRedrawKeep();
+  const pr=`English sentence: "${en}"\nA Hebrew translation of it: "${old}"\nThe student says the translation has a mistake. Check it very carefully: meaning of every word, verb forms, gender, prepositions, numbers, natural Israeli Hebrew. Return the correct, natural Hebrew translation (keep numbers as digits).\nJSON: {"he":"...","changed":true or false,"why":"if changed – a very short Hebrew note on what was wrong"}\n${AIHE}`;
+  Promise.race([aiRun('','',null,{prompt:pr,temp:.1}),new Promise(r=>setTimeout(()=>r(null),20000))]).then(r=>{delete QTRP[id];const jj=r&&r.j,h=jj&&String(jj.he||'').trim();
+    if(h){AMAI['qtr|'+id]={he:h,changed:jj.changed!==false||!!(qfx&&qfx.changed)||!!(xai&&xai.book_wrong),why:jj.why||(qfx&&qfx.why)||'',t:amNow()};amAiSave();amToast(jj.changed===false?'התרגום נבדק – הוא נכון':'✓ התרגום תוקן'+(jj.why?' – '+jj.why:''))}
+    else amToast('לא הצלחתי לבדוק את התרגום עכשיו');amRedrawKeep()}).catch(()=>{delete QTRP[id];amToast('לא הצלחתי לבדוק את התרגום עכשיו');amRedrawKeep()})}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-qtrfix]');if(b)qTrFix(b.dataset.qtrfix)});
 const XPLO={};
 /* the explanations are made ahead (her request – no waiting): the question on screen and the next 3, one after another, in the background */
 let XPLQ=[],XPLRUN=false;
@@ -3788,8 +3800,9 @@ document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.ma
 document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x2|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
 function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   let h=amQPath(st,ok)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
-  const xai=AMAI['x2|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
-  const heBox=(t)=>`<div class="am-box good"><h4>${xfix?'תרגום המשפט (מתוקן)':t}</h4><p>${esc(xfix?xai.translation:q.he)}</p>${xfix?`<p class="hint" style="margin:0">בתרגום של הספר הייתה טעות: ${bdiEsc(xai.book_wrong)}</p>`:GKEY()&&!xai?`<button class="small-link" data-xplfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">⚠️ יש טעות בתרגום? לבדוק ולתקן</button>`:''}</div>`;
+  const xai=AMAI['x2|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
+  const heNow=qfx&&qfx.he||(xfix?xai.translation:q.he),fixed=!!(qfx&&qfx.he&&qfx.changed!==false)||!!xfix,why=qfx&&qfx.he?qfx.why:xfix?xai.book_wrong:'';
+  const heBox=(t)=>`<div class="am-box good"><h4>${fixed?t+' (מתוקן)':t}</h4><p>${bdiEsc(heNow)}</p>${fixed&&why?`<p class="hint" style="margin:0">מה היה לא נכון: ${bdiEsc(why)}</p>`:''}${GKEY()?`<button class="small-link" data-qtrfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">${QTRP[id]?'⏳ בודקת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`;
   if(q.t==='sc'&&q.he)h+=heBox('תרגום המשפט');
   if(q.t==='rs'&&q.he)h+=`<div class="am-box"><h4>המשפט המקורי בעברית</h4><p>${esc(q.he)}</p><p class="hint" style="margin:0">ליד כל תשובה למעלה: התרגום שלה וההסבר מהספר.</p></div>`;
   if((q.t==='wf'||q.t==='gc')&&q.he)h+=heBox('תרגום המשפט');
