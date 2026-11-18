@@ -593,8 +593,10 @@ const group=(l,g)=>l===PL?byLv(l).filter(w=>PRIV.lists[g]&&w.list===PRIV.lists[g
 const nGroups=l=>l===PL?PRIV.lists.length:Math.ceil(byLv(l).length/SET);
 /* names: the private section has lists instead of numbered levels and groups */
 const PNAME='מילים לשיעור פרטי';
-const lvName=l=>l===PL?PNAME:`רמה ${l}`;
-const lvFull=l=>l===PL?PNAME:`רמה ${l} · ${LVN[l-1]}`;
+/* words she added from questions (not in the original dictionary) – their own section, "level" 12, cards "u|<english>", stored in AMS.uw (amiram.js) */
+const UL=12,UNAME='מילים שהוספתי';
+const lvName=l=>l===PL?PNAME:l===UL?UNAME:`רמה ${l}`;
+const lvFull=l=>l===PL?PNAME:l===UL?UNAME:`רמה ${l} · ${LVN[l-1]}`;
 const gName=(l,g)=>l===PL?`רשימה ${LN(PRIV.lists[g])}`:`קבוצה ${g+1}`;
 let prog={};try{prog=JSON.parse(localStorage.getItem('dictProg')||'{}')}catch(e){}
 // migrate old keys "word|unit"
@@ -902,6 +904,7 @@ function homeFit(){const g=$('dlv');if(!g)return;const H=document.documentElemen
   g.classList.toggle('tight',av/rows<58);
   if(av/rows>=36){g.style.height=av+'px';g.style.gridTemplateRows=`repeat(${rows},minmax(0,1fr))`;H.classList.add('noscroll')}else{g.style.height='';g.classList.remove('fit','tight')}}
 addEventListener('resize',()=>{if(S.screen==='home'||S.screen==='level')homeFit()});
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#uwGo'))go({screen:'level',l:UL})});
 function home(){
   const k=DW.filter(known).length;
   /* journey quizzes (keys J… – today's new words, free practice) belong to the אמירנט part, not to the dictionary home */
@@ -913,7 +916,7 @@ function home(){
       <h2>מילון אנגלית</h2>
       <p class="jh-d">${WORDS_N.toLocaleString()} מילים · ${DW.length.toLocaleString()} פירושים · <b class="kn">יודעת ${k.toLocaleString()}</b></p>${knowBar(DW)}
       <p id="syncState" class="sync-state ${SYNC.state}">${syncLabel()}</p>
-      <div class="dh-row"><button class="dh-chip${CARON?' on':''}" id="carTile">🚗 ${CARON?'מצב רכב פועל':'מצב רכב'}</button><button class="dh-chip" id="today"><b>${dayCount(dayKey())}</b> היום · היסטוריה</button>${(()=>{const f=favCur();return favValid(f)?`<button class="dh-chip" id="favGo">⭐ ${esc(favName(f))}</button>`:''})()}${rs&&rk!=='ALL'?`<button class="dh-chip" data-resume="${rk}">▶ להמשיך · ${esc(rs.name)} · ${Math.min(rs.i+1,rs.ids.length)}/${rs.ids.length}</button>`:''}</div>
+      <div class="dh-row"><button class="dh-chip${CARON?' on':''}" id="carTile">🚗 ${CARON?'מצב רכב פועל':'מצב רכב'}</button><button class="dh-chip" id="today"><b>${dayCount(dayKey())}</b> היום · היסטוריה</button>${(()=>{const f=favCur();return favValid(f)?`<button class="dh-chip" id="favGo">⭐ ${esc(favName(f))}</button>`:''})()}${byLv(UL).length?`<button class="dh-chip" id="uwGo">📝 ${UNAME} · ${byLv(UL).length}</button>`:''}${rs&&rk!=='ALL'?`<button class="dh-chip" data-resume="${rk}">▶ להמשיך · ${esc(rs.name)} · ${Math.min(rs.i+1,rs.ids.length)}/${rs.ids.length}</button>`:''}</div>
       ${quizPanel('ALL',DW,'בוחן על כל המילים','כל המילים','home',false,'dq')}
       ${catPanel('ALL',DW)}
     </section>
@@ -966,7 +969,7 @@ function countLine(ws){const y=ws.filter(isY).length,n=ws.filter(isN).length;
   return `<span class="kn">יודעת ${y}/${ws.length}</span>${n?` · <span class="unk">לא יודעת ${n}</span>`:''}${(y||n)&&u?` · לא סומנו ${u}`:''}`}
 function level(){
   const ws=byLv(S.l),n=nGroups(S.l);
-  const o={backLbl:S.l===PL?'מילון אנגלית':'כל הרמות',backFn:()=>go({screen:'home'}),kicker:S.l===PL?'':`רמה ${S.l}`,title:S.l===PL?lvFull(S.l):LVN[S.l-1]||lvFull(S.l),ws,key:lkey(S.l),
+  const o={backLbl:S.l===PL?'מילון אנגלית':'כל הרמות',backFn:()=>go({screen:'home'}),kicker:S.l===PL||S.l===UL?'':`רמה ${S.l}`,title:S.l===PL||S.l===UL?lvFull(S.l):LVN[S.l-1]||lvFull(S.l),ws,key:lkey(S.l),
     qtitle:S.l===PL?'בוחן על כל המילים':'בוחן על כל הרמה',name:lvName(S.l),from:'level',fav:[S.l],top:S.l===PL?sentBtn():'',
     listFn:()=>go({screen:'words',filter:'all',wl:'level'}),
     extra:`<div class="dgrid dlv ${S.l===PL?'g2':'g3'}" id="dlv" data-rows="${Math.ceil(n/(S.l===PL?2:3))}">${Array.from({length:n},(_,g)=>{const gw=group(S.l,g),done=gw.every(isY);
