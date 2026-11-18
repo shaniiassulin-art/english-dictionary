@@ -3548,7 +3548,7 @@ function amQNavBind(){const mv=i=>{AQ.i=Math.max(0,Math.min(AQ.ids.length,i));if
   const us=$('aqUnit');if(us)us.onchange=()=>{const x=(AMD.s||[]).find(z=>z.id===us.value);if(!x)return;JRGO=AQ.jr||null;amStartUnit(x,(AMTN[x.t]||'')+' · '+(x.b?'פרק ':'יחידה ')+x.u,AQ.from,AQ.t)}}
 function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.ids.length){go({screen:'am'});return}
   if(AQ.i>=AQ.ids.length)return amResult();
-  const id=AQ.ids[AQ.i],q=AMD.q[id],st=aqSt(),exam=AQ.mode==='exam';AQ.cur=id;
+  const id=AQ.ids[AQ.i],q=AMD.q[id],st=aqSt(),exam=AQ.mode==='exam';AQ.cur=id;if(!exam)amXplPre(AQ.ids.slice(AQ.i,AQ.i+4));
   if(st.fb==='meth')st.fb='words';
   const T=q.x?AMD.x[q.x]:null;
   /* exam look (like the real test): section tabs, a bar with instructions / question numbers / flag / next, "Question n" */
@@ -3756,6 +3756,13 @@ function amQPath(st,ok){const P=[['res','✓ תשובה'],...(ok?[]:[['why','�
 
 /* 📖 detailed explanation after answering (her request): folded; opened → Gemini explains the sentence word by word and every option, assuming she knows no English; also a correct translation (the book's may be wrong) */
 const XPLO={};
+/* the explanations are made ahead (her request – no waiting): the question on screen and the next 3, one after another, in the background */
+let XPLQ=[],XPLRUN=false;
+function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x|'+id]&&!AMAI['x|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
+function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
+  aiCached(key,promptXpl(AMD.q[id]),.2).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
+    if(r&&r.err&&/מכסה/.test(r.err)){XPLQ=[];XPLRUN=false;return}setTimeout(amXplNext,1200)})}
+
 function promptXpl(q){return `You are teaching a Hebrew-speaking student who knows almost NO English words, for the Amiram English exam. Explain this question after she answered it, in detail, so she understands the sentence and every answer option.
 ${qText(q)}
 Rules: assume she does not know any word. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
@@ -3775,7 +3782,7 @@ function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x|'+id,ai=AMAI
     b+=ai.tip?`<p><b>📌 ${bdiEsc(ai.tip)}</b></p>`:'';
     b+=askBox('xpl|'+id,qText(q)+'\nDetailed explanation she got: '+JSON.stringify(ai).slice(0,2500));
   }else if(ai&&ai.err)b+=`<p class="hint">${esc(ai.err)}</p><button class="btn secondary" data-xplre="${esc(id)}">🔄 לנסות שוב</button>`;
-  else b+=`<p class="hint">⏳ מכינה הסבר מפורט…</p>`;
+  else b+=`<p class="hint">⏳ ההסבר כמעט מוכן…</p>`;
   return `<details class="am-box am-xpl" data-xpl="${esc(id)}" ${open?'open':''}><summary>📖 הסבר מפורט – איך להבין את המשפט והתשובות</summary>${open?b:''}</details>`}
 document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.am-xpl'))return;const id=d.dataset.xpl;const was=!!XPLO[id];XPLO[id]=d.open;if(d.open&&!was)amRedrawKeep()},true);
 document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
