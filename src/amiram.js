@@ -1889,7 +1889,8 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
       fpSave();if(S.screen==='amfpl'&&FP&&FP.i===idx)amRedrawKeep()})()};
   const gv=$('fpGive');if(gv)gv.onclick=()=>{s.done=1;s.ok=false;fpSave();draw()};
   app.querySelectorAll('[data-fpo]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('[data-amsay]'))return;if(s.done)return;s.sel=b.dataset.fpo;s.ok=s.sel===c.e;s.done=1;fpSave();amRedrawKeep()});
-  app.querySelectorAll('[data-wtr]').forEach(b=>b.onclick=()=>{const t=b.dataset.wtr;WTRO[t]=!WTRO[t];const sp=b.nextElementSibling;b.textContent=WTRO[t]?'הסתרת התרגום':'תרגום לעברית';if(sp)sp.hidden=!WTRO[t];
+  app.querySelectorAll('[data-wtr]').forEach(b=>{const t=b.dataset.wtr,sp=b.nextElementSibling;if(WTRO[t]!==false&&sp&&/מתרגמת/.test(sp.textContent))amTrans(t).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו'})});
+  app.querySelectorAll('[data-wtr]').forEach(b=>b.onclick=()=>{const t=b.dataset.wtr;WTRO[t]=WTRO[t]===false;const sp=b.nextElementSibling;b.textContent=WTRO[t]?'הסתרת התרגום':'תרגום לעברית';if(sp)sp.hidden=!WTRO[t];
     if(WTRO[t]&&sp&&!sp.textContent.trim()){sp.textContent='⏳ מתרגמת…';amTrans(t).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו'})}});
   fitWords(app)}
 /* the dictionary quiz of a free practice ends → back to the practice page */
@@ -2082,10 +2083,23 @@ const wHeOk=w=>{const s=wHeSent(w);return !!((s&&!(w.used||[]).includes('he:'+s)
 /* the Hebrew sentence of the task. Only the card's own translated example is blanked directly; any other sentence is translated by Gemini,
    which marks the exact Hebrew word(s) for this English word – an exam sentence first (Gemini also says whether the word has this meaning
    there), else a new easy sentence. Returns {he,en,src,lab} | null (being made) | false (none). */
-function wHeRev(w){const s=wHeSent(w),c=wCard(w);if(s&&!(w.used||[]).includes('he:'+s))return {he:s,en:c&&c.s||'',src:'dict'};
+/* the gap of a Hebrew sentence stands where the word stands in the English one, when Hebrew allows it (her request: "I often go to the gym"
+   → "אני ___ הולכת לחדר כושר", not "אני הולכת לחדר כושר ___"). Positions are compared as a share of the sentence; a far-off gap is
+   rewritten once by Gemini (only the order, the same words), cached on this device in dictHeOrd; without Gemini / on failure the original stays. */
+let HEORD={};try{HEORD=JSON.parse(localStorage.getItem('dictHeOrd')||'{}')||{}}catch(e){}const HEORDP={};
+function heGapPos(he){const t=String(he).trim().split(/\s+/);const i=t.findIndex(x=>/_{4,}/.test(x));return i<0||t.length<2?-1:i/(t.length-1)}
+function enWordPos(en,w){const t=String(en).toLowerCase().split(/\s+/).map(x=>x.replace(/[^a-z'-]/g,''));const f=new Set(wForms(String(w.e).toLowerCase().split(/\s+/)[0]));const i=t.findIndex(x=>f.has(x));return i<0||t.length<2?-1:i/(t.length-1)}
+function heOrdered(s,en,w,key){if(!s||!en||(s.match(/_{4,}/g)||[]).length!==1)return s;const a=heGapPos(s),b=enWordPos(en,w);if(a<0||b<0||Math.abs(a-b)<.35)return s;
+  if(HEORD[key]!==undefined)return HEORD[key]||s;if(!GKEY())return s;if(HEORDP[key])return null;HEORDP[key]=1;
+  const pr=`English sentence: "${en}"\nIts Hebrew translation, with a gap (_____) where the Hebrew for "${w.e}" (${w.h}) goes: "${s}"\nIn the English the word "${w.e}" stands in a different place in the sentence than the gap in the Hebrew. Rewrite the Hebrew so the gap stands in the same place as "${w.e}" in the English – ONLY if that is correct, natural Hebrew; change only the word order, keep the same words, keep exactly one _____ (with any letter that is glued to it, like ב / ל / ה). If Hebrew word order doesn't allow it, return the sentence unchanged.\nJSON: {"he":"..."}\n${AIHE}`;
+  Promise.race([aiRun('','',null,{prompt:pr,temp:.2}),new Promise(r=>setTimeout(()=>r(null),12000))]).then(r=>{const h=r&&r.j&&String(r.j.he||'').trim();
+    const ok=h&&(h.match(/_{4,}/g)||[]).length===1&&Math.abs(h.replace(/_+/g,'').length-s.replace(/_+/g,'').length)<=6;
+    if(ok||r&&r.j){HEORD[key]=ok?h.replace(/_{4,}/,'_____'):'';try{const ks=Object.keys(HEORD);ks.slice(0,Math.max(0,ks.length-800)).forEach(x=>delete HEORD[x]);localStorage.setItem('dictHeOrd',JSON.stringify(HEORD))}catch(e){}}
+    else HEORD[key]='';delete HEORDP[key];if(S.screen==='amwl')amRedrawKeep()}).catch(()=>{HEORD[key]='';delete HEORDP[key];if(S.screen==='amwl')amRedrawKeep()});return null}
+function wHeRev(w){const s=wHeSent(w),c=wCard(w);if(s&&!(w.used||[]).includes('he:'+s)){const o=heOrdered(s,c&&c.s||'',w,'c:'+(c&&c.id));if(o===null)return null;return {he:o,en:c&&c.s||'',src:'dict'}}
   w=wLive(w);if(w.rvh&&w.rvh.he)return w.rvh;const k=wK(w);
   if(HEERR[k]||!GKEY())return false;if(HEP[k])return null;HEP[k]=1;
-  const P=wHePick(w),mark=`In the Hebrew translation wrap the Hebrew word(s) that translate "${w.e}" in double square brackets, e.g. [[מילה]] – exactly once, and nothing else in brackets.`;
+  const P=wHePick(w),mark=`In the Hebrew translation wrap the Hebrew word(s) that translate "${w.e}" in double square brackets, e.g. [[מילה]] – exactly once, and nothing else in brackets. Put them in the same place in the sentence as "${w.e}" stands in the English, whenever that is correct, natural Hebrew.`;
   const pIn=P?`Here is an English sentence: "${P.t}"\nDoes the word "${w.e}" in it have exactly this meaning: "${w.h}" (Hebrew)? Then translate the sentence into natural Hebrew. ${mark}\nJSON: {"fits":true or false,"he":"the Hebrew translation with [[...]]"}\n${AIHE}`:null;
   const seen=wSeenEn(w).slice(-8),pNew=`Write ONE short, easy English sentence (CEFR A2–B1, 6–14 words, everyday situation) that uses the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew), and its natural Hebrew translation. ${mark}${seen.length?`\nIt must be COMPLETELY different from these sentences – another situation, other people, another place, other words (not a variation of them): ${JSON.stringify(seen)}`:''}\nJSON: {"en":"the English sentence","he":"the Hebrew translation with [[...]]"}\n${AIHE}`;
   const ask=pr=>Promise.race([aiRun('','',null,{prompt:pr,temp:.6}),new Promise(r=>setTimeout(()=>r(null),25000))]);
@@ -2398,7 +2412,7 @@ function wAutoTick(){const b=$('autoBtn');if(b&&!b._w){b._w=1;b.onclick=()=>{AUT
   else{const en=R.en||(WS.cur&&WS.cur.en)||'';t=trs?'':(w.e+(en?'. '+en:''))}
   if(!t&&!ans&&app.querySelector('[data-wmc],#wAns,#trIn')){WAUTOK=key;return}
   if(!t)return;WAUTOK=key;try{amSay(t)}catch(e){}}
-function wTrHtml(s,x,ex){if(!s)return '';const t=x&&x.tr&&s===ex?x.tr:((TRC[s.toLowerCase()]||{}).h||''),op=WTRO[s];
+function wTrHtml(s,x,ex){if(!s)return '';const t=x&&x.tr&&s===ex?x.tr:((TRC[s.toLowerCase()]||{}).h||''),op=WTRO[s]!==false;/* open by default after answering (her request) – she can hide it */
   return `<div class="center"><button class="trbtn" data-wtr="${esc(s)}">${op?'הסתרת התרגום':'תרגום לעברית'}</button><span class="trans" ${op?'':'hidden'}>${op?(t?esc(t):'⏳ מתרגמת…'):esc(t)}</span></div>`}
 function wStageDots(w){return [1,2,3,4,5,6].map(i=>w.st>i?'●':w.st===i?'◉':'○').join('')}
 /* is there anything to choose from (the dictionary tip or Gemini ideas, or Gemini still working on them) */
@@ -2421,7 +2435,8 @@ function wBind(w,x){
   app.querySelectorAll('[data-round]').forEach(b=>b.onclick=()=>wRoundSwitch(+b.dataset.round));
   const pv=$('wPrev');if(pv)pv.onclick=()=>{WS.view=WS.hist.length-1;wSave();draw();window.scrollTo(0,0)};
   app.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{wSave();go({screen:'ampath',pfrom:'amwl'})});
-  app.querySelectorAll('[data-wtr]').forEach(b=>b.onclick=()=>{const s=b.dataset.wtr;WTRO[s]=!WTRO[s];const sp=b.nextElementSibling;b.textContent=WTRO[s]?'הסתרת התרגום':'תרגום לעברית';if(sp)sp.hidden=!WTRO[s];
+  app.querySelectorAll('[data-wtr]').forEach(b=>{const s=b.dataset.wtr,sp=b.nextElementSibling;if(WTRO[s]!==false&&sp&&/מתרגמת/.test(sp.textContent))amTrans(s).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו'})});
+  app.querySelectorAll('[data-wtr]').forEach(b=>b.onclick=()=>{const s=b.dataset.wtr;WTRO[s]=WTRO[s]===false;const sp=b.nextElementSibling;b.textContent=WTRO[s]?'הסתרת התרגום':'תרגום לעברית';if(sp)sp.hidden=!WTRO[s];
     if(WTRO[s]&&sp&&!sp.textContent.trim()){sp.textContent='⏳ מתרגמת…';amTrans(s).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו';else if(S.screen==='amwl')amRedrawKeep()})}});
   const g1=$('wGen1');if(g1)g1.onclick=()=>wGenAssoc(w);
   const pa=$('wPrevAs');if(pa)pa.onclick=()=>{const L=(w.asSeen||[]).filter(a=>a!==w.as);if(L.length){w.as=L[L.length-1];w.asSeen=(w.asSeen||[]).filter(a=>a!==w.as).concat(w.as);w.t=amNow();amSave();amRedrawKeep()}};
