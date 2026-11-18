@@ -2114,7 +2114,7 @@ function amLoad(){if(AMD)return Promise.resolve(AMD);if(AMDP)return AMDP;
   AMDP=(async()=>{for(const u of AMSRC){try{const r=await fetch(u+(u==='amiram.json'?'?v='+AMV:''));if(r.ok){AMD=await r.json();return AMD}}catch(e){}}AMDP=null;throw 0})();return AMDP}
 const AMV='1';
 let AMS={a:{},w:{},n:8,nd:{},t:0};try{Object.assign(AMS,JSON.parse(LS.get('dictAm')||'{}'))}catch(e){}
-try{setTimeout(()=>{amFixW&&amFixW();try{wLrUnmark()}catch(e){}try{wLrBack()}catch(e){}},0)}catch(e){}
+try{setTimeout(()=>{amFixW&&amFixW();try{wLrUnmark()}catch(e){}try{wLrBack()}catch(e){}try{wR1Release()}catch(e){}},0)}catch(e){}
 function amSave(){AMS.t=Date.now();LS.set('dictAm',JSON.stringify(AMS));dirty()}
 let AMAI={};try{AMAI=JSON.parse(LS.get('dictAmAi')||'{}')}catch(e){}
 const amAiSave=()=>LS.set('dictAmAi',JSON.stringify(AMAI));
@@ -2271,7 +2271,7 @@ const WLRN=[['תרגום משפט','משפט קל באנגלית עם המילה
   ['משפט באנגלית','משפט באנגלית עם מקום ריק – בוחרים את המילה מתוך 4.']];
 /* reviews get harder one by one, and every review brings a new sentence: easy sentences early, hard exam sentences late
    (a sentence from the exam questions when there is one at that level, else Gemini writes one – the source is shown) */
-const WREV=[null,['20 דקות','משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
+const WREV=[null,['סיום הסבבים של היום','משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
   ['יום','משפט קל באנגלית','משפט קצר וקל באנגלית (מהשאלות כשיש, אחרת משפט שנכתב בשבילך) – בוחרים את המילה החסרה מתוך 4.'],
   ['3 ימים','הפירוש בעברית','רואים רק את המילה באנגלית, בלי אפשרויות, וכותבים מה הפירוש בעברית.'],
   ['שבוע','תרגום משפט','משפט באורך בינוני (מהשאלות כשיש) – מתרגמים את כל המשפט לעברית.'],
@@ -2647,7 +2647,7 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .ax .ax-next{border:0!important;background:var(--axb);color:#fff;border-radius:999px;padding:8px 16px;font:inherit;font-size:.9rem;cursor:pointer}
 .ax .ax-tm{font-weight:800}
 .ax .ax-insbox{background:var(--surface);border-radius:12px;padding:10px 12px}.ax .ax-insbox p{margin:0 0 4px}.ax .ax-insbox p[dir=ltr]{text-align:left;font-family:var(--en)}
-.ax .ax-qn{margin:4px 0 0;color:var(--axb);font-size:1.3rem;text-align:left;font-family:Arial,Helvetica,sans-serif;font-weight:700}
+.ax .ax-qn{margin:4px 0 0;color:var(--axb);font-size:1.3rem;text-align:center;font-family:Arial,Helvetica,sans-serif;font-weight:700}
 .ax .ax-qw{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .ax .ax-q{font-family:Arial,Helvetica,sans-serif;font-size:1rem;line-height:1.7;text-align:left;color:var(--ink)}.ax .ax-q .blank{display:inline-block;min-width:5.5em;border-bottom:2px solid var(--ink);margin:0 4px}
 .ax .ax-base{font-weight:800}
@@ -2905,7 +2905,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .am-qnav #aqUnit{align-self:center;width:auto;min-height:34px;padding:4px 10px;font-size:.82rem;border-radius:999px!important;background:var(--fill)!important;border:0!important}
 .aq-row{display:flex;align-items:center;gap:6px}
 .aq-row .am-qnums{flex:1;display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;scrollbar-width:none;justify-content:flex-start;padding:2px}.aq-row .am-qnums::-webkit-scrollbar{display:none}
-.aq-row .am-qnums button{flex:none}
+.aq-row .am-qnums button{flex:none}.aq-row .am-qnums button:first-child{margin-left:auto}.aq-row .am-qnums button:last-child{margin-right:auto}
 .aq-a{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:1rem;color:var(--ink);cursor:pointer}.aq-a:disabled{opacity:.35}
 .dh-chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
 /* the dictionary home never scrolls (Nov 12, her request – everything fits) */
@@ -3012,8 +3012,8 @@ const JB={
   q:['✏️','תרגול שאלות לפי השיטה','שאלה אחרי שאלה במסלול',
     'עכשיו מיישמים: שאלות מהמבחן, כל אחת במסלול – לחשוב לפני התשובות, לחקור כל טעות מיד, להבין איך פותרים לפי השיטה, ולאסוף מילים מהמאגר.',
     ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הצעד נגמר אחרי מספר השאלות שלו – עד אז ממשיכים ליחידה הבאה']],
-  rev2:['⏱','חזרה על המילים של היום','בסוף היום · 20 דקות אחרי הלמידה',
-    'כל מילה חדשה שלמדת היום חוזרת אלייך 20 דקות אחרי שלמדת אותה. לכן החזרה הזו נמצאת בסוף היום: עד אז כל המילים של היום כבר מחכות. חזרה אחרי זמן קצר היא מה שמעביר אותן מזיכרון קצר לזיכרון של מחר.',
+  rev2:['⏱','חזרה על המילים של היום','בסוף היום · אחרי שכל המילים סיימו את הסבבים',
+    'כל מילה חדשה שלמדת היום חוזרת אלייך ברגע שכל המילים של היום סיימו את 4 הסבבים (אם לא סיימת – למחרת בבוקר). לכן החזרה הזו נמצאת בסוף היום: עד אז כל המילים של היום כבר מחכות. חזרה אחרי זמן קצר היא מה שמעביר אותן מזיכרון קצר לזיכרון של מחר.',
     ['בדרך כלל משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית','כשאין מילים שמחכות (עשית את החזרה ועוד לא למדת מילים חדשות) – הצעד כבוי','למדת עוד מילים אחר כך? הצעד נדלק שוב מעצמו']],
   sim:['⏱','סימולציה','22 שאלות ב־20 דקות',
     'פעם בשבוע (ביום הארוך) בודקים קצב ושליטה בתנאי מבחן. אחרי הסימולציה אפשר לפתוח כל שאלה שטעית בה ולעבור עליה את המסלול.',
@@ -3043,7 +3043,7 @@ function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return jrNorm
 const jrDone=P=>P.b.every(x=>x.done);
 function jrBlock(id){if(!id)return null;const P=(AMS.jp||{})[String(id).split('|')[0]];return P?P.b.find(x=>x.id===id):null}
 /* the plan she works on now: the first unfinished one from the start of the journey up to today, or one she opened ahead */
-function jrCurKey(){const T=dayKey();if(!AMS.js){const ks=Object.keys(AMS.jp||{}).filter(k=>/^\d{4}-\d\d-\d\d$/.test(k)).sort();AMS.js=ks[0]&&ks[0]<=T?ks[0]:T;amSave()}
+function jrCurKey(){try{wR1Release()}catch(e){}const T=dayKey();if(!AMS.js){const ks=Object.keys(AMS.jp||{}).filter(k=>/^\d{4}-\d\d-\d\d$/.test(k)).sort();AMS.js=ks[0]&&ks[0]<=T?ks[0]:T;amSave()}
   for(let k=AMS.js,g=0;k<=T&&g<800;k=kAdd(k,1),g++)jrPlan(k);
   /* S.jday = a past day she opened to complete, or a future day she works on ahead */
   let k=S.jday&&AMS.jp&&AMS.jp[S.jday]&&S.jday>=AMS.js?S.jday:T;const P=jrPlan(k);jrNorm(k,P);
@@ -3190,6 +3190,10 @@ function wLrBack(){try{if(localStorage.getItem('dictLrFix2'))return;localStorage
   Object.values(AMS.w||{}).forEach(w=>{if(!w||w.lr!==1||!(w.st>=1))return;const L=w.log||[];let i=-1;L.forEach((l,j)=>{if(l&&l[1]==='first'&&l[2]>0)i=j});if(i<0)return;
     const r2=L.slice(i+1).filter(l=>l&&l[1]==='r2');let to=0;if(r2.length){const okI=r2.findIndex(l=>l[2]>0);to=okI>=0&&r2.slice(okI+1).some(l=>!(l[2]>0))?4:3}else if(w.dqm)to=2;
     if(to){w.lr=to;w.t=amNow();ch=1}});if(ch)amSave()}
+/* review 1 waits until every word of the day's learning finished its 4 rounds (then due at once); unfinished day → tomorrow 05:00 */
+function wNextMorning(){const t=amNow(),d=new Date(t-5*3600e3);d.setHours(0,0,0,0);d.setDate(d.getDate()+1);return d.getTime()+5*3600e3}
+function wR1Wait(w){w.r1w=1;w.due=wNextMorning();w.t=amNow();wR1Release()}
+function wR1Release(){if(!AMS||!AMS.w||wCarry().length)return;let ch=0;const t=amNow();Object.values(AMS.w).forEach(w=>{if(w&&w.r1w){delete w.r1w;if(w.st>=1&&w.st<WMAST&&w.due>t)w.due=t;w.t=t;ch=1}});if(ch)amSave()}
 const wLearning=w=>!!w&&w.lr!=null&&w.lr>=1&&w.lr<5&&(w.lr>1||w.st>=1);
 const jnKey=x=>'J'+String(x.id).replace(/[^0-9a-z]/gi,'');
 /* called by the dictionary quiz after each word of a 'J' session: a word that isn't ✓ gets its step 2 at once (write it, then choose it in a sentence), then back to the quiz */
@@ -3798,7 +3802,7 @@ function amResult(){const exam=AQ.mode==='exam';clearInterval(AMTICK);
     <div class="am-box">${Object.entries(byT).map(([t,b])=>`<p>${AMTI[t]} <b>${AMTN[t]}</b>: ${b.ok}/${b.n} · בממוצע ${Math.round(b.ms/b.n/1e3)} שנ׳ לשאלה (מומלץ ${AMTARGET[t]})</p>`).join('')}</div>
     ${rows.some(r=>r.ans&&!r.ok)?`<p class="lbl">לחצי על שאלה כדי לראות את ההסבר ולנתח את הטעות</p>`:''}
     <ul class="am-res">${rows.map(r=>`<li class="${r.ok?'ok':r.ans?'bad':''}"><button data-ri="${r.i}"><span class="s">${r.ok?'✓':r.ans?'✗':'—'}</span><span class="tx">${esc(r.q.q)}</span><small dir="rtl" style="font-family:var(--he)">${r.s.ms?Math.round(r.s.ms/1e3)+' שנ׳':''}</small></button></li>`).join('')}</ul>
-    ${(()=>{const L=(AQ.added||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);return L.length?`<div class="am-box good"><h4>📚 אספת ${L.length} מילים חדשות בתרגול</h4><p style="margin:0">הכי טוב ללמוד אותן עכשיו, כשההקשר עוד טרי: אסוציאציה, משפט שלך ושליפה – ואז סיבוב שני מהיר. הן יחזרו אלייך אחרי 20 דקות, מחר, ועוד.</p><button class="btn" id="amLearnAdded">🌱 ללמוד אותן עכשיו</button></div>`:''})()}
+    ${(()=>{const L=(AQ.added||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);return L.length?`<div class="am-box good"><h4>📚 אספת ${L.length} מילים חדשות בתרגול</h4><p style="margin:0">הכי טוב ללמוד אותן עכשיו, כשההקשר עוד טרי: אסוציאציה, משפט שלך ושליפה – ואז סיבוב שני מהיר. הן יחזרו אלייך בסוף הסבבים של היום, מחר, ועוד.</p><button class="btn" id="amLearnAdded">🌱 ללמוד אותן עכשיו</button></div>`:''})()}
     ${(()=>{if(!AQ.jr)return '';const x=jrBlock(AQ.jr);return x&&x.k==='q'&&!x.done&&x.d<x.n?`<button class="btn" id="amJrNext">▶ ליחידה הבאה (עוד ${x.n-x.d} שאלות בצעד הזה)</button>`:''})()}
     ${!exam&&rows.some(r=>r.ans&&!r.ok)?`<button class="btn secondary" id="amFix">🔁 לפתור שוב רק את ${rows.filter(r=>r.ans&&!r.ok).length===1?'השאלה שטעיתי בה':rows.filter(r=>r.ans&&!r.ok).length+' השאלות שטעיתי בהן'}</button>`:''}
     ${!exam&&AQ.unit?`<button class="link" id="amRedo" style="align-self:center">↺ לפתור את כל היחידה מחדש</button>`:''}
@@ -4013,7 +4017,7 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
     <div class="am-box"><h4>בקצרה</h4><ol class="am-tl">${T.map(([d,t,x])=>`<li><span class="d">${d}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ol></div>
     <div class="am-box"><h4>1 · היום הראשון – למידה</h4>
       <p>4 סבבים (זו עוד לא חזרה). כל סבב נעשה לכל המילים של היום, ורק אחריו מתחיל הבא:</p>
-      <ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה נשארת באותו סבב וחוזרת בסוף הסבב עם משפט או שאלה אחרים, עד שעונים נכון; עוברים לסבב הבא רק כשכל המילים של הסבב נכונות.</p>
+      <ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – כשכל המילים של היום יסיימו את הסבבים (אם לא – מחר בבוקר), ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה נשארת באותו סבב וחוזרת בסוף הסבב עם משפט או שאלה אחרים, עד שעונים נכון; עוברים לסבב הבא רק כשכל המילים של הסבב נכונות.</p>
       <p class="hint" style="margin:0">מילה עם כמה פירושים – כל פירוש הוא כרטיס נפרד ועובר מסלול משלו.</p></div>
     <div class="am-box"><h4>2 · כל חזרה (חזרה 1–6)</h4>
       <p>כל מילה מקבלת רק את התרגיל של החזרה שלה (חזרה 1–6 ברשימה למעלה), והוא קובע מה יקרה למילה. אין חזרה שבה כותבים את המילה באנגלית.</p>
@@ -4024,7 +4028,7 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
       <li><b>טעות</b> – חוזרת שתי חזרות אחורה (לא לפני חזרה 1), מופיעה שוב מיד בסוף אותו סבב לתרגול, והחזרה הבאה שלה מחר.</li></ul>
       <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 2 – כלומר שוב "${WREV[2][1]}", מחר (ובסוף הסבב עוד פעם לתרגול).</p></div>
     <div class="am-box"><h4>4 · מתי המילים מופיעות</h4>
-      <ul><li><b>במסע היומי:</b> "חזרה על מילים" בתחילת היום (כל מה שהגיע זמנו) ו"חזרה על המילים של היום" בסוף (20 דקות אחרי הלמידה).</li>
+      <ul><li><b>במסע היומי:</b> "חזרה על מילים" בתחילת היום (כל מה שהגיע זמנו) ו"חזרה על המילים של היום" בסוף (כשכל המילים של היום סיימו את הסבבים).</li>
       <li><b>במילים שלי</b> (בעמוד ההתקדמות): כל מילה עם החזרה שהיא נמצאת בה, מתי החזרה הבאה, והיומן של כל תרגול.</li></ul></div>
     <div class="am-box"><h4>5 · מה לא משנה את המסלול</h4>
       <ul><li><b>תרגול חופשי</b> – תרגול אישי בלבד.</li>
@@ -4642,7 +4646,7 @@ function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;WS.cur=null;
   wSave();draw();window.scrollTo(0,0)}
 /* result of a recall: the stage goes up (a hint keeps it), a miss goes back and comes again at the end of this session */
 function wAfter(w,ok){w=wLive(w);if(WS.res&&!WS.res.task)WS.res.task=wTaskNow(w);if(!ok)wMiss(w);/* the answered task stays on screen even after the stage changes */
-  if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round){if(ok){w.lr=Math.max(lrOf(w),WS.round+1);if(w.lr>=5)wLrDoneMark(w);if(w.lr>=5&&w.st>=1&&w.st<WMAST)w.due=amNow()+WINT[1]/* review 1 = 20 minutes after the learning ends */}else wRequeue(w)}if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
+  if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round){if(ok){w.lr=Math.max(lrOf(w),WS.round+1);if(w.lr>=5)wLrDoneMark(w);if(w.lr>=5&&w.st>=1&&w.st<WMAST)wR1Wait(w)/* review 1 = once the whole day's learning is done, else tomorrow */}else wRequeue(w)}if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   if(WS.step==='first'){/* the first recall right after learning */
     wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();if(!(WS.counted&&WS.counted.includes(wK(w)))&&WS.jr)jrCount(WS.jr);AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
     if(!ok){WS.again=(WS.again||[]).filter(k=>k!==wK(w)).concat(wK(w))}amSave();return}
@@ -4664,7 +4668,7 @@ function wDone(){const n=WS?WS.list.length:0;
   app.innerHTML=`<div class="screen">${amNav(WS&&WS.from||'amw','חזרה')}
     <p class="am-big">🎉</p><h2 class="center">סיימת את הסבב!</h2>
     <p class="center sub">${n} מילים${WS&&WS.ok?` · ${WS.ok} נשלפו נכון`:''}.</p>
-    <div class="am-box"><h4>מה עכשיו?</h4><p>המילים יחזרו אלייך ב"חזרה פעילה" – הראשונה בעוד 20 דקות, ואז מחר, בעוד 3 ימים, שבוע, שבועיים וחודש. אין צורך לחזור עליהן לפני כן.</p><p class="hint" style="margin:0">את כל המילים, מתי כל אחת חוזרת והיומן שלה – ב"מילים ← המילים שלי".</p></div>
+    <div class="am-box"><h4>מה עכשיו?</h4><p>המילים יחזרו אלייך ב"חזרה פעילה" – הראשונה כשתסיימי את כל הסבבים של היום (אם לא – מחר), ואז אחרי יום, בעוד 3 ימים, שבוע, שבועיים וחודש. אין צורך לחזור עליהן לפני כן.</p><p class="hint" style="margin:0">את כל המילים, מתי כל אחת חוזרת והיומן שלה – ב"מילים ← המילים שלי".</p></div>
     <button class="btn" id="wBack">חזרה</button></div>`;
   amBindNav();$('wBack').onclick=()=>{const f=WS&&WS.from||'amw',jr=WS&&WS.jr;if(jr){const x=jrBlock(jr);if(x&&x.k==='new'&&Array.isArray(x.ws)){if(!jnPend(x).length)jrFinish(jr,1)}else jrFinish(jr)}WS=null;wSave();go({screen:jr?'am':f})}}
 
@@ -4762,10 +4766,10 @@ const AMHELP={
   <li><b>🎯 הכנה לאמירנט</b> – שאלות מהמבחן לפי השיטה, חקירת טעויות, ולמידת מילים פעילה עם חזרות בזמן הנכון.</li></ul>
   <p>בכל מסך יש כפתור <b>i</b> למעלה – הוא פותח את ההסבר של המסך שאת נמצאת בו.</p>
   <p>הכול נשמר אוטומטית ומסתנכרן בין המכשירים שלך.</p>`],
- schedule:['📅','לוח הזמנים','אמירנט',`<p>לוח הזמנים מחשב מתי תתחילי את כל המילים במילון שעוד לא סימנת ✓, ומתי הן ייסגרו סופית.</p><ul><li>כל יום נכנסות 13 מילים חדשות (ביום ארוך 16) – בדיוק מה שנכנס בבלוק "מילים חדשות" של המסע.</li><li>כל מילה חוזרת אחרי 20 דקות, יום, 3, 7, 14 ו־30 יום – בערך 55 יום עד שהיא "נלמדה".</li><li>אם פספסת יום, התאריך זז, ותראי כמה את מאחור לעומת התוכנית הראשונה.</li><li>כל ✓ שאת מסמנת במילון מוריד מילה מהרשימה – לכן מבחן מהיר על "לא סומנו" מקצר את הדרך הכי הרבה.</li></ul>`],
+ schedule:['📅','לוח הזמנים','אמירנט',`<p>לוח הזמנים מחשב מתי תתחילי את כל המילים במילון שעוד לא סימנת ✓, ומתי הן ייסגרו סופית.</p><ul><li>כל יום נכנסות 13 מילים חדשות (ביום ארוך 16) – בדיוק מה שנכנס בבלוק "מילים חדשות" של המסע.</li><li>כל מילה חוזרת אחרי סיום הסבבים של היום, יום, 3, 7, 14 ו־30 יום – בערך 55 יום עד שהיא "נלמדה".</li><li>אם פספסת יום, התאריך זז, ותראי כמה את מאחור לעומת התוכנית הראשונה.</li><li>כל ✓ שאת מסמנת במילון מוריד מילה מהרשימה – לכן מבחן מהיר על "לא סומנו" מקצר את הדרך הכי הרבה.</li></ul>`],
  daily:['🗺','המסע של היום','אמירנט',`<p>כל יום יש תוכנית קבועה, והמערכת מעבירה אותך בה צעד אחרי צעד – בלי לבחור לבד. <b>▶</b> פותח את הצעד הבא, עם הסבר למה הוא עכשיו ומה עושים בו.</p>
 <p><b>היעד:</b> שני ורביעי – 3 שעות; שאר הימים – שעה וחצי. מותר לעשות הפסקות; נספר רק זמן שבו את פעילה באפליקציה. כל יום נשמר ב📊 התקדמות והיסטוריה – הושלם ✓ או לא ✗.</p>
-<p><b>הסדר ולמה:</b></p><ol><li>🔁 <b>חזרה על מילים</b> – קודם מה שמתחיל להישכח, כשהראש רענן.</li><li>🌱 <b>מילים חדשות</b> – מעט, לעומק, עם אסוציאציה.</li><li>✏️ <b>שאלות לפי השיטה</b> – יחידה אחרי יחידה עד שהזמן של הבלוק עובר; טעות נחקרת מיד.</li><li>🧭 <b>שיטה ולקחים</b> – סיכום קצר.</li><li>⏱ <b>חזרה על המילים של היום</b> – בסוף: כל מילה שלמדת היום חוזרת 20 דקות אחרי שלמדת אותה. אם אין מילים שמחכות (כבר עשית את החזרה ולא למדת מילים חדשות מאז) – הצעד כבוי, ונדלק מעצמו כשמתווספות מילים.</li></ol>
+<p><b>הסדר ולמה:</b></p><ol><li>🔁 <b>חזרה על מילים</b> – קודם מה שמתחיל להישכח, כשהראש רענן.</li><li>🌱 <b>מילים חדשות</b> – מעט, לעומק, עם אסוציאציה.</li><li>✏️ <b>שאלות לפי השיטה</b> – יחידה אחרי יחידה עד שהזמן של הבלוק עובר; טעות נחקרת מיד.</li><li>🧭 <b>שיטה ולקחים</b> – סיכום קצר.</li><li>⏱ <b>חזרה על המילים של היום</b> – בסוף: כל מילה שלמדת היום חוזרת ברגע שכל המילים של היום סיימו את הסבבים (אם לא סיימת – מחר בבוקר). אם אין מילים שמחכות (כבר עשית את החזרה ולא למדת מילים חדשות מאז) – הצעד כבוי, ונדלק מעצמו כשמתווספות מילים.</li></ol>
 <p>ביום הארוך יש גם בלוק שאלות שני ו⏱ סימולציה. אם סיימת את התוכנית ועוד לא הגעת ליעד – נוסף עוד תרגול שאלות. "תרגול חופשי" נשאר למטה, אבל הוא לא חלק מהמסע.</p>`],
  questions:['✏️','תרגול שאלות','אמירנט',`<p>שלושה סוגים כמו במבחן: <b>השלמת משפטים</b>, <b>ניסוח מחדש</b>, <b>הבנת הנקרא</b> – 20 יחידות מהקורס + 4 פרקים מהספר "חזרות וניהול זמנים".</p>
   <p>ריבוע ירוק = יחידה שסיימת (המספר = כמה נכון). <b>⏱ סימולציה</b> – 22 שאלות ב־20 דקות, בלי עזרה, כמו במבחן; בסוף אפשר לפתוח כל שאלה ולעבור עליה את המסלול. <b>📝 הלקחים שלי</b> – כל מה ששמרת מחקירת טעויות.</p>`],
@@ -4783,10 +4787,10 @@ const AMHELP={
   <ol><li><b>סבב 1 · תרגום משפט</b> – משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה.</li>
   <li><b>סבב 2 · הפירוש בעברית</b> – הבוחן של המילון: כותבים את הפירוש, אפשרויות, ידעתי / לא ידעתי.</li>
   <li><b>סבב 3 · משפט בעברית</b> – בוחרים את המילה באנגלית שחסרה.</li>
-  <li><b>סבב 4 · משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – 20 דקות אחר כך, ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה נשארת באותו סבב וחוזרת בסוף הסבב עם משפט או שאלה אחרים, עד שעונים נכון; עוברים לסבב הבא רק כשכל המילים של הסבב נכונות.</p>
+  <li><b>סבב 4 · משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – כשכל המילים של היום יסיימו את הסבבים (אם לא – מחר בבוקר), ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה נשארת באותו סבב וחוזרת בסוף הסבב עם משפט או שאלה אחרים, עד שעונים נכון; עוברים לסבב הבא רק כשכל המילים של הסבב נכונות.</p>
   <p><b>מילה עם כמה פירושים</b> – כל פירוש נלמד בנפרד.</p>`],
  journey:['🛤','המסלול של מילה','אמירנט',`<p><b>למידה (באותו יום) – 4 סבבים, כל סבב לכל המילים לפני הבא:</b></p><ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol>
-  <p><b>חזרות – 6 חזרות במרווחים שגדלים (אין חזרה שבה כותבים את המילה באנגלית). חזרה 1 היא 20 דקות אחרי הסבבים:</b></p>
+  <p><b>חזרות – 6 חזרות במרווחים שגדלים (אין חזרה שבה כותבים את המילה באנגלית). חזרה 1 מגיעה כשכל המילים של היום סיימו את הסבבים (אם לא סיימת – למחרת בבוקר):</b></p>
   <ol>${[1,2,3,4,5,6].map(i=>`<li><b>חזרה ${i} · אחרי ${WREV[i][0]} · ${WREV[i][1]}</b> – ${WREV[i][2]}${i===6?' הצלחה = 🏆 נלמדה, וסימון ✓ במילון.':''}</li>`).join('')}</ol>
   <p>נכון = לחזרה הבאה · עם רמז (יש רק בחזרה 3) = אותה חזרה שוב · טעות = שתי חזרות אחורה, עוד פעם בסוף הסבב והחזרה הבאה מחר. האפשרויות בבחירה הן מילים אחרות שאת לומדת – כך לומדים להבחין ביניהן.</p>`],
  mywords:['📒','המילים שלי','אמירנט',`<p>כל המילים שלך, עם לשוניות: <b>לחזרה</b> (הגיע זמנן), <b>בלמידה</b>, <b>קשות</b>, <b>נלמדו</b>, <b>מחכות</b>. ליד כל מילה כתוב באיזו חזרה היא (חזרה 1–6) ומתי החזרה הבאה.</p>
