@@ -3002,6 +3002,7 @@ document.addEventListener('click',e=>{const t=e.target.closest('[data-tw]');if(t
 let JRGO=null;
 const JLONG=[1,3];
 const jrGoal=(k=dayKey())=>JLONG.includes(new Date(k+'T12:00:00').getDay())?180:90;
+const JBx=x=>x&&x.k==='q'&&x.qt&&JB['q_'+x.qt]?JB['q_'+x.qt]:JB[x&&x.k];
 const JB={
   rev:['🔁','חזרה על מילים','כל המילים שהגיע זמנן במסלול',
     'מתחילים במילים שהזיכרון שלהן מתחיל לדעוך עכשיו. שליפה בדיוק ברגע הזה היא מה שמקבע אותן לטווח ארוך – לכן זה תמיד הצעד הראשון ביום, כשהראש רענן.',
@@ -3012,6 +3013,15 @@ const JB={
   q:['✏️','תרגול שאלות לפי השיטה','שאלה אחרי שאלה במסלול',
     'עכשיו מיישמים: שאלות מהמבחן, כל אחת במסלול – לחשוב לפני התשובות, לחקור כל טעות מיד, להבין איך פותרים לפי השיטה, ולאסוף מילים מהמאגר.',
     ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הצעד נגמר אחרי מספר השאלות שלו – עד אז ממשיכים ליחידה הבאה']],
+  q_sc:['✏️','השלמת משפטים','שאלות שעוד לא פתרת, מהקל לקשה',
+    'שאלות השלמת משפטים מיחידות שונות – קודם כל השאלות הקלות שעוד לא פתרת, ורק אחר כך הרמה עולה. כל שאלה במסלול: תשובה, חקירת טעות, מילים מהשאלה.',
+    ['רק שאלות שעוד לא ענית עליהן','מיחידות שונות, מהקלה לקשה','רמת הקושי כתובה ליד כל שאלה']],
+  q_rs:['🔁','ניסוח מחדש','שאלות שעוד לא פתרת, מהקל לקשה',
+    'שאלות ניסוח מחדש מיחידות שונות – קודם הקלות שעוד לא פתרת. מחפשים את המבנה ואת מילות הקישור ופוסלים תשובות לפי השיטה.',
+    ['רק שאלות שעוד לא ענית עליהן','מיחידות שונות, מהקלה לקשה','רמת הקושי כתובה ליד כל שאלה']],
+  q_rc:['📖','הבנת הנקרא','קטעים שלמים, מהקל לקשה',
+    'קטעי קריאה שעוד לא פתרת – קודם הקלים. כל קטע עם השאלות שלו לפי הסדר.',
+    ['קטע שלם עם השאלות שלו','רק שאלות שעוד לא ענית עליהן','רמת הקושי כתובה ליד כל שאלה']],
   rev2:['⏱','חזרה על המילים של היום','בסוף היום · אחרי שכל המילים סיימו את הסבבים',
     'כל מילה חדשה שלמדת היום חוזרת אלייך ברגע שכל המילים של היום סיימו את 4 הסבבים (אם לא סיימת – למחרת בבוקר). לכן החזרה הזו נמצאת בסוף היום: עד אז כל המילים של היום כבר מחכות. חזרה אחרי זמן קצר היא מה שמעביר אותן מזיכרון קצר לזיכרון של מחר.',
     ['בדרך כלל משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית','כשאין מילים שמחכות (עשית את החזרה ועוד לא למדת מילים חדשות) – הצעד כבוי','למדת עוד מילים אחר כך? הצעד נדלק שוב מעצמו']],
@@ -3029,16 +3039,21 @@ const JB={
 const kAdd=(k,n)=>dayKey(dayDate(k).getTime()+n*DAY+6*36e5);
 const kDiff=(a,b)=>Math.round((dayDate(b)-dayDate(a))/DAY);
 /* plans made by an older version: ids without the day, no counts – bring them up to date */
-function jrNorm(k,P){let ch=false;if(!Array.isArray(P.b)){P.b=[];ch=true}{let seen=0;const nb=P.b.filter(x=>{if(!x||!x.k||!JB[x.k]){ch=true;return false}if(x.x&&!x.done&&!x.d){if(seen++){ch=true;return false}}return true});P.b=nb}P.b.forEach((x,i)=>{if(!String(x.id).includes('|')){x.id=k+'|'+x.k+i;ch=true}
+function jrNorm(k,P){let ch=false;if(!Array.isArray(P.b)){P.b=[];ch=true}{let seen=0;const nb=P.b.filter(x=>{if(!x||!x.k||!JBx(x)){ch=true;return false}if(x.x&&!x.done&&!x.d){if(seen++){ch=true;return false}}return true});P.b=nb}P.b.forEach((x,i)=>{if(!String(x.id).includes('|')){x.id=k+'|'+x.k+i;ch=true}
   if(x.n==null){x.n=x.k==='new'?wNPer(k):x.k==='q'?(x.m>=45?22:20):x.k==='sim'?22:x.k==='meth'?1:0;ch=true}if(x.d==null){x.d=0;ch=true}});
   {const nb=P.b.filter(x=>!(x.k==='brk'&&!x.done));if(nb.length!==P.b.length){P.b=nb;ch=true}
    const i=P.b.findIndex(x=>x.k==='rev2'&&!x.done),nx=P.b.filter(x=>!x.x);if(i>=0&&nx[nx.length-1]!==P.b[i]){const [r]=P.b.splice(i,1),j=P.b.findIndex(x=>x.x);if(j<0)P.b.push(r);else P.b.splice(j,0,r);ch=true}}
+  {const qs=P.b.filter(x=>x.k==='q'&&!x.qt&&!x.x),simU=P.b.filter(x=>x.k==='sim'&&!x.done&&!x.d&&!x.used);
+   if(simU.length){P.b=P.b.filter(x=>!simU.includes(x));ch=true}
+   if(qs.length&&qs.every(x=>!x.done&&!x.d&&!x.used&&!(AQ&&AQ.jr===x.id))){const i=P.b.indexOf(qs[0]);let n=0;const nb=jrQB(k,jrGoal(k)===180,()=>n++);P.b=P.b.filter(x=>!qs.includes(x));P.b.splice(i,0,...nb);ch=true}}
   if(ch){P.t=amNow();amSave()}return P}
 /* a review step with no words due is skipped (shown greyed, not "done"), so the day starts with what there is */
 function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==='rev'||x.k==='rev2')&&!x.go&&!wDue(x.k==='rev2'?18e5:0).length&&!(WS&&WS.jr===x.id&&WS.i<WS.list.length)){x.done=amNow();x.skip=1;ch=true;continue}break}if(ch){P.t=amNow();amSave()}return P}
+/* the day's questions as one step per type (her request), no simulation: long day sc 15 · rs 10 · rc 25 (5 passages), short day sc 6 · rs 4 · rc 10 */
+function jrQB(k,long,nx){return (long?[['sc',30,15],['rs',30,10],['rc',55,25]]:[['sc',12,6],['rs',10,4],['rc',18,10]]).map(([t,m,c])=>({id:k+'|q_'+t+nx(),k:'q',qt:t,m,n:c,d:0,done:0,used:0}))}
 function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return jrNorm(k,P);const long=jrGoal(k)===180;let n=0;
   const B=(kk,m,c)=>({id:k+'|'+kk+(n++),k:kk,m,n:c,d:0,done:0,used:0});const nw=wNPer(k);
-  const b=long?[B('rev',20),B('new',25,nw),B('q',45,22),B('q',45,22),B('sim',25,22),B('meth',10,1),B('rev2',10)]:[B('rev',15),B('new',20,nw),B('q',40,20),B('meth',5,1),B('rev2',10)];
+  const b=long?[B('rev',20),B('new',25,nw),...jrQB(k,true,()=>n++),B('meth',10,1),B('rev2',10)]:[B('rev',15),B('new',20,nw),...jrQB(k,false,()=>n++),B('meth',5,1),B('rev2',10)];
   if(!AMS.js||k<AMS.js)AMS.js=k;P=AMS.jp[k]={b,t:amNow()};amSave();return P}
 const jrDone=P=>P.b.every(x=>x.done);
 function jrBlock(id){if(!id)return null;const P=(AMS.jp||{})[String(id).split('|')[0]];return P?P.b.find(x=>x.id===id):null}
@@ -3060,7 +3075,7 @@ function jrFinish(id,force){const x=jrBlock(id);if(!x||x.done)return;const P=AMS
   if((x.k==='q')&&!force&&x.d<x.n){P.t=amNow();amSave();return}
   if((x.k==='rev'||x.k==='rev2')&&!force&&wDue().length){P.t=amNow();amSave();return}
   if(x.k==='new'&&!force&&x.d<x.n&&wQueueCount()>0){P.t=amNow();amSave();return}
-  x.done=amNow();P.t=amNow();amSave();amToast('✓ '+JB[x.k][1]+' – הושלם')}
+  x.done=amNow();P.t=amNow();amSave();amToast('✓ '+JBx(x)[1]+' – הושלם')}
 const jrCount=id=>{const x=jrBlock(id);if(x){x.d=(x.d||0)+1;AMS.jp[id.split('|')[0]].t=amNow()}};
 /* what a block holds right now, in words / questions */
 function jrWhat(x){if(x.k==='rev2'&&!x.done){const n=wDue(x.go?0:18e5).length;if(n)return n+' מילים מחכות לחזרה';const nx=Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&lrOf(w)>=5).map(w=>w.due).sort((a,b)=>a-b)[0],m=nx?Math.ceil((nx-amNow())/6e4):0;return m>0&&m<=60?'תידלק בעוד '+m+' דק׳':'כבוי עכשיו – יידלק 20 דק׳ אחרי שתלמדי מילים'}
@@ -3083,7 +3098,7 @@ function jrRun(x){
     go({screen:'amnw',jb:x.id})}
   else if(x.k==='q'||x.k==='sim'){if(x.k==='q'&&x.qs&&x.qv!==2){x.qs=null;if(AQ&&AQ.jr===x.id){AQ=null;amSaveQ()}}/* sets made before 'easy first' are rebuilt */
     if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
-    if(x.k==='q'){let ids=(Array.isArray(x.qs)?x.qs:[]).filter(id=>!amLast(id));if(!ids.length){ids=amDayIds(Math.max(1,x.n-x.d));x.qs=ids.slice();x.qv=2;amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,'שאלות היום','learn','am','mix')}
+    if(x.k==='q'){let ids=(Array.isArray(x.qs)?x.qs:[]).filter(id=>!amLast(id));if(!ids.length){ids=amDayIds(Math.max(1,x.n-x.d),x.qt);x.qs=ids.slice();x.qv=2;amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,x.qt?AMTN[x.qt]+' · שאלות היום':'שאלות היום','learn','am',x.qt||'mix')}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
       if(!u){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}}
   else go({screen:'amjb',jb:x.id})}
@@ -3098,7 +3113,7 @@ function amHub(){if(!AMD)return amLoading();
     TP.b.push(nx?{id,k:'q',m:left,n:Math.max(5,Math.min(40,Math.ceil(left/2))),d:0,done:0,used:0,x:1}:{id,k:'meth',m:left,n:1,d:0,done:0,used:0,x:1});TP.t=amNow();amSave();P=TP;nb=jrCur(TP)}
   const lbl=ck===T?'התוכנית של היום':ck&&ck<T?'התוכנית של '+fmtD(ck,{weekday:'long',day:'numeric',month:'numeric'}):ck?'התוכנית של '+(kDiff(T,ck)===1?'מחר':fmtD(ck,{weekday:'long',day:'numeric',month:'numeric'})):'התוכנית של היום';
   const {c:cc,endK}=schPlan();
-  const SH={rev:'חזרה',new:'מילים',q:'שאלות',sim:'סימולציה',meth:'שיטה',rev2:'חזרת היום',brk:'הפסקה'};
+  const SH={q_sc:'השלמה',q_rs:'ניסוח',q_rc:'קריאה',rev:'חזרה',new:'מילים',q:'שאלות',sim:'סימולציה',meth:'שיטה',rev2:'חזרת היום',brk:'הפסקה'};
   const stS=x=>x.skip?'כבוי':x.done?'בוצע':x.k==='new'||x.k==='q'||x.k==='sim'?`${x.d||0}/${x.n}`:x.k==='rev'||x.k==='rev2'?`${wDue(x.k==='rev2'?30*6e4:0).length} מילים`:x.m+' דק׳';
   const G=jrGapInfo(),gp=G.days||G.miss>0;
   app.innerHTML=`<div class="screen am-scr jh">
@@ -3106,19 +3121,19 @@ function amHub(){if(!AMD)return amLoading();
     <section class="jh-hero">
       <svg class="am-ring jh-ring" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="${r}" class="bg"/><circle cx="40" cy="40" r="${r}" class="fg" stroke-dasharray="${c}" stroke-dashoffset="${c*(1-f)}"/><text x="40" y="40" text-anchor="middle" style="font-size:17px;font-weight:800">${mins}</text><text x="40" y="54" text-anchor="middle" style="font-size:9px;font-weight:600">מתוך ${goal} דק׳</text></svg>
       <p class="jh-k">${lbl}${ck<T?' · יום שפספסת':''}</p>
-      <h2>${nb?JB[nb.k][0]+' '+JB[nb.k][1]:ck===T?'סיימת את היום 🎉':'היום הזה הושלם ✓'}</h2>
+      <h2>${nb?JBx(nb)[0]+' '+JBx(nb)[1]:ck===T?'סיימת את היום 🎉':'היום הזה הושלם ✓'}</h2>
       <p class="jh-d">${nb?(nb.x?`תרגול עד היעד · עוד ${Math.max(0,goal-mins)} דק׳`:jrWhat(nb)):`למדת היום ${mins} דקות${mins<goal?` · היעד ${goal}`:' ✓'}`}</p>
       ${nb?`<button class="btn jh-go" id="jrGo">▶ ${jrOpen(nb)||nb.d||nb.used?'להמשיך':'להתחיל'}</button>`:ck===T||ck>T?`<button class="btn jh-go" id="jrNext">▶ לתוכנית של מחר</button>`:''}
       ${nb&&nb.x?'<button class="link jh-l" id="jrNext">לעבור לתוכנית של מחר בכל זאת</button>':''}${ck!==T?`<button class="link jh-l" id="jrToday">← חזרה למסע של היום</button>`:''}
     </section>
-    <div class="jh-steps">${P.b.map(x=>`<button class="jh-st${x.skip?' skip':x.done?' done':x===nb?' on':''}" ${!x.done?`data-jstep="${esc(x.id)}"`:'disabled'}><span class="i">${x.done?'✓':JB[x.k][0]}</span><span class="n">${x.x?'עד היעד':SH[x.k]||JB[x.k][1]}</span><span class="s">${stS(x)}</span></button>`).join('')}</div>
+    <div class="jh-steps">${P.b.map(x=>`<button class="jh-st${x.skip?' skip':x.done?' done':x===nb?' on':''}" ${!x.done?`data-jstep="${esc(x.id)}"`:'disabled'}><span class="i">${x.done?'✓':JBx(x)[0]}</span><span class="n">${x.x?'עד היעד':(x.qt&&SH['q_'+x.qt]||SH[x.k])||JBx(x)[1]}</span><span class="s">${stS(x)}</span></button>`).join('')}</div>
     <div class="jh-foot">
       <button data-go="amp"><span class="i">📊</span>התקדמות</button>
       <button data-go="amgap" class="${gp?'warn':''}"><span class="i">${gp?'⏳':'✓'}</span>${gp?'פערים':'אין פערים'}</button>
       <button id="fpOpen"><span class="i">🧰</span>תרגול חופשי</button>
     </div>
   </div>`;
-  const hb=$('jhHelp');if(hb)hb.onclick=()=>amSheet('המסע של היום',(AMHELP.daily?AMHELP.daily[3]:'')+[...new Set(P.b.map(x=>x.k))].filter(k=>JB[k]).map(k=>`<h4>${JB[k][0]} ${JB[k][1]}</h4><p>${JB[k][3]}</p>`).join(''));
+  const hb=$('jhHelp');if(hb)hb.onclick=()=>amSheet('המסע של היום',(AMHELP.daily?AMHELP.daily[3]:'')+[...new Set(P.b.map(x=>JBx(x)))].filter(Boolean).map(j=>`<h4>${j[0]} ${j[1]}</h4><p>${j[3]}</p>`).join(''));
   const fo=$('fpOpen');if(fo)fo.onclick=()=>amSheet('תרגול חופשי','<p class="hint">לא חלק מהמסע – לתרגל מה שבא לך.</p><div class="jh-sheetb"><button class="btn secondary" data-sgo="amqh">✏️ שאלות</button><button class="btn secondary" data-sgo="amw">🧠 מילים</button><button class="btn secondary" data-sgo="amwp">🧬 תחיליות וסופיות</button></div>');
   amBindNav();
   const g=$('jrGo');if(g)g.onclick=()=>{try{jrRun(nb)}catch(err){drawFail(err)}};
@@ -3127,7 +3142,7 @@ function amHub(){if(!AMD)return amLoading();
   const td=$('jrToday');if(td)td.onclick=()=>{S.jday=null;persist();draw()};
   app.querySelectorAll('[data-go]').forEach(b=>{if(b.id==='bk')return;b.onclick=()=>go({screen:b.dataset.go,mfrom:'am'})})}
 /* the intro page of a block: why now, what happens, then start */
-function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return go({screen:'am'});const [i,t,sub,why,fx]=JB[x.k];
+function amBlock(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x)return go({screen:'am'});const [i,t,sub,why,fx]=JBx(x);
   let body='';
   if(x.k==='meth'){const keys=Object.keys(AMM),mk=keys[(dayDate(x.id.split('|')[0]).getDate())%keys.length],ls=Object.values(AMS.ls||{});
     body=`<div class="am-box am-m"><h4>${AMMI[mk]||'📘'} ${AMM[mk][0]}</h4>${AMM[mk][1]}${mk==='pre'?amPxTables():''}</div>${ls.length?`<div class="am-box"><h4>📝 הלקחים שלך</h4>${ls.slice(-12).map(l=>`<p>📌 ${bdiEsc(l.r)}</p>`).join('')}</div>`:''}`}
@@ -3496,17 +3511,17 @@ function amLvMap(){if(QLV)return QLV;QLV={};if(!AMD)return QLV;const by={sc:[],r
   return QLV}
 const amLv=id=>(amLvMap()[id]||{}).lv||0;
 /* the day's questions: never-answered course questions, mixed – sc / rs / rc in exam proportions, from different units, the easiest ones left first (all the easy questions in the first days, then the level goes up), ordered easy → hard; a passage's questions stay together */
-function amDayIds(n){if(!AMD)return [];const M=amLvMap(),un=id=>!amLast(id)&&M[id],sets=(AMD.s||[]).filter(x=>amCourse(x)&&(x.t==='sc'||x.t==='rs'||x.t==='rc'));
+function amDayIds(n,qt){if(!AMD)return [];const M=amLvMap(),un=id=>!amLast(id)&&M[id],sets=(AMD.s||[]).filter(x=>amCourse(x)&&(x.t==='sc'||x.t==='rs'||x.t==='rc'));
   const uOf={};sets.forEach(x=>x.ids.forEach(id=>uOf[id]=x.u));const pool=t=>sets.filter(x=>x.t===t).flatMap(x=>x.ids).filter(un).sort((a,b)=>M[a].sc-M[b].sc);
   const spread=(L,k,uf=id=>uOf[id])=>{/* the easiest first (L is sorted easy → hard), from different units: one per unit, then two, then any */if(k<=0||!L.length)return [];const out=[],used={};for(let pass=0;pass<3&&out.length<k;pass++)for(const id of L){if(out.length>=k)break;if(out.includes(id))continue;if(pass<2&&(used[uf(id)]||0)>pass)continue;out.push(id);used[uf(id)]=(used[uf(id)]||0)+1}return out};
-  let nsc=Math.round(n*8/22),nrs=Math.round(n*4/22),nrc=n-nsc-nrs;
+  let nsc=Math.round(n*8/22),nrs=Math.round(n*4/22),nrc=n-nsc-nrs;if(qt){nsc=qt==='sc'?n:0;nrs=qt==='rs'?n:0;nrc=qt==='rc'?n:0}
   /* passages: group the unanswered rc questions by passage, choose passages spread over the levels */
   const P={};pool('rc').forEach(id=>{const k=AMD.q[id].x||id;(P[k]=P[k]||[]).push(id)});const ps=Object.values(P).map(ids=>({ids:ids.sort((a,b)=>{const A=+a.split('-').pop(),B=+b.split('-').pop();return A-B}),sc:ids.reduce((a,id)=>a+M[id].sc,0)/ids.length})).sort((a,b)=>a.sc-b.sc);
   const blocks=[];let got=0;if(ps.length){const k=Math.max(1,Math.round(nrc/5)),pick=spread(ps.map((_,i)=>i),Math.min(k,ps.length),i=>uOf[ps[i].ids[0]]).map(i=>ps[i]);for(const p of pick){if(got>=nrc)break;const ids=p.ids.slice(0,Math.max(1,nrc-got));got+=ids.length;blocks.push({ids,sc:p.sc})}}
-  const rest=n-got-nrs;nsc=Math.max(0,rest);
+  if(!qt||qt==='sc')nsc=Math.max(0,n-got-nrs);
   const one=spread(pool('sc'),nsc).concat(spread(pool('rs'),nrs)).map(id=>({ids:[id],sc:M[id].sc}));
   let all=one.concat(blocks);const have=all.reduce((a,b)=>a+b.ids.length,0);
-  if(have<n){const more=pool('sc').concat(pool('rs')).filter(id=>!all.some(b=>b.ids.includes(id))).slice(0,n-have);all=all.concat(more.map(id=>({ids:[id],sc:M[id].sc})))}
+  if(have<n&&qt!=='rc'){const more=(qt?pool(qt):pool('sc').concat(pool('rs'))).filter(id=>!all.some(b=>b.ids.includes(id))).slice(0,n-have);all=all.concat(more.map(id=>({ids:[id],sc:M[id].sc})))}
   return all.sort((a,b)=>a.sc-b.sc).flatMap(b=>b.ids)}
 function amSrcOf(id){const x=(AMD.s||[]).find(z=>z.ids.includes(id));return x?(x.b?'פרק ':'יחידה ')+x.u+' · שאלה '+(x.ids.indexOf(id)+1):''}
 function amStartUnit(s,name,from,t){amStart(s.ids,name,'learn',from,t);
@@ -4794,8 +4809,8 @@ const AMHELP={
  schedule:['📅','לוח הזמנים','אמירנט',`<p>לוח הזמנים מחשב מתי תתחילי את כל המילים במילון שעוד לא סימנת ✓, ומתי הן ייסגרו סופית.</p><ul><li>כל יום נכנסות 13 מילים חדשות (ביום ארוך 16) – בדיוק מה שנכנס בבלוק "מילים חדשות" של המסע.</li><li>כל מילה חוזרת אחרי סיום הסבבים של היום, יום, 3, 7, 14 ו־30 יום – בערך 55 יום עד שהיא "נלמדה".</li><li>אם פספסת יום, התאריך זז, ותראי כמה את מאחור לעומת התוכנית הראשונה.</li><li>כל ✓ שאת מסמנת במילון מוריד מילה מהרשימה – לכן מבחן מהיר על "לא סומנו" מקצר את הדרך הכי הרבה.</li></ul>`],
  daily:['🗺','המסע של היום','אמירנט',`<p>כל יום יש תוכנית קבועה, והמערכת מעבירה אותך בה צעד אחרי צעד – בלי לבחור לבד. <b>▶</b> פותח את הצעד הבא, עם הסבר למה הוא עכשיו ומה עושים בו.</p>
 <p><b>היעד:</b> שני ורביעי – 3 שעות; שאר הימים – שעה וחצי. מותר לעשות הפסקות; נספר רק זמן שבו את פעילה באפליקציה. כל יום נשמר ב📊 התקדמות והיסטוריה – הושלם ✓ או לא ✗.</p>
-<p><b>הסדר ולמה:</b></p><ol><li>🔁 <b>חזרה על מילים</b> – קודם מה שמתחיל להישכח, כשהראש רענן.</li><li>🌱 <b>מילים חדשות</b> – מעט, לעומק, עם אסוציאציה.</li><li>✏️ <b>שאלות לפי השיטה</b> – יחידה אחרי יחידה עד שהזמן של הבלוק עובר; טעות נחקרת מיד.</li><li>🧭 <b>שיטה ולקחים</b> – סיכום קצר.</li><li>⏱ <b>חזרה על המילים של היום</b> – בסוף: כל מילה שלמדת היום חוזרת ברגע שכל המילים של היום סיימו את הסבבים (אם לא סיימת – מחר בבוקר). אם אין מילים שמחכות (כבר עשית את החזרה ולא למדת מילים חדשות מאז) – הצעד כבוי, ונדלק מעצמו כשמתווספות מילים.</li></ol>
-<p>ביום הארוך יש גם בלוק שאלות שני ו⏱ סימולציה. אם סיימת את התוכנית ועוד לא הגעת ליעד – נוסף עוד תרגול שאלות. "תרגול חופשי" נשאר למטה, אבל הוא לא חלק מהמסע.</p>`],
+<p><b>הסדר ולמה:</b></p><ol><li>🔁 <b>חזרה על מילים</b> – קודם מה שמתחיל להישכח, כשהראש רענן.</li><li>🌱 <b>מילים חדשות</b> – מעט, לעומק, עם אסוציאציה.</li><li>✏️ <b>השלמת משפטים</b>, 🔁 <b>ניסוח מחדש</b>, 📖 <b>הבנת הנקרא</b> – צעד לכל סוג: שאלות שעוד לא פתרת, מיחידות שונות, קודם הקלות; טעות נחקרת מיד.</li><li>🧭 <b>שיטה ולקחים</b> – סיכום קצר.</li><li>⏱ <b>חזרה על המילים של היום</b> – בסוף: כל מילה שלמדת היום חוזרת ברגע שכל המילים של היום סיימו את הסבבים (אם לא סיימת – מחר בבוקר). אם אין מילים שמחכות (כבר עשית את החזרה ולא למדת מילים חדשות מאז) – הצעד כבוי, ונדלק מעצמו כשמתווספות מילים.</li></ol>
+<p>ביום הארוך יש יותר שאלות מכל סוג (אין סימולציה במסע). אם סיימת את התוכנית ועוד לא הגעת ליעד – נוסף עוד תרגול שאלות. "תרגול חופשי" נשאר למטה, אבל הוא לא חלק מהמסע.</p>`],
  questions:['✏️','תרגול שאלות','אמירנט',`<p>שלושה סוגים כמו במבחן: <b>השלמת משפטים</b>, <b>ניסוח מחדש</b>, <b>הבנת הנקרא</b> – 20 יחידות מהקורס + 4 פרקים מהספר "חזרות וניהול זמנים".</p>
   <p>ריבוע ירוק = יחידה שסיימת (המספר = כמה נכון). <b>⏱ סימולציה</b> – 22 שאלות ב־20 דקות, בלי עזרה, כמו במבחן; בסוף אפשר לפתוח כל שאלה ולעבור עליה את המסלול. <b>📝 הלקחים שלי</b> – כל מה ששמרת מחקירת טעויות.</p>`],
  flow:['🪜','המסלול של שאלה','אמירנט',`<ol><li><b>חושבים לפני התשובות</b> – בהשלמת משפטים מנחשים בעברית מה חסר; בניסוח מחדש מזהים מילות קישור; בהבנת הנקרא מופיע סוג השאלה והטכניקה.</li>
