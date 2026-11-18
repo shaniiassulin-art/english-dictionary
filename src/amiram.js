@@ -2135,7 +2135,7 @@ function mcFilled(full,blank){const i=blank.search(/_{4,}/);if(i<0)return tapEn(
 const wSM=w=>{if(!WS||!w)return null;if(WS.mode==='rev'&&WS.step==='recall'&&w.st>=1&&w.st<WMAST)return {tag:w.st,lv:WLV[w.st]||2};
   if(WS.perWord&&WS.mode==='new'&&WS.step==='tr')return {tag:'L1',lv:1};if(WS.perWord&&WS.mode==='r2'&&WS.phase==='mc')return {tag:'L4',lv:1};return null};
 const wRevNow=w=>!!wSM(w);
-let SPXL=null;const srcLabOf=t=>{const e=t&&(t.en||t.t);if(!e||!sPoolX())return t.lab;if(!SPXL){SPXL={};SPOOLX.forEach(p=>SPXL[p.t]=p.lab)}return SPXL[String(e).replace(/\s+/g,' ').trim()]||t.lab};
+let SPXL=null,SPXW=0;const srcLabOf=t=>{const e=t&&(t.en||t.t);if(!e)return t.lab;if(!sPoolX()){/* questions not loaded yet (a reload straight into a round): load them and draw again, so the number shows */if(!SPXW){SPXW=1;amLoad().then(()=>{if(String(S.screen).startsWith('am'))amRedrawKeep()}).catch(()=>{})}return t.lab}if(!SPXL){SPXL={};SPOOLX.forEach(p=>SPXL[p.t]=p.lab)}return SPXL[String(e).replace(/\s+/g,' ').trim()]||t.lab};
 function srcLab(t){return t&&QSRC[t.src]?`<p class="am-srcl">📘 מתוך שאלות האמירנט · ${esc(srcLabOf(t)||QSRC[t.src])}</p>`:t&&t.src==='rd'?'<p class="am-srcl">📖 מתוך קטעי הקריאה בספר</p>':''}
 const WOC={};
 function wOther(w){const k=wK(w);if(k in WOC)return WOC[k];const P=sPool();if(!P)return '';const own=[w.my,w.c,(wCard(w)||{}).s].filter(Boolean);
