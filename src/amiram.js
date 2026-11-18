@@ -91,7 +91,7 @@ function tapEn(t,cs){t=String(t);const ph=[];
   (cs||[]).forEach(c=>c.ws.slice().sort((a,b)=>b.length-a.length).forEach(w=>{t=t.replace(new RegExp('(^|[^A-Za-z\u0001])('+w.replace(/ /g,'\\s+')+')(?=[^A-Za-z]|$)','gi'),(m,a,b)=>{ph.push('<b class="cn cn-'+c.k+'">'+esc(b)+'</b>');return a+'\u0001'+(ph.length-1)+'\u0002'})}));
   return t.split(/(\u0001\d+\u0002|[A-Za-z][A-Za-z'\-]*[A-Za-z]|[A-Za-z])/).map((x,i)=>{if(!(i%2))return esc(x);
     const m=x.match(/^\u0001(\d+)\u0002$/);if(m)return ph[+m[1]];
-    if(STOP.has(x.toLowerCase())||x.length<3)return esc(x);const db=TAPDB&&dictFind(x);return `<span class="tw${db?' db':''}" data-tw="${esc(x)}">${esc(x)}</span>`}).join('')}
+    if(STOP.has(x.toLowerCase())||x.length<3)return esc(x);const db=TAPDB&&dictFind(x),kn=db&&db.cards&&db.cards.length&&db.cards.every(isY);return `<span class="tw${db?' db':''}${kn?' kn':''}" data-tw="${esc(x)}">${esc(x)}</span>`}).join('')}
 let TAPDB=false;
 /* ---------- connectors: detected in the sentence, with what they tell us ---------- */
 const CONN=[
@@ -574,7 +574,9 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .am-mfull,.am-m .am-mfull{font-size:.93rem;line-height:1.6}.am-mfull p{margin:0 0 8px}.am-mfull ol,.am-mfull ul{margin:0 0 8px;padding-inline-start:20px;display:flex;flex-direction:column;gap:4px}
 /* question text a bit smaller, word marks quiet (her request) */
 .ax .ax-qn{font-size:1.12rem!important}.ax .ax-q{font-size:.92rem!important;line-height:1.65!important}.ax .ax-opt .ax-ot{font-size:.9rem!important;padding:9px 12px!important}.ax .ax-opt{min-height:46px!important;grid-template-columns:42px 1fr!important}.ax .ax-opt .ax-rad i{width:20px!important;height:20px!important}
-.ax .tw.db,.tw.db{text-decoration:underline solid currentColor!important;-webkit-text-decoration:underline solid currentColor!important;text-decoration-line:underline!important;-webkit-text-decoration-line:underline!important;text-decoration-thickness:1.5px!important;text-underline-offset:3px!important}
+/* dictionary words in a question: underline in the accent colour like the "→ למילה הקודמת" link; words she already knows (✓) highlighted like the word in the learning step */
+.ax .tw.db,.tw.db{text-decoration:underline!important;-webkit-text-decoration-line:underline!important;text-decoration-color:var(--accent)!important;-webkit-text-decoration-color:var(--accent)!important;text-decoration-thickness:auto!important;text-underline-offset:3px!important}
+.ax .tw.db.kn,.tw.db.kn{text-decoration:none!important;-webkit-text-decoration-line:none!important;font-weight:800;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:0 4px}
 .ax .cn{background:none!important;filter:none!important;font-weight:inherit!important;padding:0!important;color:inherit!important;border-bottom:1.5px solid color-mix(in srgb,var(--accent) 35%,transparent)}
 /* option speaker sits inside the option row, at its end */
 .ax .ax-orow{position:relative}.ax .ax-osp{position:absolute;right:6px;top:6px;z-index:1}.ax .ax-osp .spk{width:30px;height:30px;min-width:30px}.ax .ax-opt .ax-ot{padding-right:42px!important}
