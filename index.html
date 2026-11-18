@@ -3214,7 +3214,7 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
   $('bk').onclick=()=>go({screen:'am'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'jn'});
   bindSettings();bindQuizPanel(key,ws,name,'amnw');bindCards(key,ws);
-  const g=$('nwGo');if(g)g.onclick=()=>{if(open)return go({screen:'amwl'});const L=jnLeft(x);if(!L.length)return draw();
+  const g=$('nwGo');if(g)g.onclick=()=>{if(open)return go({screen:'amwl'});if(!jnPend(x).length)return draw();
     /* words she marked ✓ in the dictionary leave the learning (counted for the step) */
     jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id)}});
     amSave();const all=jnBatch(x),base={jr:x.id,from:'amnw',t0:amNow(),all};for(let r=1;r<=4;r++)if(wRound(r,all,base))return;draw()};
@@ -4035,7 +4035,9 @@ const wFb=(w,s)=>{const t=wTask(w),n=WTN[t];return n&&t!==WPATH[s]?` (במילה
 /* the learning round a word is in: 1–4 = סבב 1–4, 5 = finished learning (in the reviews) */
 const lrOf=w=>w?(w.lr!=null?w.lr:(w.st===0?1:5)):1;
 /* a word missed in any learning round goes back to round 1; it starts round 1 again by itself once all the rounds are over (Nov 16, her request) */
-function wRequeue(w){if(!WS||!WS.perWord)return;const L=wLive(w);L.lr=1;L.t=amNow();wSave()}
+function wRequeue(w){if(!WS||!WS.perWord)return;const L=wLive(w),k=wK(w);L.lr=1;L.t=amNow();
+  /* a miss in round 1 comes again at the end of round 1 (the round isn't left until every word is right – her request); the round's total grows at once */
+  if(WS.round===1&&WS.list.indexOf(k,WS.i+1)<0)WS.list.push(k);wSave()}
 /* ONE look for a word's path everywhere: learning rounds 1–4 · reviews 1–6 · 🏆
    o.counts = how many of the round's words wait in each learning round (tap = go there), o.free = free practice */
 function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&WS.list&&WS.list[WS.i]===wK(w));const lr=pw?WS.round:w?lrOf(w):(o.cur||1),s=w?Math.min(w.st,WMAST):0,inRev=!pw&&w&&lr>=5&&s>=1,ch=(t,cls,i)=>o.counts?`<button class="${cls}" data-round="${i}">${t}<small>${o.counts[i-1]}</small></button>`:`<span class="${cls}">${t}</span>`;
@@ -4047,9 +4049,9 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   else if(w&&inRev)now=res?(WS.res.ok===false?`✗ המילה תחזור שוב היום, בסוף הסבב, עם משפט אחר – עד שתעני נכון · עכשיו חזרה ${s} מתוך 6`:(WS.re||[]).includes(wK(w))&&WS.res.ok?`✓ נכון – המילה עוברת · עכשיו חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`):`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
   else if(pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend){const R=WS.res;
     now=R.ok?(lr<4?`✓ נכון – המילה עוברת לסבב ${lr+1} · ${WLRN[lr][0]}`:`✓ נכון – המילה סיימה את הלמידה ועוברת לחזרה 1 (${wWhen(w.due)})`)
-      :`✗ המילה חוזרת לסבב 1 · ${WLRN[0][0]} – תתחיל אותו שוב אחרי שתסיימי את כל הסבבים, עם משפט אחר`}
+      :lr===1?`✗ המילה תחזור שוב בסוף סבב 1, עם משפט אחר – עוברים לסבב 2 רק כשכל המילים של סבב 1 נכונות`:`✗ המילה חוזרת לסבב 1 · ${WLRN[0][0]} – תתחיל אותו שוב אחרי שתסיימי את כל הסבבים, עם משפט אחר`}
   else if(pw&&WS.res&&WS.res.pend)now=`סבב ${lr} מתוך 4 · ⏳ בודקת את התשובה…`;
-  else if(w)now=`סבב ${lr} מתוך 4 · ${WLRN[lr-1][0]}${lr<4?` ← אם נכון: סבב ${lr+1} · ${WLRN[lr][0]}`:' ← אם נכון: חזרה 1'} · אם לא: חוזרת לסבב 1 אחרי כל הסבבים`;
+  else if(w)now=`סבב ${lr} מתוך 4 · ${WLRN[lr-1][0]}${lr<4?` ← אם נכון: סבב ${lr+1} · ${WLRN[lr][0]}`:' ← אם נכון: חזרה 1'} · אם לא: ${lr===1?'שוב בסוף סבב 1':'חוזרת לסבב 1 אחרי כל הסבבים'}`;
   else now=`סבב ${o.cur} · ${WLRN[(o.cur||1)-1][0]}`;
   if(o.free)now='תרגול חופשי – לא משנה את המסלול · '+now;
   const oth=w&&res&&inRev?Object.values(AMS.w).filter(x=>x!==w&&wK(x)!==wK(w)&&String(x.e).toLowerCase()===String(w.e).toLowerCase()&&x.st>=1):[];
@@ -4337,7 +4339,7 @@ function wRound(r,keys,base){keys=(keys||[]).filter(k=>wInRound(k,r));if(!keys.l
   wSave();if(r===2){const key=wDqKey();if(SESS[key])(SDEL[key]=Date.now(),delete SESS[key]);return wDqPageGo()}go({screen:'amwl'});draw();window.scrollTo(0,0);return true}
 const wDqPageGo=()=>{go({screen:'amwl'});draw();return true};
 /* after a round: the next round that has words waiting, else back to the page of the day's words */
-function wRoundNext(r){const all=wAllK(),base=WS;for(let n=r+1;n<=4;n++)if(wRound(n,all,base))return;
+function wRoundNext(r){const all=wAllK(),base=WS;if(r===1&&wRound(1,all,base))return;for(let n=r+1;n<=4;n++)if(wRound(n,all,base))return;
   /* all rounds done: missed words (back in round 1) start round 1 again by themselves */
   for(let n=1;n<=r;n++)if(wRound(n,all,base))return;
   const jr=WS&&WS.jr,x=jr&&jrBlock(jr);if(!x||x.k!=='new'||!jnPend(x).length){WS.i=WS.list.length;wSave();return wDone()}
