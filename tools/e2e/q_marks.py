@@ -35,3 +35,15 @@ with sync_playwright() as p:
   pg.evaluate("sndNext()");assert pg.evaluate("[SNDM,MUTED()]")==['mute',True]
   assert pg.evaluate("localStorage.getItem('dictSnd')")=='mute'
   assert not errs,errs;print('OK');b.close()
+# sound sheet: the button opens the three modes; a hint popup still plays the word
+with sync_playwright() as p:
+  b=p.chromium.launch();pg=b.new_page(viewport={'width':390,'height':844});errs=[];pg.on('pageerror',lambda e:errs.append(str(e)))
+  pg.route('**/firestore.googleapis.com/**',lambda r:r.abort());pg.route('**/generativelanguage.googleapis.com/**',lambda r:r.abort())
+  pg.goto('http://localhost:8765/');pg.wait_for_timeout(1200);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(1200);pg.evaluate("amLoad()");pg.wait_for_timeout(2500)
+  pg.evaluate("amStart(['csc5-1'],'t','learn','am','sc')");pg.wait_for_timeout(800)
+  pg.click('#autoBtn');pg.wait_for_timeout(300);assert pg.locator('[data-snd]').count()==3
+  pg.click('[data-snd="mute"]');pg.wait_for_timeout(300)
+  assert pg.evaluate("[SNDM,localStorage.getItem('dictSnd')]")==['mute','mute'] and 'שקט' in pg.locator('#autoBtn').inner_text()
+  pg.click('#autoBtn');pg.click('[data-snd="off"]');pg.wait_for_timeout(300)
+  pg.evaluate("window.__said=[];const o=amSay;amSay=t=>{__said.push(t)};amPop('regal','','','','hint')");assert pg.evaluate("__said")==['regal'],'hint popup plays the word'
+  assert not errs,errs;print('OK2');b.close()

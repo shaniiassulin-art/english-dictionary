@@ -309,6 +309,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .qz .mic{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .qz .mic svg{width:18px;height:18px}
 .qz .mic.on{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
+.snd-pick{display:flex;flex-direction:column;gap:8px}.snd-o{display:flex;align-items:center;gap:12px;text-align:start;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}.snd-o.on{border-color:var(--accent);background:var(--accent-soft)}.snd-o .i{font-size:1.4rem}.snd-o b{display:block}.snd-o small{color:var(--muted);font-size:.8rem}.snd-o .v{margin-inline-start:auto;color:var(--accent);font-weight:800}
 .autob{flex:none;height:40px;border-radius:20px;border:0;background:var(--surface);color:var(--accent);display:inline-flex;align-items:center;gap:4px;padding:0 10px;font-weight:700;font-size:.8rem;cursor:pointer}
 .autob svg{width:16px;height:16px}.autob.on{background:var(--accent);color:var(--bg)}
 .vbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;gap:10px;background:var(--ink);color:var(--bg);padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));font-size:.95rem}
@@ -1372,7 +1373,12 @@ let AUTO=SNDM==='auto';
 function sndNext(){SNDM=SNDM==='auto'?'off':SNDM==='off'?'mute':'auto';AUTO=SNDM==='auto';LS.set('dictSnd',SNDM);if(SNDM==='mute'){try{stopAudio()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}
   try{amToast(SNDM==='auto'?'🔊 מצב רץ – כל שמע מושמע מעצמו':SNDM==='off'?'🔈 רגיל – שמע רק כשלוחצים':'🔇 שקט – שום דבר לא נשמע')}catch(e){}}
 const AUTOBTN=()=>`<button class="autob${SNDM==='auto'?' on':''}${SNDM==='mute'?' mute':''}" id="autoBtn" aria-label="מצב שמע: ${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'} – לחיצה מחליפה">${SNDM==='mute'?'🔇':SPK}<span>${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'}</span></button>`;
-function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>{sndNext();draw();if(AUTO&&cur)speak(cur)}}
+/* the sound button opens a small sheet with the three modes (her question "where is the quiet mode?") */
+function sndSet(m){SNDM=m;AUTO=m==='auto';LS.set('dictSnd',m);if(m==='mute'){try{stopAudio()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}}
+function sndPick(after){const O=[['auto','🔊','מצב רץ','כל שמע מושמע מעצמו: המילה, המשפט והשאלה'],['off','🔈','רגיל','שמע רק כשלוחצים על רמקול או על מילה'],['mute','🔇','שקט','שום דבר לא נשמע']];
+  amSheet('מצב שמע',`<div class="snd-pick">${O.map(([k,i,n,d])=>`<button class="snd-o${SNDM===k?' on':''}" data-snd="${k}"><span class="i">${i}</span><span><b>${n}</b><small>${d}</small></span>${SNDM===k?'<span class="v">✓</span>':''}</button>`).join('')}</div>`);
+  document.querySelectorAll('[data-snd]').forEach(b=>b.onclick=()=>{sndSet(b.dataset.snd);const d=document.getElementById('amSheet');if(d)d.remove();after&&after()})}
+function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>sndPick(()=>{draw();if(AUTO&&cur)speak(cur)})}
 function autoSay(){if(Q&&(Q.mode==='listen'||AUTO)&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
 function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},st:{},base:0,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});autoSay()}
 function saveQ(){if(!Q)return;SESS[Q.key]={v:2,kind:'quiz',t:Date.now(),ids:ids(Q.list),i:Q.i,score:Q.score,pts:Q.pts,max:Q.max,mist:ids(Q.mist),marks:Q.marks||{},st:Q.st||{},base:Q.base||0,name:Q.name,from:Q.from,l:Q.l,g:Q.g,mode:Q.mode,stage:Q.stage,mine:Q.mine,opts:Q.opts,sel:Q.sel,checked:Q.checked,shown:Q.shown,sent:Q.sent,skip:Q.skip};saveSess()}

@@ -891,7 +891,7 @@ function wordHints(e){const lo=String(e).toLowerCase(),d=dictFind(e),out=[],seen
   return out}
 function amHintAI(e,sent){const k=String(e).toLowerCase()+'|'+(sent||'');if(HINTC[k]||!GKEY())return;HINTC[k]={pend:1};
   aiRun('','',null,{prompt:`A Hebrew-speaking student meets the English word "${e}"${sent?` in the sentence: «${sent}»`:''}. Give ONE short memory hint in Hebrew (an association, a Hebrew sound-alike, a familiar loanword or a situation) that helps her GUESS what the word means – but do NOT write its Hebrew meaning, a translation or a synonym. Plain Hebrew letters. JSON: {"hint":"..."}`,temp:.7}).then(r=>{const h=r&&r.j&&String(r.j.hint||'').trim();HINTC[k]=h?{t:h}:{err:1};if(AMPOP&&AMPOP.mode==='hint'&&AMPOP.e===e)amPopDraw()})}
-function amPop(e,ctx,src,sent,mode){sent=sent||ctx||'';if(!mode&&amPopRsLock())mode='hint';AMPOP={e,ctx,src,sent,h:null,mode:mode||''};if(mode==='hint'){if(!wordHints(e).length)amHintAI(e,sent);amPopDraw();return}amPopDraw();/* the word is played at once (her request) – the tap is a user gesture, so iPhone lets it sound */try{amSay(e)}catch(x){}amTrans(e,sent).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
+function amPop(e,ctx,src,sent,mode){sent=sent||ctx||'';if(!mode&&amPopRsLock())mode='hint';AMPOP={e,ctx,src,sent,h:null,mode:mode||''};if(mode==='hint'){if(!wordHints(e).length)amHintAI(e,sent);amPopDraw();try{amSay(e)}catch(x){}return}amPopDraw();/* the word is played at once (her request) – the tap is a user gesture, so iPhone lets it sound */try{amSay(e)}catch(x){}amTrans(e,sent).then(r=>{if(AMPOP&&AMPOP.e===e){AMPOP.h=r;amPopDraw()}})}
 function amHintHtml(){const H=wordHints(AMPOP.e),k=String(AMPOP.e).toLowerCase()+'|'+(AMPOP.sent||''),g=HINTC[k];
   return `<p class="hint" style="margin:0 0 4px">💡 רמז – בלי הפירוש</p>`+(H.length?H.map(x=>`<p style="margin:2px 0">${x.html?x.t:bdiEsc(x.t)} <small style="color:var(--muted)">· ${x.src}</small></p>`).join(''):g&&g.t?`<p style="margin:2px 0">${bdiEsc(g.t)} <small style="color:var(--muted)">· רמז שנכתב עכשיו</small></p>`:g&&g.pend?'<p class="hint" style="margin:0">⏳ ממציאה רמז…</p>':'<p class="hint" style="margin:0">אין רמז למילה הזו.</p>')}
 /* restatement: before answering, a tapped word shows only a hint, never its meaning (her request) */
@@ -1473,7 +1473,7 @@ function amQNavBind(){const mv=i=>{AQ.i=Math.max(0,Math.min(AQ.ids.length,i));if
   const us=$('aqUnit');if(us)us.onchange=()=>{const x=(AMD.s||[]).find(z=>z.id===us.value);if(!x)return;JRGO=AQ.jr||null;amStartUnit(x,(AMTN[x.t]||'')+' · '+(x.b?'פרק ':'יחידה ')+x.u,AQ.from,AQ.t)}}
 /* מצב רץ in questions: the question's sentence is read once when it appears (not the reading passage; listening items read themselves) */
 let AQAUTO='';
-function amAutoQ(id,q,st){const b=$('autoBtn');if(b&&!b._q){b._q=1;b.onclick=()=>{sndNext();AQAUTO='';amRedrawKeep()}}
+function amAutoQ(id,q,st){const b=$('autoBtn');if(b&&!b._q){b._q=1;b.onclick=()=>sndPick(()=>{AQAUTO='';amRedrawKeep()})}
   if(!AUTO||!q||st.done||st.ans!=null||AQAUTO===id)return;AQAUTO=id;if(/^(lc|lq|wr)$/.test(q.t))return;setTimeout(()=>{if(AQ&&AQ.cur===id)amSay(q.q)},250)}
 function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.ids.length){go({screen:'am'});return}
   if(AQ.i>=AQ.ids.length)return amResult();
@@ -2563,7 +2563,7 @@ const WTRO={};
    a new question reads what it shows in English without giving the answer away (the sentence to translate, the word whose meaning is asked);
    after answering it reads the word and its English sentence. Each state is read once (WAUTOK), not again on redraws. */
 let WAUTOK='';
-function wAutoTick(){const b=$('autoBtn');if(b&&!b._w){b._w=1;b.onclick=()=>{sndNext();WAUTOK='';draw()}}
+function wAutoTick(){const b=$('autoBtn');if(b&&!b._w){b._w=1;b.onclick=()=>sndPick(()=>{WAUTOK='';draw()})}
   if(!AUTO||S.screen!=='amwl'||!WS||!WS.list)return;const k=WS.list[WS.i],w=AMS.w[k];if(!w)return;const R=WS.res,ans=!!(R&&!R.pend&&(R.rec||R.ok!=null||R.self));
   const key=k+'|'+WS.step+'|'+(WS.round||WS.phase||'')+'|'+(ans?'a':'q');if(key===WAUTOK)return;
   let t='';const trs=app.querySelector('.am-trs [data-amsay]'),wd=app.querySelector('.am-card .w [data-amsay]');
