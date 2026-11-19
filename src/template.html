@@ -309,6 +309,7 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .qz .mic{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--accent);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .qz .mic svg{width:18px;height:18px}
 .qz .mic.on{background:var(--bad-soft);color:var(--bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
+.autob.sm{width:40px;padding:0;justify-content:center}.autob.sm span{display:none}.autob.sm.mute{font-size:1rem}
 .snd-pick{display:flex;flex-direction:column;gap:8px}.snd-o{display:flex;align-items:center;gap:12px;text-align:start;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}.snd-o.on{border-color:var(--accent);background:var(--accent-soft)}.snd-o .i{font-size:1.4rem}.snd-o b{display:block}.snd-o small{color:var(--muted);font-size:.8rem}.snd-o .v{margin-inline-start:auto;color:var(--accent);font-weight:800}
 .autob{flex:none;height:40px;border-radius:20px;border:0;background:var(--surface);color:var(--accent);display:inline-flex;align-items:center;gap:4px;padding:0 10px;font-weight:700;font-size:.8rem;cursor:pointer}
 .autob svg{width:16px;height:16px}.autob.on{background:var(--accent);color:var(--bg)}
@@ -772,7 +773,7 @@ function drawFail(err){const m=String(err&&(err.stack||err.message)||err).split(
   $('bk').onclick=()=>go({screen:/^am/.test(S.screen)?'am':'home'})}
 function draw(){document.documentElement.classList.remove('noscroll');const fa=document.activeElement,fid=fa&&fa.id&&/^inp\d/.test(fa.id)?fa.id:null;
   if(S.screen!=='amq')clearInterval(typeof AMTICK!=='undefined'?AMTICK:0);if(typeof AMPOP!=='undefined'&&AMPOP&&S.screen!=='amq'){AMPOP=null;amPopDraw()}
-  try{({home,all:allScreen,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords,amgap:amGaps,amfp:amFreePick,amfpl:amFreeRun,ampath:amPath})[S.screen]();}catch(err){drawFail(err)}
+  try{({home,all:allScreen,level,group:groupScreen,words:wordsScreen,quiz:quizScreen,result,cards:cardScreen,days:daysScreen,sent:sentScreen,car:carScreen,tr:trScreen,start:startScreen,am:amHub,amu:amUnits,amq:amQuiz,amx:amMist,amw:amWords,amwl:amWordLearn,amm:amMethods,amh:amHc,amrd:amReader,aml:amList,amhelp:amHelp,amqh:amQHub,amwm:amMyWords,amwd:amWordPage,amls:amLessons,amp:amProgress,amwp:amParts,ammt:amMethod,amjb:amBlock,amsch:amSchedule,amnw:amNewWords,amgap:amGaps,amfp:amFreePick,amfpl:amFreeRun,ampath:amPath})[S.screen]();}catch(err){drawFail(err)}try{sndInject()}catch(e){}
   if(fid){const el=$(fid);if(el)try{el.focus({preventScroll:true})}catch(e){}}
   /* ✕ in the search box clears it */
   const si=$('srch'),sc=$('sclear');if(si&&sc){si.addEventListener('input',()=>{sc.hidden=!si.value});
@@ -1378,6 +1379,9 @@ function sndSet(m){SNDM=m;AUTO=m==='auto';LS.set('dictSnd',m);if(m==='mute'){try
 function sndPick(after){const O=[['auto','🔊','מצב רץ','כל שמע מושמע מעצמו: המילה, המשפט והשאלה'],['off','🔈','רגיל','שמע רק כשלוחצים על רמקול או על מילה'],['mute','🔇','שקט','שום דבר לא נשמע']];
   amSheet('מצב שמע',`<div class="snd-pick">${O.map(([k,i,n,d])=>`<button class="snd-o${SNDM===k?' on':''}" data-snd="${k}"><span class="i">${i}</span><span><b>${n}</b><small>${d}</small></span>${SNDM===k?'<span class="v">✓</span>':''}</button>`).join('')}</div>`);
   document.querySelectorAll('[data-snd]').forEach(b=>b.onclick=()=>{sndSet(b.dataset.snd);const d=document.getElementById('amSheet');if(d)d.remove();after&&after()})}
+/* every screen gets the sound button (her request): screens that don't draw one get a small icon-only one next to their refresh button */
+function sndInject(){if(S.screen==='car'||$('autoBtn'))return;const r=document.querySelector('#app [data-reload]');if(!r||!r.parentNode)return;
+  const t=document.createElement('span');t.innerHTML=AUTOBTN().replace('class="autob','class="autob sm');const b=t.firstElementChild;r.parentNode.insertBefore(b,r);b.onclick=()=>sndPick(()=>draw())}
 function bindAuto(cur){const b=$('autoBtn');if(b)b.onclick=()=>sndPick(()=>{draw();if(AUTO&&cur)speak(cur)})}
 function autoSay(){if(Q&&(Q.mode==='listen'||AUTO)&&!V.on&&Q.list[Q.i])speak(Q.list[Q.i].e)}
 function startQuiz(list,name,from,key){if(!list.length)return;Q={key,list,i:0,score:0,pts:0,max:0,mist:[],marks:{},st:{},base:0,name,from,l:S.l,g:S.g,mode:S.mode,...blankQ()};saveQ();S.active=key;go({screen:'quiz'});autoSay()}
