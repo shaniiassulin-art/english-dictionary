@@ -3024,14 +3024,14 @@ function amPopDraw(){let el=$('amPop');if(!AMPOP){if(el)el.remove();return}
   const k=wKey(AMPOP.e),inW=AMS.w[k],d=dictFind(AMPOP.e),dq=d&&d.cards.some(c=>!isY(c)&&(AMS.w['c:'+c.id]||AMS.w[wKey(c.e)]));
   el.innerHTML=`<div class="e"><button class="spk" data-amsay="${esc(d?d.e:AMPOP.e)}" aria-label="השמעה">${SPK}</button>${esc(AMPOP.e)}${d&&d.e.toLowerCase()!==AMPOP.e.toLowerCase()?` <small style="font-size:.8rem;color:var(--muted)">(${esc(d.e)})</small>`:''}</div>
         <div>${AMPOP.mode==='hint'?amHintHtml():popSecret(AMPOP.e)?'🔒 זו המילה שאת נבחנת עליה – הפירוש יופיע אחרי הבדיקה.':AMPOP.h?(AMPOP.h.h?(AMPOP.h.hs&&AMPOP.h.hs.length>1?`<ol class="am-pophs">${AMPOP.h.hs.map(x=>`<li>${esc(x)}</li>`).join('')}</ol>`:esc(AMPOP.h.h))+` <small style="color:var(--muted)">· ${esc(AMPOP.h.src)}</small>`:'לא נמצא תרגום'):'⏳ מחפשת פירוש…'}${d&&d.cards.every(isY)?' · <b style="color:var(--ok)">✓ סימנת שאת יודעת</b>':''}</div>
-    <div class="row">${d?(d.cards.every(isY)?'':`<button class="btn${dq?' secondary':''}" id="popSoon">${dq?'⏩ בתור ללמידה':'⏩ ללמידה בקרוב'}</button>`):AMPOP.mode==='hint'?'':`<button class="btn secondary" id="popUw" ${AMPOP.h&&AMPOP.h.h?'':'disabled'}>➕ למילון</button><button class="btn" id="popUwS" ${AMPOP.h&&AMPOP.h.h?'':'disabled'}>⏩ ללמידה בקרוב</button>`}<button class="btn secondary" id="popX">סגירה</button></div>${amUnk()?`<button class="am-sb" id="popUnk" style="margin-top:6px">${amUnk().includes(AMPOP.e.toLowerCase())?'✓ סומנה כמילה שלא ידעתי – ביטול':'🔖 לא ידעתי את המילה – להסביר אחרי התשובה'}</button>`:''}`;
+    <div class="row">${d?(d.cards.every(isY)?'':`<button class="btn${dq?' secondary':''}" id="popSoon">${dq?(amDbLabel(d)||'⏳ ממתינה ללמידה'):'➕ להוסיף ללמידה'}</button>`):AMPOP.mode==='hint'?'':`<button class="btn secondary" id="popUw" ${AMPOP.h&&AMPOP.h.h?'':'disabled'}>➕ למילון</button><button class="btn" id="popUwS" ${AMPOP.h&&AMPOP.h.h?'':'disabled'}>➕ למילון + ללמידה</button>`}<button class="btn secondary" id="popX">סגירה</button></div>${amUnk()?`<button class="am-sb" id="popUnk" style="margin-top:6px">${amUnk().includes(AMPOP.e.toLowerCase())?'✓ סומנה כמילה שלא ידעתי – ביטול':'🔖 לא ידעתי את המילה – להסביר אחרי התשובה'}</button>`:''}`;
     $('popX').onclick=()=>{AMPOP=null;amPopDraw()};
   const popCtx=()=>{const cq=AQ&&AQ.cur&&AMD&&AMD.q[AQ.cur];return AMPOP.ctx||AMPOP.sent||(cq?amQCtx(cq,AMPOP.e):'')};
   const queue=dd=>{const ctx=popCtx();dd.cards.filter(c=>!isY(c)&&!AMS.w['c:'+c.id]).forEach(c=>wAdd(c.e,c.h[0],ctx,'dict:'+c.id,'c:'+c.id))};
   const after=()=>{amPopDraw();const r=document.querySelector('.am-wordsbox');if(r&&AQ&&AQ.cur)r.outerHTML=amWordsBox(AQ.cur)};
   const pk=$('popUnk');if(pk)pk.onclick=()=>{const U=amUnk(),w=AMPOP.e.toLowerCase(),i=U.indexOf(w);if(i<0)U.push(w);else U.splice(i,1);amSaveQ();amUnkMark();amPopDraw()};
-  const ps=$('popSoon');if(ps)ps.onclick=()=>{if(dq)return;queue(d);amToast('✓ תילמד בקרוב');after()};
-  const pu=(soon)=>{if(!AMPOP.h||!AMPOP.h.h)return;const c=uwAdd(AMPOP.e.toLowerCase(),AMPOP.h.h,popCtx(),'');if(!c)return;if(soon)queue(dictFind(AMPOP.e));amToast(soon?'✓ נוספה למילון ותילמד בקרוב':'✓ נוספה למילון · מילים שהוספתי');after()};
+  const ps=$('popSoon');if(ps)ps.onclick=()=>{if(dq)return;queue(d);amToast('✓ נוספה ללמידה – תגיע בשלב המילים החדשות הבא');after()};
+  const pu=(soon)=>{if(!AMPOP.h||!AMPOP.h.h)return;const c=uwAdd(AMPOP.e.toLowerCase(),AMPOP.h.h,popCtx(),'');if(!c)return;if(soon)queue(dictFind(AMPOP.e));amToast(soon?'✓ נוספה למילון וללמידה – תגיע בשלב המילים החדשות הבא':'✓ נוספה למילון · מילים שהוספתי');after()};
   const pa=$('popUw');if(pa)pa.onclick=()=>pu(false);const pb=$('popUwS');if(pb)pb.onclick=()=>pu(true)}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-tw]');if(t){e.preventDefault();document.querySelectorAll('.tw.on').forEach(x=>x.classList.remove('on'));t.classList.add('on');
   const box=t.closest('[data-ctx]');amPop(t.dataset.tw,box?box.dataset.ctx:'',box?box.dataset.src:'',t.firstChild?enSentOf(t.firstChild,t.dataset.tw):'');return}
@@ -3799,6 +3799,10 @@ function amQWords(id){const q=AMD.q[id],rows=[],seen=new Set();
   const txt=[q.q.replace(/_{3,}/g,' '),...(q.o||[]),typeof q.a==='string'?q.a:''].join(' ');
   for(const m of txt.match(/[A-Za-z][A-Za-z'\-]*[A-Za-z]/g)||[]){const lw=m.toLowerCase();if(STOP.has(lw)||lw.length<3)continue;const d=dictFind(lw);if(!d||seen.has(d.e.toLowerCase()))continue;seen.add(d.e.toLowerCase());rows.push(d)}
   return rows}
+/* where a dictionary word of a question stands for her (her question: what's the difference between the two labels; show words she learned) */
+function amDbLabel(d){const es=d.cards.map(c=>AMS.w['c:'+c.id]).concat([AMS.w[wKey(d.e)]]).filter(Boolean);
+  const done=es.some(w=>w.st>=WMAST),rev=es.some(w=>w.st>=1&&lrOf(w)>=5),lrn=es.some(w=>w.st>=1&&lrOf(w)<5),wait=es.some(w=>!w.st);
+  if(done)return '✓ למדת';if(rev)return '✓ למדת · בחזרות';if(lrn)return '📖 בלמידה עכשיו';if(d.cards.every(isY))return '✓ יודעת';if(wait)return '⏳ ממתינה ללמידה';return ''}
 function amDbStatus(d){if(d.cards.every(isY))return 'y';if(d.cards.some(c=>AMS.w['c:'+c.id])||AMS.w[wKey(d.e)])return 'w';return ''}
 function amQPath(st,ok){const P=[['res','✓ תשובה'],...(ok?[]:[['why','🔍 חקירה']]),['words','📚 מילים']];const cur=st.fb||'res',ci=P.findIndex(x=>x[0]===cur);
   return `<div class="am-path">${P.map(([k,t],i)=>`<span class="${i<ci?'done':i===ci?'on':''}">${t}</span>`).join('')}</div>`}
@@ -3884,7 +3888,7 @@ function amFbPage(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
     if(q.ex)h+=`<div class="am-box"><h4>📗 ההסבר מהספר</h4><div class="exl">${esc(q.ex)}</div></div>`;
     h+=amMethodBox(id);
     h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="words">📚 המילים מהשאלה ←</button></div>`}
-  else{h+=EXB('מילים מהשאלה. מילה שבמילון מסומנת "📘 במילון"; <b>⏩ ללמידה בקרוב</b> מקדים אותה בתור של המילים החדשות. מילה שלא במילון: <b>➕ למילון</b> מוסיף אותה ל"מילים שהוספתי", ו<b>⏩ ללמידה בקרוב</b> גם מוסיף וגם מקדים אותה בתור.');h+=amWordsBox(id);
+  else{h+=EXB('מילים מהשאלה. מילה מהמילון: <b>➕ להוסיף ללמידה</b> מכניס אותה לתור – היא תגיע בשלב המילים החדשות הבא, לפני שאר המילים. ליד מילה כתוב איפה היא אצלך: ⏳ ממתינה ללמידה (בתור, עוד לא התחלת) · 📖 בלמידה עכשיו (בסבבים) · ✓ למדת · בחזרות · ✓ למדת · ✓ יודעת (סימנת במילון). מילה שלא במילון: <b>למילון</b> מוסיף אותה ל"מילים שהוספתי", <b>למילון + ללמידה</b> גם מכניס אותה לתור.');h+=amWordsBox(id);
     h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="">${amNextLbl()} ←</button></div>`}
   return h}
 function amWhyBox(id,st){const q=AMD.q[id],a=AMS.a[id]||{},key='why|'+id+'|'+st.sel,ai=AMAI[key],why=st.why&&st.why.length?st.why:(a.r||[]);
@@ -3920,8 +3924,8 @@ const UWP={};
 function amWordsBox(id){if(!id||!AMD)return '';const q=AMD.q[id],R=amQWords(id),N=amQNew(id),add=R.filter(d=>!amDbStatus(d)).length;
   const need=N.filter(e=>!TRX[e+'|'+amQCtx(q,e).trim()]&&!UWP[e+'|'+id]);
   if(need.length){need.forEach(e=>UWP[e+'|'+id]=1);Promise.all(need.map(e=>amTrans(e,amQCtx(q,e)).catch(()=>null))).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()})}
-  const rowD=d=>{const st=amDbStatus(d);return `<div class="am-wl"><span class="e" dir="ltr">${esc(d.e)}</span><span class="h">${esc(d.cards.map(c=>c.h[0]).filter((v,i,a)=>a.indexOf(v)===i).join(' · '))}</span><span class="a">${st==='y'?'<small>✓ יודעת</small>':st==='w'?'<small>בתור ללמידה</small>':`<small>במילון</small><button class="am-sb" data-dbadd="${esc(d.e)}">ללמידה בקרוב</button>`}</span></div>`};
-  const rowN=e=>{const t=TRX[e+'|'+amQCtx(q,e).trim()],h=t&&t.h||'';return `<div class="am-wl"><span class="e" dir="ltr">${esc(e)}</span><span class="h">${h?esc(h):'…'}</span><span class="a"><button class="am-sb" data-uwadd="${esc(e)}" ${h?'':'disabled'}>למילון</button><button class="am-sb" data-uwsoon="${esc(e)}" ${h?'':'disabled'}>ללמידה בקרוב</button></span></div>`};
+  const rowD=d=>{const st=amDbStatus(d);return `<div class="am-wl"><span class="e" dir="ltr">${esc(d.e)}</span><span class="h">${esc(d.cards.map(c=>c.h[0]).filter((v,i,a)=>a.indexOf(v)===i).join(' · '))}</span><span class="a">${(()=>{const L=amDbLabel(d);return L?`<small>${L}</small>`:`<small>במילון</small> <button class="am-sb" data-dbadd="${esc(d.e)}">➕ להוסיף ללמידה</button>`})()}</span></div>`};
+  const rowN=e=>{const t=TRX[e+'|'+amQCtx(q,e).trim()],h=t&&t.h||'';return `<div class="am-wl"><span class="e" dir="ltr">${esc(e)}</span><span class="h">${h?esc(h):'…'}</span><span class="a"><button class="am-sb" data-uwadd="${esc(e)}" ${h?'':'disabled'}>למילון</button><button class="am-sb" data-uwsoon="${esc(e)}" ${h?'':'disabled'}>למילון + ללמידה</button></span></div>`};
   return `<div class="am-box am-wordsbox"><h4>מילים מהשאלה</h4>${R.length?`<div class="am-wls">${R.map(rowD).join('')}</div>`:''}
     ${N.length?`<h5 class="am-wlh">לא במילון</h5><div class="am-wls">${N.map(rowN).join('')}</div>`:''}
     ${!R.length&&!N.length?'<p class="hint" style="margin:0">אין בשאלה מילים חדשות.</p>':''}</div>`}
@@ -3942,9 +3946,9 @@ function amBindWordBtns(id){const q=id&&AMD.q[id];
   const addD=e=>{const d=dictFind(e);if(!d)return;const ctx=q?(q.t==='rc'?amSentenceWith(q,e):q.t==='sc'?q.q.replace(/_{3,}/g,q.o[q.a-1]):q.q):'';
     /* every meaning she does not know yet joins the queue; the sentence from the question is kept as the place she met it */
     d.cards.filter(c=>!isY(c)&&!AMS.w['c:'+c.id]).forEach(c=>wAdd(c.e,c.h[0],ctx,'dict:'+c.id,'c:'+c.id))};
-  app.querySelectorAll('[data-dbadd]').forEach(b=>b.onclick=()=>{if(b.classList.contains('in'))return;addD(b.dataset.dbadd);b.closest('.a').innerHTML='<small>בתור ללמידה</small>'});
+  app.querySelectorAll('[data-dbadd]').forEach(b=>b.onclick=()=>{if(b.classList.contains('in'))return;addD(b.dataset.dbadd);b.closest('.a').innerHTML='<small>⏳ ממתינה ללמידה</small>'});
   const uw=(e,soon)=>{const ctx=amQCtx(q,e).trim(),t=TRX[e+'|'+ctx];if(!t||!t.h)return;const tr=q&&q.t==='sc'?((AMAI['qtr|'+id]||{}).he||q.he||''):'';
-    const c=uwAdd(e,t.h,ctx,tr);if(!c)return;if(soon)addD(e);amToast(soon?'✓ נוספה למילון ותילמד בקרוב':'✓ נוספה למילון · מילים שהוספתי');amRedrawKeep()};
+    const c=uwAdd(e,t.h,ctx,tr);if(!c)return;if(soon)addD(e);amToast(soon?'✓ נוספה למילון וללמידה – תגיע בשלב המילים החדשות הבא':'✓ נוספה למילון · מילים שהוספתי');amRedrawKeep()};
   app.querySelectorAll('[data-uwadd]').forEach(b=>b.onclick=()=>uw(b.dataset.uwadd,false));
   app.querySelectorAll('[data-uwsoon]').forEach(b=>b.onclick=()=>uw(b.dataset.uwsoon,true));
   app.querySelectorAll('[data-wadd]').forEach(b=>b.onclick=()=>{const e=b.dataset.wadd;if(AMS.w[wKey(e)])return;wAdd(e,b.dataset.wh,'',b.dataset.wsrc||id);b.classList.add('in');b.textContent='✓ בסדנה'});
