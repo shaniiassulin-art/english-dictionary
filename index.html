@@ -3133,7 +3133,8 @@ function jrWhat(x){if(x.k==='rev2'&&!x.done){const n=wDue(x.go?0:18e5).length;if
 let JACT=Date.now(),JTICK=0;['pointerdown','keydown','scroll','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{JACT=Date.now()},{passive:true,capture:true}));
 setInterval(()=>{const jnS=['quiz','cards','car'].includes(S.screen)&&/^[FC]?J/.test(String(S.active||''));if(document.visibilityState!=='visible'||!(/^am/.test(S.screen)||jnS)||S.screen==='amhelp'||Date.now()-JACT>300e3)return;
   const k=dayKey();AMS.tm=AMS.tm||{};AMS.tm[k]=(AMS.tm[k]||0)+15e3;const ck=jrCurKey(),P=ck&&AMS.jp[ck],cur=P&&jrCur(P);
-  if(cur&&cur.k!=='brk'){const act=(S.screen==='amq'&&AQ&&AQ.jr===cur.id)||(S.screen==='amwl'&&WS&&WS.jr===cur.id)||S.screen==='amjb'||(cur.k==='new'&&(S.screen==='amnw'||jnS));if(act)cur.used=(cur.used||0)+15e3}
+  /* the minutes go to the step she is actually working on (any step of the plan, not only the next one) – shown on its tile as "done / planned" */
+  if(P){const on=P.b.find(x=>(S.screen==='amq'&&AQ&&AQ.jr===x.id)||(S.screen==='amwl'&&WS&&WS.jr===x.id))||(cur&&cur.k!=='brk'&&(S.screen==='amjb'||(cur.k==='new'&&(S.screen==='amnw'||jnS)))?cur:null)||((S.screen==='amnw'||jnS)?P.b.find(x=>x.k==='new'&&!x.done):null);if(on)on.used=(on.used||0)+15e3}
   LS.set('dictAm',JSON.stringify(AMS));if(++JTICK%8===0){AMS.t=amNow();amSave()}},15e3);
 const jrMin=k=>Math.floor(((AMS.tm||{})[k]||0)/6e4);
 /* start (or go on with) a block */
@@ -3174,7 +3175,7 @@ function amHub(){if(!AMD)return amLoading();
       ${nb?`<button class="btn jh-go" id="jrGo">▶ ${jrOpen(nb)||nb.d||nb.used?'להמשיך':'להתחיל'}</button>`:ck===T||ck>T?`<button class="btn jh-go" id="jrNext">▶ לתוכנית של מחר</button>`:''}
       ${nb&&nb.x?'<button class="link jh-l" id="jrNext">לעבור לתוכנית של מחר בכל זאת</button>':''}${ck!==T?`<button class="link jh-l" id="jrToday">← חזרה למסע של היום</button>`:''}
     </section>
-    <div class="jh-steps">${P.b.map(x=>`<button class="jh-st${x.skip?' skip':x.done?' done':x===nb?' on':''}" ${!x.done?`data-jstep="${esc(x.id)}"`:'disabled'}><span class="i">${x.done?'✓':JBx(x)[0]}</span><span class="n">${x.x?'עד היעד':(x.qt&&SH['q_'+x.qt]||SH[x.k])||JBx(x)[1]}</span><span class="s">${stS(x)}</span>${x.m&&!/דק/.test(stS(x))?`<span class="m">⏱ ${x.m} דק׳</span>`:''}</button>`).join('')}</div>
+    <div class="jh-steps">${P.b.map(x=>`<button class="jh-st${x.skip?' skip':x.done?' done':x===nb?' on':''}" ${!x.done?`data-jstep="${esc(x.id)}"`:'disabled'}><span class="i">${x.done?'✓':JBx(x)[0]}</span><span class="n">${x.x?'עד היעד':(x.qt&&SH['q_'+x.qt]||SH[x.k])||JBx(x)[1]}</span><span class="s">${stS(x)}</span>${x.m?`<span class="m">⏱ ${Math.round((x.used||0)/6e4)}/${x.m} דק׳</span>`:''}</button>`).join('')}</div>
     <div class="jh-foot">
       <button data-go="amp"><span class="i">📊</span>התקדמות</button>
       <button data-go="amgap" class="${gp?'warn':''}"><span class="i">${gp?'⏳':'✓'}</span>${gp?'פערים':'אין פערים'}</button>
