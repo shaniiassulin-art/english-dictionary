@@ -2880,6 +2880,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .jh-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .jh-st{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border-radius:16px;border:1px solid var(--line);background:var(--surface);font:inherit;color:var(--ink);cursor:pointer;min-width:0}
 .jh-st .i{font-size:1.25rem;line-height:1.2}.jh-st .n{font-size:.78rem;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.jh-st .s{font-size:.7rem;color:var(--muted);white-space:nowrap}
+.jh-st .m{font-size:.68rem;color:var(--muted);white-space:nowrap}
 .jh-st.on{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)}
 .jh-st.done{opacity:.55;cursor:default}.jh-st.done .i{color:var(--ok);font-weight:800}
 .jh-st.skip{opacity:.5}.jh-st.skip .n{text-decoration:line-through}
@@ -3173,7 +3174,7 @@ function amHub(){if(!AMD)return amLoading();
       ${nb?`<button class="btn jh-go" id="jrGo">▶ ${jrOpen(nb)||nb.d||nb.used?'להמשיך':'להתחיל'}</button>`:ck===T||ck>T?`<button class="btn jh-go" id="jrNext">▶ לתוכנית של מחר</button>`:''}
       ${nb&&nb.x?'<button class="link jh-l" id="jrNext">לעבור לתוכנית של מחר בכל זאת</button>':''}${ck!==T?`<button class="link jh-l" id="jrToday">← חזרה למסע של היום</button>`:''}
     </section>
-    <div class="jh-steps">${P.b.map(x=>`<button class="jh-st${x.skip?' skip':x.done?' done':x===nb?' on':''}" ${!x.done?`data-jstep="${esc(x.id)}"`:'disabled'}><span class="i">${x.done?'✓':JBx(x)[0]}</span><span class="n">${x.x?'עד היעד':(x.qt&&SH['q_'+x.qt]||SH[x.k])||JBx(x)[1]}</span><span class="s">${stS(x)}</span></button>`).join('')}</div>
+    <div class="jh-steps">${P.b.map(x=>`<button class="jh-st${x.skip?' skip':x.done?' done':x===nb?' on':''}" ${!x.done?`data-jstep="${esc(x.id)}"`:'disabled'}><span class="i">${x.done?'✓':JBx(x)[0]}</span><span class="n">${x.x?'עד היעד':(x.qt&&SH['q_'+x.qt]||SH[x.k])||JBx(x)[1]}</span><span class="s">${stS(x)}</span>${x.m&&!/דק/.test(stS(x))?`<span class="m">⏱ ${x.m} דק׳</span>`:''}</button>`).join('')}</div>
     <div class="jh-foot">
       <button data-go="amp"><span class="i">📊</span>התקדמות</button>
       <button data-go="amgap" class="${gp?'warn':''}"><span class="i">${gp?'⏳':'✓'}</span>${gp?'פערים':'אין פערים'}</button>
