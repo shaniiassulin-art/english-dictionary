@@ -212,3 +212,4 @@
   - Questions answered outside the journey: a course question answered for the first time outside a journey step counts for today's step of its type (`amRecord` → `jrCount`); answered questions are never in a day's set anyway (`amLast` / `amSeenQ`).
   - Free word practice removed: no "🧠 מילים" in the hub's תרגול חופשי sheet and no "תרגול חופשי" card on the words page (`amfp` / `amfpl` stay in the code, unreachable).
   Test: `tools/e2e/more_group.py`.
+- No meanings before answering, in every question type (Nov 20, her request – was restatement only): `amPopRsLock` locks any practice question that isn't answered yet, so a tapped word opens the popup in hint mode (association / tip without the meaning / word parts); after answering the meaning shows. "🔖 לא ידעתי את המילה" is a big full-width button (two lines: "לא ידעתי את המילה" / "אסביר אותה אחרי שתעני"; secondary once marked). Test: `tools/e2e/q_nomeaning.py`.
