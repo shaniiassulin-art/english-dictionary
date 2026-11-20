@@ -833,7 +833,7 @@ html.noscroll .dhome,html.noscroll .dpage{min-height:0!important}
 /* history: the answered page as she saw it – read only, speakers still play */
 .am-histsnap{display:flex;flex-direction:column;gap:12px}
 .am-histsnap button:not([data-amsay]),.am-histsnap [role=button]:not([data-amsay]),.am-histsnap a,.am-histsnap summary{pointer-events:none}
-.am-histsnap .am-opt{cursor:default}.am-histsnap [data-amsay]{pointer-events:auto}
+.am-histsnap .am-opt{cursor:default}.am-histsnap [data-amsay],.am-histsnap button[data-path]{pointer-events:auto;cursor:pointer}
 `;document.head.appendChild(st)})();
 
 /* ---------- shared UI pieces ---------- */
@@ -2118,7 +2118,7 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   const res=WS&&WS.res&&WS.step!=='tr'&&!o.free;let now='';
   if(w&&!w.k&&o.free)now='המילה עוד לא נכנסה ללמידה';
   else if(w&&s>=WMAST)now='🏆 המילה נלמדה';
-  else if(w&&inRev)now=res?(WS.res.ok===false?`✗ המילה תחזור שוב היום, בסוף הסבב, עם משפט אחר – עד שתעני נכון · עכשיו חזרה ${s} מתוך 6`:(WS.re||[]).includes(wK(w))&&WS.res.ok?`✓ נכון – המילה עוברת · עכשיו חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`):`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
+  else if(w&&inRev)now=res?(WS.res.ok===false?`✗ המילה תחזור שוב היום, בסוף הסבב, עם משפט אחר – עד שתעני נכון · עכשיו חזרה ${s} מתוך 6`:(WS.re||[]).includes(wK(w))&&WS.res.ok?`✓ נכון – המילה עוברת · עכשיו חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:(()=>{const s0=WS.res.st0;/* say which review she just did and where the word went (her question: "how is this review 2?") */return s0!=null&&s0>=1&&s0!==s?`✓ חזרה ${s0} הושלמה – המילה עברה ${s>=WMAST?'ל־🏆 נלמדה':`לחזרה ${s} · הבאה ${wWhen(w.due)}`}`:s0===s?`✓ נכון עם רמז – המילה נשארת בחזרה ${s} · הבאה ${wWhen(w.due)}`:`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`})()):`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
   else if(pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend){const R=WS.res;
     now=R.ok?(lr<4?`✓ נכון – המילה עוברת לסבב ${lr+1} · ${WLRN[lr][0]}`:`✓ נכון – המילה סיימה את הלמידה ועוברת לחזרה 1 (${wWhen(w.due)})`)
       :`✗ המילה תחזור שוב בסוף סבב ${lr}, עם ${lr===2?'משפט אחר':'שאלה אחרת'} – עוברים לסבב הבא רק כשכל המילים של הסבב נכונות`}
@@ -2469,7 +2469,8 @@ function wHistPage(){const H=WS.hist||[],v=Math.max(0,Math.min(WS.view,H.length-
   app.innerHTML=h;$('bk').onclick=()=>{WS.view=null;wSave();go({screen:WS.from||'amw'})};
   const mv=d=>{WS.view=v+d;wSave();draw();window.scrollTo(0,0)};
   const p=$('hPrev');if(p)p.onclick=()=>mv(-1);const n=$('hNext');if(n)n.onclick=()=>mv(1);
-  $('hBack').onclick=()=>{WS.view=null;wSave();draw();window.scrollTo(0,0)}}
+  $('hBack').onclick=()=>{WS.view=null;wSave();draw();window.scrollTo(0,0)};
+  app.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{wSave();go({screen:'ampath',pfrom:'amwl'})})}
 function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   if(WS.view!=null&&(WS.hist||[]).length)return wHistPage();
   if(WS.mode==='r2'&&WS.phase==='dq')return wDqPage();
@@ -2701,7 +2702,7 @@ function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;WS.cur=null;
   if(WS.i>=WS.list.length&&WS.mode==='r2')WS.mode='rev';
   wSave();draw();window.scrollTo(0,0)}
 /* result of a recall: the stage goes up (a hint keeps it), a miss goes back and comes again at the end of this session */
-function wAfter(w,ok){w=wLive(w);if(WS.res&&!WS.res.task)WS.res.task=wTaskNow(w);if(!ok)wMiss(w);/* the answered task stays on screen even after the stage changes */
+function wAfter(w,ok){w=wLive(w);if(WS.res&&!WS.res.task)WS.res.task=wTaskNow(w);if(WS.res&&WS.res.st0==null)WS.res.st0=w.st;if(!ok)wMiss(w);/* the answered task stays on screen even after the stage changes */
   if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round){if(ok){w.lr=Math.max(lrOf(w),WS.round+1);if(w.lr>=5)wLrDoneMark(w);if(w.lr>=5&&w.st>=1&&w.st<WMAST)wR1Wait(w)/* review 1 = once the whole day's learning is done, else tomorrow */}else wRequeue(w)}if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   if(WS.step==='first'){/* the first recall right after learning */
     wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();if(!(WS.counted&&WS.counted.includes(wK(w)))&&WS.jr)jrCount(WS.jr);AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
