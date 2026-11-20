@@ -792,7 +792,7 @@ function xlines(t,tip){const s=String(t);const raw=(tip?s.replace(/(\.)\s+(?=\S)
 /* escape a line and set its English runs in <bdi> (escaping after the split, so &quot; etc. stay intact) */
 const RTLAR={'→':'←','⇒':'⇐','➡':'⬅','⟶':'⟵'};
 /* English runs (with the numbers / punctuation inside them, and a number right before them) are isolated, so mixed Hebrew + English + numbers keep their order */
-const bdiEsc=x=>String(x).split(/((?:\d[\d.,%]*\s+)?[A-Za-z](?:[A-Za-z0-9'’\-.,%$ ]*[A-Za-z0-9%])?)/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p).replace(/[→⇒➡⟶]/g,c=>RTLAR[c])).join('');
+/* a common slip in Gemini's Hebrew: "בשלמת" for "בהשלמת" */const bdiEsc=x=>String(x).replace(/(^|[^א-ת])בשלמת/g,'$1בהשלמת').split(/((?:\d[\d.,%]*\s+)?[A-Za-z](?:[A-Za-z0-9'’\-.,%$ ]*[A-Za-z0-9%])?)/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p).replace(/[→⇒➡⟶]/g,c=>RTLAR[c])).join('');
 function xuse(t){const L=String(t).split('\n').map(x=>x.trim().replace(/^\d+[.)]\s*/,'')).filter(Boolean);
   return '<ol class="num">'+L.map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ol>'}
 function xfmt(t,tip){return '<ul>'+xlines(t,tip).map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ul>'}
@@ -962,7 +962,7 @@ try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['ho
 try{const lt=+localStorage.getItem('dictLastT')||0;
   /* sessionStorage lives as long as the tab / app is open (also across refreshes); iPhone sometimes reloads a page it put to sleep
      without it, so a very recent visit (under 10 min) still counts as "the same visit" */
-  if(!sessionStorage.getItem('dictOpen')&&Date.now()-lt>10*6e4)S.screen='start';sessionStorage.setItem('dictOpen','1')}catch(e){}
+  /* (Nov 20, her request) leaving the app and coming back always keeps the same place – no jump to the app chooser */void lt;sessionStorage.setItem('dictOpen','1')}catch(e){}
 const markLast=()=>{try{localStorage.setItem('dictLastT',String(Date.now()))}catch(e){}};markLast();
 ['pointerdown','keydown','scroll'].forEach(ev=>document.addEventListener(ev,()=>{if(!markLast.t||Date.now()-markLast.t>15e3){markLast.t=Date.now();markLast()}},{passive:true,capture:true}));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')markLast();else markLast()});
@@ -2710,6 +2710,12 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .am-mclosed{padding:0!important}.am-mclosed>summary{cursor:pointer;padding:12px 14px;list-style:none;display:flex;align-items:center;gap:6px}.am-mclosed>summary::-webkit-details-marker{display:none}.am-mclosed>summary::after{content:"▾";margin-inline-start:auto;color:var(--muted)}.am-mclosed[open]>summary::after{content:"▴"}
 .am-mclosed>summary b{color:var(--accent)}.am-mclosed>summary small{color:var(--muted)}.am-mclosed[open]{padding:0 14px 12px!important}.am-mclosed[open]>summary{padding-inline:0}
 .am-mclosed h5{margin:10px 0 4px;color:var(--accent);font-size:.95rem}
+.am-hintq>summary{gap:10px!important}.am-hintq .hq-i{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);display:grid;place-items:center;font-size:1.05rem;flex:none}
+.am-hintq .hq-t{display:flex;flex-direction:column;line-height:1.25}.am-hintq .hq-t b{color:var(--ink)!important;font-size:.98rem}.am-hintq .hq-t small{font-size:.78rem;color:var(--muted)}
+.am-hintq .hq-steps{list-style:none;counter-reset:hq;padding:0;margin:4px 0 0;display:flex;flex-direction:column;gap:8px}
+.am-hintq .hq-steps>li{counter-increment:hq;position:relative;background:var(--fill);border-radius:var(--r-md,14px);padding:10px 12px;padding-inline-start:44px;font-size:.9rem;line-height:1.65}
+.am-hintq .hq-steps>li::before{content:counter(hq);position:absolute;inset-inline-start:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;display:grid;place-items:center}
+.am-unkbox .am-xopts li.mk>b{color:var(--bad)}
 /* one style for every method text (lists, paragraphs, tables) */
 .am-mfull,.am-m .am-mfull{font-size:.93rem;line-height:1.6}.am-mfull p{margin:0 0 8px}.am-mfull ol,.am-mfull ul{margin:0 0 8px;padding-inline-start:20px;display:flex;flex-direction:column;gap:4px}
 /* question text a bit smaller, word marks quiet (her request) */
@@ -3760,7 +3766,7 @@ function amMethodNow(q,cs){const cn=cs.map(c=>`«<bdi>${c.ws.join(', ')}</bdi>»
   else if(q.t==='lq'){const t=qq.toLowerCase();
     st.push('<b>מה מחפשים:</b> '+(/^why/.test(t)?'סיבה – הקשיבי ל־because / so / since.':/will .* do|offer|plan|decide|suggest/.test(t)?'מה מישהו יעשה / מציע – בדרך כלל בסוף השיחה.':/according to|what does .* say|mention/.test(t)?'פרט שנאמר – התשובה מנוסחת במילים אחרות.':/problem/.test(t)?'בעיה – מילים כמו unfortunately / but / however.':'הנושא והפרטים שהשאלה שואלת עליהם.'))}
   st=st.filter(Boolean);
-  return `<details class="am-meth am-mclosed"><summary><b>🧭 איך פותרים את השאלה</b> <small>· אחרי שחשבת</small></summary><ol>${st.map(x=>`<li>${x}</li>`).join('')}</ol></details>`}
+  return `<details class="am-meth am-mclosed am-hintq"><summary><span class="hq-i">💡</span><span class="hq-t"><b>רמז לפתרון</b><small>כדאי לפתוח אחרי שחשבת לבד</small></span></summary><ol class="hq-steps">${st.map(x=>`<li>${x}</li>`).join('')}</ol></details>`}
 
 function amMethodFirst(t){
   app.innerHTML=`<div class="screen am-scr">
@@ -3837,7 +3843,7 @@ function amQPath(st,ok){const P=[['res','✓ תשובה'],...(ok?[]:[['why','�
 
 /* fixing a question's Hebrew translation on request (always offered, also after the explanation corrected it) */
 const QTRP={};
-function qTrFix(id){const q=AMD.q[id];if(!q||QTRP[id])return;const xai=AMAI['x3|'+id],qfx=AMAI['qtr|'+id];
+function qTrFix(id){const q=AMD.q[id];if(!q||QTRP[id])return;const xai=AMAI['x4|'+id],qfx=AMAI['qtr|'+id];
   const old=qfx&&qfx.he||(xai&&!xai.err&&xai.book_wrong&&xai.translation)||q.he||'';let en=q.q;if(q.t==='sc'&&typeof q.a!=='string'&&q.o)en=en.replace(/_{2,}/,q.o[q.a-1]);else if(typeof q.a==='string')en=en.replace(/_{2,}/,q.a);
   QTRP[id]=1;amRedrawKeep();
   const pr=`English sentence: "${en}"\nA Hebrew translation of it: "${old}"\nThe student says the translation has a mistake. Check it very carefully: meaning of every word, verb forms, gender, prepositions, numbers, natural Israeli Hebrew. Return the correct, natural Hebrew translation (keep numbers as digits).\nJSON: {"he":"...","changed":true or false,"why":"if changed – a very short Hebrew note on what was wrong"}\n${AIHE}`;
@@ -3848,45 +3854,51 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 const XPLO={};
 /* the explanations are made ahead (her request – no waiting): the question on screen and the next 3, one after another, in the background */
 let XPLQ=[],XPLRUN=false;
-function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x3|'+id]&&!AMAI['x3|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
-function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x3|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
+function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x4|'+id]&&!AMAI['x4|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
+function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x4|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
   aiCached(key,promptXpl(AMD.q[id]),.2).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
     if(r&&r.err&&/מכסה/.test(r.err)){XPLQ=[];XPLRUN=false;return}setTimeout(amXplNext,1200)})}
 
 function promptXpl(q){return `You are teaching a Hebrew-speaking student who knows almost NO English words, for the Amiram English exam. Explain this question after she answered it, in detail, so she understands the sentence and every answer option.
 ${qText(q)}
-Rules: assume she does not know any word. Do NOT give a word-by-word glossary – for the hard words, teach HOW to guess the meaning from context and word parts. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
+Rules: assume she does not know any word. Do NOT give a word-by-word glossary – for the hard words, teach HOW to guess the meaning from context and word parts. Sound-alikes: say that an English word sounds like a Hebrew word ONLY when it truly sounds like it when read aloud (a real loanword or near-identical sound, e.g. computer ≈ קומפיוטר, fabric ≈ פבריקה). NEVER say an English word sounds like or resembles its own Hebrew translation (e.g. tents does NOT sound like אוהלים). When there is no real sound-alike, don't invent one – use the other clues. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
 JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","decode":[{"en":"a word she probably does not know – the hard words of the sentence and of the options (up to 8)","how":"Hebrew: how she could work out its meaning WITHOUT knowing the word – clues from the sentence around it (what comes before/after, connectors like but/because, positive or negative tone, what makes sense logically), prefix / suffix / root she may know, a similar word in Hebrew or a loanword, its part of speech from its place in the sentence","meaning":"the meaning she reaches in the end, 1-3 Hebrew words"}],"understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit","words":[{"en":"each word of the option that carries meaning","hint":"Hebrew: a hint how to understand this word without knowing it (context, word parts, a Hebrew look-alike or loanword, its place in the sentence) – then its meaning in a few words"}]}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
 ${AIHE}`}
-function promptUnk(q,ws){return `A Hebrew-speaking student who knows almost no English marked words she did not know in this exam question. For EACH marked word explain in Hebrew how she could understand it without knowing it (clues from the sentence, connectors, tone, word parts – prefix / suffix / root, a Hebrew look-alike or loanword, its part of speech from its place), then its meaning here.
+function promptUnk(q,ws){return `A Hebrew-speaking student who knows almost no English marked words she did not know in this exam question. For EACH marked word explain in Hebrew how she could understand it without knowing it (clues from the sentence, connectors, tone, word parts – prefix / suffix / root, a Hebrew look-alike or loanword, its part of speech from its place), then its meaning here. Sound-alikes: say that an English word sounds like a Hebrew word ONLY when it truly sounds like it when read aloud (a real loanword or near-identical sound, e.g. computer ≈ קומפיוטר, fabric ≈ פבריקה). NEVER say an English word sounds like or resembles its own Hebrew translation (e.g. tents does NOT sound like אוהלים). When there is no real sound-alike, don't invent one – use the other clues.
 ${qText(q)}
 Marked words: ${ws.join(', ')}
 JSON: {"words":[{"en":"the word","how":"Hebrew explanation + hint","meaning":"its meaning here, 1-3 Hebrew words"}]}
 ${AIHE}`}
-function amUnkBox(id,st){const U=st&&st.unk||[];if(!U.length||!GKEY())return '';const key='xu|'+id+'|'+U.slice().sort().join(','),ai=AMAI[key];
-  if(!ai&&!AIP[key])aiCached(key,promptUnk(AMD.q[id],U),.2).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()});
-  return `<div class="am-box am-xpl am-unkbox"><h5 style="margin-top:0">🔖 המילים שסימנת</h5>${ai&&!ai.err?`<ul class="am-xopts">${(ai.words||[]).map(d=>`<li><b><bdi dir="ltr">${esc(d.en||'')}</bdi></b> – ${bdiEsc(d.how||'')}${d.meaning?` <span>← ${esc(d.meaning)}</span>`:''}</li>`).join('')}</ul>`:ai&&ai.err?`<p class="hint">${esc(ai.err)}</p>`:'<p class="hint">⏳ מכינה הסבר למילים שסימנת…</p>'}</div>`}
-function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x3|'+id,ai=AMAI[key],open=!!XPLO[id];
+/* box 1 (Nov 20, her request): how to understand the words – the words she marked (🔖), the hard words of the sentence and the words of the options, in one box */
+function amUnkBox(id,st){if(!GKEY())return '';const U=st&&st.unk||[],q=AMD.q[id];let ua=null;
+  if(U.length){const key='xu2|'+id+'|'+U.slice().sort().join(',');ua=AMAI[key];if(!ua&&!AIP[key])aiCached(key,promptUnk(q,U),.2).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()})}
+  const xk='x4|'+id,xa=AMAI[xk];if(!xa&&!AIP[xk])aiCached(xk,promptXpl(q),.2).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()});
+  const seen=new Set(),L=[];const add=(en,how,mean,mk)=>{const k=String(en||'').toLowerCase().trim();if(!k||seen.has(k))return;seen.add(k);L.push(`<li${mk?' class="mk"':''}><b><bdi dir="ltr">${esc(en)}</bdi></b>${mk?' <small>🔖</small>':''} – ${bdiEsc(how||'')}${mean?` <span>← ${esc(mean)}</span>`:''}</li>`)};
+  if(ua&&!ua.err)(ua.words||[]).forEach(d=>add(d.en,d.how,d.meaning,1));
+  if(xa&&!xa.err){(xa.decode||[]).forEach(d=>add(d.en,d.how,d.meaning));(xa.options||[]).forEach(o=>(o.words||[]).forEach(w=>add(w.en,w.hint,'')))}
+  const wait=(U.length&&!ua)||!xa;
+  if(!L.length&&!wait)return '';
+  return `<div class="am-box am-xpl am-unkbox"><h5 style="margin-top:0">🔤 איך מבינים את המילים</h5>${L.length?`<ul class="am-xopts">${L.join('')}</ul>`:''}${wait?'<p class="hint">⏳ מכינה הסבר למילים…</p>':''}${ua&&ua.err?`<p class="hint">${esc(ua.err)}</p>`:''}</div>`}
+function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x4|'+id,ai=AMAI[key],open=!!XPLO[id];
   let b='';
   if(open&&!ai&&!AIP[key]){const p=aiCached(key,promptXpl(q),.2);p.then(()=>{if(S.screen==='amq'&&AQ.cur===id)amRedrawKeep()})}
   if(ai&&!ai.err){const L=(a,f)=>(a||[]).map(f).join('');
     const outer=q.he&&/^(sc|wf|gc)$/.test(q.t);/* the translation box above already shows the corrected one */
     if(!outer){b+=ai.translation?`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(ai.translation)}</p>`:'';b+=''}
-    b+=(ai.decode||[]).length?`<h5>איך מבינים מילה שלא מכירים</h5><ul class="am-xopts">${L(ai.decode,d=>`<li><b><bdi dir="ltr">${esc(d.en||'')}</bdi></b> – ${bdiEsc(d.how||'')}${d.meaning?` <span>← ${esc(d.meaning)}</span>`:''}</li>`)}</ul>`:'';
     b+=(ai.understand||[]).length?`<h5>איך מבינים את המשפט</h5><ol>${L(ai.understand,x=>`<li>${bdiEsc(x)}</li>`)}</ol>`:'';
     b+=(ai.passage||[]).length?`<h5>איפה התשובה בקטע</h5>${L(ai.passage,x=>`<p dir="ltr" class="en">${esc(x.en||'')}</p><p>${bdiEsc(x.he||'')}</p>`)}`:'';
-    b+=(ai.options||[]).length?`<h5>התשובות</h5><ul class="am-xopts">${L(ai.options,(o,i)=>`<li class="${o.ok?'ok':''}"><b>(${i+1}) <bdi dir="ltr">${esc(o.en||'')}</bdi></b> = ${esc(o.he||'')} ${o.ok?'✓':'✗'}<br><span>${bdiEsc(o.why||'')}</span>${(o.words||[]).length?`<ul class="am-xow">${(o.words||[]).map(w=>`<li><bdi dir="ltr"><b>${esc(w.en||'')}</b></bdi> – ${bdiEsc(w.hint||'')}</li>`).join('')}</ul>`:''}</li>`)}</ul>`:'';
+    b+=(ai.options||[]).length?`<h5>התשובות</h5><ul class="am-xopts">${L(ai.options,(o,i)=>`<li class="${o.ok?'ok':''}"><b>(${i+1}) <bdi dir="ltr">${esc(o.en||'')}</bdi></b> = ${esc(o.he||'')} ${o.ok?'✓':'✗'}<br><span>${bdiEsc(o.why||'')}</span></li>`)}</ul>`:'';
     b+=ai.answer?`<h5>למה זו התשובה</h5><p>${bdiEsc(ai.answer)}</p>`:'';
     b+=ai.tip?`<p><b>📌 ${bdiEsc(ai.tip)}</b></p>`:'';
     b+=askBox('xpl|'+id,qText(q)+'\nDetailed explanation she got: '+JSON.stringify(ai).slice(0,2500));
   }else if(ai&&ai.err)b+=`<p class="hint">${esc(ai.err)}</p><button class="btn secondary" data-xplre="${esc(id)}">🔄 לנסות שוב</button>`;
   else b+=`<p class="hint">⏳ ההסבר כמעט מוכן…</p>`;
-  return `<details class="am-box am-xpl" data-xpl="${esc(id)}" ${open?'open':''}><summary>📖 הסבר מפורט – איך להבין את המשפט והתשובות</summary>${open?b:''}</details>`}
+  return `<details class="am-box am-xpl" data-xpl="${esc(id)}" ${open?'open':''}><summary>🧭 איך פותרים את השאלה – הסבר מפורט</summary>${open?b:''}</details>`}
 document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.am-xpl'))return;const id=d.dataset.xpl;const was=!!XPLO[id];XPLO[id]=d.open;if(d.open&&!was)amRedrawKeep()},true);
-document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x3|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
+document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x4|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
 function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   let h=amQPath(st,ok)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
-  const xai=AMAI['x3|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
+  const xai=AMAI['x4|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
   const heNow=qfx&&qfx.he||(xfix?xai.translation:q.he),fixed=!!(qfx&&qfx.he&&qfx.changed!==false)||!!xfix,why=qfx&&qfx.he?qfx.why:xfix?xai.book_wrong:'';
   const heBox=(t)=>`<div class="am-box good"><h4>${t}</h4><p>${bdiEsc(heNow)}</p>${GKEY()?`<button class="small-link" data-qtrfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">${QTRP[id]?'⏳ בודקת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`;
   if(q.t==='sc'&&q.he)h+=heBox('תרגום המשפט');

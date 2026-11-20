@@ -566,7 +566,7 @@ function xlines(t,tip){const s=String(t);const raw=(tip?s.replace(/(\.)\s+(?=\S)
 /* escape a line and set its English runs in <bdi> (escaping after the split, so &quot; etc. stay intact) */
 const RTLAR={'→':'←','⇒':'⇐','➡':'⬅','⟶':'⟵'};
 /* English runs (with the numbers / punctuation inside them, and a number right before them) are isolated, so mixed Hebrew + English + numbers keep their order */
-const bdiEsc=x=>String(x).split(/((?:\d[\d.,%]*\s+)?[A-Za-z](?:[A-Za-z0-9'’\-.,%$ ]*[A-Za-z0-9%])?)/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p).replace(/[→⇒➡⟶]/g,c=>RTLAR[c])).join('');
+/* a common slip in Gemini's Hebrew: "בשלמת" for "בהשלמת" */const bdiEsc=x=>String(x).replace(/(^|[^א-ת])בשלמת/g,'$1בהשלמת').split(/((?:\d[\d.,%]*\s+)?[A-Za-z](?:[A-Za-z0-9'’\-.,%$ ]*[A-Za-z0-9%])?)/).map((p,i)=>i%2?'<bdi>'+esc(p)+'</bdi>':esc(p).replace(/[→⇒➡⟶]/g,c=>RTLAR[c])).join('');
 function xuse(t){const L=String(t).split('\n').map(x=>x.trim().replace(/^\d+[.)]\s*/,'')).filter(Boolean);
   return '<ol class="num">'+L.map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ol>'}
 function xfmt(t,tip){return '<ul>'+xlines(t,tip).map(x=>'<li>'+bdiEsc(x)+'</li>').join('')+'</ul>'}
@@ -736,7 +736,7 @@ try{Object.assign(S,JSON.parse(localStorage.getItem('dictNav2')||'{}'));if(!['ho
 try{const lt=+localStorage.getItem('dictLastT')||0;
   /* sessionStorage lives as long as the tab / app is open (also across refreshes); iPhone sometimes reloads a page it put to sleep
      without it, so a very recent visit (under 10 min) still counts as "the same visit" */
-  if(!sessionStorage.getItem('dictOpen')&&Date.now()-lt>10*6e4)S.screen='start';sessionStorage.setItem('dictOpen','1')}catch(e){}
+  /* (Nov 20, her request) leaving the app and coming back always keeps the same place – no jump to the app chooser */void lt;sessionStorage.setItem('dictOpen','1')}catch(e){}
 const markLast=()=>{try{localStorage.setItem('dictLastT',String(Date.now()))}catch(e){}};markLast();
 ['pointerdown','keydown','scroll'].forEach(ev=>document.addEventListener(ev,()=>{if(!markLast.t||Date.now()-markLast.t>15e3){markLast.t=Date.now();markLast()}},{passive:true,capture:true}));
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')markLast();else markLast()});

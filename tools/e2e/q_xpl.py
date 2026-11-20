@@ -12,14 +12,14 @@ with sync_playwright() as p:
   pg.route('**/generativelanguage.googleapis.com/**',gem)
   pg.goto('http://localhost:8765/');pg.wait_for_timeout(1200);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(1200);pg.evaluate("amLoad()");pg.wait_for_timeout(2500)
   pg.evaluate("amStart(['csc5-1'],'t','learn','am','sc')");pg.wait_for_timeout(800)
-  pg.wait_for_timeout(1500);assert pg.evaluate("!!AMAI['x3|csc5-1']"),'made ahead'
+  pg.wait_for_timeout(1500);assert pg.evaluate("!!AMAI['x4|csc5-1']"),'made ahead'
   pg.locator('.ax-rad').first.click();pg.wait_for_timeout(300)
   if pg.locator('#amChk').count():pg.click('#amChk')
   pg.wait_for_timeout(800)
   assert pg.locator('details.am-xpl').count()==1 and not pg.locator('details.am-xpl[open]').count()
-  pg.locator('.am-xpl>summary').click();pg.wait_for_timeout(500)
-  t=pg.locator('.am-xpl').inner_text();print(t[:300])
-  assert 'איך מבינים מילה' in t and 'facial' in t and 'כיווץ' in pg.locator('.am-box.good').first.inner_text()
+  pg.locator('details.am-xpl>summary').click();pg.wait_for_timeout(500)
+  t=' '.join(pg.locator('.am-xpl').all_inner_texts());print(t[:300]);pg.screenshot(path='/tmp/claude-0/-home-claude/57ff57e9-f98a-5dad-a91a-88f510546bae/scratchpad/xpl.png',full_page=True)
+  assert 'איך מבינים את המילים' in t and 'facial' in t and 'כיווץ' in pg.locator('.am-box.good').first.inner_text()
   assert 'מתוקן' not in pg.locator('.am-box.good').first.inner_text() and 'כיווץ' in pg.locator('.am-box.good').first.inner_text()
   assert 'כמעט מוכן' not in t
   pg.locator('[data-qtrfix]').click();pg.wait_for_timeout(2000)
