@@ -2114,7 +2114,8 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   /* after answering in a learning round the chips show where the word is now (her request: a miss moves the mark back to round 1 at once) */
   const ans=pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend,lc=ans?lrOf(w):lr;
   const rd=[1,2,3,4].map(i=>ch(i,(w&&(inRev||lc>i))?'done':(lc===i&&!inRev&&(w||o.cur))?'on':'',i)).join('');
-  const rv=[1,2,3,4,5,6].map(i=>`<span class="${inRev?(i<s?'done':i===s?'on':''):''}">${i}</span>`).join('')+`<span class="${s>=WMAST?'on':''}">🏆</span>`;
+  /* after answering, the chips keep the review she just did marked (her request); the line under them says where the word went */const sr=inRev&&WS&&WS.res&&WS.step!=='tr'&&!o.free&&WS.res.st0>=1?Math.min(WS.res.st0,6):s;
+  const rv=[1,2,3,4,5,6].map(i=>`<span class="${inRev?(i<sr?'done':i===sr?'on':''):''}">${i}</span>`).join('')+`<span class="${sr>=WMAST?'on':''}">🏆</span>`;
   const res=WS&&WS.res&&WS.step!=='tr'&&!o.free;let now='';
   if(w&&!w.k&&o.free)now='המילה עוד לא נכנסה ללמידה';
   else if(w&&s>=WMAST)now='🏆 המילה נלמדה';

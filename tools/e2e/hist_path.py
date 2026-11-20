@@ -13,7 +13,7 @@ with sync_playwright() as p:
   opts=pg.locator('[data-wmc]');n=opts.count()
   for i in range(n):
     if opts.nth(i).get_attribute('data-wmc')==w:opts.nth(i).click();break
-  pg.wait_for_timeout(600);t=T(pg);m=re.search(r'✓ חזרה 2 הושלמה – המילה עברה לחזרה 3',t);print('line:',bool(m))
+  pg.wait_for_timeout(600);t=T(pg);m=re.search(r'✓ חזרה 2 הושלמה – המילה עברה לחזרה 3',t);print('line:',bool(m));on=pg.locator('.am-mpath .g2 .on').first.inner_text();print('chip on:',on);assert on=='2'
   pg.click('#wOn');pg.wait_for_timeout(2000);pg.click('#wPrev');pg.wait_for_timeout(600)
   pg.locator('.am-histsnap [data-path]').first.click();pg.wait_for_timeout(600);s1=pg.evaluate("S.screen")
   pg.click('#bk') if pg.locator('#bk').count() else None;pg.wait_for_timeout(600);s2=pg.evaluate("[S.screen,WS.view]")
