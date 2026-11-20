@@ -26,7 +26,8 @@ function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n
     if(!y){o.a[k]=JSON.parse(JSON.stringify(x));continue}
     const h=[...(y.h||[])];(x.h||[]).forEach(r=>{if(!h.some(z=>z[3]===r[3]))h.push(r)});h.sort((p,q)=>p[3]-q[3]);
     o.a[k]=(x.t||0)>(y.t||0)?{...x,h}:{...y,h}}
-  for(const s of [a.w||{},b.w||{}])for(const k in s)if(!o.w[k]||(s[k].t||0)>(o.w[k].t||0))o.w[k]=s[k];
+  /* per word: the copy with the latest answer wins (an old copy whose time was bumped must never erase answers done on another device), then the newest */const lastA=w=>{let m=0;(w&&w.log||[]).forEach(r=>{if(r&&r[0]>m)m=r[0]});return m};
+  for(const s of [a.w||{},b.w||{}])for(const k in s){const x=s[k],y=o.w[k];if(!y){o.w[k]=x;continue}const lx=lastA(x),ly=lastA(y);if(lx>ly||(lx===ly&&(x.t||0)>(y.t||0)))o.w[k]=x}
   for(const s of [a.nd||{},b.nd||{}])for(const k in s)o.nd[k]=Math.max(o.nd[k]||0,s[k]);
   /* attempts and simulations from before the reset are dropped */
   if(o.ar){for(const k in o.a){const x=o.a[k];x.h=(x.h||[]).filter(r=>r[3]>o.ar);if(!x.h.length&&(x.t||0)<=o.ar)delete o.a[k]}}
@@ -1138,7 +1139,7 @@ function wLrBack(){try{if(localStorage.getItem('dictLrFix2'))return;localStorage
 /* review 1 waits until every word of the day's learning finished its 4 rounds (then due at once); unfinished day → tomorrow 05:00 */
 function wNextMorning(){const t=amNow(),d=new Date(t-5*3600e3);d.setHours(0,0,0,0);d.setDate(d.getDate()+1);return d.getTime()+5*3600e3}
 function wR1Wait(w){w.r1w=1;w.due=wNextMorning();w.t=amNow();wR1Release()}
-function wR1Release(){if(!AMS||!AMS.w||wCarry().length)return;let ch=0;const t=amNow();Object.values(AMS.w).forEach(w=>{if(w&&w.r1w){delete w.r1w;if(w.st>=1&&w.st<WMAST&&w.due>t)w.due=t;w.t=t;ch=1}});if(ch)amSave()}
+function wR1Release(){if(!AMS||!AMS.w||wCarry().length)return;let ch=0;const t=amNow();/* no w.t bump: a device with an old copy (still waiting) must not win the sync over reviews done elsewhere */Object.values(AMS.w).forEach(w=>{if(w&&w.r1w){delete w.r1w;if(w.st>=1&&w.st<WMAST&&w.due>t)w.due=t;ch=1}});if(ch)amSave()}
 const wLearning=w=>!!w&&w.lr!=null&&w.lr>=1&&w.lr<5&&(w.lr>1||w.st>=1);
 const jnKey=x=>'J'+String(x.id).replace(/[^0-9a-z]/gi,'');
 /* called by the dictionary quiz after each word of a 'J' session: a word that isn't ✓ gets its step 2 at once (write it, then choose it in a sentence), then back to the quiz */
