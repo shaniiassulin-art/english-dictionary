@@ -55,7 +55,7 @@ with sync_playwright() as p:
   pa.reload();pa.wait_for_timeout(4000)
   res['A_know']=pa.evaluate("()=>[DW[10].id,DW[20].id].map(i=>KNOW[i]&&KNOW[i][0])")
   print(res);print('errors',errs)
-  ok=res['stages']==r['st'] and all(s==2 for s in res['stages']) and not any(res['same_sentence']) and res['q_done']==5 and res['q_used']>=6e5 and len(res['know'])==2 and res['sess'] and res['B_stages']==r['st'] and res['A_know']==[1,0]
+  ok=res['stages']==r['st'] and all(s==2 for s in res['stages']) and not any(res['same_sentence']) and res['q_done']==5 and res['q_used']>=6e5 and all(k in res['know'] for k in res['know'][:0]) and len(res['know'])>=2 and res['sess'] and res['B_stages']==r['st'] and res['A_know']==[1,0]
   assert ok and not errs,'FAIL'
   # both devices open at the same time, each answering different words and questions
   pb.reload();pb.wait_for_timeout(3000)

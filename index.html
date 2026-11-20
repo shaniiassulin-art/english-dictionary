@@ -2134,7 +2134,7 @@ function amLoad(){if(AMD)return Promise.resolve(AMD);if(AMDP)return AMDP;
   AMDP=(async()=>{for(const u of AMSRC){try{const r=await fetch(u+(u==='amiram.json'?'?v='+AMV:''));if(r.ok){AMD=await r.json();return AMD}}catch(e){}}AMDP=null;throw 0})();return AMDP}
 const AMV='1';
 let AMS={a:{},w:{},n:8,nd:{},t:0};try{Object.assign(AMS,JSON.parse(LS.get('dictAm')||'{}'))}catch(e){}
-try{setTimeout(()=>{amFixW&&amFixW();try{wLrUnmark()}catch(e){}try{wLrBack()}catch(e){}try{wR1Release()}catch(e){}},0)}catch(e){}
+try{setTimeout(()=>{amFixW&&amFixW();try{wLrUnmark()}catch(e){}try{wLrBack()}catch(e){}try{wR1Release()}catch(e){}try{wLearnedSync()}catch(e){}},0)}catch(e){}
 function amSave(){AMS.t=Date.now();LS.set('dictAm',JSON.stringify(AMS));dirty()}
 let AMAI={};try{AMAI=JSON.parse(LS.get('dictAmAi')||'{}')}catch(e){}
 const amAiSave=()=>LS.set('dictAmAi',JSON.stringify(AMAI));
@@ -2177,7 +2177,7 @@ function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const
     if(!cid){try{const cc=wCard(w);cid=cc&&cc.id}catch(e){}}const c=cid&&A['c:'+cid];if(!c||c===w)continue;
     if(w.st>c.st||(w.st===c.st&&(w.t||0)>(c.t||0)))Object.assign(c,{st:w.st,due:w.due,ok:Math.max(w.ok||0,c.ok||0),bad:Math.max(w.bad||0,c.bad||0)});
     c.log=[...(c.log||[]),...(w.log||[])].sort((a,b)=>a[0]-b[0]).slice(-40);c.as=c.as||w.as;c.used=[...new Set([...(c.used||[]),...(w.used||[])])].slice(-24);c.t=Math.max(w.t||0,c.t||0);delete A[k]}}
-function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});try{uwSync()}catch(e){}amFixW();LS.set('dictAm',JSON.stringify(AMS));amTakeSess()}
+function amApply(m){AMS=Object.assign({a:{},w:{},n:8,nd:{}},m||{});try{uwSync()}catch(e){}amFixW();LS.set('dictAm',JSON.stringify(AMS));amTakeSess();setTimeout(()=>{try{wLearnedSync()}catch(e){}},0)}
 /* a session saved later on another device replaces this device's copy (not while it is open on this screen) */
 function amTakeSess(force){const ss=AMS.ss||{};try{
   const w=ss.ws;if(w&&(w[1]||0)>(+LS.get('dictAmWsT')||0)&&(force||S.screen!=='amwl'&&!(S.screen==='quiz'&&/^JW/.test(String(S.active||''))))){WS=w[0];LS.set('dictAmWs',JSON.stringify(WS));LS.set('dictAmWsT',String(w[1]))}
@@ -2284,7 +2284,9 @@ const WHY=[['vocabQ','לא הכרתי מילה במשפט'],['vocabA','לא הכ
 const BOXD=[1,3,7];
 function amAtt(id){return AMS.a[id]}
 function amLast(id){const a=AMS.a[id];return a&&a.h&&a.h.length?a.h[a.h.length-1]:null}
-function amRecord(id,choice,ms){if(AQ&&AQ.jr)jrCount(AQ.jr);const q=AMD.q[id],ok=amIsOk(q,choice),a=AMS.a[id]=AMS.a[id]||{h:[]};const now=amNow();
+function amRecord(id,choice,ms){if(AQ&&AQ.jr)jrCount(AQ.jr);
+  /* a course question answered outside the journey for the first time counts for today's step of its type (her request: what she did syncs with the daily practice) */
+  else if(/^[cb]/.test(id)&&!amLast(id)){try{const t=AMD.q[id]&&AMD.q[id].t,P=(AMS.jp||{})[dayKey()],x=P&&P.b.find(b=>b.k==='q'&&b.qt===t&&!b.done);if(x)jrCount(x.id)}catch(e){}}const q=AMD.q[id],ok=amIsOk(q,choice),a=AMS.a[id]=AMS.a[id]||{h:[]};const now=amNow();
   const wasMist=amIsMist(id);a.h.push([choice,ok?1:0,Math.round(ms||0),now]);
   if(!ok){a.box=0;a.due=now+DAY;a.fixed=0}
   else if(wasMist){a.box=(a.box||0)+1;if(a.box>=BOXD.length){a.fixed=now;a.due=0}else a.due=now+BOXD[a.box]*DAY}
@@ -3195,7 +3197,7 @@ function amHub(){if(!AMD)return amLoading();
     </div>
   </div>`;
   const hb=$('jhHelp');if(hb)hb.onclick=()=>amSheet('המסע של היום',(AMHELP.daily?AMHELP.daily[3]:'')+[...new Set(P.b.map(x=>JBx(x)))].filter(Boolean).map(j=>`<h4>${j[0]} ${j[1]}</h4><p>${j[3]}</p>`).join(''));
-  const fo=$('fpOpen');if(fo)fo.onclick=()=>amSheet('תרגול חופשי','<p class="hint">לא חלק מהמסע – לתרגל מה שבא לך.</p><div class="jh-sheetb"><button class="btn secondary" data-sgo="amqh">✏️ שאלות</button><button class="btn secondary" data-sgo="amw">🧠 מילים</button><button class="btn secondary" data-sgo="amwp">🧬 תחיליות וסופיות</button></div>');
+  const fo=$('fpOpen');if(fo)fo.onclick=()=>amSheet('תרגול חופשי','<p class="hint">לא חלק מהמסע – לתרגל מה שבא לך.</p><div class="jh-sheetb"><button class="btn secondary" data-sgo="amqh">✏️ שאלות</button><button class="btn secondary" data-sgo="amwp">🧬 תחיליות וסופיות</button></div>');
   amBindNav();
   const g=$('jrGo');if(g)g.onclick=()=>{try{jrRun(nb)}catch(err){drawFail(err)}};
   app.querySelectorAll('[data-jstep]').forEach(li=>li.onclick=()=>{const x=jrBlock(li.dataset.jstep);if(!x||x.done)return;try{jrRun(x)}catch(err){drawFail(err)}});
@@ -3258,6 +3260,8 @@ const jnPend=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.s
 /* a word already inside the 4 learning rounds (started, not finished): a ✓ from the round-2 dictionary quiz doesn't take it out */
 /* the word finished all 4 learning rounds → its card is marked ✓ ידעתי in the dictionary (only now – not from the round-2 quiz) */
 function wLrDoneMark(w){const c=wCard(w);if(c&&!isY(c))setKnow(c.id,'y')}
+/* words she finished learning (all 4 rounds, or learned) show ✓ in the dictionary too – also those finished before this was in place (Nov 20, her request). A card she marked ✗ herself is left alone. */
+function wLearnedSync(){if(!AMS||!AMS.w)return;let n=0;for(const w of Object.values(AMS.w)){if(!w||!(w.st>=1)||lrOf(w)<5||!String(wK(w)).startsWith('c:'))continue;const c=wCard(w);if(c&&!isY(c)&&!isN(c)){KNOW[c.id]=['y',Date.now()];n++}}if(n){saveKnow()}return n}
 /* one-time: cards marked ✓ by the round-2 quiz while their word is still in learning go back to unmarked (they get ✓ when the rounds end) */
 function wLrUnmark(){try{if(localStorage.getItem('dictLrFix1'))return;localStorage.setItem('dictLrFix1','1')}catch(e){return}
   Object.values(AMS.w||{}).forEach(w=>{if(!wLearning(w)||w.lr<3)return;const c=wCard(w);if(!c||!isY(c))return;const t=(KNOW[c.id]||[])[1]||0,t0=Math.min(...(w.log||[]).map(l=>l[0]).filter(Boolean),Infinity);if(t>=t0)setKnow(c.id,null)})}
@@ -3290,7 +3294,7 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
       <h2>🌱 ${ws.length} מילים חדשות</h2>
       <p class="jh-d">${known?`יודעת ${known} מתוך ${ws.length}`:'מילים שסימנת ✗ או שעוד לא סימנת'}</p>
       <div class="jh-track">${wTrack(null,{counts:cnt,cur:open?WS.round:(cnt.findIndex(n=>n)+1||1)})}</div>
-      ${left.length?`<button class="btn jh-go" id="nwGo">${open?`▶ להמשיך · סבב ${WS.round||1} · מילה ${WS.i+1}/${WS.list.length}`:`▶ ללמוד את המילים · ${left.length}`}</button>`:`<p class="jh-d">✓ כל המילים של היום נכנסו לחזרות</p><button class="btn jh-go" id="nwDone">סיום ← חזרה למסע</button>`}
+      ${left.length?`<button class="btn jh-go" id="nwGo">${open?`▶ להמשיך · סבב ${WS.round||1} · מילה ${WS.i+1}/${WS.list.length}`:`▶ ללמוד את המילים · ${left.length}`}</button>`:`<p class="jh-d">✓ סיימת את הסבבים של כל המילים בקבוצה</p><button class="btn jh-go" id="nwMore">➕ ללמוד קבוצת מילים נוספת</button><button class="link" id="nwDone" style="align-self:center">סיום ← חזרה למסע</button>`}
     </section>
     <div class="jh-foot">
       <button id="carTog" class="${CARON?'on':''}"><span class="i">🚗</span>${CARON?'מצב רכב פועל':'מצב רכב'}</button>
@@ -3308,6 +3312,10 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
     jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id)}});
     amSave();const all=jnBatch(x),base={jr:x.id,from:'amnw',t0:amNow(),all};for(let r=1;r<=4;r++)if(wRound(r,all,base))return;draw()};
   app.querySelectorAll('[data-round]').forEach(b=>b.onclick=()=>{const r=+b.dataset.round;if(open&&WS.round===r)return go({screen:'amwl'});if(!wRound(r,jnBatch(x),Object.assign({jr:x.id,from:'amnw',t0:amNow(),all:jnBatch(x)},open?{hist:WS.hist,counted:WS.counted}:{})))amToast('אין מילים שמחכות בסבב הזה')});
+  /* another group of new words, as many times as she likes (her request): a new 'new' step is added to the day's plan right after this one (synced with the plan) */
+  const mo=$('nwMore');if(mo)mo.onclick=()=>{jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wMaster(w);jrCount(x.id)}});jrFinish(x.id,1);
+    const day=String(x.id).split('|')[0],P=AMS.jp[day];if(!P)return go({screen:'am'});let i=P.b.length,id;do{id=day+'|new'+(i++)}while(P.b.some(b=>b.id===id));
+    const nx={id,k:'new',m:x.m||20,n:wNPer(),d:0,done:0,used:0,more:1};P.b.splice(P.b.indexOf(x)+1,0,nx);P.t=amNow();amSave();jrRun(nx)};
   const dn=$('nwDone');if(dn)dn.onclick=()=>{jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wMaster(w);jrCount(x.id)}});jrFinish(x.id,1);go({screen:'am'})}}
 
 
@@ -4106,10 +4114,10 @@ function amWords(){if(!AMD)return amLoading();
     <div class="am-title"><span class="gi g-w">🧠</span><div><h2>מילים</h2><p>לומדים לעומק ושולפים מהזיכרון – בלי "ידעתי / לא ידעתי".</p></div></div>
     ${card('wRev','g-w','🔁','חזרה פעילה',due?'כל מילה – התרגיל של החזרה שלה (1–6)':'אין מילים שמחכות עכשיו',due||'',!due)}
     ${card('wNew','g-w','🌱','מילים חדשות להיום',newLeft?'4 סבבים: '+WPH.join(' ← '):'סיימת את המילים של היום ✓',newLeft||'',!newLeft)}
-    ${card('wFree','g-w','🎯','תרגול חופשי','לבחור שלב ומילים – כמה שרוצים, קדימה ואחורה','','',EX('תרגול אישי בלבד: לא נספר בחזרות ולא מזיז מילים במסלול. בוחרים שלב (תרגום משפט, הפירוש בעברית, משפט בעברית, משפט באנגלית, כתיבה באנגלית) ואילו מילים – גם את כל המילון.'))}
+    ${''/* free word practice removed (Nov 20, her request) */}
     ${''&&card('wMine','g-w','📒','המילים שלי',`${learn} בלמידה · ${mast} נלמדו${hard?' · '+hard+' קשות':''}${wait?' · '+wait+' מחכות':''}`,'','',EX('כל המילים שאת לומדת, מסוננות: לחזרה, בלמידה, קשות, נלמדו, מחכות. לחיצה על מילה מראה מתי החזרה הבאה, יומן של כל הצלחה וטעות, והמלצה איך ללמוד אותה.','רשימת המילים שלך ← עמוד לכל מילה'))}
   </div>`;
-  amBindNav();$('wRev').onclick=()=>{if(due)wStart('rev');else amToast('אין עכשיו מילים לחזרה – הן יופיעו כשיגיע זמנן')};$('wNew').onclick=()=>{if(newLeft)wStart('new');else amToast('סיימת את המילים החדשות של היום. אפשר להגדיל את הכמות ב"המילים שלי".')};($('wMine')||{}).onclick=()=>go({screen:'amwm'});$('wFree').onclick=()=>go({screen:'amfp'});
+  amBindNav();$('wRev').onclick=()=>{if(due)wStart('rev');else amToast('אין עכשיו מילים לחזרה – הן יופיעו כשיגיע זמנן')};$('wNew').onclick=()=>{if(newLeft)wStart('new');else amToast('סיימת את המילים החדשות של היום. אפשר להגדיל את הכמות ב"המילים שלי".')};($('wMine')||{}).onclick=()=>go({screen:'amwm'});
 }
 /* ================= 🎯 free practice: any stage, any words, back and forth – nothing is recorded =================
    FP = {stage, src, ids:[card ids], i, st:{index:{…}}, t0} (localStorage dictAmFp, synced as AMS.ss.fp). The 'dq' stage is the dictionary quiz itself. */
