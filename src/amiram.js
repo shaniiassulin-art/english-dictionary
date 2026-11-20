@@ -598,7 +598,7 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .ax .tw.db,.tw.db{text-decoration:underline!important;-webkit-text-decoration-line:underline!important;text-decoration-color:var(--accent)!important;-webkit-text-decoration-color:var(--accent)!important;text-decoration-thickness:auto!important;text-underline-offset:3px!important}
 /* no other marks inside the question (her request): connectors, known words and tapped words look like plain text */
 .ax .ax-q .cn,.ax .ax-q .cn *{color:inherit!important;background:none!important;text-decoration:none!important;border:0!important;font-weight:inherit!important}.ax .ax-q .tw.on{background:none!important}.ax .ax-q .tw:not(.db){text-decoration:none!important}
-.ax .tw.unk{background:color-mix(in srgb,var(--bad) 14%,transparent)!important;border-radius:4px}
+.ax .tw.unk{background:none!important;color:var(--bad)!important;text-decoration-color:var(--bad)!important;font-weight:600}.ax .tw.on{background:none!important}
 .autob.mute{color:var(--muted)}
 .ax .cn{background:none!important;filter:none!important;font-weight:inherit!important;padding:0!important;color:inherit!important;border-bottom:1.5px solid color-mix(in srgb,var(--accent) 35%,transparent)}
 /* option speaker sits inside the option row, at its end */
@@ -913,7 +913,7 @@ function amHintHtml(){const H=wordHints(AMPOP.e),k=String(AMPOP.e).toLowerCase()
 function amPopRsLock(){if(S.screen!=='amq'||!AQ||AQ.mode==='exam'||!AMD)return false;const q=AMD.q[AQ.cur],st=AQ.st&&AQ.st[AQ.i];/* no meanings in any practice question before answering (Nov 20, her request – was restatement only); after answering the popup shows the meaning */return !!(q&&!(st&&st.done))}
 /* 🔖 words she marks as unknown in a question (her request) – explained with a hint after answering */
 function amUnk(){if(S.screen!=='amq'||!AQ||AQ.mode==='exam')return null;const st=AQ.st[AQ.i]=AQ.st[AQ.i]||{};return st.unk=st.unk||[]}
-function amUnkMark(){app.querySelectorAll('.ax-q .tw').forEach(t=>t.classList.toggle('unk',!!(amUnk()||[]).includes(String(t.dataset.tw||'').toLowerCase())))}
+/* words she marked "לא ידעתי" are red – in the question and in the options (Nov 20, her request) */function amUnkMark(){const U=amUnk()||[];app.querySelectorAll('.ax-q .tw,.ax-ot .tw').forEach(t=>t.classList.toggle('unk',U.includes(String(t.dataset.tw||t.dataset.ow||'').toLowerCase())))}
 function amPopDraw(){let el=$('amPop');if(!AMPOP){if(el)el.remove();return}
   if(!el){el=document.createElement('div');el.id='amPop';el.className='am-pop';document.body.appendChild(el)}
   const k=wKey(AMPOP.e),inW=AMS.w[k],d=dictFind(AMPOP.e),dq=d&&d.cards.some(c=>!isY(c)&&(AMS.w['c:'+c.id]||AMS.w[wKey(c.e)]));
