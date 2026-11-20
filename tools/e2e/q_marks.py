@@ -16,7 +16,7 @@ with sync_playwright() as p:
   rs=pg.evaluate("AMD.s.find(x=>x.t==='rs'&&!x.b&&!x.nt).ids[0]")
   pg.evaluate(f"amStart(['{rs}'],'t','learn','am','rs')");pg.wait_for_timeout(800)
   pg.evaluate("amPop('people','','','')");pg.wait_for_timeout(300)
-  assert pg.evaluate("AMPOP.mode")=='hint','rs hint only'
+  assert pg.evaluate("AMPOP.mode")=='lock','rs: no meaning, no hint'
   pg.evaluate("AMPOP=null;amPopDraw()")
   # sc: mark a word unknown, answer, explanation for it
   pg.evaluate("amStart(['csc5-1'],'t','learn','am','sc')");pg.wait_for_timeout(800)
