@@ -21,18 +21,23 @@ const amAiSave=()=>LS.set('dictAmAi',JSON.stringify(AMAI));
 /* once (Oct 30, her request): all solved questions and simulations start again from zero; mistakes are handled on the spot, no retry list */
 if(!LS.get('dictAmReset1')){AMS.ar=Date.now();AMS.a={};AMS.ex={};LS.set('dictAmReset1','1');try{LS.set('dictAmQ','null')}catch(e){}LS.set('dictAm',JSON.stringify(AMS));setTimeout(()=>{try{dirty()}catch(e){}},0)}
 /* sync merge: per question / per word the newer entry wins; attempt lists are joined */
+function jpMerge(p,q){if(!p||!Array.isArray(p.b))return q;if(!q||!Array.isArray(q.b))return p;const nw=(q.t||0)>(p.t||0)?q:p,ol=nw===p?q:p;const byId={};ol.b.forEach(x=>{if(x&&x.id)byId[x.id]=x});
+  const b=nw.b.map(x=>{const y=x&&byId[x.id];if(!y)return x;const z={...x};z.d=Math.max(x.d||0,y.d||0);z.used=Math.max(x.used||0,y.used||0);z.go=Math.max(x.go||0,y.go||0)||x.go||y.go||0;
+    /* a step really finished on the other copy stays finished (a step skipped there may come back on by itself) */if(!x.done&&y.done&&!y.skip&&!(x.k==='rev2'||x.k==='new'))z.done=y.done;
+    for(const f of ['qs','ws','theme','qt0','qv'])if(z[f]==null&&y[f]!=null)z[f]=y[f];return z});return{...nw,b}}
 function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n||a.n||8:a.n||b.n||8,nd:{},na:(b.t||0)>(a.t||0)?(b.na??a.na):(a.na??b.na),sch:(b.sch&&(!a.sch||b.sch.t>a.sch.t))?b.sch:a.sch,t:Math.max(a.t||0,b.t||0),ar:Math.max(a.ar||0,b.ar||0)};
   for(const s of [a.a||{},b.a||{}])for(const k in s){const x=s[k],y=o.a[k];
     if(!y){o.a[k]=JSON.parse(JSON.stringify(x));continue}
     const h=[...(y.h||[])];(x.h||[]).forEach(r=>{if(!h.some(z=>z[3]===r[3]))h.push(r)});h.sort((p,q)=>p[3]-q[3]);
     o.a[k]=(x.t||0)>(y.t||0)?{...x,h}:{...y,h}}
-  /* per word: the copy with the latest answer wins (an old copy whose time was bumped must never erase answers done on another device), then the newest */const lastA=w=>{let m=0;(w&&w.log||[]).forEach(r=>{if(r&&r[0]>m)m=r[0]});return m};
+  /* per word: the copy with the latest answer (log, or `pt` = a round moved by the round-2 quiz) wins (an old copy whose time was bumped must never erase answers done on another device), then the newest */const lastA=w=>{let m=w&&w.pt||0;(w&&w.log||[]).forEach(r=>{if(r&&r[0]>m)m=r[0]});return m};
   for(const s of [a.w||{},b.w||{}])for(const k in s){const x=s[k],y=o.w[k];if(!y){o.w[k]=x;continue}const lx=lastA(x),ly=lastA(y);if(lx>ly||(lx===ly&&(x.t||0)>(y.t||0)))o.w[k]=x}
   for(const s of [a.nd||{},b.nd||{}])for(const k in s)o.nd[k]=Math.max(o.nd[k]||0,s[k]);
   /* attempts and simulations from before the reset are dropped */
   if(o.ar){for(const k in o.a){const x=o.a[k];x.h=(x.h||[]).filter(r=>r[3]>o.ar);if(!x.h.length&&(x.t||0)<=o.ar)delete o.a[k]}}
   o.js=[a.js,b.js].filter(Boolean).sort()[0];o.tm={};for(const x of [a.tm||{},b.tm||{}])for(const k in x)o.tm[k]=Math.max(o.tm[k]||0,x[k]);
-  o.jp={};for(const x of [a.jp||{},b.jp||{}])for(const k in x)if(!o.jp[k]||(x[k].t||0)>(o.jp[k].t||0))o.jp[k]=x[k];
+  /* day plans: the newer plan gives the steps, but each step keeps the progress made on either device (counts, minutes, started / done) – a device with an old copy that only touched the plan (a skip, a relit step, an extra step) must not erase progress */
+  o.jp={};for(const x of [a.jp||{},b.jp||{}])for(const k in x){const y=o.jp[k];o.jp[k]=y?jpMerge(y,x[k]):x[k]}
   for(const f of ['ls','hc','rd','ex','wpa','uw']){o[f]={};for(const s of [a[f]||{},b[f]||{}])for(const k in s){const v=s[k],w=o[f][k],tv=Array.isArray(v)?v[1]:v&&v.t||v,tw=Array.isArray(w)?w[1]:w&&w.t||w;if(w===undefined||(tv||0)>(tw||0))o[f][k]=v}}
   if(o.ar)for(const k in o.ex)if((o.ex[k].t||0)<=o.ar)delete o.ex[k];
   /* the open learning round / question session, so another device goes on from the same place (newest wins) */
@@ -2400,7 +2405,7 @@ function wDqStart(){const key=wDqKey(),m=S.mode;S.mode='read';try{if(SESS[key]&&
 /* called by the dictionary quiz when it ends: the learning round goes on with round 3 */
 function jwQuizDone(){if(!Q||!/^JW/.test(String(Q.key||''))||!WS||WS.phase!=='dq'||wDqKey()!==Q.key)return false;
   const M=Q.marks||{},miss=[];
-  WS.list.forEach(k=>{const w=AMS.w[k];if(!w)return;const c=wCard(w);if(lrOf(w)!==2)return;if(c&&M[c.id]==='n'){w.lr=2;w.dqm=(w.dqm||0)+1;miss.push(k)}else{w.lr=3;delete w.dqm}w.t=amNow()});amSave();
+  WS.list.forEach(k=>{const w=AMS.w[k];if(!w)return;const c=wCard(w);if(lrOf(w)!==2)return;if(c&&M[c.id]==='n'){w.lr=2;w.dqm=(w.dqm||0)+1;miss.push(k)}else{w.lr=3;delete w.dqm}w.t=w.pt=amNow()});amSave();
   /* words marked "לא ידעתי" stay in round 2 – round 2 starts again with them (another sentence on each card) */
   wRoundNext(2);return true}
 /* the words of this learning (all rounds) and how many wait in each round */
@@ -2410,7 +2415,7 @@ const wInRound=(k,r)=>{const w=AMS.w[k];if(!w||w.st>=WMAST)return false;const c=
   return lrOf(w)===r};
 /* round 2 = the dictionary quiz: each card answered there moves its word on to round 3 at once */
 function jwWordDone(c){if(!c||!WS||!WS.list||!Q||!/^JW/.test(String(Q.key||'')))return;
-  const k=WS.list.find(x=>{const w=AMS.w[x];const cc=w&&wCard(w);return cc&&cc.id===c.id});const w=k&&AMS.w[k];if(w&&lrOf(w)===2){if((Q.marks||{})[c.id]==='n'){w.dqm=(w.dqm||0)+1}else{w.lr=3;delete w.dqm}w.t=amNow();amSave()}}
+  const k=WS.list.find(x=>{const w=AMS.w[x];const cc=w&&wCard(w);return cc&&cc.id===c.id});const w=k&&AMS.w[k];if(w&&lrOf(w)===2){if((Q.marks||{})[c.id]==='n'){w.dqm=(w.dqm||0)+1}else{w.lr=3;delete w.dqm}w.t=w.pt=amNow();amSave()}}
 const wRoundCounts=keys=>[1,2,3,4].map(r=>(keys||wAllK()).filter(k=>wInRound(k,r)).length);
 /* start one learning round on the words waiting in it (keeps the learning's other fields) */
 function wRound(r,keys,base){keys=(keys||[]).filter(k=>wInRound(k,r));if(!keys.length)return false;base=base||{};
@@ -2441,7 +2446,7 @@ function wDqPage(){const key=wDqKey(),open=SESS[key]&&SESS[key].kind==='quiz',n=
     <div class="am-cta"><button class="btn" id="dqGo">${open?'▶ להמשיך':'▶ להתחיל'}</button></div>
     <button class="link" id="dqSkip" style="align-self:center">לדלג לסבב 3 – משפט בעברית</button></div>`;
   $('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};$('dqGo').onclick=wDqStart;
-  $('dqSkip').onclick=()=>{WS.list.forEach(k=>{const w=AMS.w[k];if(w){w.lr=Math.max(lrOf(w),3);w.t=amNow()}});amSave();wRoundNext(2)};
+  $('dqSkip').onclick=()=>{WS.list.forEach(k=>{const w=AMS.w[k];if(w){w.lr=Math.max(lrOf(w),3);w.t=w.pt=amNow()}});amSave();wRoundNext(2)};
   app.querySelectorAll('[data-round]').forEach(b=>b.onclick=()=>wRoundSwitch(+b.dataset.round))}
 /* going back to words already done in this round: each one is shown as it was answered (read only) */
 function wHistPage(){const H=WS.hist||[],v=Math.max(0,Math.min(WS.view,H.length-1)),it=H[v],w=it&&AMS.w[it.k];if(!it||!w){WS.view=null;wSave();return draw()}
