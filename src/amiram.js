@@ -19,13 +19,16 @@ function amSave(){AMS.t=Date.now();LS.set('dictAm',JSON.stringify(AMS));dirty()}
 let AMAI={};try{AMAI=JSON.parse(LS.get('dictAmAi')||'{}')}catch(e){}
 const amAiSave=()=>LS.set('dictAmAi',JSON.stringify(AMAI));
 /* once (Oct 30, her request): all solved questions and simulations start again from zero; mistakes are handled on the spot, no retry list */
-if(!LS.get('dictAmReset1')){AMS.ar=Date.now();AMS.a={};AMS.ex={};LS.set('dictAmReset1','1');try{LS.set('dictAmQ','null')}catch(e){}LS.set('dictAm',JSON.stringify(AMS));setTimeout(()=>{try{dirty()}catch(e){}},0)}
+/* the one-time reset of question attempts (Oct 30) has a FIXED time. It used to run again on any device / browser whose storage was empty (iPhone clears a site's storage after days without a visit, the home-screen app has its own storage), set the reset time to "now" and so wiped every answer on all devices at the next sync (Nov 20, her report: answered questions came back in the journey) */
+const AR0=Date.parse('2026-10-30T14:00:00+02:00');
+if(!LS.get('dictAmReset1')){LS.set('dictAmReset1','1');if(!AMS.ar&&Object.keys(AMS.a||{}).length&&Object.values(AMS.a).every(x=>!(x.h||[]).some(r=>r[3]>AR0))){AMS.ar=AR0;AMS.a={};AMS.ex={};LS.set('dictAm',JSON.stringify(AMS))}}
+if(AMS.ar&&AMS.ar!==AR0){AMS.ar=AR0;LS.set('dictAm',JSON.stringify(AMS))}
 /* sync merge: per question / per word the newer entry wins; attempt lists are joined */
 function jpMerge(p,q){if(!p||!Array.isArray(p.b))return q;if(!q||!Array.isArray(q.b))return p;const nw=(q.t||0)>(p.t||0)?q:p,ol=nw===p?q:p;const byId={};ol.b.forEach(x=>{if(x&&x.id)byId[x.id]=x});
   const b=nw.b.map(x=>{const y=x&&byId[x.id];if(!y)return x;const z={...x};z.d=Math.max(x.d||0,y.d||0);z.used=Math.max(x.used||0,y.used||0);z.go=Math.max(x.go||0,y.go||0)||x.go||y.go||0;
     /* a step really finished on the other copy stays finished (a step skipped there may come back on by itself) */if(!x.done&&y.done&&!y.skip&&!(x.k==='rev2'||x.k==='new'))z.done=y.done;
     for(const f of ['qs','ws','theme','qt0','qv'])if(z[f]==null&&y[f]!=null)z[f]=y[f];return z});return{...nw,b}}
-function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n||a.n||8:a.n||b.n||8,nd:{},na:(b.t||0)>(a.t||0)?(b.na??a.na):(a.na??b.na),sch:(b.sch&&(!a.sch||b.sch.t>a.sch.t))?b.sch:a.sch,t:Math.max(a.t||0,b.t||0),ar:Math.max(a.ar||0,b.ar||0)};
+function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n||a.n||8:a.n||b.n||8,nd:{},na:(b.t||0)>(a.t||0)?(b.na??a.na):(a.na??b.na),sch:(b.sch&&(!a.sch||b.sch.t>a.sch.t))?b.sch:a.sch,t:Math.max(a.t||0,b.t||0),ar:(a.ar||b.ar)?AR0:0};
   for(const s of [a.a||{},b.a||{}])for(const k in s){const x=s[k],y=o.a[k];
     if(!y){o.a[k]=JSON.parse(JSON.stringify(x));continue}
     const h=[...(y.h||[])];(x.h||[]).forEach(r=>{if(!h.some(z=>z[3]===r[3]))h.push(r)});h.sort((p,q)=>p[3]-q[3]);
@@ -205,7 +208,10 @@ function wAdd(e,h,c,src,key){const k=key||wKey(e);if(!k)return;let w=AMS.w[k];if
   else{if(h&&!w.h)w.h=h;if(c&&!w.c)w.c=c;w.t=amNow()}
   amSave();return w}
 function wKnownDict(e){const d=dictFind(e);return d&&d.cards.every(isY)}
-function wDue(ahead){const now=amNow()+(ahead||0);return Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&w.due<=now&&lrOf(w)>=5).sort((a,b)=>a.due-b.due)}
+/* reviews are by day (her report: after finishing all the reviews and leaving, more showed up – their exact time had passed meanwhile): a word due any time today (until tomorrow 05:00) is due now, so the day's reviews all come in one go */
+function wDueEnd(ahead){return Math.max(amNow()+(ahead||0)+1,wNextMorning())}
+function wIsDue(w,ahead){return w.st>=1&&w.st<WMAST&&w.due<wDueEnd(ahead)&&lrOf(w)>=5}
+function wDue(ahead){return Object.values(AMS.w).filter(w=>wIsDue(w,ahead)).sort((a,b)=>a.due-b.due)}
 const NAUTO={90:13,180:16};
 function wNPer(k=dayKey()){return AMS.na===0?(AMS.n||8):NAUTO[jrGoal(k)]}
 function wNewToday(){return AMS.nd[dayKey()]||0}
@@ -1012,7 +1018,7 @@ function jrFinish(id,force){const x=jrBlock(id);if(!x||x.done)return;const P=AMS
   x.done=amNow();P.t=amNow();amSave();amToast('✓ '+JBx(x)[1]+' – הושלם')}
 const jrCount=id=>{const x=jrBlock(id);if(x){x.d=(x.d||0)+1;AMS.jp[id.split('|')[0]].t=amNow()}};
 /* what a block holds right now, in words / questions */
-function jrWhat(x){if(x.k==='rev2'&&!x.done){const n=wDue(x.go?0:18e5).length;if(n)return n+' מילים מחכות לחזרה';const nx=Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&lrOf(w)>=5).map(w=>w.due).sort((a,b)=>a-b)[0],m=nx?Math.ceil((nx-amNow())/6e4):0;return m>0&&m<=60?'תידלק בעוד '+m+' דק׳':'כבוי עכשיו – יידלק 20 דק׳ אחרי שתלמדי מילים'}
+function jrWhat(x){if(x.k==='rev2'&&!x.done){const n=wDue(x.go?0:18e5).length;if(n)return n+' מילים מחכות לחזרה';const nx=Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&lrOf(w)>=5).map(w=>w.due).sort((a,b)=>a-b)[0],m=nx?Math.ceil((nx-amNow())/6e4):0;return m>0&&m<=60?'תידלק בעוד '+m+' דק׳':'כבוי עכשיו – יידלק כשתסיימי את הסבבים של המילים החדשות'}
   if(x.k==='rev'||x.k==='rev2'){const n=wDue(x.k==='rev2'&&!x.go?18e5:0).length;return x.done?'':n?n+' מילים מחכות לחזרה':'אין מילים לחזרה כרגע'}
   if(x.k==='new')return `${x.d}/${x.n} מילים חדשות`+(Array.isArray(x.ws)&&!x.done?` · ${jnPend(x).length} עוד בסבבים`:'');if(x.k==='q')return `${Math.min(x.d,x.n)}/${x.n} שאלות`;if(x.k==='sim')return '22 שאלות ב־20 דקות';if(x.k==='meth')return 'נושא אחד מהשיטה';return '10 דקות'}
 /* study time: counted every 15 s while the page is visible, on an אמירנט screen, and she did something in the last 5 minutes (Nov 18, her request – reading and thinking count) */
@@ -1449,7 +1455,9 @@ const amLv=id=>(amLvMap()[id]||{}).lv||0;
 /* a question answered wrong comes back in the journey only after QBACK days (she should have forgotten the answer); answered right – never */
 const QBACK=21;
 const amQBack=id=>{const l=amLast(id);return !!(l&&!l[1]&&amNow()-(l[3]||0)>QBACK*864e5)};
-function amDayIds(n,qt){if(!AMD)return [];const M=amLvMap(),un=id=>M[id]&&(!amLast(id)||amQBack(id)),sets=(AMD.s||[]).filter(x=>amCourse(x)&&(x.t==='sc'||x.t==='rs'||x.t==='rc'));
+/* questions already given in the journey: the first d of every question step's set (d = how many she answered). Covers answers whose record was lost (the reset bug fixed on Nov 20) */
+function amSeenQ(){const S0=new Set();for(const P of Object.values(AMS.jp||{}))for(const x of (P&&P.b)||[])if(x&&x.k==='q'&&Array.isArray(x.qs))x.qs.slice(0,Math.min(x.d||0,x.qs.length)).forEach(id=>S0.add(id));return S0}
+function amDayIds(n,qt){if(!AMD)return [];const SQ=amSeenQ(),M=amLvMap(),un=id=>M[id]&&(amLast(id)?amQBack(id):!SQ.has(id)),sets=(AMD.s||[]).filter(x=>amCourse(x)&&(x.t==='sc'||x.t==='rs'||x.t==='rc'));
   const uOf={};sets.forEach(x=>x.ids.forEach(id=>uOf[id]=x.u));const pool=t=>sets.filter(x=>x.t===t).flatMap(x=>x.ids).filter(un).sort((a,b)=>(amQBack(b)?1:0)-(amQBack(a)?1:0)||M[a].sc-M[b].sc);
   const spread=(L,k,uf=id=>uOf[id])=>{/* the easiest first (L is sorted easy → hard), from different units: one per unit, then two, then any */if(k<=0||!L.length)return [];const out=[],used={};for(let pass=0;pass<3&&out.length<k;pass++)for(const id of L){if(out.length>=k)break;if(out.includes(id))continue;if(pass<2&&(used[uf(id)]||0)>pass)continue;out.push(id);used[uf(id)]=(used[uf(id)]||0)+1}return out};
   let nsc=Math.round(n*8/22),nrs=Math.round(n*4/22),nrc=n-nsc-nrs;if(qt){nsc=qt==='sc'?n:0;nrs=qt==='rs'?n:0;nrc=qt==='rc'?n:0}
@@ -1904,7 +1912,7 @@ function amLessons(){if(!AMD)return amLoading();const LS0=Object.entries(AMS.ls|
 function amProgress(){if(!AMD)return amLoading();
   const types=['sc','rs','rc','yb'].map(t=>{let n=0,ok=0,ms=0,c=0;Object.entries(AMS.a).forEach(([id,a])=>{const q=AMD.q[id];if(!q||q.t!==t)return;(a.h||[]).forEach(r=>{n++;if(r[1])ok++;if(r[2]){ms+=r[2];c++}})});return {t,n,ok,ms:c?ms/c:0}});
   const W=Object.values(AMS.w),st=[0,1,2,3,4,5,6,7].map(i=>W.filter(w=>w.st===i).length),now=amNow();
-  const fc=[0,1,2,3,4,5,6].map(d=>W.filter(w=>w.st>=1&&w.st<WMAST&&lrOf(w)>=5&&w.due<now+(d+1)*DAY&&(d?w.due>=now+d*DAY:true)).length);
+  const nm=wNextMorning(),fc=[0,1,2,3,4,5,6].map(d=>W.filter(w=>w.st>=1&&w.st<WMAST&&lrOf(w)>=5&&w.due<nm+d*DAY&&(d?w.due>=nm+(d-1)*DAY:true)).length);
   const cnt={};Object.values(AMS.a).forEach(a=>(a.r||[]).forEach(r=>cnt[r]=(cnt[r]||0)+1));const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,4);
   const days=new Set();Object.values(AMS.a).forEach(a=>(a.h||[]).forEach(r=>days.add(dayKey(r[3]))));W.forEach(w=>(w.log||[]).forEach(r=>days.add(dayKey(r[0]))));
   let streak=0;for(let d=0;d<400;d++){if(days.has(dayKey(now-d*DAY)))streak++;else if(d)break}
@@ -2119,7 +2127,7 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   const res=WS&&WS.res&&WS.step!=='tr'&&!o.free;let now='';
   if(w&&!w.k&&o.free)now='המילה עוד לא נכנסה ללמידה';
   else if(w&&s>=WMAST)now='🏆 המילה נלמדה';
-  else if(w&&inRev)now=res?(WS.res.ok===false?`✗ המילה תחזור שוב היום, בסוף הסבב, עם משפט אחר – עד שתעני נכון · עכשיו חזרה ${s} מתוך 6`:(WS.re||[]).includes(wK(w))&&WS.res.ok?`✓ נכון – המילה עוברת · עכשיו חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:(()=>{const s0=WS.res.st0;/* say which review she just did and where the word went (her question: "how is this review 2?") */return s0!=null&&s0>=1&&s0!==s?`✓ חזרה ${s0} הושלמה – המילה עברה ${s>=WMAST?'ל־🏆 נלמדה':`לחזרה ${s} · הבאה ${wWhen(w.due)}`}`:s0===s?`✓ נכון עם רמז – המילה נשארת בחזרה ${s} · הבאה ${wWhen(w.due)}`:`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`})()):`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
+  else if(w&&inRev)now=res?(WS.res.ok===false?(WS.res.st0!=null&&WS.res.st0!==s?`✗ לא נכון – המילה ירדה לחזרה ${s} ותחזור שוב היום בסוף הסבב, עם שאלה אחרת`:`✗ לא נכון – המילה תחזור שוב היום בסוף הסבב, עם שאלה אחרת`):(WS.re||[]).includes(wK(w))&&WS.res.ok?`✓ נכון – המילה עוברת · עכשיו חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:(()=>{const s0=WS.res.st0;/* say which review she just did and where the word went (her question: "how is this review 2?") */return s0!=null&&s0>=1&&s0!==s?`✓ חזרה ${s0} הושלמה – המילה עברה ${s>=WMAST?'ל־🏆 נלמדה':`לחזרה ${s} · הבאה ${wWhen(w.due)}`}`:s0===s?`✓ נכון עם רמז – המילה נשארת בחזרה ${s} · הבאה ${wWhen(w.due)}`:`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`})()):`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
   else if(pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend){const R=WS.res;
     now=R.ok?(lr<4?`✓ נכון – המילה עוברת לסבב ${lr+1} · ${WLRN[lr][0]}`:`✓ נכון – המילה סיימה את הלמידה ועוברת לחזרה 1 (${wWhen(w.due)})`)
       :`✗ המילה תחזור שוב בסוף סבב ${lr}, עם ${lr===2?'משפט אחר':'שאלה אחרת'} – עוברים לסבב הבא רק כשכל המילים של הסבב נכונות`}
@@ -2131,10 +2139,10 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   return `<div class="am-mpath"><div class="am-trk"><div class="g g1"><b>למידה${o.counts?' · מילים בכל סבב':''}</b><div class="am-path">${rd}</div></div>${!o.free&&!inRev&&!(w&&s>=WMAST)?'':`<div class="g g2"><b>חזרות</b><div class="am-path">${rv}</div></div>`}</div>
     <p>${now} · <button class="link small-link" data-path="1">🛤 המסלול</button></p>${oth.length?`<p class="hint" style="margin:2px 0 0">הפירוש שתרגלת עכשיו: <b>${esc(w.h)}</b>. ל־<bdi>${esc(w.e)}</bdi> יש אצלך עוד ${oth.length>1?'פירושים':'פירוש'} במסלול, וכל פירוש עובר מסלול משלו: ${oth.map(x=>`${esc(x.h)} (${x.st>=WMAST?'🏆':'חזרה '+x.st})`).join(' · ')}</p>`:''}</div>`}
 const wMiniPath=w=>wTrack(w,{});
-const wWhen=t=>{const d=t-amNow();if(d<=0)return 'עכשיו';if(d<36e5)return 'בעוד '+Math.max(1,Math.round(d/6e4))+' דק׳';if(d<DAY)return 'בעוד '+Math.round(d/36e5)+' שע׳';return 'בעוד '+Math.round(d/DAY)+' ימים'};
+/* reviews come by day (from 05:00), so later reviews are named by day: מחר / בעוד יומיים / בעוד n ימים */const wWhen=t=>{const d=t-amNow();if(d<=0)return 'עכשיו';const nm=wNextMorning();if(t<nm){if(d<36e5)return 'בעוד '+Math.max(1,Math.round(d/6e4))+' דק׳';return 'היום'}const n=1+Math.floor((t-nm)/DAY);return n===1?'מחר':n===2?'בעוד יומיים':'בעוד '+n+' ימים'};
 const wDate=t=>{const d=new Date(t);return d.getDate()+'.'+(d.getMonth()+1)+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')};
 function amMyWords(){if(!AMD)return amLoading();const f=S.wf||'due',all=Object.values(AMS.w);
-  const F={due:['לחזרה',w=>w.st>=1&&w.st<WMAST&&lrOf(w)>=5&&w.due<=amNow()],learn:['בלמידה',w=>w.st>=1&&w.st<WMAST],hard:['קשות',wHard],done:['נלמדו',w=>w.st>=WMAST],wait:['מחכות',w=>w.st===0]};
+  const F={due:['לחזרה',w=>wIsDue(w)],learn:['בלמידה',w=>w.st>=1&&w.st<WMAST],hard:['קשות',wHard],done:['נלמדו',w=>w.st>=WMAST],wait:['מחכות',w=>w.st===0]};
   const L=all.filter(F[f][1]).sort((a,b)=>f==='learn'||f==='due'?a.due-b.due:(b.t||0)-(a.t||0));
   app.innerHTML=`<div class="screen am-scr">
     ${amNav('amp','התקדמות')}
@@ -2486,7 +2494,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
   const ctx=w.c||ex||'';
   let h=`<div class="screen qz am-scr">
     <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${AUTOBTN()}${HOME}${INFOB()}</span></div>
-    <div class="am-bar"><span class="am-chip t">${WS.step==='tr'?(WS.mode==='new'?'🌱 סבב 1 – תרגום משפט':'🌐 חזרה · תרגום משפט חדש'):WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'&&WS.perWord?(WS.phase==='he'?'🇮🇱 סבב 3 – משפט בעברית':'🔁 סבב 4 – משפט באנגלית'):WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 משפט בעברית':'🔁 בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span>${w.st?`<span class="am-timer">${wStageDots(w)}</span>`:''}</div>
+    <div class="am-bar"><span class="am-chip t">${WS.step==='tr'?(WS.mode==='new'?'🌱 סבב 1 – תרגום משפט':'🌐 חזרה · תרגום משפט חדש'):WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'&&WS.perWord?(WS.phase==='he'?'🇮🇱 סבב 3 – משפט בעברית':'🔁 סבב 4 – משפט באנגלית'):WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 משפט בעברית':'🔁 בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span></div>
     <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>${(WS.hist||[]).length?'<button class="link small-link" id="wPrev" style="align-self:flex-start">→ למילה הקודמת</button>':''}`;
   h+=WS.perWord?wTrack(w,{counts:wRoundCounts()}):wMiniPath(w);
   /* a review saved during the old warm-up (sentence translation for all words first) goes straight to the stage tasks */
@@ -2545,22 +2553,24 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
     else if(task==='cloze2'){const s2=blankOut(wOther(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">משפט חדש – איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${SAYB(s2,'sm inl')}${tapEn(s2)}</div>${res?wTrHtml(wOther(w),x,ex):''}</div>`}
-    else if(task==='en2he')h+=`<div class="am-card"><p class="hint center" style="margin:0">מה הפירוש בעברית?</p><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div>${ctx&&hint>0?`<div class="ctx">${esc(ctx)}</div>`:''}</div>`;
+    else if(task==='en2he'){if(!res)h+=`<div class="am-card"><p class="hint center" style="margin:0">מה הפירוש בעברית?</p><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div>${ctx&&hint>0?`<div class="ctx">${esc(ctx)}</div>`:''}</div>`;}
     else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${s?SAYB(s,'sm inl')+tapEn(s):'_____'}</div>${s&&res?wTrHtml(wCtx(w),x,ex):''}</div>`}
     else h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
     /* hint ladder */
     const hs=[];if(hint>=1&&w.as)hs.push('💡 '+bdiEsc(w.as));if(hint>=2&&task!=='en2he')hs.push('האות הראשונה: <bdi dir="ltr" style="font-family:var(--en);font-size:1.2rem;letter-spacing:3px">'+esc(w.e[0]+w.e.slice(1).replace(/[A-Za-z]/g,'_ '))+'</bdi>');
     if(hint>=3&&task==='he2en'){const s=blankOut(w.my||ctx,w.e);if(s)hs.push('<bdi style="font-family:var(--en)">'+esc(s)+'</bdi>')}
     if(hs.length)h+=`<div class="am-hints">${hs.map(x=>`<div class="am-hint">${x}</div>`).join('')}</div>`;
+    if(!res&&task==='en2he'&&WS.e2hOther)h+=`<div class="am-box"><p style="margin:0">${bdiEsc(WS.e2hOther)}</p></div>`;
     if(!res&&task!=='mc'&&task!=='hecl'){h+=`<input class="am-in ${task==='en2he'?'':'en'}" id="wAns" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${task==='en2he'?'הפירוש בעברית':'כתבי את המילה באנגלית'}">
       <div class="am-nav"><button class="btn secondary" id="wHint" ${hint>=(task==='en2he'?2:3)?'disabled':''}>💡 רמז ${hint?'נוסף':''}</button><button class="btn" id="wGo">בדיקה</button></div>
       <button class="link" id="wGive" style="align-self:center">לא זוכרת – הראי לי</button>${EXB('<b>בדיקה</b> – בודק מה כתבת (טעות הקלדה קטנה נחשבת). <b>💡 רמז</b> – כל לחיצה נותנת רמז נוסף: האסוציאציה, האות הראשונה, המשפט שלך עם חור. רמז לא מקדם שלב. <b>לא זוכרת</b> – מראה את התשובה.')}`}
     else if(res){
       if(task==='hecl'){const c=wCard(w),full=(heR&&heR.en)||(c&&c.s);if(full)h+=`<div class="am-box"><p dir="ltr" style="margin:0;text-align:left;font-family:var(--en)">${SAYB(full,'sm inl')}${esc(full)}</p></div>`}
+      if(res.pend){h+=`<p class="am-fb">⏳ בודקת את התשובה…</p>`;/* a check cut off by a reload starts again */if(task==='en2he'&&!E2HLIVE[wK(w)])setTimeout(()=>e2hCheck(w,res.typed),0)}else
       h+=`<p class="am-fb ${res.ok?'ok':'bad'}">${res.ok?(res.near?'כמעט מושלם ✓':'נכון! ✓'):res.self?'':'עוד לא – הנה התשובה:'}</p>
-        <div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>${res.typed?`<p class="hint center" style="margin:0">כתבת: <bdi>${esc(res.typed)}</bdi></p>`:''}${w.as?`<div class="am-hint">💡 ${bdiEsc(w.as)}</div>`:''}${w.my?`<div class="ctx">${SAYB(w.my,'sm inl')}✍️ ${esc(w.my)}</div>`:''}</div>`;
+        <div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>${res.typed?`<p class="hint center" style="margin:0">כתבת: <bdi>${esc(res.typed)}</bdi></p>`:''}${res.fb?`<p style="margin:0">${bdiEsc(res.fb)}</p>`:''}${w.as?`<div class="am-hint">💡 ${bdiEsc(w.as)}</div>`:''}${w.my?`<div class="ctx">${SAYB(w.my,'sm inl')}✍️ ${esc(w.my)}</div>`:''}</div>`;
       if(!res.ok)h+=wMethodBox(w);
-      if(res.self)h+=`<p class="center" style="margin:0">הפירוש שכתבת נכון?</p><div class="am-nav"><button class="btn" id="wSelfY">✓ כן, התכוונתי לזה</button><button class="btn secondary" id="wSelfN">✗ לא</button></div>`;
+      if(res.pend){}else if(res.self)h+=`<p class="center" style="margin:0">הפירוש שכתבת נכון?</p><div class="am-nav"><button class="btn" id="wSelfY">✓ כן, התכוונתי לזה</button><button class="btn secondary" id="wSelfN">✗ לא</button></div>`;
       else if(false)h+=`<div class="am-step-box"><h4>כתבי את המילה פעם אחת כדי לחזק</h4><input class="am-in en" id="wCopy" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(w.e)}"></div>`;
       else{if(step==='first')h+=`<div class="am-box good"><h4>מה יקרה עכשיו עם המילה?</h4><p>✓ היא נכנסה ללמידה. המסלול שלה:</p><div class="am-next"><span>בסוף הסבב · בחירה במשפט</span><span>20 דק׳ · משפט בעברית</span><span>מחר · תרגום משפט</span><span>3 ימים · משפט חדש</span><span>שבוע · הפירוש בעברית</span><span>שבועיים · תרגום משפט</span><span>חודש · משפט חדש</span><span>🏆 נלמדה</span></div><p class="hint" style="margin:0">טעות מחזירה אותה קצת אחורה, כדי שתחזור מוקדם יותר.</p></div>`;
         h+=`<div class="am-cta"><button class="btn" id="wOn">${WS.i+1<WS.list.length||WS.again||WS.mode==='new'?'המילה הבאה ←':'סיום'}</button></div>`}}
@@ -2645,7 +2655,9 @@ function wBind(w,x){
   const hb=$('wHint');if(hb)hb.onclick=()=>{WS.hint=(WS.hint||0)+1;wSave();amRedrawKeep()};
   const task=wTaskNow(w);
   const gb=$('wGo');if(gb)gb.onclick=()=>{const v=(ans.value||'').trim();if(!v)return;
-    if(task==='en2he'){if(heMatch(v,w.h))WS.res={ok:true,typed:v};else WS.res={self:true,typed:v};}
+    if(task==='en2he'){WS.e2hOther='';if(heMatch(v,w.h))WS.res={ok:true,typed:v};
+      else{const oth=wOtherMeanings(w);if(oth.some(m=>heMatch(v,m))){WS.e2hOther=`<b>${esc(v)}</b> הוא פירוש נכון של <bdi>${esc(w.e)}</bdi> – אבל כאן מתרגלים פירוש אחר שלה. נסי שוב.`;ans.value='';wSave();return amRedrawKeep()}
+        if(GKEY()){WS.res={pend:true,typed:v};wSave();draw();e2hCheck(w,v);return}WS.res={self:true,typed:v}}}
     else{const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=w.e.toLowerCase(),dd=lev(a,e);const ok=a===e||dd<=(e.length>=6?1:0);WS.res={ok,near:ok&&a!==e,typed:v}}
     if(!WS.res.self)wAfter(w,WS.res.ok);wSave();draw()};
   const gv=$('wGive');if(gv)gv.onclick=()=>{WS.res={ok:false};wAfter(w,false);wSave();draw()};
@@ -2668,6 +2680,21 @@ function wTrBind(w){
   const n=$('trN');if(n)n.onclick=()=>{wTrDone(w,false);wSave();amRedrawKeep()};
   if(WS.res&&!w.as){const c=wCard(w),t=c&&(EXTRA[c.xid||c.id]||{}).tip;if(t){w.as=t;w.asSeen=[t];amSave()}else if(GKEY()&&!WSGEN[wK(w)]&&!WSGERR[wK(w)])wGenAssoc(w)}}
 /* Gemini checks the translation (tries twice before giving up) */
+/* the other meanings of the same English word (every other card of it) */
+function wOtherMeanings(w){const c=wCard(w);const L=(DIX[String(w.e).toLowerCase()]||[]).filter(x=>!c||x.id!==c.id).map(x=>x.h[0]);if(c&&c.others)L.push(...c.others);return [...new Set(L)].filter(m=>m&&m!==w.h)}
+function promptE2H(w,v,oth){return `A Hebrew-speaking learner is asked for the Hebrew meaning of the English word "${w.e}". The meaning being practised is: "${w.h}".${oth.length?` Other meanings of this word (practised separately): ${oth.map(m=>'"'+m+'"').join(', ')}.`:''}
+She wrote: "${v}".
+Decide:
+- "right": her answer means the practised meaning – a synonym, a related form (verb / noun / adjective of the same idea), spoken Hebrew, small spelling slips all count.
+- "other": her answer is a correct meaning of "${w.e}" but a different one from the practised meaning (e.g. one of the other meanings).
+- "wrong": anything else.
+Return JSON only: {"verdict":"right"|"other"|"wrong","feedback":"one short sentence in plain Hebrew letters: why (for wrong – what her answer means and what the practised meaning is)"}`}
+var E2HLIVE={};
+function e2hCheck(w,v){const k=wK(w);E2HLIVE[k]=1;(async()=>{let r=await aiRun('','',null,{prompt:promptE2H(w,v,wOtherMeanings(w)),temp:.1});if(!(r&&r.j&&r.j.verdict))r=await aiRun('','',null,{prompt:promptE2H(w,v,wOtherMeanings(w)),temp:.1});
+  delete E2HLIVE[k];const R=WS&&WS.res;if(!R||!R.pend||WS.list[WS.i]!==k||R.typed!==v)return;
+  if(!(r&&r.j&&r.j.verdict)){WS.res={self:true,typed:v};wSave();if(S.screen==='amwl')amRedrawKeep();return}
+  if(r.j.verdict==='other'){WS.res=null;WS.e2hOther=`<b>${esc(v)}</b> הוא פירוש נכון של <bdi>${esc(w.e)}</bdi> – אבל כאן מתרגלים פירוש אחר שלה. נסי שוב.`;wSave();if(S.screen==='amwl')amRedrawKeep();return}
+  const ok=r.j.verdict==='right';WS.res={ok,typed:v,fb:r.j.feedback||''};wAfter(w,ok);wSave();if(S.screen==='amwl')amRedrawKeep()})()}
 function trCheck(w,v,t,key){
     (async()=>{let he=t.he;if(!he){const r=await amTrans(t.en);he=r&&r.h||'';const R0=WS&&WS.res;if(R0&&WS.list[WS.i]===key&&!R0.he){R0.he=he;if(S.screen==='amwl')amRedrawKeep()}}
       let r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});if(!(r&&r.j&&typeof r.j.ok==='boolean'))r=await aiRun('','',null,{prompt:promptTr(w,t.en,he,v),temp:.2});delete TRLIVE[key];const R=WS&&WS.res;if(!R||WS.list[WS.i]!==key||R.typed!==v)return;R.pend=0;
@@ -2678,7 +2705,7 @@ let WHH=null;const whh=()=>{if(!WHH){try{WHH=JSON.parse(localStorage.getItem('di
 function wSnap(){const sc=app.querySelector('.screen');if(!sc)return '';const c=sc.cloneNode(true);
   c.querySelectorAll('.nav,.am-cta,#wPrev,.am-exb,.am-ex,.am-bar,.am-prog,.prog,.am-pbar,#pgHelp,.am-toast,#wGive,.am-hist-nav').forEach(e=>e.remove());
   c.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));c.querySelectorAll('input,textarea,select').forEach(e=>e.setAttribute('disabled',''));return c.innerHTML}
-function wNextWord(){WS.nwOpen=0;WS.draft='';WS.busy=false;WS.cur=null;
+function wNextWord(){WS.nwOpen=0;WS.e2hOther='';WS.draft='';WS.busy=false;WS.cur=null;
   /* remember the answered word, so she can go back to it */
   {const k=WS.list[WS.i],r=WS.res;if(k&&r&&(r.rec||r.ok!=null||r.ai)){const hid=Date.now().toString(36)+Math.random().toString(36).slice(2,5);
     try{const H=whh(),snap=S.screen==='amwl'?wSnap():'';if(snap){H[hid]=snap;const ks=Object.keys(H);ks.slice(0,Math.max(0,ks.length-40)).forEach(x=>delete H[x]);localStorage.setItem('dictWsHistH',JSON.stringify(H))}}catch(e){}
