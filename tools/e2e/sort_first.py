@@ -1,5 +1,5 @@
 # New words: first a sorting pass in the dictionary quiz (her request) – ✓ ידעתי leaves the learning (and is ✓ in the dictionary), only ✗ words go into the rounds;
-# other meanings show in every learning / review step; no underline on highlighted words outside the question body
+# other meanings show in every learning / review step; links have no underline (her request), highlighted words keep theirs
 import json
 from playwright.sync_api import sync_playwright
 def gem(route):
@@ -29,5 +29,6 @@ with sync_playwright() as p:
   if pg.evaluate("AMS.w[WS.list[WS.i]].e")=='post':assert oth==1 and 'פירושים אחרים של המילה' in tx
   # underline styles: highlighted words have none; the question body keeps it
   dec=pg.evaluate("""(()=>{const m=document.createElement('mark');document.body.appendChild(m);const f=document.createElement('span');f.className='am-fill';document.body.appendChild(f);
-    return [getComputedStyle(m).textDecorationLine,getComputedStyle(f).textDecorationLine]})()""");print('decor',dec);assert dec==['none','none']
+    return [getComputedStyle(m).textDecorationLine,getComputedStyle(f).textDecorationLine]})()""");print('decor',dec);assert dec==['underline','underline']
+  lk=pg.evaluate("[...document.querySelectorAll('.small-link,.hint .link,.jh-l,#wPrev,[data-path]')].map(e=>getComputedStyle(e).textDecorationLine)");print('links',lk);assert all(x=='none' for x in lk)
   assert not e,e;print('OK')

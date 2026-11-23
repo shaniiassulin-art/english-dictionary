@@ -372,7 +372,7 @@ ${AIHE}`}
 .am-in:focus{border-color:var(--accent);outline:none}.am-in.en{font-family:var(--en);direction:ltr;text-align:left}
 textarea.am-in{resize:vertical;min-height:70px}
 .am-opts{display:flex;flex-direction:column;gap:10px}
-.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-fill{color:var(--ok);text-decoration:none;text-underline-offset:3px}.am-qnav{display:flex;flex-direction:column;gap:6px}.am-qnums{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;direction:ltr}.am-qnums button{min-width:30px;height:30px;padding:0 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:.78rem;color:var(--muted)}.am-qnums button.on{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}.am-qnums button.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}.am-qnums button.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 50%,transparent)}.am-ohint{margin:0;font-size:.8rem;text-align:center}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-popss{display:block;margin:4px 0 2px;font-size:.85rem}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
+.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-fill{color:var(--ok);text-decoration:underline;text-underline-offset:3px}.am-qnav{display:flex;flex-direction:column;gap:6px}.am-qnums{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;direction:ltr}.am-qnums button{min-width:30px;height:30px;padding:0 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:.78rem;color:var(--muted)}.am-qnums button.on{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}.am-qnums button.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}.am-qnums button.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 50%,transparent)}.am-ohint{margin:0;font-size:.8rem;text-align:center}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-popss{display:block;margin:4px 0 2px;font-size:.85rem}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
 .am-opt .k{flex:none;font-weight:700;color:var(--muted)}
 .am-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
 .am-opt.right{border-color:var(--ok);background:var(--ok-soft);border-width:3px}
@@ -776,7 +776,7 @@ input:focus,textarea:focus,select:focus{border-color:var(--accent)!important}
 .jh-k{margin:0;font-size:.8rem;font-weight:700;color:var(--muted);letter-spacing:.01em}
 .jh-d{margin:0;font-size:.9rem;color:var(--muted)}
 .jh-go{width:100%;margin-top:10px;min-height:54px!important;font-size:1.05rem!important;border-radius:16px!important}
-.jh-l{border:0;background:none;color:var(--muted);font:inherit;font-size:.85rem;padding:6px;cursor:pointer;text-decoration:underline}
+.jh-l{border:0;background:none;color:var(--muted);font:inherit;font-size:.85rem;padding:6px;cursor:pointer;text-decoration:none}
 .jh-track{width:100%;margin-top:6px}.jh-track .am-mpath p,.jh-track>div>p{display:none}
 .jh-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .jh-st{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px 8px;border-radius:16px;border:1px solid var(--line);background:var(--surface);font:inherit;color:var(--ink);cursor:pointer;min-width:0}
@@ -1579,7 +1579,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
     else h+=`${!exam&&!st.done?'<p class="hint am-ohint xhelp">💡 לא מכירה מילה? לחיצה עליה – לסמן שלא ידעת אותה (את הפירוש תראי אחרי שתעני). לבחירת תשובה – לחיצה על העיגול.</p>':''}<div class="ax-opts">${q.o.map((o,j)=>{const k=j+1,cl=st.done?(k===q.a?' right':k===st.sel?' wrong':''):(k===st.sel?' sel':'')+(st.elim[k]?' elim':'');
       const he=st.done&&!exam&&q.oh&&q.oh[j]?`<span class="he">${esc(q.oh[j])}</span>`:'';
       const elim=!st.done&&!exam&&['rs','rc','lq'].includes(q.t)?`<div class="am-elim">${(q.t==='rs'?[['add','מידע נוסף'],['rel','קשר אחר'],['ext','הקצנה'],['contra','סותר'],['miss','חסר']]:[['out',q.t==='lq'?'לא נאמר':'לא מהקטע'],['wrong',q.t==='lq'?'סותר את ההקלטה':'סותר את הקטע'],['nq','לא עונה לשאלה']]).map(([c,l])=>`<button data-el="${k}" data-r="${c}" aria-pressed="${st.elim[k]===c}">✗ ${l}</button>`).join('')}</div>`:'';
-      const oh=tapEn(o).replace(/data-tw=/g,'data-ow=');
+      TAPDB=!exam;const oh=tapEn(o).replace(/data-tw=/g,'data-ow=');TAPDB=false;
       return `<div class="ax-orow"><button class="am-opt ax-opt${cl}" data-k="${k}" ${st.done?'aria-disabled="true"':''} dir="ltr"><span class="ax-rad"><i></i></span><span class="ax-ot"><span>${oh}</span>${he}</span></button><span class="ax-osp">${SAYB(o,'sm')}</span>${elim}</div>`}).join('')}</div>`;
     if(!st.done)h+=`<div class="am-cta"><button class="btn" id="amChk" ${st.sel?'':'disabled'}>${exam?(AQ.i+1<AQ.ids.length?'לשאלה הבאה':'סיום הסימולציה'):'בדיקה'}</button></div>${exam?`<div class="am-nav">${AQ.i?'<button class="btn secondary" id="amPrev">→ הקודמת</button>':''}<button class="btn secondary" id="amSkip">דילוג ←</button></div>`:''}`;
     else h+=amFeedback(id,st);}
@@ -2436,7 +2436,7 @@ function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.re
     <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,WS.nwOpen||res)}</div>${srcLab(t)}${othersBox(w)}</div>`;
   if(!res){h+=`<textarea class="am-in" id="trIn" rows="2" placeholder="התרגום שלי לעברית" dir="rtl">${esc(WS.draft||'')}</textarea>
     ${WS.busy?'<p class="hint center">⏳ בודקת את התרגום…</p>':''}<div class="am-cta"><button class="btn" id="trChk" ${WS.busy?'disabled':''}>בדיקה</button></div>
-    ${WS.mode==='new'?'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>':''}`;return h+'</div>'}
+    `;return h+'</div>'}/* no "I already know it" skip in learning (her request – the sorting quiz before learning does that) */
   const ai=res.ai;
   if(ai)h+=`<p class="am-fb ${ai.ok?'ok':'bad'}">${ai.ok?'נכון! ✓':'לא נכון – המילה לא תורגמה בפירוש הנכון'}</p>${ai.feedback?`<div class="am-box ${ai.ok?'good':'why'}"><p style="margin:0">${bdiEsc(ai.feedback)}</p></div>`:''}${askBox('tr|'+k+'|'+t.en,`Task: translate the English sentence into Hebrew. The learned word: "${w.e}" = "${w.h}".\nEnglish sentence: ${t.en}\nCorrect Hebrew translation: ${t.he||''}\nHer translation: ${res.typed||''}\nVerdict: ${ai.ok?'correct':'wrong'}\nFeedback she got: ${ai.feedback||''}`)}`;
   else if(res.pend)h+=`<p class="hint center" style="margin:0">⏳ בודקת את התרגום שלך…</p>`;
@@ -2565,7 +2565,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
       ${wMethodBox(w)}
       ${x.use?`<details class="am-box"><summary style="font-weight:800;cursor:pointer">📌 דגשים על המילה (לא חובה)</summary>${xuse(x.use)}</details>`:''}
       <div class="am-cta"><button class="btn" id="wNext">${WS.assocOnly?'שמירה ✓':'המשך ←'}</button></div>
-      ${WS.assocOnly?'':'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>'}
+
       ${WS.assocOnly?'':EXB('אחרי שבוחרים אסוציאציה: <b>אחר כך</b> – בוחרים את המילה באנגלית במשפט. <b>ובסוף</b> – בסוף הסבב, אחרי כל המילים החדשות, עוד שליפה קצרה של כולן (השלמה במשפט).')}`}
   else if(step==='write'||(step==='recall'&&wTask(w)==='write')){
     const ck=WS.chk;
