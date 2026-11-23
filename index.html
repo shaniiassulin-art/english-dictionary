@@ -3121,11 +3121,16 @@ function jrNorm(k,P){let ch=false;if(!Array.isArray(P.b)){P.b=[];ch=true}{let se
        nb.forEach(y=>{y.d=Math.min(y.n,per[y.qt]||0);y.used=0;if(y.d>=y.n)y.done=amNow()})}
      if(AQ&&qs.some(x=>AQ.jr===x.id)){AQ=null;try{LS.set('dictAmQ','null')}catch(e){}}
      P.b=P.b.filter(x=>!qs.includes(x));P.b.splice(i,0,...nb);ch=true}}
+  {const q=P.b.filter(x=>x.k==='q'&&x.qt&&!x.x);if(q.length>1&&q.every(x=>!x.done&&!x.d&&!x.used&&!x.go&&!(AQ&&AQ.jr===x.id))){const o=jrQOrd(k),sq=[...q].sort((a,b)=>o.indexOf(a.qt)-o.indexOf(b.qt));
+    if(sq.some((x,i)=>x!==q[i])){const pos=q.map(x=>P.b.indexOf(x));pos.forEach((p,i)=>P.b[p]=sq[i]);amSave()}}}
   if(ch){P.t=amNow();amSave()}return P}
 /* a review step with no words due is skipped (shown greyed, not "done"), so the day starts with what there is */
 function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==='rev'||x.k==='rev2')&&!x.go&&!wDue(x.k==='rev2'?18e5:0).length&&!(WS&&WS.jr===x.id&&WS.i<WS.list.length)){x.done=amNow();x.skip=1;ch=true;continue}break}if(ch){P.t=amNow();amSave()}return P}
 /* the day's questions as one step per type (her request), no simulation: long day sc 15 · rs 10 · rc 25 (5 passages), short day sc 6 · rs 4 · rc 10 */
-function jrQB(k,long,nx){return (long?[['sc',30,15],['rs',30,10],['rc',55,25]]:[['sc',12,6],['rs',10,4],['rc',18,10]]).map(([t,m,c])=>({id:k+'|q_'+t+nx(),k:'q',qt:t,m,n:c,d:0,done:0,used:0}))}
+/* the order of the three question steps changes every day (her request): the six orders in turn, so the first type changes from day to day */
+const JQORD=[['sc','rs','rc'],['rs','rc','sc'],['rc','sc','rs'],['sc','rc','rs'],['rs','sc','rc'],['rc','rs','sc']];
+function jrQOrd(k){const d=Math.round(Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10))/864e5);return JQORD[((d%6)+6)%6]}
+function jrQB(k,long,nx){const o=jrQOrd(k);return (long?[['sc',30,15],['rs',30,10],['rc',55,25]]:[['sc',12,6],['rs',10,4],['rc',18,10]]).sort((a,b)=>o.indexOf(a[0])-o.indexOf(b[0])).map(([t,m,c])=>({id:k+'|q_'+t+nx(),k:'q',qt:t,m,n:c,d:0,done:0,used:0}))}
 function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return jrNorm(k,P);const long=jrGoal(k)===180;let n=0;
   const B=(kk,m,c)=>({id:k+'|'+kk+(n++),k:kk,m,n:c,d:0,done:0,used:0});const nw=wNPer(k);
   const b=long?[B('rev',20),B('new',25,nw),...jrQB(k,true,()=>n++),B('meth',10,1),B('rev2',10)]:[B('rev',15),B('new',20,nw),...jrQB(k,false,()=>n++),B('meth',5,1),B('rev2',10)];
@@ -4351,7 +4356,7 @@ try{WS=JSON.parse(LS.get('dictAmWs')||'null')}catch(e){}
 setTimeout(()=>{try{if(WS&&!((AMS.ss||{}).ws&&AMS.ss.ws[0]))amSessPut('ws',WS);if(AQ&&!((AMS.ss||{}).aq&&AMS.ss.aq[0]))amSessPut('aq',AQ)}catch(e){}},0);
 function wStart(mode,keys,cnt){
   if(mode==='collect'){const L=(keys||[]).filter(k=>AMS.w[k]&&AMS.w[k].st===0);if(!L.length)return;WS={mode:'new',perWord:1,list:L,i:0,step:'tr',hint:0,from:S.screen,ok:0,bad:0,collect:1,t0:amNow()};if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}wSave();go({screen:'amwl'});return}
-  if(mode==='rev'){const d=wDue(cnt||0);if(!d.length)return;WS={mode,list:d.slice(0,30).map(w=>wK(w)),i:0,step:'recall',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
+  if(mode==='rev'){const d=wDue(cnt||0);if(!d.length)return;WS={mode,list:d.map(w=>wK(w)),i:0,step:'recall',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
   else{const n=cnt||Math.max(0,wNPer()-wNewToday());if(!n)return;const q=wQueue(n);if(!q.length)return;
     q.forEach(w=>{if(w.fresh){const x=wAdd(w.e,w.h,w.c,w.src,w.k);}});q.splice(0,q.length,...q.filter(w=>AMS.w[wK(w)]));if(!q.length)return;WS={mode,perWord:1,t0:amNow(),list:q.map(w=>wK(w)),i:0,step:'tr',hint:0,from:S.screen==='am'?'am':'amw',ok:0,bad:0}}
   if(JRGO){WS.jr=JRGO;WS.from='am';JRGO=null}

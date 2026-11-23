@@ -17,10 +17,11 @@ with sync_playwright() as p:
     out.started=jrPlan(T).b.map(x=>x.k+(x.qt?':'+x.qt+':'+x.d:''));out.aq=AQ;
     const ids={};for(const t of ['sc','rs','rc'])ids[t]=[...new Set(amDayIds(t==='rc'?25:10,t).map(id=>AMD.q[id].t))];return out})()""")
   print(r)
-  assert r['2026-11-16']==['rev','new','q:sc15','q:rs10','q:rc25','meth','rev2'],r
-  assert r['2026-11-17']==['rev','new','q:sc6','q:rs4','q:rc10','meth','rev2']
-  assert r['old']==['rev','q:sc','q:rs','q:rc','rev2']
-  assert r['started'][1:4]==['q:sc:3','q:rs:1','q:rc:0'] and r['aq'] is None,r
+  S=lambda L:sorted(L)
+  assert S(r['2026-11-16'])==S(['rev','new','q:sc15','q:rs10','q:rc25','meth','rev2']) and r['2026-11-16'][:2]==['rev','new'] and r['2026-11-16'][-2:]==['meth','rev2'],r
+  assert S(r['2026-11-17'])==S(['rev','new','q:sc6','q:rs4','q:rc10','meth','rev2']) and r['2026-11-16'][2:5]!=r['2026-11-17'][2:5]
+  assert S(r['old'])==S(['rev','q:sc','q:rs','q:rc','rev2'])
+  assert S(r['started'][1:4])==S(['q:sc:3','q:rs:1','q:rc:0']) and r['aq'] is None,r
   pg.evaluate("go({screen:'am'});const k=jrCurKey(),P=AMS.jp[k];for(const y of P.b){if(y.k==='q'&&y.qt==='rs')break;y.done=1;y.skip=1}amSave();draw()");pg.wait_for_timeout(800)
   pg.screenshot(path='/tmp/claude-0/-home-claude/57ff57e9-f98a-5dad-a91a-88f510546bae/scratchpad/qtypes.png')
   pg.evaluate("const k=jrCurKey(),x=AMS.jp[k].b.find(x=>x.qt==='rs');jrRun(x)");pg.wait_for_timeout(1200)
