@@ -11,7 +11,7 @@ with sync_playwright() as p:
   pg.evaluate("amLoad()");pg.wait_for_timeout(2500)
   # day 1: start today's new words, translate 3 words (round 1), then leave
   pg.evaluate("go({screen:'am'});const k=jrCurKey(),P=AMS.jp[k];const x=P.b.find(x=>x.k==='new');for(const y of P.b){if(y===x)break;y.done=1}amSave();jrRun(x)");pg.wait_for_timeout(1500)
-  print('day1 screen',pg.evaluate("S.screen"));pg.click('#nwGo');pg.wait_for_timeout(1200)
+  print('day1 screen',pg.evaluate("S.screen"));(pg.click('#jsSkip'),pg.wait_for_timeout(500)) if pg.locator('#jsSkip').count() else None;pg.click('#nwGo');pg.wait_for_timeout(1200)
   for i in range(3):
     pg.wait_for_selector('#trIn',timeout=10000);pg.fill('#trIn','משהו');pg.click('#trChk');pg.wait_for_timeout(1500)
     if pg.locator('#trLater').count():pg.click('#trLater');pg.wait_for_timeout(400)

@@ -46,7 +46,7 @@ function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n
   /* the open learning round / question session, so another device goes on from the same place (newest wins) */
   o.ss={};for(const f of ['ws','aq','fp']){const x=(a.ss||{})[f],y=(b.ss||{})[f];const v=!x?y:!y?x:(y[1]||0)>(x[1]||0)?y:x;if(v)o.ss[f]=v}
   return o}
-function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const w=A[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete A[k];continue}if(!w.k)w.k=k;
+function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const w=A[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete A[k];continue}if(!w.k)w.k=k;/* a stored Gemini sentence with another meaning of the word (made before senseOk) is dropped – a new one is made (no t bump) */try{if(typeof senseOk==='function'&&DIX){if(w.trc&&w.trc.he&&w.trc.src==='ai'&&!senseOk(w,w.trc.he))delete w.trc;if(w.rv&&w.rv.he&&w.rv.src==='ai'&&!senseOk(w,w.rv.he))delete w.rv}}catch(e){}
   /* Hebrew sentences blanked straight from a book translation (Nov 16 version) could blank the wrong word – dropped, made again */
   if(w.rvh&&!w.rvh.g&&w.rvh.src!=='ai')delete w.rvh;if(typeof w.st!=='number')w.st=0;
   /* a card's word (c:<id>) learns that card's single meaning – older entries could hold all the meanings joined */
@@ -322,7 +322,8 @@ JSON: {"method_tip":"","ideas":[{"sound":"the sound-alike in Hebrew letters and 
 function promptTrSent(w,old,lv){return `Write ONE English sentence for a Hebrew-speaking learner preparing for the Amirnet / psychometric English exam. It must use the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew).
 ${lv===3?'Level: HARD – like a sentence in the exam itself: academic register, 18–30 words, two clauses joined by a connector (although, whereas, however, because, despite…), CEFR B2–C1.':lv===2?'Level: MEDIUM – CEFR B1, 10–16 words, a natural sentence like in a simple article, may have one connector.':'Level: EASY – every other word very common and simple (CEFR A1–A2, 5–12 words), so the learner understands everything except "'+w.e+'". Everyday situation, concrete, natural.'}
 It must be COMPLETELY different from these sentences – another situation, other people, another place, other words (not a variation of them): ${JSON.stringify(old||[])}.
-JSON: {"en":"the sentence","he":"a natural, grammatically correct Hebrew translation of the whole sentence – correct verb forms (e.g. command: השווי / תשווי, never a made-up form like תשוות), correct prepositions (compare X with Y = להשוות את X ל-Y), as an Israeli would say it; read it again and fix any mistake before answering"}
+Before answering, check the word really means "${w.h}" in your sentence (not another meaning of "${w.e}").
+JSON: {"w_he":"the Hebrew word(s) in your translation that translate \"${w.e}\"","en":"the sentence","he":"a natural, grammatically correct Hebrew translation of the whole sentence – correct verb forms (e.g. command: השווי / תשווי, never a made-up form like תשוות), correct prepositions (compare X with Y = להשוות את X ל-Y), as an Israeli would say it; read it again and fix any mistake before answering"}
 ${AIHE}`}
 function promptTr(w,en,he,mine){return `A Hebrew-speaking learner translated an English sentence into Hebrew, to practise the word "${w.e}" (meaning here: ${w.h}).
 English: «${en}»
@@ -371,7 +372,7 @@ ${AIHE}`}
 .am-in:focus{border-color:var(--accent);outline:none}.am-in.en{font-family:var(--en);direction:ltr;text-align:left}
 textarea.am-in{resize:vertical;min-height:70px}
 .am-opts{display:flex;flex-direction:column;gap:10px}
-.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-fill{color:var(--ok);text-decoration:underline;text-underline-offset:3px}.am-qnav{display:flex;flex-direction:column;gap:6px}.am-qnums{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;direction:ltr}.am-qnums button{min-width:30px;height:30px;padding:0 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:.78rem;color:var(--muted)}.am-qnums button.on{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}.am-qnums button.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}.am-qnums button.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 50%,transparent)}.am-ohint{margin:0;font-size:.8rem;text-align:center}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-popss{display:block;margin:4px 0 2px;font-size:.85rem}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
+.am-osay{margin-inline-start:auto;flex:none;display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--fill);color:var(--accent);font-style:normal;cursor:pointer}.am-osay svg{width:16px;height:16px}.am-fill{color:var(--ok);text-decoration:none;text-underline-offset:3px}.am-qnav{display:flex;flex-direction:column;gap:6px}.am-qnums{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;direction:ltr}.am-qnums button{min-width:30px;height:30px;padding:0 6px;border-radius:999px;border:1px solid var(--line);background:var(--surface);font:inherit;font-size:.78rem;color:var(--muted)}.am-qnums button.on{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}.am-qnums button.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 50%,transparent)}.am-qnums button.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 50%,transparent)}.am-ohint{margin:0;font-size:.8rem;text-align:center}.am-srcl{margin:6px 0 0;font-size:.78rem;color:var(--muted);text-align:center}.am-popss{display:block;margin:4px 0 2px;font-size:.85rem}.am-pophs{margin:2px 0;padding-inline-start:20px}.am-pophs li{margin:1px 0}.am-popsent{font-family:var(--en);text-align:left;font-size:.92rem;line-height:1.5;margin:4px 0 6px;color:var(--ink)}.am-popsent .spk{vertical-align:middle;margin-right:6px}.am-opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;direction:ltr;border:2px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;font-family:var(--en);font-size:1.06rem;line-height:1.45;cursor:pointer;color:var(--ink)}
 .am-opt .k{flex:none;font-weight:700;color:var(--muted)}
 .am-opt.sel{border-color:var(--accent);background:var(--accent-soft)}
 .am-opt.right{border-color:var(--ok);background:var(--ok-soft);border-width:3px}
@@ -1131,6 +1132,10 @@ function jnSet(x,q,theme){q.forEach(w=>{if(w.fresh)wAdd(w.e,w.h,w.c,w.src,w.k)})
 function wPos(e,h){e=String(e).toLowerCase();h=String(h||'').trim();if(/\s/.test(e))return 'phrase';if(STOP.has(e))return 'func';
   if(/^ל[א-ת]{2,}/.test(h)&&!/^(לא|לפי|למרות|לכן|לעומת|ליד|לפני|לאחר)\b/.test(h))return 'verb';if(/^(באופן|בצורה|ב[א-ת]+ות)\b/.test(h)||/ly$/.test(e))return 'adv';
   if(/(ous|ful|ive|able|ible|less|ic|al|ant|ent|ary|ish)$/.test(e))return 'adj';return 'noun'}
+/* does a Hebrew translation use the word in THIS card's meaning? (her screenshot: system = שיטה, but the sentence "heating system" = מערכת)
+   rejected when the target Hebrew (the marked word, else the whole translation) has a word of another meaning of the word and none of this one */
+function senseOk(w,he,whe){const T=String(whe||he||'');if(!T)return true;const st=t=>t.length>=4?t.slice(0,-1):t,has=t=>T.includes(st(t));
+  const mine=[...heToks(w.h)];if(mine.some(has))return true;const oth=wOtherMeanings(w).flatMap(m=>[...heToks(m)]).filter(t=>!mine.includes(t));return !oth.some(has)}
 const heToks=h=>new Set(String(h||'').replace(/\(.*?\)/g,' ').split(/[^א-ת]+/).map(t=>t.replace(/^[והבלמש](?=[א-ת]{3})/,'')).filter(t=>t.length>=2));
 /* the day's words as one group: the first word in line, then the words most like it (same part of speech, shared meaning words), earlier in line first */
 const uniqE=c=>{const s=new Set();return c.filter(w=>{const e=String(w.e).toLowerCase();if(s.has(e))return false;s.add(e);return true})};
@@ -1172,6 +1177,15 @@ function wR1Wait(w){w.r1w=1;w.due=wNextMorning();w.t=amNow();wR1Release()}
 function wR1Release(){if(!AMS||!AMS.w||wCarry().length)return;let ch=0;const t=amNow();/* no w.t bump: a device with an old copy (still waiting) must not win the sync over reviews done elsewhere */Object.values(AMS.w).forEach(w=>{if(w&&w.r1w){delete w.r1w;if(w.st>=1&&w.st<WMAST&&w.due>t)w.due=t;ch=1}});if(ch)amSave()}
 const wLearning=w=>!!w&&w.lr!=null&&w.lr>=1&&w.lr<5&&(w.lr>1||w.st>=1);
 const jnKey=x=>'J'+String(x.id).replace(/[^0-9a-z]/gi,'');
+/* step 0 before learning (her request): the day's group goes through the dictionary's own quiz first; ✓ ידעתי leaves the learning, only the words she didn't know are learned */
+const jsKey=x=>'JS'+String(x.id).replace(/[^0-9a-z]/gi,'');
+const jsFresh=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.st===0&&c&&!isY(c)});
+const jsNeed=x=>!x.sorted&&jsFresh(x).length>0;
+function jsStart(x){const key=jsKey(x),m=S.mode;S.mode='read';try{if(SESS[key]&&SESS[key].kind==='quiz')resumeQuiz(key);else{const L=jsFresh(x).map(jnCard).filter(Boolean);if(!L.length){x.sorted=amNow();amSave();return draw()}startQuiz(shuffle(L),'מיון המילים של היום','amnw',key)}}finally{S.mode=m}}
+function jsSorted(x){x.sorted=amNow();jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id)}});const P=AMS.jp[String(x.id).split('|')[0]];if(P)P.t=amNow();amSave()}
+/* called by the dictionary quiz when it ends: back to the new-words page, ready to learn the words she didn't know */
+function jsQuizDone(){if(!Q||!/^JS/.test(String(Q.key||'')))return false;let x=null;Object.values(AMS.jp||{}).forEach(P=>(P.b||[]).forEach(b=>{if(b.k==='new'&&jsKey(b)===Q.key)x=b}));
+  if(!x)return false;jsSorted(x);S.jb=x.id;const n=jsFresh(x).length;go({screen:'amnw'});amToast(n?`✓ המיון הסתיים – ${n} מילים ללמידה`:'✓ ידעת את כל המילים בקבוצה');return true}
 /* called by the dictionary quiz after each word of a 'J' session: a word that isn't ✓ gets its step 2 at once (write it, then choose it in a sentence), then back to the quiz */
 function jnAfterWord(card,back){try{if(!Q||!/^J/.test(String(Q.key||'').replace(/^[NUY](?=J)/,''))||!card)return false;
   const x=jrBlock(S.jb);if(!x||x.k!=='new'||jnKey(x)!==String(Q.key).replace(/^[NUY](?=J)/,''))return false;
@@ -1181,7 +1195,7 @@ function jnAfterWord(card,back){try{if(!Q||!/^J/.test(String(Q.key||'').replace(
   WS={mode:'new',one:1,list:[k],i:0,step:'first',skipMeet:1,hint:0,from:back,ok:0,bad:0,jr:x.id};amSave();wSave();go({screen:'amwl'});return true}catch(e){return false}}
 function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.k!=='new'){go({screen:'am'});return}
   const ws=jnCards(x),key=jnKey(x),name='מילים חדשות להיום',left=jnPend(x),cnt=wRoundCounts(jnBatch(x)),known=ws.filter(isY).length,open=WS&&WS.jr===x.id&&WS.perWord&&WS.i<WS.list.length;
-  const cur=open?AMS.w[WS.list[WS.i]]:null;
+  const cur=open?AMS.w[WS.list[WS.i]]:null,sortNow=!open&&jsNeed(x),sq=SESS[jsKey(x)];
   app.innerHTML=`<div class="screen jh">
     <div class="nav"><button class="back" id="bk">המסע</button><span class="nav-ic">${HOME}<button class="home-btn jh-q" id="jhHelp" aria-label="הסבר">?</button></span></div>
     <section class="jh-hero">
@@ -1189,7 +1203,7 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
       <h2>🌱 ${ws.length} מילים חדשות</h2>
       <p class="jh-d">${known?`יודעת ${known} מתוך ${ws.length}`:'מילים שסימנת ✗ או שעוד לא סימנת'}</p>
       <div class="jh-track">${wTrack(null,{counts:cnt,cur:open?WS.round:(cnt.findIndex(n=>n)+1||1)})}</div>
-      ${left.length?`<button class="btn jh-go" id="nwGo">${open?`▶ להמשיך · סבב ${WS.round||1} · מילה ${WS.i+1}/${WS.list.length}`:`▶ ללמוד את המילים · ${left.length}`}</button>`:`<p class="jh-d">✓ סיימת את הסבבים של כל המילים בקבוצה</p><button class="btn jh-go" id="nwMore">➕ ללמוד קבוצת מילים נוספת</button><button class="link" id="nwDone" style="align-self:center">סיום ← חזרה למסע</button>`}
+      ${sortNow?`<p class="jh-d"><b>שלב ראשון · מיון במילון:</b> סמני ✓ ידעתי / ✗ לא ידעתי לכל מילה. ללמידה ייכנסו רק המילים שלא ידעת.</p><button class="btn jh-go" id="jsGo">${sq&&sq.kind==='quiz'?`▶ להמשיך במיון · מילה ${Math.min((sq.i||0)+1,(sq.ids||[]).length||1)}/${(sq.ids||[]).length||jsFresh(x).length}`:`▶ למיין ${jsFresh(x).length} מילים במילון`}</button><button class="link" id="jsSkip" style="align-self:center">לדלג על המיון וללמוד את כולן</button>`:left.length?`<button class="btn jh-go" id="nwGo">${open?`▶ להמשיך · סבב ${WS.round||1} · מילה ${WS.i+1}/${WS.list.length}`:`▶ ללמוד את המילים · ${left.length}`}</button>`:`<p class="jh-d">✓ סיימת את הסבבים של כל המילים בקבוצה</p><button class="btn jh-go" id="nwMore">➕ ללמוד קבוצת מילים נוספת</button><button class="link" id="nwDone" style="align-self:center">סיום ← חזרה למסע</button>`}
     </section>
     <div class="jh-foot">
       <button id="carTog" class="${CARON?'on':''}"><span class="i">🚗</span>${CARON?'מצב רכב פועל':'מצב רכב'}</button>
@@ -1198,10 +1212,12 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
     </div>
     ${cardSess(key)[1]?'<button class="link dh-all" id="fcNew">כרטיסיות מההתחלה</button>':''}
   </div>`;
-  $('jhHelp').onclick=()=>amSheet('מילים חדשות להיום',`<p>${ws.length} מילים מהמילון – מילים שסימנת ✗ או שעוד לא סימנת${x.theme?`, בקבוצה אחת: <b>${esc(x.theme)}</b>`:''}.</p>`+WLRN.map((r,i)=>`<h4>סבב ${i+1} · ${r[0]}</h4><p>${r[1]}</p>`).join('')+'<p>המספר מתחת לכל סבב = כמה מילים מחכות בו. לחיצה על סבב = ללמוד עכשיו את המילים שמחכות בו.</p><h4>🚗 מצב רכב</h4><p>מקריא את המילים של היום ברצף – להאזנה בנסיעה.</p>');
+  $('jhHelp').onclick=()=>amSheet('מילים חדשות להיום',`<p>${ws.length} מילים מהמילון – מילים שסימנת ✗ או שעוד לא סימנת${x.theme?`, בקבוצה אחת: <b>${esc(x.theme)}</b>`:''}.</p>`+'<h4>מיון במילון (לפני הסבבים)</h4><p>קודם עוברים על המילים בבוחן של המילון ומסמנים ✓ / ✗. ✓ = כבר יודעת – המילה יוצאת מהלמידה ומסומנת ✓ במילון. ללמידה נכנסות רק המילים שלא ידעת.</p>'+WLRN.map((r,i)=>`<h4>סבב ${i+1} · ${r[0]}</h4><p>${r[1]}</p>`).join('')+'<p>המספר מתחת לכל סבב = כמה מילים מחכות בו. לחיצה על סבב = ללמוד עכשיו את המילים שמחכות בו.</p><h4>🚗 מצב רכב</h4><p>מקריא את המילים של היום ברצף – להאזנה בנסיעה.</p>');
   $('bk').onclick=()=>go({screen:'am'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'jn'});
   bindSettings();bindQuizPanel(key,ws,name,'amnw');bindCards(key,ws);
+  const jg=$('jsGo');if(jg)jg.onclick=()=>jsStart(x);
+  const jk=$('jsSkip');if(jk)jk.onclick=()=>{jsSorted(x);draw()};
   const g=$('nwGo');if(g)g.onclick=()=>{if(open)return go({screen:'amwl'});if(!jnPend(x).length)return draw();
     /* words she marked ✓ in the dictionary leave the learning (counted for the step) */
     jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id)}});
@@ -1563,7 +1579,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
     else h+=`${!exam&&!st.done?'<p class="hint am-ohint xhelp">💡 לא מכירה מילה? לחיצה עליה – לסמן שלא ידעת אותה (את הפירוש תראי אחרי שתעני). לבחירת תשובה – לחיצה על העיגול.</p>':''}<div class="ax-opts">${q.o.map((o,j)=>{const k=j+1,cl=st.done?(k===q.a?' right':k===st.sel?' wrong':''):(k===st.sel?' sel':'')+(st.elim[k]?' elim':'');
       const he=st.done&&!exam&&q.oh&&q.oh[j]?`<span class="he">${esc(q.oh[j])}</span>`:'';
       const elim=!st.done&&!exam&&['rs','rc','lq'].includes(q.t)?`<div class="am-elim">${(q.t==='rs'?[['add','מידע נוסף'],['rel','קשר אחר'],['ext','הקצנה'],['contra','סותר'],['miss','חסר']]:[['out',q.t==='lq'?'לא נאמר':'לא מהקטע'],['wrong',q.t==='lq'?'סותר את ההקלטה':'סותר את הקטע'],['nq','לא עונה לשאלה']]).map(([c,l])=>`<button data-el="${k}" data-r="${c}" aria-pressed="${st.elim[k]===c}">✗ ${l}</button>`).join('')}</div>`:'';
-      TAPDB=!exam;const oh=tapEn(o).replace(/data-tw=/g,'data-ow=');TAPDB=false;
+      const oh=tapEn(o).replace(/data-tw=/g,'data-ow=');
       return `<div class="ax-orow"><button class="am-opt ax-opt${cl}" data-k="${k}" ${st.done?'aria-disabled="true"':''} dir="ltr"><span class="ax-rad"><i></i></span><span class="ax-ot"><span>${oh}</span>${he}</span></button><span class="ax-osp">${SAYB(o,'sm')}</span>${elim}</div>`}).join('')}</div>`;
     if(!st.done)h+=`<div class="am-cta"><button class="btn" id="amChk" ${st.sel?'':'disabled'}>${exam?(AQ.i+1<AQ.ids.length?'לשאלה הבאה':'סיום הסימולציה'):'בדיקה'}</button></div>${exam?`<div class="am-nav">${AQ.i?'<button class="btn secondary" id="amPrev">→ הקודמת</button>':''}<button class="btn secondary" id="amSkip">דילוג ←</button></div>`:''}`;
     else h+=amFeedback(id,st);}
@@ -2086,7 +2102,7 @@ function amFreeRun(){if(!AMD)return amLoading();if(!FP||!FP.ids||!FP.ids.length|
   const tw=$('trW');if(tw)tw.onclick=()=>{if(!s.done)return amToast('את הפירוש של המילה תראי אחרי שתכתבי את התרגום – אפשר ללחוץ על שאר המילים');s.open=1;fpSave();amRedrawKeep()};
   const inp=$('fpIn')||$('fpAns');if(inp){inp.oninput=()=>{s.typed=inp.value;fpSave()};if(!s.typed)setTimeout(()=>{try{inp.focus({preventScroll:true})}catch(e){}},50);if(inp.id==='fpAns')inp.onkeydown=e=>{if(e.key==='Enter')$('fpChk').click()}}
   const al=$('fpAlt');if(al)al.onclick=()=>{if(s.altP)return;s.altP=1;amRedrawKeep();const used=[c.s].concat(s.alt?[s.alt.en]:[]);
-    aiRun('','',null,{prompt:promptTrSent(w,used),temp:.9}).then(r=>{s.altP=0;const j=r&&r.j;if(j&&j.en&&j.he&&blankOut(String(j.en),c.e)){s.alt={en:String(j.en).trim(),he:String(j.he).trim()}}else amToast('לא הצלחתי ליצור משפט אחר עכשיו');fpSave();if(S.screen==='amfpl')amRedrawKeep()})};
+    aiRun('','',null,{prompt:promptTrSent(w,used),temp:.9}).then(r=>{s.altP=0;const j=r&&r.j;if(j&&j.en&&j.he&&blankOut(String(j.en),c.e)&&senseOk(w,String(j.he),j.w_he)){s.alt={en:String(j.en).trim(),he:String(j.he).trim()}}else amToast('לא הצלחתי ליצור משפט אחר עכשיו');fpSave();if(S.screen==='amfpl')amRedrawKeep()})};
   const ck=$('fpChk');if(ck)ck.onclick=()=>{const v=(s.typed||'').trim();if(!v){inp&&inp.focus();return}
     if(st==='he2en'){const a=v.toLowerCase().replace(/[^a-z' \-]/g,''),e=c.e.toLowerCase();s.ok=a===e||lev(a,e)<=(e.length>=6?1:0);s.done=1;fpSave();return draw()}
     const t=s.alt||{en:c.s,he:x.tr||''},idx=FP.i;s.done=1;s.pend=GKEY()?1:0;if(!GKEY())s.err='אין בדיקה חכמה – השווי לתרגום הנכון.';fpSave();draw();window.scrollTo(0,0);if(!GKEY())return;
@@ -2110,6 +2126,7 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
     <div class="am-title"><div><h2>🛤 המסלול של מילה</h2><p>מה קורה למילה מהרגע שמתחילים ללמוד אותה ועד שהיא נלמדה.</p></div></div>
     <div class="am-box"><h4>בקצרה</h4><ol class="am-tl">${T.map(([d,t,x])=>`<li><span class="d">${d}</span><b>${t}</b><small>${x}</small></li>`).join('')}</ol></div>
     <div class="am-box"><h4>1 · היום הראשון – למידה</h4>
+      <p><b>לפני הלמידה – מיון במילון:</b> קודם עוברים על המילים של הקבוצה בבוחן של המילון ומסמנים ✓ ידעתי / ✗ לא ידעתי. ללמידה נכנסות רק המילים שלא ידעת; מה שסימנת ✓ יוצא מהלמידה.</p>
       <p>4 סבבים (זו עוד לא חזרה). כל סבב נעשה לכל המילים של היום, ורק אחריו מתחיל הבא:</p>
       <ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – כשכל המילים של היום יסיימו את הסבבים (אם לא – מחר בבוקר), ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה נשארת באותו סבב וחוזרת בסוף הסבב עם משפט או שאלה אחרים, עד שעונים נכון; עוברים לסבב הבא רק כשכל המילים של הסבב נכונות.</p>
       <p class="hint" style="margin:0">מילה עם כמה פירושים – כל פירוש הוא כרטיס נפרד ועובר מסלול משלו.</p></div>
@@ -2120,13 +2137,12 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
       <ul><li><b>נכון</b> – המילה עוברת לחזרה הבאה, שרחוקה יותר בזמן.</li>
       <li><b>רמז</b> – יש רק בחזרה 3 (${WREV[3][1]}): נכון עם רמז = אותה חזרה שוב, באותו מרווח.</li>
       <li><b>טעות</b> – יורדת חזרה אחת אחורה (לא לפני חזרה 1), מופיעה שוב מיד בסוף אותו סבב לתרגול, והחזרה הבאה שלה מחר.</li></ul>
-      <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 2 – כלומר שוב "${WREV[2][1]}", מחר (ובסוף הסבב עוד פעם לתרגול).</p></div>
+      <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 3 – כלומר שוב "${WREV[3][1]}", מחר (ובסוף הסבב עוד פעם לתרגול).</p></div>
     <div class="am-box"><h4>4 · מתי המילים מופיעות</h4>
       <ul><li><b>במסע היומי:</b> "חזרה על מילים" בתחילת היום (כל מה שהגיע זמנו) ו"חזרה על המילים של היום" בסוף (כשכל המילים של היום סיימו את הסבבים).</li>
       <li><b>במילים שלי</b> (בעמוד ההתקדמות): כל מילה עם החזרה שהיא נמצאת בה, מתי החזרה הבאה, והיומן של כל תרגול.</li></ul></div>
     <div class="am-box"><h4>5 · מה לא משנה את המסלול</h4>
-      <ul><li><b>תרגול חופשי</b> – תרגול אישי בלבד.</li>
-      <li><b>בחנים, כרטיסיות ומצב רכב במילון</b> – משנים רק את סימוני ✓ / ✗ במילון.</li>
+      <ul><li><b>בחנים, כרטיסיות ומצב רכב במילון</b> – משנים רק את סימוני ✓ / ✗ במילון.</li>
       <li>מילה שעוד לא התחלת ללמוד וסימנת ✓ במילון – כבר לא תיכנס ללמידה. מילה שכבר במסלול ממשיכה בו.</li></ul></div>
   </div>`;
   amBindNav()}
@@ -2313,7 +2329,7 @@ function wHeRev(w){const s=wHeSent(w),c=wCard(w);if(s&&!(w.used||[]).includes('h
   const pIn=P?`Here is an English sentence: "${P.t}"\nDoes the word "${w.e}" in it have exactly this meaning: "${w.h}" (Hebrew)? Then translate the sentence into natural Hebrew. ${mark}\nJSON: {"fits":true or false,"he":"the Hebrew translation with [[...]]"}\n${AIHE}`:null;
   const seen=wSeenEn(w).slice(-8),pNew=`Write ONE short, easy English sentence (CEFR A2–B1, 6–14 words, everyday situation) that uses the English word "${w.e}" in exactly this meaning: "${w.h}" (Hebrew), and its natural Hebrew translation. ${mark}${seen.length?`\nIt must be COMPLETELY different from these sentences – another situation, other people, another place, other words (not a variation of them): ${JSON.stringify(seen)}`:''}\nJSON: {"en":"the English sentence","he":"the Hebrew translation with [[...]]"}\n${AIHE}`;
   const ask=pr=>Promise.race([aiRun('','',null,{prompt:pr,temp:.6}),new Promise(r=>setTimeout(()=>r(null),25000))]);
-  const take=(he,en,src,lab)=>{const m=/\[\[([^\]]+)\]\]/.exec(he||'');if(!m||!en||!wHas(en,w)||wTooSim(w,en)||/\[\[/.test(he.replace(m[0],'')))return false;const L=wLive(w);L.rvh={he:he.replace(m[0],'_____').trim(),en,src,lab:lab||'',g:1};L.t=amNow();amSave();return true};
+  const take=(he,en,src,lab)=>{const m=/\[\[([^\]]+)\]\]/.exec(he||'');if(!m||!en||!wHas(en,w)||wTooSim(w,en)||!senseOk(w,he,m[1])||/\[\[/.test(he.replace(m[0],'')))return false;const L=wLive(w);L.rvh={he:he.replace(m[0],'_____').trim(),en,src,lab:lab||'',g:1};L.t=amNow();amSave();return true};
   const done=()=>{delete HEP[k];if(S.screen==='amwl')amRedrawKeep()};
   (async()=>{try{
     if(pIn){const r=await ask(pIn),j=r&&r.j;if(j&&j.fits!==false&&take(String(j.he||''),P.t,P.src,P.lab))return done();const L=wLive(w);L.heTried=(L.heTried||[]).concat(P.t).slice(-12)}
@@ -2353,7 +2369,7 @@ function wRevSent(w){w=wLive(w);const sm=wSM(w)||{tag:w.st,lv:WLV[w.st]||2},tg=s
   const any=()=>{const a=P.filter(p=>Math.abs(p.lvl-lv)<=1);if(a.length)return set(rnd(shuffle(a.slice())));if(P.length)return set(P[0]);if(c&&c.s&&wHas(c.s,w))return set({t:c.s,src:'dict',he:(EXTRA[c.xid||c.id]||{}).tr||''});RVERR[k]='לא נמצא משפט למילה הזו.';return null};
   if(!GKEY())return any();
   RVP[k]=1;aiRun('','',null,{prompt:promptTrSent(w,[...new Set([...used,...wSeenEn(w)])].slice(-8),lv),temp:.9}).then(r=>{delete RVP[k];const j=r&&r.j,en=j&&String(j.en||'').trim();
-    if(en&&j.he&&wHas(en,w)&&!used.has(en)&&!wTooSim(w,en))set({t:en,he:String(j.he).trim(),src:'ai'});else any();if(S.screen==='amwl')amRedrawKeep()});return null}
+    if(en&&j.he&&wHas(en,w)&&!used.has(en)&&!wTooSim(w,en)&&senseOk(w,String(j.he),j.w_he))set({t:en,he:String(j.he).trim(),src:'ai'});else any();if(S.screen==='amwl')amRedrawKeep()});return null}
 /* the sentence with the missing word put back and marked */
 function mcFilled(full,blank){const i=blank.search(/_{4,}/);if(i<0)return tapEn(full);const m=/_{4,}/.exec(blank),tail=blank.slice(i+m[0].length),j=full.length-tail.length;
   return tapEn(full.slice(0,i))+`<b class="am-fill">${esc(full.slice(i,j))}</b>`+tapEn(full.slice(j))}
@@ -2391,7 +2407,7 @@ function trSent(w){if(wRevNow(w))return wRevSent(w);if(w.trc&&w.trc.en)return w.
     if(!he)fillHe(en)};
   if(!GKEY()){other();return w.trc||null}
   TRP[k]=1;aiRun('','',null,{prompt:promptTrSent(w,used.slice(-8)),temp:.9}).then(r=>{delete TRP[k];const j=r&&r.j;
-    if(j&&j.en&&j.he&&blankOut(String(j.en),w.e)&&!used.includes(String(j.en).trim())){w.trc={en:String(j.en).trim(),he:String(j.he).trim(),src:'ai'};amSave()}else other();
+    if(j&&j.en&&j.he&&blankOut(String(j.en),w.e)&&!used.includes(String(j.en).trim())&&senseOk(w,String(j.he),j.w_he)){w.trc={en:String(j.en).trim(),he:String(j.he).trim(),src:'ai'};amSave()}else other();
     if(S.screen==='amwl')amRedrawKeep()});return null}
 /* the sentence with the new word as a button (tap = its meaning), other words tappable as everywhere */
 /* the meaning written in her translation counts even if the smart check said otherwise (her report: "even" = זוגי, she wrote זוגי and got ✗) */
@@ -2417,7 +2433,7 @@ function wTrPage(w,h){if(WS.res&&WS.res.pend&&!TRLIVE[wK(w)]&&!WS.res.ai&&!WS.re
   else setTimeout(()=>{for(let j=1;j<=3;j++){const nx=AMS.w[WS.list[WS.i+j]];if(nx&&['tr','mc'].includes(wTask(nx)))try{wRevNow(nx)?wRevSent(nx):trSent(nx)}catch(e){}}},300);
   if(!t){h+=`<div class="am-card"><p class="hint center" style="margin:0">${TRERR[k]||RVERR[k]?esc(TRERR[k]||RVERR[k]):'⏳ מכינה משפט עם המילה…'}</p></div>${TRERR[k]||RVERR[k]?'<div class="am-cta"><button class="btn" id="trSkip">המשך ←</button></div>':''}`;return h+'</div>'}
   h+=`<div class="am-card"><p class="hint center" style="margin:0">תרגמי את המשפט לעברית. ${WS.mode==='new'?'המילה החדשה':'המילה'} מודגשת – את הפירוש שלה תראי אחרי שתכתבי; את שאר המילים אפשר ללחוץ ולתרגם.</p>
-    <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,WS.nwOpen||res)}</div>${srcLab(t)}</div>`;
+    <div class="ctx am-trs" dir="ltr">${SAYB(t.en,'sm inl')}${trHtml(t.en,w,WS.nwOpen||res)}</div>${srcLab(t)}${othersBox(w)}</div>`;
   if(!res){h+=`<textarea class="am-in" id="trIn" rows="2" placeholder="התרגום שלי לעברית" dir="rtl">${esc(WS.draft||'')}</textarea>
     ${WS.busy?'<p class="hint center">⏳ בודקת את התרגום…</p>':''}<div class="am-cta"><button class="btn" id="trChk" ${WS.busy?'disabled':''}>בדיקה</button></div>
     ${WS.mode==='new'?'<button class="link" id="wKnow" style="align-self:center">את המילה הזו אני כבר יודעת ✓ – לדלג</button>':''}`;return h+'</div>'}
@@ -2578,7 +2594,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
     const mcS=task==='mc'?blankOut(mcF,w.e):'',heS=task==='hecl'&&heR?heR.he:'';
     if(task==='mc'||task==='hecl'){
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${task==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-        <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?heGapHtml(heS,w.e,!!res):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):task==='hecl'?srcLab(heR):''}${task==='mc'&&res?wTrHtml(mcF,x,ex,w):''}</div>`;
+        <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?heGapHtml(heS,w.e,!!res):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):task==='hecl'?srcLab(heR):''}${task==='mc'&&res?wTrHtml(mcF,x,ex,w):''}${res?othersBox(w):''}</div>`;
       const O=res&&res.opts&&res.opts.length?res.opts:wOpts(w);
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
@@ -2588,7 +2604,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
       const so=WS.e2hS===wK(w)+'|'+WS.i;
       const sent=!ctx?'':so?`<div class="sentence"><button class="spk sm" data-amsay="${esc(ctx)}" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(ctx,w.e)}</span>${res&&!res.pend?wTrHtml(ctx,x,ex,w):''}</div></div>`:`<button class="link" id="e2hSent" style="align-self:center">הצגת משפט לדוגמה</button>`;
       const om=wOtherMeanings(w);
-      h+=`<div class="am-card e2h"><div class="word"><span class="w">${esc(w.e)}</span><button class="spk" data-amsay="${esc(w.e)}" aria-label="השמעת המילה">${SPK}</button></div>${sent}${om.length?`<div class="others">פירושים אחרים של המילה:${numList(om)}${res?'':'מה הפירוש הנוסף?'}</div>`:''}</div>`;}
+      h+=`<div class="am-card e2h"><div class="word"><span class="w">${esc(w.e)}</span><button class="spk" data-amsay="${esc(w.e)}" aria-label="השמעת המילה">${SPK}</button></div>${sent}${othersBox(w,!res)}</div>`;}
     else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${s?SAYB(s,'sm inl')+tapEn(s):'_____'}</div>${s&&res?wTrHtml(wCtx(w),x,ex,w):''}</div>`}
     else h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
     /* hint ladder */
@@ -2735,6 +2751,8 @@ function e2hDone(w,res){const c=wCard(w);
     <p class="fb ${res.ok?'ok':'bad'}" role="status">${res.ok?'נכון!':'לא נכון'}</p>
     ${res.fb?`<p class="hint center" style="margin:0">${bdiEsc(res.fb)}</p>`:''}
     ${c?xfull(c):''}`}
+/* the word's other meanings, as in the dictionary quiz (her request: in every step, so she knows which meaning is meant) */
+function othersBox(w,ask){const om=wOtherMeanings(w);return om.length?`<div class="others">פירושים אחרים של המילה:${numList(om)}${ask?'מה הפירוש הנוסף?':''}</div>`:''}
 function wOtherMeanings(w){const c=wCard(w);const L=(DIX[String(w.e).toLowerCase()]||[]).filter(x=>!c||x.id!==c.id).map(x=>x.h[0]);if(c&&c.others)L.push(...c.others);return [...new Set(L)].filter(m=>m&&m!==w.h)}
 function promptE2H(w,v,oth){return `A Hebrew-speaking learner is asked for the Hebrew meaning of the English word "${w.e}". The meaning being practised is: "${w.h}".${oth.length?` Other meanings of this word (practised separately): ${oth.map(m=>'"'+m+'"').join(', ')}.`:''}
 She wrote: "${v}".
@@ -2911,7 +2929,7 @@ const AMHELP={
  daily:['🗺','המסע של היום','אמירנט',`<p>כל יום יש תוכנית קבועה, והמערכת מעבירה אותך בה צעד אחרי צעד – בלי לבחור לבד. <b>▶</b> פותח את הצעד הבא, עם הסבר למה הוא עכשיו ומה עושים בו.</p>
 <p><b>היעד:</b> שני ורביעי – 3 שעות; שאר הימים – שעה וחצי. מותר לעשות הפסקות; נספר רק זמן שבו את פעילה באפליקציה. כל יום נשמר ב📊 התקדמות והיסטוריה – הושלם ✓ או לא ✗.</p>
 <p><b>הסדר ולמה:</b></p><ol><li>🔁 <b>חזרה על מילים</b> – קודם מה שמתחיל להישכח, כשהראש רענן.</li><li>🌱 <b>מילים חדשות</b> – מעט, לעומק, עם אסוציאציה.</li><li>✏️ <b>השלמת משפטים</b>, 🔁 <b>ניסוח מחדש</b>, 📖 <b>הבנת הנקרא</b> – צעד לכל סוג: שאלות שעוד לא פתרת, מיחידות שונות, קודם הקלות; טעות נחקרת מיד.</li><li>🧭 <b>שיטה ולקחים</b> – סיכום קצר.</li><li>⏱ <b>חזרה על המילים של היום</b> – בסוף: כל מילה שלמדת היום חוזרת ברגע שכל המילים של היום סיימו את הסבבים (אם לא סיימת – מחר בבוקר). אם אין מילים שמחכות (כבר עשית את החזרה ולא למדת מילים חדשות מאז) – הצעד כבוי, ונדלק מעצמו כשמתווספות מילים.</li></ol>
-<p>ביום הארוך יש יותר שאלות מכל סוג (אין סימולציה במסע). אם סיימת את התוכנית ועוד לא הגעת ליעד – נוסף עוד תרגול שאלות. "תרגול חופשי" נשאר למטה, אבל הוא לא חלק מהמסע.</p>`],
+<p>ביום הארוך יש יותר שאלות מכל סוג (אין סימולציה במסע). אם סיימת את התוכנית ועוד לא הגעת ליעד – נוסף עוד תרגול שאלות. "תרגול חופשי" (שאלות ותחיליות) נשאר למטה, אבל הוא לא חלק מהמסע.</p>`],
  questions:['✏️','תרגול שאלות','אמירנט',`<p>שלושה סוגים כמו במבחן: <b>השלמת משפטים</b>, <b>ניסוח מחדש</b>, <b>הבנת הנקרא</b> – 20 יחידות מהקורס + 4 פרקים מהספר "חזרות וניהול זמנים".</p>
   <p>ריבוע ירוק = יחידה שסיימת (המספר = כמה נכון). <b>⏱ סימולציה</b> – 22 שאלות ב־20 דקות, בלי עזרה, כמו במבחן; בסוף אפשר לפתוח כל שאלה ולעבור עליה את המסלול. <b>📝 הלקחים שלי</b> – כל מה ששמרת מחקירת טעויות.</p>`],
  flow:['🪜','המסלול של שאלה','אמירנט',`<ol><li><b>חושבים לפני התשובות</b> – בהשלמת משפטים מנחשים בעברית מה חסר; בניסוח מחדש מזהים מילות קישור; בהבנת הנקרא מופיע סוג השאלה והטכניקה.</li>

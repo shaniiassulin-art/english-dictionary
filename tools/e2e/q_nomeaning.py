@@ -6,7 +6,7 @@ with sync_playwright() as p:
   pg.goto('http://localhost:8765/');pg.wait_for_timeout(1500);pg.evaluate("amLoad()");pg.wait_for_timeout(2500)
   pg.evaluate("""(()=>{const id=Object.keys(AMD.q).find(i=>/^c/.test(i)&&AMD.q[i].t==='sc');amStart([id],'t','learn','am','sc')})()""");pg.wait_for_timeout(1200)
   if pg.locator('#amMf').count():pg.click('#amMf');pg.wait_for_timeout(500)
-  r1=pg.evaluate("(()=>{amPop('important','','',''); return [AMPOP.mode, !!document.getElementById('popUnk'), document.getElementById('popUnk').getBoundingClientRect().height, document.getElementById('amPop').innerText, document.querySelectorAll('.ax-ot .tw.db').length]})()")
+  r1=pg.evaluate("(()=>{amPop('important','','',''); return [AMPOP.mode, !!document.getElementById('popUnk'), document.getElementById('popUnk').getBoundingClientRect().height, document.getElementById('amPop').innerText, document.querySelectorAll('.ax-ot .tw.db').length+document.querySelectorAll('.ax-ot .tw').length*0]})()")
   pg.screenshot(path='/tmp/claude-0/-home-claude/57ff57e9-f98a-5dad-a91a-88f510546bae/scratchpad/qpop.png')
   pg.evaluate("document.getElementById('popX')&&document.getElementById('popX').click()");pg.wait_for_timeout(400)
   pg.locator('.ax-rad').first.click();pg.wait_for_timeout(300)
@@ -14,4 +14,4 @@ with sync_playwright() as p:
   pg.wait_for_timeout(800)
   print(pg.evaluate('[AQ.i,JSON.stringify(AQ.st)]'));r2=pg.evaluate("(()=>{amPop('important','','',''); return AMPOP.mode})()")
   r3=None
-  pg.wait_for_timeout(1500);bb=pg.evaluate("(()=>{const x=document.querySelector('.ax-ot .tw.db');if(!x)return null;x.scrollIntoView();const r=x.getBoundingClientRect();return [r.x+r.width/2,r.y+r.height/2]})()");print('bb',bb);pg.mouse.click(bb[0],bb[1]);pg.wait_for_timeout(500);r3=pg.evaluate('AMPOP&&AMPOP.mode');print(r1,r2,r3,e);assert r3=='';assert r1[0]=='lock' and 'רמז' not in r1[3] and r1[4]>0 and r1[1] and r1[2]>=50 and r2=='' and not e;print('OK')
+  pg.wait_for_timeout(1500);bb=pg.evaluate("(()=>{const x=document.querySelector('.ax-ot .tw');if(!x)return null;x.scrollIntoView();const r=x.getBoundingClientRect();return [r.x+r.width/2,r.y+r.height/2]})()");print('bb',bb);pg.mouse.click(bb[0],bb[1]);pg.wait_for_timeout(500);r3=pg.evaluate('AMPOP&&AMPOP.mode');print(r1,r2,r3,e);assert r3=='';assert r1[0]=='lock' and 'רמז' not in r1[3] and r1[4]==0 and r1[1] and r1[2]>=50 and r2=='' and not e;print('OK')

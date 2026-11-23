@@ -180,7 +180,7 @@ button,.item,.opt{touch-action:manipulation;-webkit-tap-highlight-color:transpar
 .link{border:0;background:none;color:var(--accent);font-weight:700;text-decoration:none;padding:10px 4px;cursor:pointer;min-height:44px;align-self:center}
 .sentence{display:flex;align-items:flex-start;gap:10px;background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-family:var(--en);font-size:1.08rem;line-height:1.45}
 .sentence{position:relative}.sentence>.spk{position:absolute;inset-inline-start:10px;top:50%;transform:translateY(-50%)}.sentence .scol{text-align:center;padding:0 40px}.sentence span{display:block;text-align:center}.sentence .trans{text-align:center}
-mark{background:none;color:var(--accent);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+mark{background:none;color:var(--accent);font-weight:700;text-decoration:none;text-underline-offset:3px}
 .spk.sm{width:38px;height:38px;flex:none}
 .spk.sm svg{width:17px;height:17px}
 .mode-tag{margin:0;text-align:center;color:var(--muted);font-size:.9rem;font-weight:600}
@@ -1440,7 +1440,7 @@ function qNext(){const n=Q.list.length,wPrev=Q.list[Q.i];if(typeof jwWordDone===
   Q.st=Q.st||{};Q.st[Q.i]=curState();
   /* on to the next word not marked yet; when none is left after this one, the quiz is done */
   let j=Q.i+1;while(j<n&&Q.marks[Q.list[j].id])j++;
-  if(j>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);if(typeof jwQuizDone==='function'&&jwQuizDone())return true;if(typeof jpQuizDone==='function'&&jpQuizDone())return true;if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'result'))return true;go({screen:'result'});return true}
+  if(j>=n){(SDEL[Q.key]=Date.now(),delete SESS[Q.key]);saveSess();S.active=null;stopVoice(true);if(typeof jwQuizDone==='function'&&jwQuizDone())return true;if(typeof jsQuizDone==='function'&&jsQuizDone())return true;if(typeof jpQuizDone==='function'&&jpQuizDone())return true;if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'result'))return true;go({screen:'result'});return true}
   enterWord(j);saveQ();
   /* today's new words (אמירנט): right after a word, its writing + sentence step, then back here to the next word */
   if(!V.on&&typeof jnAfterWord==='function'&&jnAfterWord(wPrev,'quiz'))return false;
