@@ -2596,7 +2596,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
       <button class="link" id="wGive" style="align-self:center">לא זוכרת – הראי לי</button>${EXB('<b>בדיקה</b> – בודק מה כתבת (טעות הקלדה קטנה נחשבת). <b>💡 רמז</b> – כל לחיצה נותנת רמז נוסף: האסוציאציה, האות הראשונה, המשפט שלך עם חור. רמז לא מקדם שלב. <b>לא זוכרת</b> – מראה את התשובה.')}`}
     else if(res){
       if(task==='hecl'){const c=wCard(w),full=(heR&&heR.en)||(c&&c.s);if(full)h+=`<div class="am-box"><p dir="ltr" style="margin:0;text-align:left;font-family:var(--en)">${SAYB(full,'sm inl')}${esc(full)}</p></div>`}
-      if(res.pend){h+=`<p class="am-fb">⏳ בודקת את התשובה…</p>`;/* a check cut off by a reload starts again */if(task==='en2he'&&!E2HLIVE[wK(w)])setTimeout(()=>e2hCheck(w,res.typed),0)}else
+      if(res.pend){h+=`<p class="am-fb">⏳ בודקת את התשובה…</p>`;/* a check cut off by a reload starts again */if(task==='en2he'&&!E2HLIVE[wK(w)])setTimeout(()=>e2hCheck(w,res.typed),0)}else if(task==='en2he'&&!res.self)h+=e2hDone(w,res);else
       h+=`<p class="am-fb ${res.ok?'ok':'bad'}">${res.ok?(res.near?'כמעט מושלם ✓':'נכון! ✓'):res.self?'':'עוד לא – הנה התשובה:'}</p>
         <div class="am-card">${task==='en2he'?`<p class="hint center" style="margin:0">הפירוש</p>`:`<div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div>`}<div class="m">${esc(w.h)}</div>${res.typed?`<p class="hint center" style="margin:0">כתבת: <bdi>${esc(res.typed)}</bdi></p>`:''}${res.fb?`<p style="margin:0">${bdiEsc(res.fb)}</p>`:''}${w.as&&task!=='en2he'?`<div class="am-hint">💡 ${bdiEsc(w.as)}</div>`:''}${w.my?`<div class="ctx">${SAYB(w.my,'sm inl')}✍️ ${esc(w.my)}</div>`:''}</div>`;
       if(!res.ok)h+=wMethodBox(w);
@@ -2712,6 +2712,14 @@ function wTrBind(w){
   if(WS.res&&!w.as){const c=wCard(w),t=c&&(EXTRA[c.xid||c.id]||{}).tip;if(t){w.as=t;w.asSeen=[t];amSave()}else if(GKEY()&&!WSGEN[wK(w)]&&!WSGERR[wK(w)])wGenAssoc(w)}}
 /* Gemini checks the translation (tries twice before giving up) */
 /* the other meanings of the same English word (every other card of it) */
+/* "הפירוש בעברית" after answering – laid out like the dictionary quiz's answered page (her request, screenshot):
+   what she wrote, the right meaning as a green option, נכון! / לא נכון, Gemini's note, then the full tip + notes (xfull) */
+function e2hDone(w,res){const c=wCard(w);
+  return `<p class="mine"><span>מה שכתבת:</span> ${res.typed?esc(res.typed):'<span>(לא נכתב)</span>'}</p>
+    <div class="opt ${res.ok?'right':'missed'}" style="cursor:default">✓ ${esc(w.h)}${res.ok?'':'<span class="rtag">התשובה הנכונה</span>'}</div>
+    <p class="fb ${res.ok?'ok':'bad'}" role="status">${res.ok?'נכון!':'לא נכון'}</p>
+    ${res.fb?`<p class="hint center" style="margin:0">${bdiEsc(res.fb)}</p>`:''}
+    ${c?xfull(c):''}`}
 function wOtherMeanings(w){const c=wCard(w);const L=(DIX[String(w.e).toLowerCase()]||[]).filter(x=>!c||x.id!==c.id).map(x=>x.h[0]);if(c&&c.others)L.push(...c.others);return [...new Set(L)].filter(m=>m&&m!==w.h)}
 function promptE2H(w,v,oth){return `A Hebrew-speaking learner is asked for the Hebrew meaning of the English word "${w.e}". The meaning being practised is: "${w.h}".${oth.length?` Other meanings of this word (practised separately): ${oth.map(m=>'"'+m+'"').join(', ')}.`:''}
 She wrote: "${v}".

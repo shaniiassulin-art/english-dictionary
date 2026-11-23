@@ -21,7 +21,7 @@ with sync_playwright() as p:
   V['v']='other';pg.fill('#wAns','משהו');pg.click('#wGo');pg.wait_for_timeout(1500);r2='פירוש נכון של' in T(pg) and pg.locator('#wAns').count()==1;print('gemini other → retry:',r2)
   V['v']='right';pg.fill('#wAns','מכתבים');pg.click('#wGo');pg.wait_for_timeout(1500);t=T(pg)
   st=pg.evaluate("Object.values(AMS.w)[0].st")
-  r3='נכון' in t and 'הפירוש שכתבת נכון?' not in t and st==4 and pg.locator('.am-timer').count()==0 and t.count('post')<=2
+  r3='נכון' in t and 'הפירוש שכתבת נכון?' not in t and st==4 and pg.locator('.am-timer').count()==0 and pg.locator('.am-card>.w').count()==0 and pg.locator('.opt.right').count()==1 and pg.locator('.mine').count()==1 and pg.locator('.xfull').count()==1
   r3=r3 and pg.locator('.e2h .sentence').count()==1 and pg.locator('.e2h .others').count()==1 and 'ידעתי' not in t
   print('right:',r3,st,t[:300])
   assert r1 and r2 and r3 and not e,e;print('OK')
