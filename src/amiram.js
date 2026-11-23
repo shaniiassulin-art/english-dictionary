@@ -903,8 +903,11 @@ app.addEventListener('click',e=>{if(e.defaultPrevented||!(e.target instanceof El
   const sn=enSentOf(hit.n,hit.w);amPop(hit.w,sn,'',sn)});
 /* a hint for a word – never its meaning: her own association, the dictionary's tip with the meaning cut out, the word's parts; else Gemini makes one */
 const HINTC={};
-function wordHints(e){const lo=String(e).toLowerCase(),d=dictFind(e),out=[],seen=new Set(),means=d?d.h:[];
-  const cut=t=>{t=String(t||'').replace(/\s*=\s*[^=]*$/,'').trim();means.forEach(m=>String(m).split(/[,/]/).map(x=>x.trim()).filter(x=>x.length>=3).forEach(x=>{t=t.split(x).join('…')}));return t};
+/* a hint never shows the real translation (Nov 23, her request): the "= meaning" / "→ meaning" tail is cut and every meaning word of the word (all its cards) becomes "…" */
+function hintNoMean(t,e,extra){const d=dictFind(e),means=[...(d?d.h:[]),...(extra||[])];t=String(t||'').replace(/\s*(=|→|⇒|➡|←|⇐|⬅)\s*[^=→⇒➡←⇐⬅]*$/,'').trim();
+  means.forEach(m=>String(m).split(/[,/;()]|\s+או\s+/).map(x=>x.trim().replace(/^ל(?=[א-ת]{3})/,'')).filter(x=>x.length>=2).flatMap(x=>{const F={'ן':'נ','ם':'מ','ך':'כ','ף':'פ','ץ':'צ'},y=x.replace(/[ןםךףץ]$/,c=>F[c]);/* also the form inside a longer word: הוגן → הוגנת */return y!==x?[x,y]:[x]}).sort((a,b)=>b.length-a.length).forEach(x=>{t=t.split(x).join('…')}));return t.replace(/(…\s*){2,}/g,'… ')}
+function wordHints(e){const lo=String(e).toLowerCase(),d=dictFind(e),out=[],seen=new Set();
+  const cut=t=>hintNoMean(t,e);
   const add=(t,src)=>{t=cut(t);if(t&&t.length>4&&!seen.has(t)){seen.add(t);out.push({t,src})}};
   Object.values(AMS.w).filter(w=>String(w.e).toLowerCase()===lo&&w.as).forEach(w=>add(w.as,'האסוציאציה שלך'));
   (d?d.cards:[]).forEach(c=>add((EXTRA[c.xid||c.id]||{}).tip,'רמז מהמילון'));
@@ -2579,7 +2582,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
     else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${s?SAYB(s,'sm inl')+tapEn(s):'_____'}</div>${s&&res?wTrHtml(wCtx(w),x,ex):''}</div>`}
     else h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
     /* hint ladder */
-    const hs=[];if(hint>=1&&w.as)hs.push('💡 '+bdiEsc(w.as));if(hint>=2&&task!=='en2he')hs.push('האות הראשונה: <bdi dir="ltr" style="font-family:var(--en);font-size:1.2rem;letter-spacing:3px">'+esc(w.e[0]+w.e.slice(1).replace(/[A-Za-z]/g,'_ '))+'</bdi>');
+    const hs=[];if(hint>=1&&w.as){const ht=hintNoMean(w.as,w.e,[w.h]);if(ht&&ht.replace(/[…\s]/g,'').length>3)hs.push('💡 '+bdiEsc(ht))}if(hint>=2&&task!=='en2he')hs.push('האות הראשונה: <bdi dir="ltr" style="font-family:var(--en);font-size:1.2rem;letter-spacing:3px">'+esc(w.e[0]+w.e.slice(1).replace(/[A-Za-z]/g,'_ '))+'</bdi>');
     if(hint>=3&&task==='he2en'){const s=blankOut(w.my||ctx,w.e);if(s)hs.push('<bdi style="font-family:var(--en)">'+esc(s)+'</bdi>')}
     if(hs.length)h+=`<div class="am-hints">${hs.map(x=>`<div class="am-hint">${x}</div>`).join('')}</div>`;
     if(!res&&task==='en2he'&&WS.e2hOther)h+=`<div class="am-box"><p style="margin:0">${WS.e2hOther/* built with esc() already – shown as HTML (was escaped twice: "<b>…</b>" showed as text) */}</p></div>`;
