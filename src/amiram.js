@@ -2578,7 +2578,12 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
     else if(task==='cloze2'){const s2=blankOut(wOther(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">משפט חדש – איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${SAYB(s2,'sm inl')}${tapEn(s2)}</div>${res?wTrHtml(wOther(w),x,ex):''}</div>`}
-    else if(task==='en2he'){if(!res)h+=`<div class="am-card"><p class="hint center" style="margin:0">מה הפירוש בעברית?</p><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div>${(()=>{const om=wOtherMeanings(w);return om.length?`<div class="others">פירושים אחרים של המילה:${numList(om)}מה הפירוש הנוסף?</div>`:''})()}${ctx&&hint>0?`<div class="ctx">${esc(ctx)}</div>`:''}</div>`;}
+    else if(task==='en2he'){/* laid out like the dictionary quiz (her request): the word + speaker, the example sentence opens on tap
+      (its translation only after answering), the other meanings; the card stays after answering */
+      const so=WS.e2hS===wK(w)+'|'+WS.i;
+      const sent=!ctx?'':so?`<div class="sentence"><button class="spk sm" data-amsay="${esc(ctx)}" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(ctx,w.e)}</span>${res&&!res.pend?wTrHtml(ctx,x,ex):''}</div></div>`:`<button class="link" id="e2hSent" style="align-self:center">הצגת משפט לדוגמה</button>`;
+      const om=wOtherMeanings(w);
+      h+=`<div class="am-card e2h"><div class="word"><span class="w">${esc(w.e)}</span><button class="spk" data-amsay="${esc(w.e)}" aria-label="השמעת המילה">${SPK}</button></div>${sent}${om.length?`<div class="others">פירושים אחרים של המילה:${numList(om)}${res?'':'מה הפירוש הנוסף?'}</div>`:''}</div>`;}
     else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${s?SAYB(s,'sm inl')+tapEn(s):'_____'}</div>${s&&res?wTrHtml(wCtx(w),x,ex):''}</div>`}
     else h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
     /* hint ladder */
@@ -2587,13 +2592,13 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
     if(hs.length)h+=`<div class="am-hints">${hs.map(x=>`<div class="am-hint">${x}</div>`).join('')}</div>`;
     if(!res&&task==='en2he'&&WS.e2hOther)h+=`<div class="am-box"><p style="margin:0">${WS.e2hOther/* built with esc() already – shown as HTML (was escaped twice: "<b>…</b>" showed as text) */}</p></div>`;
     if(!res&&task!=='mc'&&task!=='hecl'){h+=`<input class="am-in ${task==='en2he'?'':'en'}" id="wAns" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${task==='en2he'?'הפירוש בעברית':'כתבי את המילה באנגלית'}">
-      <div class="am-nav"><button class="btn secondary" id="wHint" ${hint>=(task==='en2he'?2:3)?'disabled':''}>💡 רמז ${hint?'נוסף':''}</button><button class="btn" id="wGo">בדיקה</button></div>
+      <div class="am-nav"><button class="btn secondary" id="wHint" ${hint>=(task==='en2he'?1:3)||(task==='en2he'&&!w.as)?'disabled':''}>💡 רמז ${hint?'נוסף':''}</button><button class="btn" id="wGo">בדיקה</button></div>
       <button class="link" id="wGive" style="align-self:center">לא זוכרת – הראי לי</button>${EXB('<b>בדיקה</b> – בודק מה כתבת (טעות הקלדה קטנה נחשבת). <b>💡 רמז</b> – כל לחיצה נותנת רמז נוסף: האסוציאציה, האות הראשונה, המשפט שלך עם חור. רמז לא מקדם שלב. <b>לא זוכרת</b> – מראה את התשובה.')}`}
     else if(res){
       if(task==='hecl'){const c=wCard(w),full=(heR&&heR.en)||(c&&c.s);if(full)h+=`<div class="am-box"><p dir="ltr" style="margin:0;text-align:left;font-family:var(--en)">${SAYB(full,'sm inl')}${esc(full)}</p></div>`}
       if(res.pend){h+=`<p class="am-fb">⏳ בודקת את התשובה…</p>`;/* a check cut off by a reload starts again */if(task==='en2he'&&!E2HLIVE[wK(w)])setTimeout(()=>e2hCheck(w,res.typed),0)}else
       h+=`<p class="am-fb ${res.ok?'ok':'bad'}">${res.ok?(res.near?'כמעט מושלם ✓':'נכון! ✓'):res.self?'':'עוד לא – הנה התשובה:'}</p>
-        <div class="am-card"><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div><div class="m">${esc(w.h)}</div>${res.typed?`<p class="hint center" style="margin:0">כתבת: <bdi>${esc(res.typed)}</bdi></p>`:''}${res.fb?`<p style="margin:0">${bdiEsc(res.fb)}</p>`:''}${w.as?`<div class="am-hint">💡 ${bdiEsc(w.as)}</div>`:''}${w.my?`<div class="ctx">${SAYB(w.my,'sm inl')}✍️ ${esc(w.my)}</div>`:''}</div>`;
+        <div class="am-card">${task==='en2he'?`<p class="hint center" style="margin:0">הפירוש</p>`:`<div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div>`}<div class="m">${esc(w.h)}</div>${res.typed?`<p class="hint center" style="margin:0">כתבת: <bdi>${esc(res.typed)}</bdi></p>`:''}${res.fb?`<p style="margin:0">${bdiEsc(res.fb)}</p>`:''}${w.as&&task!=='en2he'?`<div class="am-hint">💡 ${bdiEsc(w.as)}</div>`:''}${w.my?`<div class="ctx">${SAYB(w.my,'sm inl')}✍️ ${esc(w.my)}</div>`:''}</div>`;
       if(!res.ok)h+=wMethodBox(w);
       if(res.pend){}else if(res.self)h+=`<p class="center" style="margin:0">הפירוש שכתבת נכון?</p><div class="am-nav"><button class="btn" id="wSelfY">✓ כן, התכוונתי לזה</button><button class="btn secondary" id="wSelfN">✗ לא</button></div>`;
       else if(false)h+=`<div class="am-step-box"><h4>כתבי את המילה פעם אחת כדי לחזק</h4><input class="am-in en" id="wCopy" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="${esc(w.e)}"></div>`;
@@ -2677,6 +2682,7 @@ function wBind(w,x){
     if(WS.step==='write'){WS.step='first';WS.hint=0;WS.res=null;amSave();wSave();draw();window.scrollTo(0,0)}
     else{wGrade(w,true,0);wNextWord()}};
   const ans=$('wAns');if(ans){setTimeout(()=>{try{ans.focus({preventScroll:true})}catch(e){}},50);ans.onkeydown=e=>{if(e.key==='Enter')$('wGo').click()}}
+  const e2s=$('e2hSent');if(e2s)e2s.onclick=()=>{WS.e2hS=wK(w)+'|'+WS.i;amRedrawKeep();const c=app.querySelector('.e2h .sentence [data-amsay]');if(c&&AUTO)amSay(c.dataset.amsay)};
   const hb=$('wHint');if(hb)hb.onclick=()=>{WS.hint=(WS.hint||0)+1;wSave();amRedrawKeep()};
   const task=wTaskNow(w);
   const gb=$('wGo');if(gb)gb.onclick=()=>{const v=(ans.value||'').trim();if(!v)return;
