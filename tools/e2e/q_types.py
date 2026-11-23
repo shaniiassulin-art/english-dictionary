@@ -21,10 +21,13 @@ with sync_playwright() as p:
   for _k in ['2026-11-16','2026-11-17','old','started']:
     xs=[x for x in r[_k] if _re.match(r'q:(wf|gc|lc|lq|wr)',x)];assert len(xs)==1,('one extra part a day',_k,r[_k]);r[_k]=[x for x in r[_k] if x not in xs]
   S=lambda L:sorted(L)
-  assert S(r['2026-11-16'])==S(['rev','new','q:sc15','q:rs10','q:rc25','meth','rev2']) and r['2026-11-16'][:2]==['rev','new'] and r['2026-11-16'][-2:]==['meth','rev2'],r
-  assert S(r['2026-11-17'])==S(['rev','new','q:sc6','q:rs4','q:rc10','meth','rev2']) and r['2026-11-16'][2:5]!=r['2026-11-17'][2:5]
+  # 30-minute day (Nov 23): rev · new · one question type (few) · rev2, then the bonus (the other two types at the old sizes, methods)
+  for _k,L in [('2026-11-16',{'sc':15,'rs':10,'rc':25}),('2026-11-17',{'sc':6,'rs':4,'rc':10})]:
+    x=r[_k];assert x[:2]==['rev','new'] and x[3]=='rev2' and x[-1]=='meth',x
+    qs=[y for y in x if y.startswith('q:')];assert sorted(y[2:4] for y in qs)==['rc','rs','sc'] and int(qs[0][4:])<=5 and all(int(y[4:])==L[y[2:4]] for y in qs[1:]),x
+  assert r['2026-11-16'][2]!=r['2026-11-17'][2]
   assert S(r['old'])==S(['rev','q:sc','q:rs','q:rc','rev2'])
-  assert S(r['started'][1:4])==S(['q:sc:3','q:rs:1','q:rc:0']) and r['aq'] is None,r
+  assert r['started'][1]=='q:sc:3' and S(r['started'][1:])==S(['q:sc:3','q:rs:1','q:rc:0','rev2']) and r['aq'] is None,r
   pg.evaluate("go({screen:'am'});const k=jrCurKey(),P=AMS.jp[k];for(const y of P.b){if(y.k==='q'&&y.qt==='rs')break;y.done=1;y.skip=1}amSave();draw()");pg.wait_for_timeout(800)
   pg.screenshot(path='/tmp/claude-0/-home-claude/57ff57e9-f98a-5dad-a91a-88f510546bae/scratchpad/qtypes.png')
   pg.evaluate("const k=jrCurKey(),x=AMS.jp[k].b.find(x=>x.qt==='rs');jrRun(x)");pg.wait_for_timeout(1200)

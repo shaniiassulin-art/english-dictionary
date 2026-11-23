@@ -14,5 +14,5 @@ with sync_playwright() as p:
     const want=jrQOrd(k).join(',');const qq=P.b.filter(x=>x.k==='q'&&!isNT(x.qt));const pos=qq.map(x=>P.b.indexOf(x));const rev=[...qq].reverse();pos.forEach((p,i)=>P.b[p]=rev[i]);const scr=q();
     jrNorm(k,P);const fixed=q();const f=P.b.filter(x=>x.k==='q'&&!isNT(x.qt));const pos2=f.map(x=>P.b.indexOf(x));[...f].reverse().forEach((x,i)=>P.b[pos2[i]]=x);P.b.filter(x=>x.k==='q'&&!isNT(x.qt))[0].d=1;const kept=q();jrNorm(k,P);
     return [want,scr,fixed,kept,q()]})()""")
-  print('reorder',r);assert r[2]==r[0] and r[4]==r[3]
+  print('reorder',r);c=r[0].split(',')[0];assert r[2]==r[0] and r[4].split(',')==[c]+[t for t in r[3].split(',') if t!=c]  # core type first (30-minute day), the bonus keep their order
   assert not e,e;print('OK')
