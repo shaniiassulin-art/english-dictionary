@@ -2573,18 +2573,18 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
     const mcS=task==='mc'?blankOut(mcF,w.e):'',heS=task==='hecl'&&heR?heR.he:'';
     if(task==='mc'||task==='hecl'){
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${task==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
-        <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?heGapHtml(heS,w.e,!!res):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):task==='hecl'?srcLab(heR):''}${task==='mc'&&res?wTrHtml(mcF,x,ex):''}</div>`;
+        <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?heGapHtml(heS,w.e,!!res):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):task==='hecl'?srcLab(heR):''}${task==='mc'&&res?wTrHtml(mcF,x,ex,w):''}</div>`;
       const O=res&&res.opts&&res.opts.length?res.opts:wOpts(w);
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
-    else if(task==='cloze2'){const s2=blankOut(wOther(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">משפט חדש – איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${SAYB(s2,'sm inl')}${tapEn(s2)}</div>${res?wTrHtml(wOther(w),x,ex):''}</div>`}
+    else if(task==='cloze2'){const s2=blankOut(wOther(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">משפט חדש – איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${SAYB(s2,'sm inl')}${tapEn(s2)}</div>${res?wTrHtml(wOther(w),x,ex,w):''}</div>`}
     else if(task==='en2he'){/* laid out like the dictionary quiz (her request): the word + speaker, the example sentence opens on tap
       (its translation only after answering), the other meanings; the card stays after answering */
       const so=WS.e2hS===wK(w)+'|'+WS.i;
-      const sent=!ctx?'':so?`<div class="sentence"><button class="spk sm" data-amsay="${esc(ctx)}" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(ctx,w.e)}</span>${res&&!res.pend?wTrHtml(ctx,x,ex):''}</div></div>`:`<button class="link" id="e2hSent" style="align-self:center">הצגת משפט לדוגמה</button>`;
+      const sent=!ctx?'':so?`<div class="sentence"><button class="spk sm" data-amsay="${esc(ctx)}" aria-label="השמעת המשפט">${SPK}</button><div class="scol"><span dir="ltr">${highlight(ctx,w.e)}</span>${res&&!res.pend?wTrHtml(ctx,x,ex,w):''}</div></div>`:`<button class="link" id="e2hSent" style="align-self:center">הצגת משפט לדוגמה</button>`;
       const om=wOtherMeanings(w);
       h+=`<div class="am-card e2h"><div class="word"><span class="w">${esc(w.e)}</span><button class="spk" data-amsay="${esc(w.e)}" aria-label="השמעת המילה">${SPK}</button></div>${sent}${om.length?`<div class="others">פירושים אחרים של המילה:${numList(om)}${res?'':'מה הפירוש הנוסף?'}</div>`:''}</div>`;}
-    else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${s?SAYB(s,'sm inl')+tapEn(s):'_____'}</div>${s&&res?wTrHtml(wCtx(w),x,ex):''}</div>`}
+    else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${s?SAYB(s,'sm inl')+tapEn(s):'_____'}</div>${s&&res?wTrHtml(wCtx(w),x,ex,w):''}</div>`}
     else h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
     /* hint ladder */
     const hs=[];if(hint>=1&&w.as){const ht=hintNoMean(w.as,w.e,[w.h]);if(ht&&ht.replace(/[…\s]/g,'').length>3)hs.push('💡 '+bdiEsc(ht))}if(hint>=2&&task!=='en2he')hs.push('האות הראשונה: <bdi dir="ltr" style="font-family:var(--en);font-size:1.2rem;letter-spacing:3px">'+esc(w.e[0]+w.e.slice(1).replace(/[A-Za-z]/g,'_ '))+'</bdi>');
@@ -2625,11 +2625,21 @@ function wAutoTick(){const b=$('autoBtn');if(b&&!b._w){b._w=1;b.onclick=()=>sndP
   else{const en=R.en||(WS.cur&&WS.cur.en)||'';t=trs?'':(w.e+(en?'. '+en:''))}
   if(!t&&!ans&&app.querySelector('[data-wmc],#wAns,#trIn')){WAUTOK=key;return}
   if(!t)return;WAUTOK=key;try{amSay(t)}catch(e){}}
-function wTrHtml(s,x,ex){if(!s)return '';const fx=TRC[s.toLowerCase()],t=fx&&fx.src==='תוקן'?fx.h:x&&x.tr&&s===ex?x.tr:((fx||{}).h||''),op=WTRO[s]!==false;/* open by default after answering (her request) – she can hide it */
-  return `<div class="center"><button class="trbtn" data-wtr="${esc(s)}">${op?'הסתרת התרגום':'תרגום לעברית'}</button><span class="trans" ${op?'':'hidden'}>${op?(t?esc(t):'⏳ מתרגמת…'):esc(t)}</span>${op&&t&&GKEY()?`<button class="link small-link am-trfix" data-trfix="${esc(s)}">${TRFIXP[s]?'⏳ מתקנת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`}
+/* the Hebrew translation that came with a sentence (Gemini's own sentence, the book's translation of an exam sentence) –
+   used before any machine translation (her screenshot: "an even parking space" → Google's "חניה אחיד" instead of זוגי) */
+function sentHe(w,s){if(!s)return '';const L=s.toLowerCase(),m=o=>o&&o.en&&o.en.toLowerCase()===L&&o.he?o.he:'';
+  let h=m(WS&&WS.res)||m(WS&&WS.cur);if(h)return h;if(w){w=AMS.w[wK(w)]||w;h=m(w.rv)||m(w.trc);if(h)return h}
+  const P=sPoolX()||[],p=P.find(o=>o.t.toLowerCase()===L);return p&&p.he||''}
+/* a sentence with the word being practised: translated by Gemini with the word's meaning given, so that word is translated in the right sense; Google only as a fallback */
+async function trSentMean(s,w){const k='m|'+s.toLowerCase();if(TRC[k])return TRC[k];
+  if(w&&GKEY()){try{const r=await Promise.race([aiRun('','',null,{prompt:`Translate this English sentence into natural, grammatically correct Israeli Hebrew. In it the word "${w.e}" means "${w.h}" – translate it with that meaning.\nSentence: «${s}»\nJSON: {"he":"..."}\n${AIHE}`,temp:.1}),new Promise(r=>setTimeout(()=>r(null),20000))]);
+    const h=r&&r.j&&String(r.j.he||'').trim();if(h&&/[\u05d0-\u05ea]/.test(h)&&!/[\u0600-\u06ff\u0590-\u05cf\ufb1d-\ufb4f]/.test(h))return TRC[k]={h,src:'ai'}}catch(x){}}
+  return amTrans(s)}
+function wTrHtml(s,x,ex,w){if(!s)return '';const fx=TRC[s.toLowerCase()],mx=TRC['m|'+s.toLowerCase()],t=fx&&fx.src==='תוקן'?fx.h:x&&x.tr&&s===ex?x.tr:(sentHe(w,s)||(mx&&mx.h)||(w?'':((fx||{}).h||''))),op=WTRO[s]!==false;/* open by default after answering (her request) – she can hide it */
+  return `<div class="center"><button class="trbtn" data-wtr="${esc(s)}"${w?` data-wtrk="${esc(wK(w))}"`:''}>${op?'הסתרת התרגום':'תרגום לעברית'}</button><span class="trans" ${op?'':'hidden'}>${op?(t?esc(t):'⏳ מתרגמת…'):esc(t)}</span>${op&&t&&GKEY()?`<button class="link small-link am-trfix" data-trfix="${esc(s)}">${TRFIXP[s]?'⏳ מתקנת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`}
 /* "⚠️ יש טעות בתרגום" (her report: a Gemini translation with a wrong verb form): Gemini checks and corrects the translation; the fix replaces it everywhere (TRC, the word's sentence, the answered page) */
 const TRFIXP={};
-function trFix(en){const c=TRC[en.toLowerCase()],cd=DW.find(d=>d.s===en),old=(c&&c.h)||(WS&&WS.res&&WS.res.en===en&&WS.res.he)||(cd&&(EXTRA[cd.xid||cd.id]||{}).tr)||'';if(!old||TRFIXP[en])return;TRFIXP[en]=1;if(S.screen.startsWith('am'))amRedrawKeep();
+function trFix(en){const c=TRC[en.toLowerCase()]&&TRC[en.toLowerCase()].src==='תוקן'?TRC[en.toLowerCase()]:(TRC['m|'+en.toLowerCase()]||TRC[en.toLowerCase()]),cd=DW.find(d=>d.s===en),old=(c&&c.h)||(WS&&WS.res&&WS.res.en===en&&WS.res.he)||(cd&&(EXTRA[cd.xid||cd.id]||{}).tr)||'';if(!old||TRFIXP[en])return;TRFIXP[en]=1;if(S.screen.startsWith('am'))amRedrawKeep();
   const pr=`English sentence: "${en}"\nA Hebrew translation of it: "${old}"\nCheck the Hebrew translation very carefully: verb forms and conjugation, gender, prepositions, word choice, natural Israeli Hebrew. Return the correct, natural Hebrew translation (fix every mistake; if it is already fully correct, return it unchanged).\nJSON: {"he":"...","changed":true or false,"why":"if changed – a very short Hebrew note on what was wrong"}\n${AIHE}`;
   Promise.race([aiRun('','',null,{prompt:pr,temp:.1}),new Promise(r=>setTimeout(()=>r(null),20000))]).then(r=>{delete TRFIXP[en];const j=r&&r.j,h=j&&String(j.he||'').trim();
     if(h){TRC[en.toLowerCase()]={h,src:'תוקן'};if(WS&&WS.res&&WS.res.en===en)WS.res.he=h;Object.values(AMS.w).forEach(w=>{for(const f of ['rv','trc'])if(w[f]&&w[f].en===en)w[f].he=h});amSave();if(WS)wSave();amToast(j.changed===false?'התרגום נבדק – הוא נכון':'✓ התרגום תוקן')}
@@ -2656,9 +2666,9 @@ function wBind(w,x){
   app.querySelectorAll('[data-round]').forEach(b=>b.onclick=()=>wRoundSwitch(+b.dataset.round));
   const pv=$('wPrev');if(pv)pv.onclick=()=>{WS.view=WS.hist.length-1;wSave();draw();window.scrollTo(0,0)};
   app.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{wSave();go({screen:'ampath',pfrom:'amwl'})});
-  app.querySelectorAll('[data-wtr]').forEach(b=>{const s=b.dataset.wtr,sp=b.nextElementSibling;if(WTRO[s]!==false&&sp&&/מתרגמת/.test(sp.textContent))amTrans(s).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו'})});
+  app.querySelectorAll('[data-wtr]').forEach(b=>{const s=b.dataset.wtr,sp=b.nextElementSibling;if(WTRO[s]!==false&&sp&&/מתרגמת/.test(sp.textContent))trSentMean(s,AMS.w[b.dataset.wtrk]).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו'})});
   app.querySelectorAll('[data-wtr]').forEach(b=>b.onclick=()=>{const s=b.dataset.wtr;WTRO[s]=WTRO[s]===false;const sp=b.nextElementSibling;b.textContent=WTRO[s]?'הסתרת התרגום':'תרגום לעברית';if(sp)sp.hidden=!WTRO[s];
-    if(WTRO[s]&&sp&&!sp.textContent.trim()){sp.textContent='⏳ מתרגמת…';amTrans(s).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו';else if(S.screen==='amwl')amRedrawKeep()})}});
+    if(WTRO[s]&&sp&&!sp.textContent.trim()){sp.textContent='⏳ מתרגמת…';trSentMean(s,AMS.w[b.dataset.wtrk]).then(r=>{if(sp.isConnected)sp.textContent=r&&r.h?r.h:'לא הצלחתי לתרגם עכשיו';else if(S.screen==='amwl')amRedrawKeep()})}});
   const g1=$('wGen1');if(g1)g1.onclick=()=>wGenAssoc(w);
   const pa=$('wPrevAs');if(pa)pa.onclick=()=>{const L=(w.asSeen||[]).filter(a=>a!==w.as);if(L.length){w.as=L[L.length-1];w.asSeen=(w.asSeen||[]).filter(a=>a!==w.as).concat(w.as);w.t=amNow();amSave();amRedrawKeep()}};
   if(WS&&WS.step==='meet'&&!w.as&&x&&x.tip){w.as=x.tip;w.asSeen=[x.tip];amSave()}
