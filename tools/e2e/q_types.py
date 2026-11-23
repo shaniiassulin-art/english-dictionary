@@ -17,6 +17,9 @@ with sync_playwright() as p:
     out.started=jrPlan(T).b.map(x=>x.k+(x.qt?':'+x.qt+':'+x.d:''));out.aq=AQ;
     const ids={};for(const t of ['sc','rs','rc'])ids[t]=[...new Set(amDayIds(t==='rc'?25:10,t).map(id=>AMD.q[id].t))];return out})()""")
   print(r)
+  import re as _re
+  for _k in ['2026-11-16','2026-11-17','old','started']:
+    xs=[x for x in r[_k] if _re.match(r'q:(wf|gc|lc|lq|wr)',x)];assert len(xs)==1,('one extra part a day',_k,r[_k]);r[_k]=[x for x in r[_k] if x not in xs]
   S=lambda L:sorted(L)
   assert S(r['2026-11-16'])==S(['rev','new','q:sc15','q:rs10','q:rc25','meth','rev2']) and r['2026-11-16'][:2]==['rev','new'] and r['2026-11-16'][-2:]==['meth','rev2'],r
   assert S(r['2026-11-17'])==S(['rev','new','q:sc6','q:rs4','q:rc10','meth','rev2']) and r['2026-11-16'][2:5]!=r['2026-11-17'][2:5]

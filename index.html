@@ -2289,7 +2289,7 @@ function amAtt(id){return AMS.a[id]}
 function amLast(id){const a=AMS.a[id];return a&&a.h&&a.h.length?a.h[a.h.length-1]:null}
 function amRecord(id,choice,ms){if(AQ&&AQ.jr)jrCount(AQ.jr);
   /* a course question answered outside the journey for the first time counts for today's step of its type (her request: what she did syncs with the daily practice) */
-  else if(/^[cb]/.test(id)&&!amLast(id)){try{const t=AMD.q[id]&&AMD.q[id].t,P=(AMS.jp||{})[dayKey()],x=P&&P.b.find(b=>b.k==='q'&&b.qt===t&&!b.done);if(x)jrCount(x.id)}catch(e){}}const q=AMD.q[id],ok=amIsOk(q,choice),a=AMS.a[id]=AMS.a[id]||{h:[]};const now=amNow();
+  else if(/^[cbn]/.test(id)&&!amLast(id)){try{const t=AMD.q[id]&&AMD.q[id].t,P=(AMS.jp||{})[dayKey()],x=P&&P.b.find(b=>b.k==='q'&&b.qt===t&&!b.done);if(x)jrCount(x.id)}catch(e){}}const q=AMD.q[id],ok=amIsOk(q,choice),a=AMS.a[id]=AMS.a[id]||{h:[]};const now=amNow();
   const wasMist=amIsMist(id);a.h.push([choice,ok?1:0,Math.round(ms||0),now]);
   if(!ok){a.box=0;a.due=now+DAY;a.fixed=0}
   else if(wasMist){a.box=(a.box||0)+1;if(a.box>=BOXD.length){a.fixed=now;a.due=0}else a.due=now+BOXD[a.box]*DAY}
@@ -2423,11 +2423,11 @@ async function aiCached(key,prompt,temp){if(AMAI[key]&&!AMAI[key].err)return AMA
   AIP[key]=(async()=>{const r=await aiRun('','',null,{prompt,temp:temp??.3});delete AIP[key];
     if(r&&r.j){AMAI[key]={...r.j,mdl:r.mdl,t:amNow()};amAiSave();return AMAI[key]}return {err:aiWhyText(r&&r.why)}})();return AIP[key]}
 function qText(q){const T=q.x&&AMD.x[q.x];
-  return (T?'PASSAGE:\n'+T.l.map((l,i)=>l).join('\n')+'\n\n':'')+'QUESTION ('+AMTN[q.t]+'): '+q.q+'\n'+q.o.map((o,i)=>'('+(i+1)+') '+o).join('\n')+'\nCORRECT ANSWER: '+(typeof q.a==='string'?q.a:'('+q.a+')')+
+  return (T?'PASSAGE:\n'+[].concat(T.l||T.say||[]).join('\n')+'\n\n':'')+(q.ctx?'SITUATION: '+q.ctx+'\n':'')+(q.say?'TEXT HEARD: '+q.say+'\n':'')+(q.base?'BASE WORD (bold): '+q.base+'\n':'')+'QUESTION ('+AMTN[q.t]+'): '+q.q+'\n'+(q.o||[]).map((o,i)=>'('+(i+1)+') '+o).join('\n')+'\nCORRECT ANSWER: '+(typeof q.a==='string'?q.a:'('+q.a+')')+
     (q.he?'\nHebrew translation (from the course book): '+q.he:'')+(q.oh&&q.oh.length?'\nBook notes per option: '+q.oh.map((o,i)=>'('+(i+1)+') '+o).join(' | '):'')+(q.ex?'\nBook explanation: '+q.ex:'')}
 const AIHE='Write in simple, everyday Hebrew, using only regular Hebrew letters (English words may appear in Latin letters). Be short and concrete. Answer ONLY with JSON.';
-function promptMethod(q){return `You are an expert Israeli psychometric-exam English teacher. Explain to a Hebrew-speaking student, step by step, how to solve this ${q.t==='yb'?'basic English':q.t==='sc'?'Sentence Completion':q.t==='rs'?'Restatement':'Reading Comprehension'} question using the course method.
-${q.t==='yb'?'This is a basic English exercise ('+(q.ch||'')+'). Explain which grammar or vocabulary point it tests and why the correct answer fits.':q.t==='sc'?'Method: 1) read the sentence and translate it in your head WITHOUT looking at the options, 2) find the clue (a connector like but/although/because, a word that the blank must agree with or contrast with), 3) predict the missing word in Hebrew, 4) only then look for an option with that meaning, 5) re-read the full sentence.':q.t==='rs'?'Method: 1) translate the original and find its structure: who/what, what is said, and the relation between the parts (connector: contrast / cause / result / addition / time / condition), 2) eliminate options: added information, changed relation (different connector family), exaggeration (always/never/all), contradiction, reversed cause and effect, missing essential information, 3) check the last option fully.':'Method: identify the question type (main idea / paragraph / detail / function of a detail / inference / vocabulary / refer to), locate the exact sentence in the passage (by line or keywords), read it fully, predict the answer, then eliminate distractors typical for that type.'}
+function promptMethod(q){return `You are an expert Israeli psychometric-exam English teacher. Explain to a Hebrew-speaking student, step by step, how to solve this ${q.t==='yb'?'basic English':q.t==='sc'?'Sentence Completion':q.t==='rs'?'Restatement':isNT(q.t)?AMEN[q.t]||q.t:'Reading Comprehension'} question using the course method.
+${q.t==='wf'?'Method: 1) find the role of the gap from the words around it (a/the → noun, is/was/very → adjective, after a verb → adverb, can/will → verb), 2) name the part of speech needed, 3) change the bold base word with the right prefix / suffix (-tion, -ment, -ness, -ful, -less, -ly, -ize, un-, dis-…), 4) check plural / tense / negative meaning, 5) re-read the sentence.':q.t==='gc'?'Method: 1) find which grammar point the gap tests (tense, conditional, relative word, to / -ing, passive, comparison, preposition), 2) find the clues in the sentence (time words, if, who / which, the verb before the gap), 3) choose the only form that fits every clue, 4) eliminate each other option with its reason.':q.t==='lc'?'Method: 1) understand the situation (who is talking, to whom, about what), 2) follow the logic of the last sentence and its connector (however / so / because), 3) predict what has to come next, 4) choose the option that continues that logic; eliminate options unrelated to the topic.':q.t==='lq'?'Method: 1) read the question before listening, 2) catch the main point and the key details, 3) notice connectors (but / so / because) and the speaker\'s opinion, 4) eliminate options that add information, exaggerate or contradict what was said.':q.t==='yb'?'This is a basic English exercise ('+(q.ch||'')+'). Explain which grammar or vocabulary point it tests and why the correct answer fits.':q.t==='sc'?'Method: 1) read the sentence and translate it in your head WITHOUT looking at the options, 2) find the clue (a connector like but/although/because, a word that the blank must agree with or contrast with), 3) predict the missing word in Hebrew, 4) only then look for an option with that meaning, 5) re-read the full sentence.':q.t==='rs'?'Method: 1) translate the original and find its structure: who/what, what is said, and the relation between the parts (connector: contrast / cause / result / addition / time / condition), 2) eliminate options: added information, changed relation (different connector family), exaggeration (always/never/all), contradiction, reversed cause and effect, missing essential information, 3) check the last option fully.':'Method: identify the question type (main idea / paragraph / detail / function of a detail / inference / vocabulary / refer to), locate the exact sentence in the passage (by line or keywords), read it fully, predict the answer, then eliminate distractors typical for that type.'}
 ${qText(q)}
 JSON: {"steps":["3-5 short steps in Hebrew, each naming exactly what to notice in THIS question (quote the clue English words)"],"options":["one short Hebrew line per option (4 lines, in order): what it means and why it is right or wrong"],"rule":"one short general rule in Hebrew to remember for similar questions"}
 ${AIHE}`}
@@ -3084,6 +3084,11 @@ const JB={
   q:['✏️','תרגול שאלות לפי השיטה','שאלה אחרי שאלה במסלול',
     'עכשיו מיישמים: שאלות מהמבחן, כל אחת במסלול – לחשוב לפני התשובות, לחקור כל טעות מיד, להבין איך פותרים לפי השיטה, ולאסוף מילים מהמאגר.',
     ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הצעד נגמר אחרי מספר השאלות שלו – עד אז ממשיכים ליחידה הבאה']],
+  q_wf:['🧬','חלק נוסף · יצירת מילים','כמה שאלות, מהקל לקשה','חלק אחד מהחלקים הנוספים של המבחן – כל יום חלק אחר. כאן יוצרים מילה חדשה מהמילה המודגשת (תחילית / סופית) כך שתתאים למשפט.',['שאלות שעוד לא פתרת, מהקלה לקשה','רמז לפתרון מתחת לשאלה','אחרי התשובה: חקירה (אם טעית), פתרון לפי השיטה, מילים']],
+  q_gc:['🧩','חלק נוסף · דקדוק בהקשר','כמה שאלות, מהקל לקשה','חלק אחד מהחלקים הנוספים של המבחן – כל יום חלק אחר. כאן בוחרים את הצורה הדקדוקית שמתאימה למשפט (זמן, תנאי, מילת יחס, to / ing…).',['שאלות שעוד לא פתרת, מהקלה לקשה','רמז לפתרון מתחת לשאלה','אחרי התשובה: חקירה (אם טעית), פתרון לפי השיטה, מילים']],
+  q_lc:['🎧','חלק נוסף · השלמת שמיעה','כמה שאלות, מהקל לקשה','חלק אחד מהחלקים הנוספים של המבחן – כל יום חלק אחר. שומעים קטע קצר ובוחרים איך הוא נגמר.',['שאלות שעוד לא פתרת, מהקלה לקשה','רמז לפתרון מתחת לשאלה','אחרי התשובה: חקירה (אם טעית), פתרון לפי השיטה, מילים']],
+  q_lq:['🎙','חלק נוסף · הרצאה / שיחה','קטע אחד או שניים, מהקל לקשה','חלק אחד מהחלקים הנוספים של המבחן – כל יום חלק אחר. שומעים הרצאה או שיחה ועונים על השאלות שלה.',['קטע שלם עם השאלות שלו','רמז לפתרון מתחת לשאלה','אחרי התשובה: חקירה (אם טעית), פתרון לפי השיטה, מילים']],
+  q_wr:['📝','חלק נוסף · משימת כתיבה','משימה אחת','חלק אחד מהחלקים הנוספים של המבחן – כל יום חלק אחר. כותבים 90–120 מילים על הנושא, וג׳מיני נותן ציון, טעויות וגרסה משופרת.',['משימה אחת שעוד לא כתבת','ספירת מילים תוך כדי כתיבה','משוב מלא אחרי השליחה']],
   q_sc:['✏️','השלמת משפטים','שאלות שעוד לא פתרת, מהקל לקשה',
     'שאלות השלמת משפטים מיחידות שונות – קודם כל השאלות הקלות שעוד לא פתרת, ורק אחר כך הרמה עולה. כל שאלה במסלול: תשובה, חקירת טעות, מילים מהשאלה.',
     ['רק שאלות שעוד לא ענית עליהן','מיחידות שונות, מהקלה לקשה','רמת הקושי כתובה ליד כל שאלה']],
@@ -3122,8 +3127,9 @@ function jrNorm(k,P){let ch=false;if(!Array.isArray(P.b)){P.b=[];ch=true}{let se
        nb.forEach(y=>{y.d=Math.min(y.n,per[y.qt]||0);y.used=0;if(y.d>=y.n)y.done=amNow()})}
      if(AQ&&qs.some(x=>AQ.jr===x.id)){AQ=null;try{LS.set('dictAmQ','null')}catch(e){}}
      P.b=P.b.filter(x=>!qs.includes(x));P.b.splice(i,0,...nb);ch=true}}
-  {const q=P.b.filter(x=>x.k==='q'&&x.qt&&!x.x);if(q.length>1&&q.every(x=>!x.done&&!x.d&&!x.used&&!x.go&&!(AQ&&AQ.jr===x.id))){const o=jrQOrd(k),sq=[...q].sort((a,b)=>o.indexOf(a.qt)-o.indexOf(b.qt));
+  {const q=P.b.filter(x=>x.k==='q'&&/^(sc|rs|rc)$/.test(x.qt||'')&&!x.x);if(q.length>1&&q.every(x=>!x.done&&!x.d&&!x.used&&!x.go&&!(AQ&&AQ.jr===x.id))){const o=jrQOrd(k),sq=[...q].sort((a,b)=>o.indexOf(a.qt)-o.indexOf(b.qt));
     if(sq.some((x,i)=>x!==q[i])){const pos=q.map(x=>P.b.indexOf(x));pos.forEach((p,i)=>P.b[p]=sq[i]);amSave()}}}
+  if(k>=dayKey()&&!P.b.some(x=>x.k==='q'&&isNT(x.qt||''))){const q=P.b.filter(x=>x.k==='q'&&/^(sc|rs|rc)$/.test(x.qt||''));if(q.length){P.b.splice(P.b.indexOf(q[q.length-1])+1,0,jrNxB(k,jrGoal(k)===180));amSave()}}
   if(ch){P.t=amNow();amSave()}return P}
 /* a review step with no words due is skipped (shown greyed, not "done"), so the day starts with what there is */
 function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==='rev'||x.k==='rev2')&&!x.go&&!wDue(x.k==='rev2'?18e5:0).length&&!(WS&&WS.jr===x.id&&WS.i<WS.list.length)){x.done=amNow();x.skip=1;ch=true;continue}break}if(ch){P.t=amNow();amSave()}return P}
@@ -3131,7 +3137,16 @@ function jrSkip(P){let ch=false;for(const x of P.b){if(x.done)continue;if((x.k==
 /* the order of the three question steps changes every day (her request): the six orders in turn, so the first type changes from day to day */
 const JQORD=[['sc','rs','rc'],['rs','rc','sc'],['rc','sc','rs'],['sc','rc','rs'],['rs','sc','rc'],['rc','rs','sc']];
 function jrQOrd(k){const d=Math.round(Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10))/864e5);return JQORD[((d%6)+6)%6]}
-function jrQB(k,long,nx){const o=jrQOrd(k);return (long?[['sc',30,15],['rs',30,10],['rc',55,25]]:[['sc',12,6],['rs',10,4],['rc',18,10]]).sort((a,b)=>o.indexOf(a[0])-o.indexOf(b[0])).map(([t,m,c])=>({id:k+'|q_'+t+nx(),k:'q',qt:t,m,n:c,d:0,done:0,used:0}))}
+/* the extra parts of the exam (her request): one of them every day, in turn, a few questions, easy → hard */
+const JNT=['wf','gc','lc','lq','wr'],isNT=t=>JNT.includes(t);
+const jrNtOf=k=>JNT[(((Math.round(Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10))/864e5))%5)+5)%5];
+function jrNxB(k,long){const t=jrNtOf(k),n=t==='wr'?1:t==='lq'?(long?4:2):(long?6:4),m=t==='wr'?(long?25:20):(long?15:10);return {id:k+'|q_x',k:'q',qt:t,m,n,d:0,done:0,used:0}}
+function jrQB(k,long,nx){const o=jrQOrd(k);return (long?[['sc',30,15],['rs',30,10],['rc',55,25]]:[['sc',12,6],['rs',10,4],['rc',18,10]]).sort((a,b)=>o.indexOf(a[0])-o.indexOf(b[0])).map(([t,m,c])=>({id:k+'|q_'+t+nx(),k:'q',qt:t,m,n:c,d:0,done:0,used:0})).concat([jrNxB(k,long)])}
+/* the extra part's questions: never answered, unit 1 first (the items get harder unit by unit); a lecture passage stays whole */
+function amNxIds(n,t){if(!AMD)return [];const SQ=amSeenQ(),un=id=>AMD.q[id]&&(amLast(id)?amQBack(id):!SQ.has(id));
+  const L=(AMD.s||[]).filter(x=>x.nt&&x.t===t).sort((a,b)=>(a.u||0)-(b.u||0)).flatMap(x=>x.ids).filter(un),out=[];
+  for(const id of L){if(out.length>=n)break;if(out.includes(id))continue;const x=AMD.q[id].x;if(t==='lq'&&x){out.push(...L.filter(j=>AMD.q[j].x===x&&!out.includes(j)))}else out.push(id)}
+  return out}
 function jrPlan(k=dayKey()){AMS.jp=AMS.jp||{};let P=AMS.jp[k];if(P)return jrNorm(k,P);const long=jrGoal(k)===180;let n=0;
   const B=(kk,m,c)=>({id:k+'|'+kk+(n++),k:kk,m,n:c,d:0,done:0,used:0});const nw=wNPer(k);
   const b=long?[B('rev',20),B('new',25,nw),...jrQB(k,true,()=>n++),B('meth',10,1),B('rev2',10)]:[B('rev',15),B('new',20,nw),...jrQB(k,false,()=>n++),B('meth',5,1),B('rev2',10)];
@@ -3180,7 +3195,7 @@ function jrRun(x){
     go({screen:'amnw',jb:x.id})}
   else if(x.k==='q'||x.k==='sim'){if(x.k==='q'&&x.qs&&x.qv!==2){x.qs=null;if(AQ&&AQ.jr===x.id){AQ=null;amSaveQ()}}/* sets made before 'easy first' are rebuilt */
     if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
-    if(x.k==='q'){const t0=x.qt0||0,todo=id=>{const l=amLast(id);return !l||(l[3]||0)<=t0};let ids=(Array.isArray(x.qs)?x.qs:[]).filter(todo);if(!ids.length){ids=amDayIds(Math.max(1,x.n-x.d),x.qt);x.qs=ids.slice();x.qv=2;x.qt0=amNow();amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,x.qt?AMTN[x.qt]+' · שאלות היום':'שאלות היום','learn','am',x.qt||'mix')}
+    if(x.k==='q'){const t0=x.qt0||0,todo=id=>{const l=amLast(id);return !l||(l[3]||0)<=t0};let ids=(Array.isArray(x.qs)?x.qs:[]).filter(todo);if(!ids.length){ids=isNT(x.qt)?amNxIds(Math.max(1,x.n-x.d),x.qt):amDayIds(Math.max(1,x.n-x.d),x.qt);x.qs=ids.slice();x.qv=2;x.qt0=amNow();amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,x.qt?AMTN[x.qt]+' · שאלות היום':'שאלות היום','learn','am',x.qt||'mix')}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
       if(!u){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}}
   else go({screen:'amjb',jb:x.id})}
@@ -3195,7 +3210,7 @@ function amHub(){if(!AMD)return amLoading();
     TP.b.push(nx?{id,k:'q',m:left,n:Math.max(5,Math.min(40,Math.ceil(left/2))),d:0,done:0,used:0,x:1}:{id,k:'meth',m:left,n:1,d:0,done:0,used:0,x:1});TP.t=amNow();amSave();P=TP;nb=jrCur(TP)}
   const lbl=ck===T?'התוכנית של היום':ck&&ck<T?'התוכנית של '+fmtD(ck,{weekday:'long',day:'numeric',month:'numeric'}):ck?'התוכנית של '+(kDiff(T,ck)===1?'מחר':fmtD(ck,{weekday:'long',day:'numeric',month:'numeric'})):'התוכנית של היום';
   const {c:cc,endK}=schPlan();
-  const SH={q_sc:'השלמה',q_rs:'ניסוח',q_rc:'קריאה',rev:'חזרה',new:'מילים',q:'שאלות',sim:'סימולציה',meth:'שיטה',rev2:'חזרת היום',brk:'הפסקה'};
+  const SH={q_wf:'יצירה',q_gc:'דקדוק',q_lc:'שמיעה',q_lq:'הרצאה',q_wr:'כתיבה',q_sc:'השלמה',q_rs:'ניסוח',q_rc:'קריאה',rev:'חזרה',new:'מילים',q:'שאלות',sim:'סימולציה',meth:'שיטה',rev2:'חזרת היום',brk:'הפסקה'};
   const stS=x=>x.skip?'כבוי':x.done?'בוצע':x.k==='new'||x.k==='q'||x.k==='sim'?`${x.d||0}/${x.n}`:x.k==='rev'||x.k==='rev2'?`${wDue(x.k==='rev2'?30*6e4:0).length} מילים`:x.m+' דק׳';
   const G=jrGapInfo(),gp=G.days||G.miss>0;
   app.innerHTML=`<div class="screen am-scr jh">
@@ -3864,7 +3879,7 @@ function amDbLabel(d){const es=d.cards.map(c=>AMS.w['c:'+c.id]).concat([AMS.w[wK
   if(done)return '✓ למדת';if(rev)return '✓ למדת · בחזרות';if(lrn)return '📖 בלמידה עכשיו';if(d.cards.every(isY))return '✓ יודעת';if(wait)return '⏳ ממתינה ללמידה';return ''}
 function amDbStatus(d){if(d.cards.every(isY))return 'y';if(d.cards.some(c=>AMS.w['c:'+c.id])||AMS.w[wKey(d.e)])return 'w';return ''}
 /* restatement (her request): answer → investigation (if wrong) → 🧭 solving by the method → words */
-const amHasMeth=q=>!!q&&q.t==='rs';
+const amHasMeth=q=>!!q&&/^(rs|wf|gc|lc|lq)$/.test(q.t);
 function amQPath(st,ok,q){const P=[['res','✓ תשובה'],...(ok?[]:[['why','🔍 חקירה']]),...(amHasMeth(q)?[['meth','🧭 לפי השיטה']]:[]),['words','📚 מילים']];const cur=st.fb||'res',ci=P.findIndex(x=>x[0]===cur);
   return `<div class="am-path">${P.map(([k,t],i)=>`<span class="${i<ci?'done':i===ci?'on':''}">${t}</span>`).join('')}</div>`}
 
@@ -3954,6 +3969,7 @@ function amFbPage(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
     if(q.t==='rc'){const k=rcType(q.q);h+=`<div class="am-box"><h4>📖 סוג השאלה: ${RCT[k][0]}</h4><p>${RCT[k][1]}</p></div>`}
     if(q.ex)h+=`<div class="am-box"><h4>📗 ההסבר מהספר</h4><div class="exl">${esc(q.ex)}</div></div>`;
     h+=amMethodBox(id);
+    h+=MLINK(q.t);
     h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="words">📚 המילים מהשאלה ←</button></div>`}
   else{h+=EXB('מילים מהשאלה. מילה מהמילון: <b>⏩ למידה בקרוב</b> מכניס אותה לתור – היא תגיע בשלב המילים החדשות הבא, לפני שאר המילים. ליד מילה כתוב איפה היא אצלך: ⏳ ממתינה ללמידה (בתור, עוד לא התחלת) · 📖 בלמידה עכשיו (בסבבים) · ✓ למדת · בחזרות · ✓ למדת · ✓ יודעת (סימנת במילון). מילה שלא במילון: <b>למילון</b> מוסיף אותה ל"מילים שהוספתי", <b>למילון + למידה בקרוב</b> גם מכניס אותה לתור.');h+=amWordsBox(id);
     h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="">${amNextLbl()} ←</button></div>`}
