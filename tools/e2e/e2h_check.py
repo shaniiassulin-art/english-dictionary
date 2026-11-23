@@ -13,6 +13,8 @@ with sync_playwright() as p:
   info=pg.evaluate("""(()=>{const c=DW.find(c=>c.e==='post'&&/דואר/.test(c.h[0]));AMS.w={};const k='c:'+c.id;AMS.w[k]={k,e:c.e,h:c.h[0],st:3,lr:5,due:Date.now()-1000,log:[],t:Date.now()};go({screen:'amw'});wStart('rev');return [c.h[0],wOtherMeanings(AMS.w[k]),wTaskNow(AMS.w[k])]})()""")
   print(info);pg.wait_for_timeout(1000)
   oth=info[1][0]
+  ot=pg.locator('.am-card .others').inner_text();r0=('פירושים אחרים של המילה' in ot and oth in ot and info[0] not in ot.split(chr(10)));print('others shown:',r0,ot.replace(chr(10),' | '))
+  assert r0
   pg.fill('#wAns',oth);pg.click('#wGo');pg.wait_for_timeout(500);t=T(pg)
   r1='פירוש נכון של' in t and '<b>' not in t and '<bdi>' not in t and pg.locator('#wAns').count()==1;print('other meaning → retry:',r1)
   V['v']='other';pg.fill('#wAns','משהו');pg.click('#wGo');pg.wait_for_timeout(1500);r2='פירוש נכון של' in T(pg) and pg.locator('#wAns').count()==1;print('gemini other → retry:',r2)

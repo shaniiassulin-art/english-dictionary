@@ -333,6 +333,8 @@ mark{background:none;color:var(--accent);font-weight:700;text-decoration:underli
 .app:has(.vbar){padding-bottom:64px}
 .vmsg{margin:0;background:var(--bad-soft);color:var(--bad);border-radius:10px;padding:8px 12px;font-size:.9rem}
 
+.am-card .others{margin:10px 0 0;background:var(--fill,var(--surface));border-radius:10px;padding:8px 12px;font-size:.92rem;line-height:1.45;color:var(--muted);text-align:right}
+.am-card .others .olist{margin:4px 0}
 .qz .others{margin:0;background:var(--surface);border-radius:10px;padding:8px 12px;font-size:.92rem;line-height:1.45;color:var(--muted)}
 .qz .others b{color:var(--ink);font-weight:600}
 .qz .others.sm{font-size:.85rem;padding:6px 12px}
@@ -4698,7 +4700,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
       h+=`<div class="am-opts">${O.map(o=>`<button class="am-opt${res?(o===w.e?' right':o===res.typed?' wrong':''):''}" data-wmc="${esc(o)}" ${res?'aria-disabled="true"':''}><span>${esc(o)}</span><i class="am-osay" data-amsay="${esc(o)}" role="button" aria-label="השמעה">${SPK}</i></button>`).join('')}</div>`;
       if(!res)h+=`<button class="link" id="wGive" style="align-self:center">לא יודעת – הראי לי</button>${EXB('לחצי על המילה שמתאימה למשפט. האפשרויות הן מילים אחרות שאת לומדת – כדי שתלמדי להבחין ביניהן.')}`}
     else if(task==='cloze2'){const s2=blankOut(wOther(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">משפט חדש – איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${SAYB(s2,'sm inl')}${tapEn(s2)}</div>${res?wTrHtml(wOther(w),x,ex):''}</div>`}
-    else if(task==='en2he'){if(!res)h+=`<div class="am-card"><p class="hint center" style="margin:0">מה הפירוש בעברית?</p><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div>${ctx&&hint>0?`<div class="ctx">${esc(ctx)}</div>`:''}</div>`;}
+    else if(task==='en2he'){if(!res)h+=`<div class="am-card"><p class="hint center" style="margin:0">מה הפירוש בעברית?</p><div class="w"><button class="spk" data-amsay="${esc(w.e)}">${SPK}</button><span>${esc(w.e)}</span></div>${(()=>{const om=wOtherMeanings(w);return om.length?`<div class="others">פירושים אחרים של המילה:${numList(om)}מה הפירוש הנוסף?</div>`:''})()}${ctx&&hint>0?`<div class="ctx">${esc(ctx)}</div>`:''}</div>`;}
     else if(task==='cloze'){const s=blankOut(wCtx(w),w.e);h+=`<div class="am-card"><p class="hint center" style="margin:0">איזו מילה חסרה? (${esc(w.h)})</p><div class="ctx" dir="ltr" style="font-size:1.15rem;color:var(--ink)">${s?SAYB(s,'sm inl')+tapEn(s):'_____'}</div>${s&&res?wTrHtml(wCtx(w),x,ex):''}</div>`}
     else h+=`<div class="am-card"><p class="hint center" style="margin:0">איך אומרים באנגלית?</p><div class="m" style="font-size:1.5rem">${esc(w.h)}</div></div>`;
     /* hint ladder */
