@@ -3129,6 +3129,7 @@ function jrNorm(k,P){let ch=false;if(!Array.isArray(P.b)){P.b=[];ch=true}{let se
      P.b=P.b.filter(x=>!qs.includes(x));P.b.splice(i,0,...nb);ch=true}}
   {const q=P.b.filter(x=>x.k==='q'&&/^(sc|rs|rc)$/.test(x.qt||'')&&!x.x);if(q.length>1&&q.every(x=>!x.done&&!x.d&&!x.used&&!x.go&&!(AQ&&AQ.jr===x.id))){const o=jrQOrd(k),sq=[...q].sort((a,b)=>o.indexOf(a.qt)-o.indexOf(b.qt));
     if(sq.some((x,i)=>x!==q[i])){const pos=q.map(x=>P.b.indexOf(x));pos.forEach((p,i)=>P.b[p]=sq[i]);amSave()}}}
+  P.b.forEach(x=>{if(x.k==='q'&&isNT(x.qt||'')&&!x.d&&!x.go&&!x.done&&!(x.qs&&x.qs.length)){const z=jrNxNM(x.qt,jrGoal(k)===180);if(x.n!==z.n||x.m!==z.m){x.n=z.n;x.m=z.m}}});
   if(k>=dayKey()&&!P.b.some(x=>x.k==='q'&&isNT(x.qt||''))){const q=P.b.filter(x=>x.k==='q'&&/^(sc|rs|rc)$/.test(x.qt||''));if(q.length){P.b.splice(P.b.indexOf(q[q.length-1])+1,0,jrNxB(k,jrGoal(k)===180));amSave()}}
   if(ch){P.t=amNow();amSave()}return P}
 /* a review step with no words due is skipped (shown greyed, not "done"), so the day starts with what there is */
@@ -3140,7 +3141,9 @@ function jrQOrd(k){const d=Math.round(Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.
 /* the extra parts of the exam (her request): one of them every day, in turn, a few questions, easy → hard */
 const JNT=['wf','gc','lc','lq','wr'],isNT=t=>JNT.includes(t);
 const jrNtOf=k=>JNT[(((Math.round(Date.UTC(+k.slice(0,4),+k.slice(5,7)-1,+k.slice(8,10))/864e5))%5)+5)%5];
-function jrNxB(k,long){const t=jrNtOf(k),n=t==='wr'?1:t==='lq'?(long?4:2):(long?6:4),m=t==='wr'?(long?25:20):(long?15:10);return {id:k+'|q_x',k:'q',qt:t,m,n,d:0,done:0,used:0}}
+const jrDayOf=x=>String(x.id||'').slice(0,10)||dayKey();
+const jrNxNM=(t,long)=>({n:t==='wr'?1:t==='lq'?2:(long?3:2),m:t==='wr'?20:(long?8:6)});
+function jrNxB(k,long){const t=jrNtOf(k),z=jrNxNM(t,long);return {id:k+'|q_x',k:'q',qt:t,m:z.m,n:z.n,d:0,done:0,used:0}}
 function jrQB(k,long,nx){const o=jrQOrd(k);return (long?[['sc',30,15],['rs',30,10],['rc',55,25]]:[['sc',12,6],['rs',10,4],['rc',18,10]]).sort((a,b)=>o.indexOf(a[0])-o.indexOf(b[0])).map(([t,m,c])=>({id:k+'|q_'+t+nx(),k:'q',qt:t,m,n:c,d:0,done:0,used:0})).concat([jrNxB(k,long)])}
 /* the extra part's questions: never answered, unit 1 first (the items get harder unit by unit); a lecture passage stays whole */
 function amNxIds(n,t){if(!AMD)return [];const SQ=amSeenQ(),un=id=>AMD.q[id]&&(amLast(id)?amQBack(id):!SQ.has(id));
@@ -3195,7 +3198,7 @@ function jrRun(x){
     go({screen:'amnw',jb:x.id})}
   else if(x.k==='q'||x.k==='sim'){if(x.k==='q'&&x.qs&&x.qv!==2){x.qs=null;if(AQ&&AQ.jr===x.id){AQ=null;amSaveQ()}}/* sets made before 'easy first' are rebuilt */
     if(AQ&&AQ.jr===x.id&&AQ.i<AQ.ids.length&&!AQ.fin)return amResume();
-    if(x.k==='q'){const t0=x.qt0||0,todo=id=>{const l=amLast(id);return !l||(l[3]||0)<=t0};let ids=(Array.isArray(x.qs)?x.qs:[]).filter(todo);if(!ids.length){ids=isNT(x.qt)?amNxIds(Math.max(1,x.n-x.d),x.qt):amDayIds(Math.max(1,x.n-x.d),x.qt);x.qs=ids.slice();x.qv=2;x.qt0=amNow();amSave()}if(!ids.length){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,x.qt?AMTN[x.qt]+' · שאלות היום':'שאלות היום','learn','am',x.qt||'mix')}
+    if(x.k==='q'){const t0=x.qt0||0,todo=id=>{const l=amLast(id);return !l||(l[3]||0)<=t0};let ids=(Array.isArray(x.qs)?x.qs:[]).filter(todo);if(!ids.length){if(isNT(x.qt)){const i0=JNT.indexOf(x.qt);for(let j=0;j<JNT.length&&!ids.length;j++){const t=JNT[(i0+j)%JNT.length];ids=amNxIds(Math.max(1,(t===x.qt?x.n:jrNxNM(t,jrGoal(jrDayOf(x))===180).n)-x.d),t);if(ids.length&&t!==x.qt){const z=jrNxNM(t,jrGoal(jrDayOf(x))===180);x.qt=t;x.n=z.n;x.m=z.m;x.d=0;amToast('אין עוד שאלות ב'+AMTN[JNT[i0]]+' – היום '+AMTN[t])}}}else ids=amDayIds(Math.max(1,x.n-x.d),x.qt);x.qs=ids.slice();x.qv=2;x.qt0=amNow();amSave()}if(!ids.length){if(isNT(x.qt))amToast('סיימת את כל השאלות בחלקים הנוספים של המבחן ✓');jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(ids,x.qt?AMTN[x.qt]+' · שאלות היום':'שאלות היום','learn','am',x.qt||'mix')}
     else{const done=AMS.ex||{};let u=[1,2,3,4].find(i=>!done['b'+i]);let bb=true;if(!u){u=Array.from({length:20},(_,i)=>i+1).find(i=>!done[i]);bb=false}
       if(!u){jrFinish(x.id,1);go({screen:'am'});return}JRGO=x.id;amStart(amExamIds(u,bb),(bb?'סימולציה · ניהול זמנים פרק ':'סימולציה ')+u,'exam','am','ex',u,bb)}}
   else go({screen:'amjb',jb:x.id})}

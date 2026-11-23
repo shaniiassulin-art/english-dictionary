@@ -28,4 +28,12 @@ with sync_playwright() as p:
     nx.click();pg.wait_for_timeout(500)
   print(seq,pg.evaluate("jrBlock(AQ.jr).d"));assert 'meth' in seq and seq[-1]=='words' and pg.evaluate("jrBlock(AQ.jr).d")==1
   assert pg.locator('.am-mlink').count()==0 or True
+  # sizes: few questions a day
+  z=pg.evaluate("['wf','gc','lc','lq','wr'].map(t=>[t,jrNxNM(t,false).n,jrNxNM(t,true).n,jrNxNM(t,false).m])");print(z)
+  assert all(n<=3 for _,a,b2,_m in z for n in (a,b2))
+  # an unstarted step of an old size shrinks; a used-up part falls to the next part in turn
+  r=pg.evaluate("""(()=>{const T=kAdd(dayKey(),1),P=jrPlan(T);const x=P.b.find(b=>isNT(b.qt||''));x.n=6;x.m=15;jrNorm(T,P);const sz=[x.n,x.m];
+    x.qt='lc';AMS.a=AMS.a||{};(AMD.s||[]).filter(s=>s.nt&&s.t==='lc').flatMap(s=>s.ids).forEach(id=>AMS.a[id]={h:[[0,1,1000,amNow()]]});
+    AMS.jp[T]=P;jrRun(x);return [sz,x.qt,x.n,S.screen,(AQ.ids||[])[0]]})()""");print(r)
+  assert r[0][0]<=3 and r[1]!='lc' and r[3]=='amq'
   assert not e,e;print('OK')
