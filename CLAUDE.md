@@ -232,3 +232,4 @@
 - Nov 23 (her requests):
   - All of the day's reviews in one session: `wStart('rev')` takes every due word (it was capped at 30, so after "finishing" the rest showed up as more reviews).
   - The three question steps come in a different order every day: `jrQOrd(k)` cycles the six orders of sc / rs / rc by day number (`JQORD`, the first type changes from day to day); `jrQB` builds new plans in that order and `jrNorm` reorders an existing plan's typed question steps while none of them was started (no `P.t` bump – every device computes the same order). Test: `tools/e2e/q_order_rev_all.py` (`q_types.py` now checks the steps regardless of order).
+- A wrong review answer moves the word ONE review back (Nov 23, her request – was two; `wGrade`: `st = max(1, st-1)`), still practised again at the end of the same round and next review tomorrow; path page / help texts updated. Test: `tools/e2e/miss_one_back.py`.

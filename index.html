@@ -4242,7 +4242,7 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
     <div class="am-box"><h4>3 · מה קובע אם מתקדמים</h4>
       <ul><li><b>נכון</b> – המילה עוברת לחזרה הבאה, שרחוקה יותר בזמן.</li>
       <li><b>רמז</b> – יש רק בחזרה 3 (${WREV[3][1]}): נכון עם רמז = אותה חזרה שוב, באותו מרווח.</li>
-      <li><b>טעות</b> – חוזרת שתי חזרות אחורה (לא לפני חזרה 1), מופיעה שוב מיד בסוף אותו סבב לתרגול, והחזרה הבאה שלה מחר.</li></ul>
+      <li><b>טעות</b> – יורדת חזרה אחת אחורה (לא לפני חזרה 1), מופיעה שוב מיד בסוף אותו סבב לתרגול, והחזרה הבאה שלה מחר.</li></ul>
       <p class="hint" style="margin:0">דוגמה: מילה בחזרה 4 שטעית בה חוזרת לחזרה 2 – כלומר שוב "${WREV[2][1]}", מחר (ובסוף הסבב עוד פעם לתרגול).</p></div>
     <div class="am-box"><h4>4 · מתי המילים מופיעות</h4>
       <ul><li><b>במסע היומי:</b> "חזרה על מילים" בתחילת היום (כל מה שהגיע זמנו) ו"חזרה על המילים של היום" בסוף (כשכל המילים של היום סיימו את הסבבים).</li>
@@ -4918,9 +4918,9 @@ function wGrade(w,ok,hint){w=wLive(w);const k=wK(w),task=WS&&WS.res&&WS.res.task
     /* wrong again: once more at the end of this round, with another sentence – the word moves on only when she gets it right (her request) */
     else if(!(WS.again||[]).includes(k))WS.again=(WS.again||[]).concat(k);amSave();return}
   wLog(w,task,ok?(hint?.5:1):0,hint);
-  /* right without a hint: one stage up; with a hint: same stage again; wrong: two stages back and again in 20 minutes */
+  /* right without a hint: one stage up; with a hint: same stage again; wrong: one stage back (her request, Nov 23) */
   if(ok){w.ok=(w.ok||0)+1;if(task==='en2he')delete w.e2hBad;if(!hint)w.st=Math.min(WMAST,w.st+1);if(w.st>=WMAST)wMaster(w);else w.due=amNow()+WINT[w.st]}
-  else{/* wrong: two reviews back, practised again at the end of this round (WS.again), next review tomorrow – not again 20 min after the round (Nov 16, her request) */w.bad=(w.bad||0)+1;w.st=Math.max(1,w.st-2);w.due=amNow()+DAY;if(!(WS.again||[]).includes(k))WS.again=(WS.again||[]).concat(k)}
+  else{/* wrong: one review back (Nov 23, her request; was two), practised again at the end of this round (WS.again), next review tomorrow – not again 20 min after the round (Nov 16, her request) */w.bad=(w.bad||0)+1;w.st=Math.max(1,w.st-1);w.due=amNow()+DAY;if(!(WS.again||[]).includes(k))WS.again=(WS.again||[]).concat(k)}
   wSentUsed(w);
   w.t=amNow();if(ok)WS.ok=(WS.ok||0)+1;else WS.bad=(WS.bad||0)+1;amSave()}
 /* the sentence just answered goes to the used ones, so the next question has another one */
@@ -5056,7 +5056,7 @@ const AMHELP={
  journey:['🛤','המסלול של מילה','אמירנט',`<p><b>למידה (באותו יום) – 4 סבבים, כל סבב לכל המילים לפני הבא:</b></p><ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol>
   <p><b>חזרות – 6 חזרות במרווחים שגדלים (אין חזרה שבה כותבים את המילה באנגלית). חזרה 1 מגיעה כשכל המילים של היום סיימו את הסבבים (אם לא סיימת – למחרת בבוקר):</b></p>
   <ol>${[1,2,3,4,5,6].map(i=>`<li><b>חזרה ${i} · אחרי ${WREV[i][0]} · ${WREV[i][1]}</b> – ${WREV[i][2]}${i===6?' הצלחה = 🏆 נלמדה, וסימון ✓ במילון.':''}</li>`).join('')}</ol>
-  <p>נכון = לחזרה הבאה · עם רמז (יש רק בחזרה 3) = אותה חזרה שוב · טעות = שתי חזרות אחורה, עוד פעם בסוף הסבב והחזרה הבאה מחר. האפשרויות בבחירה הן מילים אחרות שאת לומדת – כך לומדים להבחין ביניהן.</p>`],
+  <p>נכון = לחזרה הבאה · עם רמז (יש רק בחזרה 3) = אותה חזרה שוב · טעות = חזרה אחת אחורה, עוד פעם בסוף הסבב והחזרה הבאה מחר. האפשרויות בבחירה הן מילים אחרות שאת לומדת – כך לומדים להבחין ביניהן.</p>`],
  mywords:['📒','המילים שלי','אמירנט',`<p>כל המילים שלך, עם לשוניות: <b>לחזרה</b> (הגיע זמנן), <b>בלמידה</b>, <b>קשות</b>, <b>נלמדו</b>, <b>מחכות</b>. ליד כל מילה כתוב באיזו חזרה היא (חזרה 1–6) ומתי החזרה הבאה.</p>
   <p>לחיצה על מילה פותחת את העמוד שלה: מסלול החזרות ומתי הבאה, <b>היומן</b> (כל תרגול: מתי, איזה תרגיל, הצלחה / טעות / עם רמז), אחוז הצלחה, <b>המלצה אישית</b>, האסוציאציה (אפשר להחליף), משפט משלך (לא חובה), איפה פגשת אותה, ו"תרגול עכשיו".</p>
   <p>למטה בעמוד הרשימה: כמה מילים חדשות ביום.</p>`],
