@@ -2780,7 +2780,7 @@ function wNextWord(){WS.nwOpen=0;WS.e2hOther='';WS.draft='';WS.busy=false;WS.cur
   wSave();draw();window.scrollTo(0,0)}
 /* result of a recall: the stage goes up (a hint keeps it), a miss goes back and comes again at the end of this session */
 function wAfter(w,ok){w=wLive(w);if(WS.res&&!WS.res.task)WS.res.task=wTaskNow(w);if(WS.res&&WS.res.st0==null)WS.res.st0=w.st;if(!ok)wMiss(w);/* the answered task stays on screen even after the stage changes */
-  if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round){if(ok){w.lr=Math.max(lrOf(w),WS.round+1);if(w.lr>=5)wLrDoneMark(w);if(w.lr>=5&&w.st>=1&&w.st<WMAST)wR1Wait(w)/* review 1 = once the whole day's learning is done, else tomorrow */}else wRequeue(w)}if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
+  if(WS.mode==='r2'){/* second round of the new words, same session: practice only */if(WS.perWord&&WS.round){if(ok){w.lr=Math.max(lrOf(w),WS.round+1);if(w.lr>=5)wLrDoneMark(w);if(w.lr>=5&&w.st>=1&&w.st<WMAST)wR1Wait(w)/* review 1 = once the whole day's learning is done, else tomorrow */}else wRequeue(w)}wHeUsed(w);if(w.rvh){if(w.rvh.en)w.used=(w.used||[]).filter(x=>x!==w.rvh.en).concat(w.rvh.en).slice(-24);delete w.rvh}if(w.rv&&String(w.rv.st)[0]==='L'){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}wLog(w,'r2',ok?1:0,WS.hint||0);w.t=amNow();if(!ok&&!(WS.again||[]).includes(wK(w)))WS.again=(WS.again||[]).concat(wK(w));if(ok)WS.ok=(WS.ok||0)+1;amSave();return}
   if(WS.step==='first'){/* the first recall right after learning */
     wLog(w,'first',ok?(WS.hint?.5:1):0,WS.hint||0);if(ok)w.ok=(w.ok||0)+1;else w.bad=(w.bad||0)+1;w.st=1;w.due=amNow()+WINT[1];w.t=amNow();if(!(WS.counted&&WS.counted.includes(wK(w)))&&WS.jr)jrCount(WS.jr);AMS.nd[dayKey()]=(AMS.nd[dayKey()]||0)+(WS.counted&&WS.counted.includes(wK(w))?0:1);WS.counted=(WS.counted||[]).concat(wK(w));
     if(!ok){WS.again=(WS.again||[]).filter(k=>k!==wK(w)).concat(wK(w))}amSave();return}
@@ -2796,7 +2796,9 @@ function wGrade(w,ok,hint){w=wLive(w);const k=wK(w),task=WS&&WS.res&&WS.res.task
   wSentUsed(w);
   w.t=amNow();if(ok)WS.ok=(WS.ok||0)+1;else WS.bad=(WS.bad||0)+1;amSave()}
 /* the sentence just answered goes to the used ones, so the next question has another one */
-function wSentUsed(w){if(w.rv){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}
+/* the card's own Hebrew sentence, once answered (right or wrong), is used up too – when the word goes back a review or comes to review 1 after learning round 3, it gets another sentence (her request) */
+function wHeUsed(w){const t=WS&&WS.res&&WS.res.task;if(t!=='hecl')return;const s=wHeSent(w);if(s&&!(w.used||[]).includes('he:'+s))w.used=(w.used||[]).concat('he:'+s).slice(-24)}
+function wSentUsed(w){wHeUsed(w);if(w.rv){w.used=(w.used||[]).filter(x=>x!==w.rv.en).concat(w.rv.en).slice(-24);delete w.rv}
   if(w.rvh){if(w.rvh.en)w.used=(w.used||[]).filter(x=>x!==w.rvh.en).concat(w.rvh.en).slice(-24);delete w.rvh}}
 function wDone(){const n=WS?WS.list.length:0;
   app.innerHTML=`<div class="screen">${amNav(WS&&WS.from||'amw','חזרה')}
