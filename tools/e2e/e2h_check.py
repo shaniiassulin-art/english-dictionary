@@ -14,7 +14,7 @@ with sync_playwright() as p:
   print(info);pg.wait_for_timeout(1000)
   oth=info[1][0]
   pg.fill('#wAns',oth);pg.click('#wGo');pg.wait_for_timeout(500);t=T(pg)
-  r1='פירוש נכון של' in t and pg.locator('#wAns').count()==1;print('other meaning → retry:',r1)
+  r1='פירוש נכון של' in t and '<b>' not in t and '<bdi>' not in t and pg.locator('#wAns').count()==1;print('other meaning → retry:',r1)
   V['v']='other';pg.fill('#wAns','משהו');pg.click('#wGo');pg.wait_for_timeout(1500);r2='פירוש נכון של' in T(pg) and pg.locator('#wAns').count()==1;print('gemini other → retry:',r2)
   V['v']='right';pg.fill('#wAns','מכתבים');pg.click('#wGo');pg.wait_for_timeout(1500);t=T(pg)
   st=pg.evaluate("Object.values(AMS.w)[0].st")

@@ -222,3 +222,4 @@
   - "בשלמת" → "בהשלמת" fixed in every Gemini Hebrew text (`bdiEsc`).
   - The hint under a question is "💡 רמז לפתרון · כדאי לפתוח אחרי שחשבת לבד" (`.am-hintq`): icon chip, title + subtitle, steps as numbered grey cards.
   - Coming back always keeps the same place: a new browser session no longer opens the app chooser (the 10-minute rule is gone).
+- "Another meaning" notice showed raw tags (Nov 23, her screenshot "<b>רק בלבד</b> … <bdi>just</bdi>"): `WS.e2hOther` is built with `esc()` and is now inserted as HTML, not passed through `bdiEsc` again. `tools/e2e/e2h_check.py` checks no "<b>"/"<bdi>" text shows.
