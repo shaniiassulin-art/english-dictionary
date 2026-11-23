@@ -1533,7 +1533,7 @@ function amAutoQ(id,q,st){const b=$('autoBtn');if(b&&!b._q){b._q=1;b.onclick=()=
 function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.ids.length){go({screen:'am'});return}
   if(AQ.i>=AQ.ids.length)return amResult();
   const id=AQ.ids[AQ.i],q=AMD.q[id],st=aqSt(),exam=AQ.mode==='exam';AQ.cur=id;if(!exam)amXplPre(AQ.ids.slice(AQ.i,AQ.i+4));
-  if(st.fb==='meth')st.fb='words';
+  if(st.fb==='meth'&&!amHasMeth(q))st.fb='words';
   const T=q.x?AMD.x[q.x]:null;
   /* exam look (like the real test): section tabs, a bar with instructions / question numbers / flag / next, "Question n" */
   const runs=[];AQ.ids.forEach((qid,i)=>{const t=(AMD.q[qid]||{}).t,r=runs[runs.length-1];if(r&&r.t===t&&!(t==='lq'&&AMD.q[qid].x!==AMD.q[AQ.ids[r.e]].x&&false))r.e=i;else runs.push({t,s:i,e:i})});
@@ -1740,7 +1740,9 @@ function amDbLabel(d){const es=d.cards.map(c=>AMS.w['c:'+c.id]).concat([AMS.w[wK
   const done=es.some(w=>w.st>=WMAST),rev=es.some(w=>w.st>=1&&lrOf(w)>=5),lrn=es.some(w=>w.st>=1&&lrOf(w)<5),wait=es.some(w=>!w.st);
   if(done)return '✓ למדת';if(rev)return '✓ למדת · בחזרות';if(lrn)return '📖 בלמידה עכשיו';if(d.cards.every(isY))return '✓ יודעת';if(wait)return '⏳ ממתינה ללמידה';return ''}
 function amDbStatus(d){if(d.cards.every(isY))return 'y';if(d.cards.some(c=>AMS.w['c:'+c.id])||AMS.w[wKey(d.e)])return 'w';return ''}
-function amQPath(st,ok){const P=[['res','✓ תשובה'],...(ok?[]:[['why','🔍 חקירה']]),['words','📚 מילים']];const cur=st.fb||'res',ci=P.findIndex(x=>x[0]===cur);
+/* restatement (her request): answer → investigation (if wrong) → 🧭 solving by the method → words */
+const amHasMeth=q=>!!q&&q.t==='rs';
+function amQPath(st,ok,q){const P=[['res','✓ תשובה'],...(ok?[]:[['why','🔍 חקירה']]),...(amHasMeth(q)?[['meth','🧭 לפי השיטה']]:[]),['words','📚 מילים']];const cur=st.fb||'res',ci=P.findIndex(x=>x[0]===cur);
   return `<div class="am-path">${P.map(([k,t],i)=>`<span class="${i<ci?'done':i===ci?'on':''}">${t}</span>`).join('')}</div>`}
 
 /* 📖 detailed explanation after answering (her request): folded; opened → Gemini explains the sentence word by word and every option, assuming she knows no English; also a correct translation (the book's may be wrong) */
@@ -1776,11 +1778,11 @@ ${AIHE}`}
 /* box 1 (Nov 20, her request): how to understand the words – the words she marked (🔖), the hard words of the sentence and the words of the options, in one box */
 function amUnkBox(id,st){if(!GKEY())return '';const U=st&&st.unk||[],q=AMD.q[id];let ua=null;
   if(U.length){const key='xu2|'+id+'|'+U.slice().sort().join(',');ua=AMAI[key];if(!ua&&!AIP[key])aiCached(key,promptUnk(q,U),.2).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()})}
-  const xk='x4|'+id,xa=AMAI[xk];if(!xa&&!AIP[xk])aiCached(xk,promptXpl(q),.2).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()});
+  /* only the words she marked "לא ידעתי את המילה" (her request – no other words in this box); no marks = no box */
+  if(!U.length)return '';
   const seen=new Set(),L=[];const add=(en,how,mean,mk)=>{const k=String(en||'').toLowerCase().trim();if(!k||seen.has(k))return;seen.add(k);L.push(`<li${mk?' class="mk"':''}><b><bdi dir="ltr">${esc(en)}</bdi></b>${mk?' <small>🔖</small>':''} – ${bdiEsc(how||'')}${mean?` <span>← ${esc(mean)}</span>`:''}</li>`)};
   if(ua&&!ua.err)(ua.words||[]).forEach(d=>add(d.en,d.how,d.meaning,1));
-  if(xa&&!xa.err){(xa.decode||[]).forEach(d=>add(d.en,d.how,d.meaning));(xa.options||[]).forEach(o=>(o.words||[]).forEach(w=>add(w.en,w.hint,'')))}
-  const wait=(U.length&&!ua)||!xa;
+  const wait=!ua;
   if(!L.length&&!wait)return '';
   return `<div class="am-box am-xpl am-unkbox"><h5 style="margin-top:0">🔤 איך מבינים את המילים</h5>${L.length?`<ul class="am-xopts">${L.join('')}</ul>`:''}${wait?'<p class="hint">⏳ מכינה הסבר למילים…</p>':''}${ua&&ua.err?`<p class="hint">${esc(ua.err)}</p>`:''}</div>`}
 function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x4|'+id,ai=AMAI[key],open=!!XPLO[id];
@@ -1801,7 +1803,7 @@ function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x4|'+id,ai=AMA
 document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.am-xpl'))return;const id=d.dataset.xpl;const was=!!XPLO[id];XPLO[id]=d.open;if(d.open&&!was)amRedrawKeep()},true);
 document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x4|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
 function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
-  let h=amQPath(st,ok)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
+  let h=amQPath(st,ok,q)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
   const xai=AMAI['x4|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
   const heNow=qfx&&qfx.he||(xfix?xai.translation:q.he),fixed=!!(qfx&&qfx.he&&qfx.changed!==false)||!!xfix,why=qfx&&qfx.he?qfx.why:xfix?xai.book_wrong:'';
   const heBox=(t)=>`<div class="am-box good"><h4>${t}</h4><p>${bdiEsc(heNow)}</p>${GKEY()?`<button class="small-link" data-qtrfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">${QTRP[id]?'⏳ בודקת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`;
@@ -1812,18 +1814,18 @@ function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   h+=amUnkBox(id,st);h+=amXplBox(id);
   if(q.ex)h+=`<div class="am-box"><h4>📗 ההסבר</h4><div class="exl">${esc(q.ex)}</div></div>`;
   h+=EXB(!ok?'הטעות מטופלת עכשיו, לא מחכה לאחר כך: הכפתור למטה ממשיך ל<b>חקירת הטעות</b>, אחריה <b>איך פותרים לפי השיטה</b>, ואז <b>המילים מהשאלה</b>.':'הכפתור למטה ממשיך ל<b>איך פותרים לפי השיטה</b> – גם כשצדקת, כדי לוודא שזה לא היה מזל – ואז <b>המילים מהשאלה</b>.');
-  h+=`<div class="am-cta">${AQ.i?'<button class="btn secondary" id="amPrev2" aria-label="השאלה הקודמת">→</button>':''}<button class="btn" id="amNext" data-fb="${!ok?'why':'words'}">${!ok?'🔍 לחקור את הטעות':'📚 המילים מהשאלה'} ←</button></div>`;
+  h+=`<div class="am-cta">${AQ.i?'<button class="btn secondary" id="amPrev2" aria-label="השאלה הקודמת">→</button>':''}<button class="btn" id="amNext" data-fb="${!ok?'why':amHasMeth(q)?'meth':'words'}">${!ok?'🔍 לחקור את הטעות':amHasMeth(q)?'🧭 פתרון לפי השיטה':'📚 המילים מהשאלה'} ←</button></div>`;
   return h}
 function amNextLbl(){return AQ.i+1<AQ.ids.length?'לשאלה הבאה':'סיום'}
 function amFbPage(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   const mine=typeof q.a==='string'?st.sel:q.o[st.sel-1],right=typeof q.a==='string'?q.a:q.o[q.a-1];
-  let h=amQPath(st,ok);
+  let h=amQPath(st,ok,q);
   if(st.fb==='why'){
     h+=`<div class="am-vs"><div class="bad"><small>בחרת</small><bdi dir="ltr">${esc(mine||'')}</bdi></div><div class="ok"><small>הנכונה</small><bdi dir="ltr">${esc(right||'')}</bdi></div></div>`;
     h+=EXB('3 צעדים: <b>1</b> סמני מה קרה, <b>2</b> לחצי "לנתח" לקבל הסבר אישי, <b>3</b> שמרי לקח במשפט אחד (נשמר ב"הלקחים שלי").');
     h+=amWhyBox(id,st);
-    h+=amMethodBox(id);
-    h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="words">📚 המילים מהשאלה ←</button></div>`}
+    if(!amHasMeth(q))h+=amMethodBox(id);
+    h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="${amHasMeth(q)?'meth':'words'}">${amHasMeth(q)?'🧭 פתרון לפי השיטה':'📚 המילים מהשאלה'} ←</button></div>`}
   else if(st.fb==='meth'){
     if(q.t!=='rc'&&q.t!=='yb'){const cs=connFind(q.q);if(cs.length)h+=`<div class="am-box"><h4>🔗 מילות הקישור במשפט</h4>${cs.map(c=>`<p>«<bdi>${c.ws.join(', ')}</bdi>» – <b>${c.he}</b>: ${c.tip}</p>`).join('')}</div>`}
     if(q.t==='rc'){const k=rcType(q.q);h+=`<div class="am-box"><h4>📖 סוג השאלה: ${RCT[k][0]}</h4><p>${RCT[k][1]}</p></div>`}
@@ -1875,7 +1877,7 @@ function amBindFeedback(id,st){const q=AMD.q[id];
   const nx=$('amNext');if(nx)nx.onclick=()=>{const f=nx.dataset.fb;if(f){st.fb=f;amSaveQ();draw();window.scrollTo(0,0);
       if(f==='why'&&GKEY()&&!AMAI['why|'+id+'|'+st.sel]){}return}
     st.fb='';AQ.i++;if(AQ.i<AQ.ids.length)aqSt().seen=amNow();amSaveQ();draw();window.scrollTo(0,0)};
-  const br=$('amBackRes');if(br)br.onclick=()=>{const ok=amIsOk(q,st.sel);st.fb=st.fb==='words'?(ok?'':'why'):'';amSaveQ();draw();window.scrollTo(0,0)};
+  const br=$('amBackRes');if(br)br.onclick=()=>{const ok=amIsOk(q,st.sel);st.fb=st.fb==='words'&&amHasMeth(q)?'meth':(st.fb==='words'||st.fb==='meth')?(ok?'':'why'):'';amSaveQ();draw();window.scrollTo(0,0)};
   const lsb=$('amLsSave');if(lsb)lsb.onclick=()=>{const v=($('amLesson').value||'').trim();if(!v)return;AMS.ls=AMS.ls||{};AMS.ls[id+'|'+st.sel]={id,r:v,w:(st.why||[]).slice(),t:amNow()};amSave();amRedrawKeep()};
   const pv=$('amPrev2');if(pv)pv.onclick=()=>{AQ.i--;amSaveQ();draw();window.scrollTo(0,0)};
   app.querySelectorAll('[data-why]').forEach(b=>b.onclick=()=>{const k=b.dataset.why;st.why=st.why&&st.why.length?st.why:((AMS.a[id]||{}).r||[]).slice();
