@@ -2226,7 +2226,7 @@ async function amTrans(e,sent){const k=e.toLowerCase();const d=dictFind(e);if(d)
 const STOP=new Set('a an the of to in on at by for and or but is are was were be been being it its this that these those he she they we you i his her their our your with as from not no so if than then there here have has had do does did can could will would shall should may might must also very more most much many such only just into about over under after before while when which who whom whose what where why how all any some each both other one two three'.split(' '));
 /* 🔊 any English text: the recording if there is one, the Gemini English voice if chosen, else the phone's voice */
 const DSENT=new Set(RAW.flatMap(r=>Array.isArray(r.s)?r.s:[r.s]).filter(Boolean));
-function amSay(t){t=String(t||'').replace(/_{2,}/g,' blank ').trim();if(!t)return;unlockAudio();
+function amSay(t){t=String(t||'').replace(/_{2,}/g,' mmm ').trim();if(!t)return;unlockAudio();
   if(WORDSET.has(t)||DSENT.has(t)){speak(t);return}
   /* a speaker she tapped keeps working through the slower fallbacks, also in שקט */
   if(typeof MANT!=='undefined'&&Date.now()-MANT<1500)MANT=Date.now()+20000;
@@ -3760,7 +3760,7 @@ function amQuiz(){TAPDB=false;if(!AMD)return amLoading();if(!AQ||!AQ.ids||!AQ.id
   const cs=['sc','rs','gc'].includes(q.t)?connFind(q.q):[];
   TAPDB=!exam;let qh=tapEn(q.q,st.stage!=='read'||q.t==='rs'||exam?cs:[]);TAPDB=false;qh=qh.replace(/_{3,}/g,'<span class="blank">&nbsp;</span>');
   if(q.t==='wf')qh+=` <b class="ax-base">${esc(q.base)}</b>`;
-  h+=`<div class="ax-qw" dir="ltr"><div class="ax-q am-q" data-ctx="${esc(q.q)}" data-src="${id}">${qh}</div>${q.t==='lc'||q.t==='wr'?'':SAYB(q.q.replace(/_{3,}/g,' blank '),'sm inl')}</div>`;
+  h+=`<div class="ax-qw" dir="ltr"><div class="ax-q am-q" data-ctx="${esc(q.q)}" data-src="${id}">${qh}</div>${q.t==='lc'||q.t==='wr'?'':SAYB(q.q.replace(/_{3,}/g,' mmm '),'sm inl')}</div>`;
   if(q.t==='wr'&&q.he)h+=`<p class="hint" style="margin:0">${esc(q.he)}</p>`;
   /* step 1 – think before the options (learning mode) */
   if(st.stage==='read')st.stage='opts';
