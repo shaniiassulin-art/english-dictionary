@@ -1942,6 +1942,8 @@ function amWhyBox(id,st){const q=AMD.q[id],a=AMS.a[id]||{},key='why|'+id+'|'+st.
     <button class="btn ${ls?'secondary':''}" id="amLsSave">${ls?'✓ נשמר · לעדכן':'📝 לשמור את הלקח'}</button></div>`;
   return h}
 /* one page for "how to solve" (Nov 25, her request – the detailed explanation and the method page repeated each other): the method page shows the detailed explanation's translation / reading / passage, then the method steps, then each option once (the explanation's richer list, the method's as fallback), why the answer is right, the rule + tip, and one question box */
+/* seconds counter on waiting lines (her request): any [data-secs=<start ms>] shows the seconds since then */
+const SOLVET={};setInterval(()=>{document.querySelectorAll('[data-secs]').forEach(e=>{const v=String(Math.floor((Date.now()-+e.dataset.secs)/1000));if(e.textContent!==v)e.textContent=v})},1000);
 function amSolveBox(id){const q=AMD.q[id],xk='x4|'+id,mk='m|'+id,X=AMAI[xk],M=AMAI[mk];
   if(GKEY()&&S.screen==='amq'){const re=()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()};
     if(!X&&!AIP[xk])aiCached(xk,promptXpl(q),.2).then(re);
@@ -1949,7 +1951,7 @@ function amSolveBox(id){const q=AMD.q[id],xk='x4|'+id,mk='m|'+id,X=AMAI[xk],M=AM
   if(!GKEY())return `<div class="am-box"><h4>🧭 פתרון לפי השיטה</h4>${aiNeedKey()}</div>`;
   const x=X&&!X.err?X:null,m=M&&!M.err?M:null,L=(a,f)=>(a||[]).map(f).join('');
   /* nothing until both parts are ready (her request – no half explanation) */
-  if(!X||!M)return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4><p class="hint">⏳ מכינה את ההסבר…</p></div>`;
+  if(!X||!M){const t0=SOLVET[id]=SOLVET[id]||Date.now();return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4><p class="hint">⏳ מכינה את ההסבר… <b data-secs="${t0}">${Math.floor((Date.now()-t0)/1000)}</b> שנ׳</p></div>`}
   let b='';
   if(x&&x.translation)b+=`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(x.translation)}</p>`;
   if(x&&(x.understand||[]).length)b+=`<h5>איך מבינים את המשפט</h5><ol>${L(x.understand,t=>`<li>${bdiEsc(t)}</li>`)}</ol>`;
