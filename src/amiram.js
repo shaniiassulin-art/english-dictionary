@@ -182,7 +182,7 @@ function amSetStat(s){let done=0,ok=0;s.ids.forEach(id=>{const l=amLast(id);if(l
 const WINT=[0,20*60e3,DAY,3*DAY,7*DAY,14*DAY,30*DAY],WMAST=7;
 /* ONE table for the whole path – every explanation and every word's display is built from these two */
 const WLRN=[['תרגום משפט','משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה.'],
-  ['הפירוש בעברית','הבוחן של המילון על המילים של היום: כותבים פירוש, אפשרויות, ידעתי / לא ידעתי (הסימון נשמר במילון).'],
+  ['הפירוש בעברית','רואים את המילה באנגלית וכותבים את הפירוש בעברית; Gemini בודק את התשובה (מילה נרדפת או ניסוח אחר של אותו פירוש נחשבים נכונים).'],
   ['משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
   ['משפט באנגלית','משפט באנגלית עם מקום ריק – בוחרים את המילה מתוך 4.']];
 /* reviews get harder one by one, and every review brings a new sentence: easy sentences early, hard exam sentences late
@@ -2218,7 +2218,7 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   else if(w&&inRev)now=res?(WS.res.ok===false?(WS.res.st0!=null&&WS.res.st0!==s?`✗ לא נכון – המילה ירדה לחזרה ${s} ותחזור שוב היום בסוף הסבב, עם שאלה אחרת`:`✗ לא נכון – המילה תחזור שוב היום בסוף הסבב, עם שאלה אחרת`):(WS.re||[]).includes(wK(w))&&WS.res.ok?`✓ נכון – המילה עוברת · עכשיו חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`:(()=>{const s0=WS.res.st0;/* say which review she just did and where the word went (her question: "how is this review 2?") */return s0!=null&&s0>=1&&s0!==s?`✓ חזרה ${s0} הושלמה – המילה עברה ${s>=WMAST?'ל־🏆 נלמדה':`לחזרה ${s} · הבאה ${wWhen(w.due)}`}`:s0===s?`✓ נכון עם רמז – המילה נשארת בחזרה ${s} · הבאה ${wWhen(w.due)}`:`עכשיו: חזרה ${s} מתוך 6 · הבאה ${wWhen(w.due)}`})()):`חזרה ${s} מתוך 6 (${WPN[s]} אחרי הלמידה) · ${WPATHN[s]}${o.free?'':wFb(w,s)}${o.free?'':s<6?` · ${WPATH[s]==='en2he'?'נכון בלי רמז':'נכון'} ← חזרה ${s+1} (בעוד ${WPN[s+1]})`:' · נכון ← 🏆 נלמדה'}`;
   else if(pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend){const R=WS.res;
     now=R.ok?(lr<4?`✓ נכון – המילה עוברת לסבב ${lr+1} · ${WLRN[lr][0]}`:`✓ נכון – המילה סיימה את הלמידה ועוברת לחזרה 1 (${wWhen(w.due)})`)
-      :`✗ המילה תחזור שוב בסוף סבב ${lr}, עם ${lr===2?'משפט אחר':'שאלה אחרת'} – עוברים לסבב הבא רק כשכל המילים של הסבב נכונות`}
+      :`✗ המילה תחזור שוב בסוף סבב ${lr}, עם ${lr===2?'שאלה אחרת':'שאלה אחרת'} – עוברים לסבב הבא רק כשכל המילים של הסבב נכונות`}
   else if(pw&&WS.res&&WS.res.pend)now=`סבב ${lr} מתוך 4 · ⏳ בודקת את התשובה…`;
   else if(w)now=`סבב ${lr} מתוך 4 · ${WLRN[lr-1][0]}${lr<4?` ← אם נכון: סבב ${lr+1} · ${WLRN[lr][0]}`:' ← אם נכון: חזרה 1'} · אם לא: שוב בסוף הסבב`;
   else now=`סבב ${o.cur} · ${WLRN[(o.cur||1)-1][0]}`;
@@ -2319,7 +2319,7 @@ function wTask(w){let t=WPATH[w.st]||'mc';
   else if(t==='mc')t=wPick(w,0);
   return t}
 const wCtx=w=>{const c=wCard(w);return [w.my,w.c,c&&c.s].find(x=>x&&blankOut(x,w.e))||''};
-const wTaskNow=w=>WS&&WS.step==='first'?wPick(w,1):WS&&WS.mode==='r2'&&WS.phase==='he'?wPick(w,1):WS&&WS.mode==='r2'?wPick(w,0):wTask(w);
+const wTaskNow=w=>WS&&WS.step==='first'?wPick(w,1):WS&&WS.mode==='r2'&&WS.phase==='e2h'?'en2he':WS&&WS.mode==='r2'&&WS.phase==='he'?wPick(w,1):WS&&WS.mode==='r2'?wPick(w,0):wTask(w);
 /* the Hebrew translation of the word's example sentence, with the meaning taken out */
 function heBlank(tr,h){if(!tr||!h)return '';const vs=String(h).replace(/\(.*?\)/g,'').split(/[,;/·]/).map(x=>x.trim().replace(/[-־]$/,'')).filter(x=>x.length>1).sort((a,b)=>b.length-a.length);
   const E=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
@@ -2523,8 +2523,9 @@ const wRoundCounts=keys=>[1,2,3,4].map(r=>(keys||wAllK()).filter(k=>wInRound(k,r
 /* start one learning round on the words waiting in it (keeps the learning's other fields) */
 function wRound(r,keys,base){keys=(keys||[]).filter(k=>wInRound(k,r));if(!keys.length)return false;base=base||{};
   WS={jr:base.jr,from:base.from||'amnw',t0:base.t0||amNow(),all:base.all||keys,ok:base.ok||0,bad:base.bad||0,counted:base.counted||[],hist:base.hist||[],collect:base.collect,
-    perWord:1,round:r,list:keys,i:0,hint:0,res:null,cur:null,view:null,mode:r===1?'new':'r2',step:r===1?'tr':'recall',phase:{2:'dq',3:'he',4:'mc'}[r],t2:r===2?amNow():base.t2};
-  wSave();if(r===2){const key=wDqKey();if(SESS[key])(SDEL[key]=Date.now(),delete SESS[key]);return wDqPageGo()}go({screen:'amwl'});draw();window.scrollTo(0,0);return true}
+    perWord:1,round:r,list:keys,i:0,hint:0,res:null,cur:null,view:null,mode:r===1?'new':'r2',step:r===1?'tr':'recall',phase:{2:'e2h',3:'he',4:'mc'}[r],t2:r===2?amNow():base.t2};
+  /* round 2 = "הפירוש בעברית" written and checked by Gemini, like review 3 (Nov 25, her request – no ידעתי / לא ידעתי) */
+  wSave();go({screen:'amwl'});draw();window.scrollTo(0,0);return true}
 const wDqPageGo=()=>{go({screen:'amwl'});draw();return true};
 /* after a round: the next round that has words waiting, else back to the page of the day's words */
 function wRoundNext(r){const all=wAllK(),base=WS;if(wRound(r,all,base))return;for(let n=r+1;n<=4;n++)if(wRound(n,all,base))return;
@@ -2576,7 +2577,7 @@ function wHistPage(){const H=WS.hist||[],v=Math.max(0,Math.min(WS.view,H.length-
   app.querySelectorAll('[data-path]').forEach(b=>b.onclick=()=>{wSave();go({screen:'ampath',pfrom:'amwl'})})}
 function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list||WS.i>=WS.list.length)return wDone();
   if(WS.view!=null&&(WS.hist||[]).length)return wHistPage();
-  if(WS.mode==='r2'&&WS.phase==='dq')return wDqPage();
+  if(WS.mode==='r2'&&WS.phase==='dq'){WS.phase='e2h';WS.i=0;wSave()}
   const w=AMS.w[WS.list[WS.i]];if(!w){WS.i++;wSave();return draw()}
   /* a review (also an old / synced one) never shows a word that is still in the 4 learning rounds */
   if(WS.mode==='rev'&&!WS.perWord&&!WS.res&&lrOf(w)<5){WS.list.splice(WS.i,1);wSave();return draw()}
@@ -2588,7 +2589,7 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
   const ctx=w.c||ex||'';
   let h=`<div class="screen qz am-scr">
     <div class="nav"><button class="back" id="bk">יציאה</button><span class="nav-ic">${AUTOBTN()}${HOME}${INFOB()}</span></div>
-    <div class="am-bar"><span class="am-chip t">${WS.step==='tr'?(WS.mode==='new'?'🌱 סבב 1 – תרגום משפט':'🌐 חזרה · תרגום משפט חדש'):WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'&&WS.perWord?(WS.phase==='he'?'🇮🇱 סבב 3 – משפט בעברית':'🔁 סבב 4 – משפט באנגלית'):WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 משפט בעברית':'🔁 בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span></div>
+    <div class="am-bar"><span class="am-chip t">${WS.step==='tr'?(WS.mode==='new'?'🌱 סבב 1 – תרגום משפט':'🌐 חזרה · תרגום משפט חדש'):WS.mode==='new'?'🌱 מילה חדשה':WS.mode==='r2'&&WS.perWord?(WS.phase==='e2h'?'✍️ סבב 2 – הפירוש בעברית':WS.phase==='he'?'🇮🇱 סבב 3 – משפט בעברית':'🔁 סבב 4 – משפט באנגלית'):WS.mode==='r2'?(WS.phase==='he'?'🇮🇱 משפט בעברית':'🔁 בחירה במשפט'):(WS.re||[]).includes(WS.list[WS.i])?'↩️ עוד פעם, כדי לחזק':'🧠 חזרה פעילה'}</span><span>${WS.i+1}/${WS.list.length}</span></div>
     <div class="am-prog"><i style="width:${WS.i/WS.list.length*100}%"></i></div>${(WS.hist||[]).length?'<button class="link small-link" id="wPrev" style="align-self:flex-start">→ למילה הקודמת</button>':''}`;
   h+=WS.perWord?wTrack(w,{counts:wRoundCounts()}):wMiniPath(w);
   /* a review saved during the old warm-up (sentence translation for all words first) goes straight to the stage tasks */
@@ -2992,7 +2993,7 @@ const AMHELP={
   <ul><li><b>🔁 חזרה פעילה</b> – המילים שהגיע זמנן עוברות את החזרה שלהן במסלול.</li><li><b>🌱 מילים חדשות</b> – מילים חדשות מתחילות את המסלול. קודם מילים שהוספת מהשאלות, אחר כך מילים שסימנת ✗ במילון, ואז מילים שלא סימנת.</li><li><b>📒 המילים שלי</b> – איפה כל מילה במסלול, היומן שלה וההמלצה.</li></ul>`],
  learn:['🌱','איך לומדים מילה חדשה','אמירנט',`<p>4 סבבים. כל סבב נעשה לכל המילים, ורק אחריו מתחיל הבא:</p>
   <ol><li><b>סבב 1 · תרגום משפט</b> – משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה.</li>
-  <li><b>סבב 2 · הפירוש בעברית</b> – הבוחן של המילון: כותבים את הפירוש, אפשרויות, ידעתי / לא ידעתי.</li>
+  <li><b>סבב 2 · הפירוש בעברית</b> – כותבים את הפירוש בעברית, ו־Gemini בודק את התשובה.</li>
   <li><b>סבב 3 · משפט בעברית</b> – בוחרים את המילה באנגלית שחסרה.</li>
   <li><b>סבב 4 · משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – כשכל המילים של היום יסיימו את הסבבים (אם לא – מחר בבוקר), ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה נשארת באותו סבב וחוזרת בסוף הסבב עם משפט או שאלה אחרים, עד שעונים נכון; עוברים לסבב הבא רק כשכל המילים של הסבב נכונות.</p>
   <p><b>מילה עם כמה פירושים</b> – כל פירוש נלמד בנפרד.</p>`],

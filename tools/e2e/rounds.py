@@ -22,7 +22,7 @@ with sync_playwright() as p:
   # switch to round 2 with the 2 done words
   pg.locator('[data-round="2"]').first.click();pg.wait_for_timeout(800)
   print('R2 page:',T(pg)[:260])
-  pg.click('#dqSkip');pg.wait_for_timeout(800)
+  assert pg.evaluate('WS.phase')=='e2h'  # round 2 is the typed meaning step now (Nov 25)
   print('after skip:',pg.evaluate("[WS&&WS.round,WS&&WS.list.length,wRoundCounts()]"),T(pg)[:200])
   pg.screenshot(path='r3.png')
   # free practice track
