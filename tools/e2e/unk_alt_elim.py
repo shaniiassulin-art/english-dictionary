@@ -23,7 +23,7 @@ with sync_playwright() as p:
   if pg.locator('#amChk').count():pg.click('#amChk')
   pg.wait_for_timeout(1500)
   pg.route('**/generativelanguage.googleapis.com/**',lambda r:r.fulfill(status=200,content_type='application/json',body=body({"words":[{"en":w,"how":"הסבר-ראשון","meaning":"פ"}]})) if 'marked words she did not know' in (r.request.post_data or '') else gem(r))
-  pg.evaluate("Object.keys(AMAI).filter(k=>k.startsWith('xu2|')).forEach(k=>delete AMAI[k]);amRedrawKeep()");pg.wait_for_timeout(1500)
+  pg.evaluate("Object.keys(AMAI).filter(k=>k.startsWith('xu3|')).forEach(k=>delete AMAI[k]);amRedrawKeep()");pg.wait_for_timeout(1500)
   t=pg.locator('.ax-opts').inner_text();print(t[:300])
   assert 'פסלת: מידע נוסף' in t and 'אבל זו התשובה הנכונה' in t
   pg.locator('[data-unkalt]').first.click();pg.wait_for_timeout(1500)
