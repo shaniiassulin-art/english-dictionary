@@ -1930,7 +1930,6 @@ function amFbPage(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
     if(q.t!=='rc'&&q.t!=='yb'){const cs=connFind(q.q);if(cs.length)h+=`<div class="am-box"><h4>🔗 מילות הקישור במשפט</h4>${cs.map(c=>`<p>«<bdi>${c.ws.join(', ')}</bdi>» – <b>${c.he}</b>: ${c.tip}</p>`).join('')}</div>`}
     if(q.t==='rc'){const k=rcType(q.q);h+=`<div class="am-box"><h4>📖 סוג השאלה: ${RCT[k][0]}</h4><p>${RCT[k][1]}</p></div>`}
     h+=amSolveBox(id);
-    h+=MLINK(q.t);
     h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="words">📚 המילים מהשאלה ←</button></div>`}
   else{h+=EXB('מילים מהשאלה. מילה מהמילון: <b>⏩ למידה בקרוב</b> מכניס אותה לתור – היא תגיע בשלב המילים החדשות הבא, לפני שאר המילים. ליד מילה כתוב איפה היא אצלך: ⏳ ממתינה ללמידה (בתור, עוד לא התחלת) · 📖 בלמידה עכשיו (בסבבים) · ✓ למדת · בחזרות · ✓ למדת · ✓ יודעת (סימנת במילון). מילה שלא במילון: <b>למילון</b> מוסיף אותה ל"מילים שהוספתי", <b>למילון + למידה בקרוב</b> גם מכניס אותה לתור.');h+=amWordsBox(id);
     h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="">${amNextLbl()} ←</button></div>`}
@@ -1954,6 +1953,13 @@ function amWhyBox(id,st){const q=AMD.q[id],a=AMS.a[id]||{},key='why|'+id+'|'+st.
 /* one page for "how to solve" (Nov 25, her request – the detailed explanation and the method page repeated each other): the method page shows the detailed explanation's translation / reading / passage, then the method steps, then each option once (the explanation's richer list, the method's as fallback), why the answer is right, the rule + tip, and one question box */
 /* seconds counter on waiting lines (her request): any [data-secs=<start ms>] shows the seconds since then */
 const SOLVET={},SOLVEERR={};setInterval(()=>{document.querySelectorAll('[data-secs]').forEach(e=>{const v=String(Math.floor((Date.now()-+e.dataset.secs)/1000));if(e.textContent!==v)e.textContent=v})},1000);
+/* when Gemini can't answer (quota / error), the method page still shows what exists without it (her request): the book's translation, the computed method steps for this question, every option with the book's note and ✓ on the answer, the book's explanation */
+function amSolveOffline(q,id,noX,noM){if(!q)return '';let o='';
+  if(noX){const tr=(AMAI['qtr|'+id]||{}).he||q.he;if(tr)o+=`<h5>תרגום ${q.x?'השאלה':'המשפט'} (מהספר)</h5><p>${bdiEsc(tr)}</p>`}
+  if(noM){let m='';try{m=(amMethodNow(q,q.t==='rc'?[]:connFind(q.q||''))||'').match(/<ol class="hq-steps">[\s\S]*?<\/ol>/)}catch(e){}if(m&&m[0]&&!/<ol class="hq-steps"><\/ol>/.test(m[0]))o+=`<h5>הצעדים לפי השיטה</h5>${m[0].replace('hq-steps','')}`}
+  if(noX&&(q.o||[]).length){const sst=AQ&&AQ.cur===id?AQ.st[AQ.i]:null;o+=`<h5>התשובות</h5><ul class="am-xopts">${q.o.map((t,i)=>`<li class="${i+1===q.a?'ok':''}"><b>(${i+1}) <bdi dir="ltr">${esc(t)}</bdi></b>${q.oh&&q.oh[i]?' = '+esc(q.oh[i]):''} ${i+1===q.a?'✓':'✗'}${elimNote(sst,i+1,q)}</li>`).join('')}</ul>`}
+  if(noX&&q.ex)o+=`<h5>ההסבר מהספר</h5><p>${bdiEsc(q.ex)}</p>`;
+  return o?`<div class="am-offl"><p class="hint">${noX&&noM?'ג׳מיני לא זמין כרגע – בינתיים מה שיש בלי ג׳מיני:':'חלק מההסבר לא הוכן – בינתיים מה שיש בלי ג׳מיני:'}</p>${o}</div>`:''}
 function amSolveBox(id){const q=AMD.q[id],xk='x5|'+id,mk='m|'+id,X=AMAI[xk],M=AMAI[mk];
   if(GKEY()&&S.screen==='amq'){const re=()=>amLateRedraw(id,1);
     if(!X&&!AIP[xk]&&!SOLVEERR[xk])aiCached(xk,promptXpl(q),.2,3000).then(r=>{if(r&&r.err)SOLVEERR[xk]=r.err;re()});
@@ -1974,7 +1980,8 @@ function amSolveBox(id){const q=AMD.q[id],xk='x5|'+id,mk='m|'+id,X=AMAI[xk],M=AM
   if(x&&x.answer)b+=`<h5>למה זו התשובה</h5><p>${bdiEsc(x.answer)}</p>`;
   if(m&&m.rule)b+=`<p><b>📌 ${bdiEsc(m.rule)}</b></p>`;
   if(x&&x.tip&&!(m&&m.rule===x.tip))b+=`<p><b>💡 ${bdiEsc(x.tip)}</b></p>`;
-  if(xe||me)b+=`<p class="hint">${esc(xe||me)}</p><button class="btn secondary" data-solvere="${esc(id)}">🔄 לנסות שוב</button>`;
+  if(xe||me){const off=amSolveOffline(q,id,!x,!m);if(off)b=(b?b:'')+off}
+  if(xe||me)b+=`<p class="hint">${xe&&me?'ההסבר לא הוכן':xe?'הוכן רק חלק מההסבר (הצעדים לפי השיטה). התרגום, ההסבר של כל תשובה ולמה זו התשובה לא הוכנו':'הוכן רק חלק מההסבר. הצעדים לפי השיטה לא הוכנו'} – ${esc(xe||me)}</p><button class="btn secondary" data-solvere="${esc(id)}">🔄 לנסות שוב</button>`;
   if(x||m)b+=askBox('xpl|'+id,qText(q)+'\nExplanation she got: '+JSON.stringify({x,m}).slice(0,2800));
   return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4>${b}</div>`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-solvere]');if(!b)return;const id=b.dataset.solvere;['x5|','m|'].forEach(k=>{const a=AMAI[k+id];if(a&&a.err)delete AMAI[k+id];delete SOLVEERR[k+id]});delete SOLVET[id];amAiSave();amRedrawKeep()});
