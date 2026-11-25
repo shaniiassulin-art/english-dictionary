@@ -1780,6 +1780,16 @@ function amWriteBind(id,st){const q=AMD.q[id];
     amSaveQ();if(S.screen==='amq')amRedrawKeep()};
   const ag=$('axWAgain');if(ag)ag.onclick=()=>{st.done=false;st.ev=null;st.seen=amNow();amSaveQ();amRedrawKeep()}}
 function amRedrawKeep(){const y=window.scrollY;draw();window.scrollTo(0,y)}
+/* answers that arrive by themselves (Gemini explanations, translations) never redraw the page under her finger (Nov 25, her report: she couldn't scroll after the explanation came – the page was replaced while she was touching / scrolling): wait until the touch and the scroll have stopped, and on the method page replace only the explanation box */
+let LTOUCH=0,LSCR=0,LRT=null,LRF=0;
+document.addEventListener('touchstart',()=>{LTOUCH=Date.now()},{passive:true,capture:true});
+['touchend','touchcancel'].forEach(t=>document.addEventListener(t,e=>{if(!e.touches||!e.touches.length){LTOUCH=0;LSCR=Date.now()}},{passive:true,capture:true}));
+addEventListener('scroll',()=>{LSCR=Date.now()},{passive:true});
+function amLateRedraw(id,bx){clearTimeout(LRT);if(!bx)LRF=1;if((LTOUCH&&Date.now()-LTOUCH<5000)||Date.now()-LSCR<700){LRT=setTimeout(()=>amLateRedraw(id,!LRF),350);return}
+  bx=bx&&!LRF;LRF=0;
+  if(S.screen!=='amq'||!AQ||AQ.cur!==id)return;
+  const box=$('amMeth');if(box&&bx){const t=document.createElement('div');t.innerHTML=amSolveBox(id);const nb=t.firstElementChild;if(nb&&nb.outerHTML!==box.outerHTML)box.replaceWith(nb);return}
+  amRedrawKeep()}
 /* ❓ ask Gemini a question about the feedback she got (her request): one box under every Gemini feedback; questions + answers kept on this device (dictAsk) */
 let ASKS={};try{ASKS=JSON.parse(localStorage.getItem('dictAsk')||'{}')||{}}catch(e){}
 const ASKCTX={},ASKLIVE={};const askSave=()=>{try{const ks=Object.keys(ASKS);ks.slice(0,Math.max(0,ks.length-200)).forEach(k=>delete ASKS[k]);localStorage.setItem('dictAsk',JSON.stringify(ASKS))}catch(e){}};
@@ -1832,7 +1842,7 @@ const XPLO={};
 let XPLQ=[],XPLRUN=false;
 function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x5|'+id]&&!AMAI['x5|'+id].err)&&!SOLVEERR['x5|'+id]&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
 function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x5|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
-  const q0=AMD.q[id],mk='m|'+id;Promise.all([aiCached(key,promptXpl(q0),.2,3000),amHasMeth(q0)&&!(AMAI[mk]&&!AMAI[mk].err)?aiCached(mk,promptMethod(q0),.2,2000):null]).then(([r,r2])=>{if(r&&r.err)SOLVEERR[key]=r.err;if(r2&&r2.err)SOLVEERR[mk]=r2.err;return r}).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
+  const q0=AMD.q[id],mk='m|'+id;Promise.all([aiCached(key,promptXpl(q0),.2,3000),amHasMeth(q0)&&!(AMAI[mk]&&!AMAI[mk].err)?aiCached(mk,promptMethod(q0),.2,2000):null]).then(([r,r2])=>{if(r&&r.err)SOLVEERR[key]=r.err;if(r2&&r2.err)SOLVEERR[mk]=r2.err;return r}).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amLateRedraw(id,st.fb==='meth')}
     if(r&&r.err&&/מכסה/.test(r.err)){XPLQ=[];XPLRUN=false;return}setTimeout(amXplNext,1200)})}
 
 function promptXpl(q){return `You are teaching a Hebrew-speaking student who knows almost NO English words, for the Amiram English exam. Explain this question after she answered it, in detail, so she understands the sentence and every answer option.
@@ -1860,12 +1870,12 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   const first=base&&!base.err&&(base.words||[]).find(d=>String(d.en||'').toLowerCase().trim()===w);
   const A=unkAlts(id,w),prev=[first&&first.how,...A.map(a=>a.how)].filter(Boolean),key='xa|'+id+'|'+w+'|'+(A.length+1);
   delete UNKERR[id+'|'+w];delete AMAI[key];const p=aiCached(key,promptUnkAlt(q,w,prev),.9);amRedrawKeep();
-  p.then(r=>{if(r&&r.err)UNKERR[id+'|'+w]=r.err;if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()})});
+  p.then(r=>{if(r&&r.err)UNKERR[id+'|'+w]=r.err;amLateRedraw(id)})});
 const ELIMN={add:'מידע נוסף',rel:'קשר אחר',ext:'הקצנה',contra:'סותר',miss:'חסר',out:'לא מהקטע / לא נאמר',wrong:'סותר את הקטע / ההקלטה',nq:'לא עונה לשאלה'};
 /* after answering (Nov 25, her request): the reason she gave when she ruled an option out */
 function elimNote(st,k,q){const r=st&&st.elim&&st.elim[k];if(!r)return '';const right=k===q.a;return `<div class="am-elimd${right?' bad':''}">✗ פסלת: ${esc(ELIMN[r]||r)}${right?' – אבל זו התשובה הנכונה':''}</div>`}
 function amUnkBox(id,st){if(!GKEY())return '';const U=st&&st.unk||[],q=AMD.q[id];let ua=null;
-  if(U.length){const key='xu2|'+id+'|'+U.slice().sort().join(',');ua=AMAI[key];if(!ua&&!AIP[key])aiCached(key,promptUnk(q,U),.2).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()})}
+  if(U.length){const key='xu2|'+id+'|'+U.slice().sort().join(',');ua=AMAI[key];if(!ua&&!AIP[key])aiCached(key,promptUnk(q,U),.2).then(()=>{amLateRedraw(id)})}
   /* only the words she marked "לא ידעתי את המילה" (her request – no other words in this box); no marks = no box */
   if(!U.length)return '';
   const seen=new Set(),L=[];const add=(en,how,mean,mk)=>{const k=String(en||'').toLowerCase().trim();if(!k||seen.has(k))return;seen.add(k);
@@ -1945,7 +1955,7 @@ function amWhyBox(id,st){const q=AMD.q[id],a=AMS.a[id]||{},key='why|'+id+'|'+st.
 /* seconds counter on waiting lines (her request): any [data-secs=<start ms>] shows the seconds since then */
 const SOLVET={},SOLVEERR={};setInterval(()=>{document.querySelectorAll('[data-secs]').forEach(e=>{const v=String(Math.floor((Date.now()-+e.dataset.secs)/1000));if(e.textContent!==v)e.textContent=v})},1000);
 function amSolveBox(id){const q=AMD.q[id],xk='x5|'+id,mk='m|'+id,X=AMAI[xk],M=AMAI[mk];
-  if(GKEY()&&S.screen==='amq'){const re=()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()};
+  if(GKEY()&&S.screen==='amq'){const re=()=>amLateRedraw(id,1);
     if(!X&&!AIP[xk]&&!SOLVEERR[xk])aiCached(xk,promptXpl(q),.2,3000).then(r=>{if(r&&r.err)SOLVEERR[xk]=r.err;re()});
     if(!M&&!AIP[mk]&&!SOLVEERR[mk])aiCached(mk,promptMethod(q),.2,2000).then(r=>{if(r&&r.err)SOLVEERR[mk]=r.err;re()})}
   if(!GKEY())return `<div class="am-box"><h4>🧭 פתרון לפי השיטה</h4>${aiNeedKey()}</div>`;
@@ -1984,7 +1994,7 @@ function amQNew(id){const q=AMD.q[id],out=[],seen=new Set();const txt=[q.q.repla
 const UWP={};
 function amWordsBox(id){if(!id||!AMD)return '';const q=AMD.q[id],R=amQWords(id),N=amQNew(id),add=R.filter(d=>!amDbStatus(d)).length;
   const need=N.filter(e=>!TRX[e+'|'+amQCtx(q,e).trim()]&&!UWP[e+'|'+id]);
-  if(need.length){need.forEach(e=>UWP[e+'|'+id]=1);Promise.all(need.map(e=>amTrans(e,amQCtx(q,e)).catch(()=>null))).then(()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()})}
+  if(need.length){need.forEach(e=>UWP[e+'|'+id]=1);Promise.all(need.map(e=>amTrans(e,amQCtx(q,e)).catch(()=>null))).then(()=>{amLateRedraw(id)})}
   const rowD=d=>{const st=amDbStatus(d);return `<div class="am-wl"><span class="e" dir="ltr">${esc(d.e)}</span><span class="h">${esc(d.cards.map(c=>c.h[0]).filter((v,i,a)=>a.indexOf(v)===i).join(' · '))}</span><span class="a">${(()=>{const L=amDbLabel(d);return L?`<small>${L}</small>`:`<small>במילון</small> <button class="am-sb" data-dbadd="${esc(d.e)}">⏩ למידה בקרוב</button>`})()}</span></div>`};
   const rowN=e=>{const t=TRX[e+'|'+amQCtx(q,e).trim()],h=t&&t.h||'';return `<div class="am-wl"><span class="e" dir="ltr">${esc(e)}</span><span class="h">${h?esc(h):'…'}</span><span class="a"><button class="am-sb" data-uwadd="${esc(e)}" ${h?'':'disabled'}>למילון</button><button class="am-sb" data-uwsoon="${esc(e)}" ${h?'':'disabled'}>למילון + למידה בקרוב</button></span></div>`};
   return `<div class="am-box am-wordsbox"><h4>מילים מהשאלה</h4>${R.length?`<div class="am-wls">${R.map(rowD).join('')}</div>`:''}
