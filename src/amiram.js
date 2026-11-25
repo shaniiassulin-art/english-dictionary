@@ -1852,7 +1852,7 @@ JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the qu
 ${AIHE}`}
 /* where a marked word sits: in the question / passage, or only in the answer options */
 function unkWhere(q,w){const re=new RegExp('\\b'+String(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i');const T=AMD&&q.x&&AMD.x[q.x];return re.test(String(q.q||''))||(T&&re.test(String(T.l||T.t||'')))?'sentence':'options'}
-const UNKSTY=`ONE short hint per word – 1 or 2 short sentences in plain everyday Hebrew, no steps, no lists, no grammar / teaching terms. Every English word you mention gets its Hebrew in parentheses. Never "translate" the word by writing it in Hebrew letters or say it sounds like itself (NOT "ordinary sounds like אורדינרי") – that explains nothing. Do not say whether the word is related to the answer or why an option is wrong.
+const UNKSTY=`ONE short hint per word – 1 or 2 short sentences in plain everyday Hebrew, no steps, no lists, no grammar / teaching terms. Every English word you mention gets its Hebrew in parentheses. Never "translate" the word by writing it in Hebrew letters or say it sounds like itself (NOT "ordinary sounds like אורדינרי") – that explains nothing. Do not say whether the word is related to the answer or why an option is wrong. NEVER write the word itself (or any form of it) in the hint – call it "המילה"; only its parts may appear, e.g. "ordin-".
 - A word that appears in the question sentence / passage: a hint that ties the sentence and the word together – what in the sentence points to its meaning.
 - A word that appears ONLY in the answer options: the sentence doesn't help – explain the word itself: its parts (prefix / suffix / a shorter word she may know inside it, with their Hebrew meaning) and what they hint about the meaning.`;
 function promptUnk(q,ws){return `A Hebrew-speaking student who knows almost no English marked words she did not know in this exam question. For each word give her a hint that would have helped her understand its meaning without knowing it.
@@ -1864,7 +1864,7 @@ ${AIHE}`}
 /* box 1 (Nov 20, her request): how to understand the words – the words she marked (🔖), the hard words of the sentence and the words of the options, in one box */
 /* another explanation of a marked word (Nov 25, her request – "if I don't understand the explanation, give me another one"): each one is kept (AMAI 'xa|<id>|<word>|n') and shown under the first */
 const UNKERR={};
-function unkAlts(id,w){const o=[];for(let n=1;n<20;n++){const a=AMAI['xa5|'+id+'|'+w+'|'+n];if(!a||a.err)break;o.push(a)}return o}
+function unkAlts(id,w){const o=[];for(let n=1;n<20;n++){const a=AMAI['xa6|'+id+'|'+w+'|'+n];if(!a||a.err)break;o.push(a)}return o}
 function promptUnkAlt(q,w,prev){return `A Hebrew-speaking student who knows almost no English did not understand the hints she got for the English word "${w}" (it appears in: ${unkWhere(q,w)}) in this exam question. Give ONE completely different, simpler hint. Do not repeat the earlier hints.
 ${UNKSTY}
 ${qText(q)}
@@ -1873,23 +1873,24 @@ ${prev.map((p,i)=>(i+1)+') '+p).join('\n')}
 JSON: {"hint":"the new short Hebrew hint","meaning":"its meaning here, 1-3 Hebrew words"}
 ${AIHE}`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-unkalt]');if(!b)return;const id=b.dataset.unkalt,w=b.dataset.w,q=AMD&&AMD.q[id];if(!q)return;
-  const st=AQ&&AQ.st&&AQ.st[AQ.i],U=st&&st.unk||[],base=AMAI['xu6|'+id+'|'+U.slice().sort().join(',')];
+  const st=AQ&&AQ.st&&AQ.st[AQ.i],U=st&&st.unk||[],base=AMAI['xu7|'+id+'|'+U.slice().sort().join(',')];
   const first=base&&!base.err&&(base.words||[]).find(d=>String(d.en||'').toLowerCase().trim()===w);
-  const A=unkAlts(id,w),prev=[first&&(first.hint||(first.steps?first.steps.join(' '):first.how)),...A.map(a=>a.hint||(a.steps?a.steps.join(' '):a.how))].filter(Boolean),key='xa5|'+id+'|'+w+'|'+(A.length+1);
+  const A=unkAlts(id,w),prev=[first&&(first.hint||(first.steps?first.steps.join(' '):first.how)),...A.map(a=>a.hint||(a.steps?a.steps.join(' '):a.how))].filter(Boolean),key='xa6|'+id+'|'+w+'|'+(A.length+1);
   delete UNKERR[id+'|'+w];delete AMAI[key];const p=aiCached(key,promptUnkAlt(q,w,prev),.9);amRedrawKeep();
   p.then(r=>{if(r&&r.err)UNKERR[id+'|'+w]=r.err;amLateRedraw(id)})});
 const ELIMN={add:'מידע נוסף',rel:'קשר אחר',ext:'הקצנה',contra:'סותר',miss:'חסר',out:'לא מהקטע / לא נאמר',wrong:'סותר את הקטע / ההקלטה',nq:'לא עונה לשאלה'};
 /* after answering (Nov 25, her request): the reason she gave when she ruled an option out */
 function elimNote(st,k,q){const r=st&&st.elim&&st.elim[k];if(!r)return '';const right=k===q.a;return `<div class="am-elimd${right?' bad':''}">✗ פסלת: ${esc(ELIMN[r]||r)}${right?' – אבל זו התשובה הנכונה':''}</div>`}
 function amUnkBox(id,st){if(!GKEY())return '';const U=st&&st.unk||[],q=AMD.q[id];let ua=null;
-  if(U.length){const key='xu6|'+id+'|'+U.slice().sort().join(',');ua=AMAI[key];if(!ua&&!AIP[key])aiCached(key,promptUnk(q,U),.2).then(()=>{amLateRedraw(id)})}
+  if(U.length){const key='xu7|'+id+'|'+U.slice().sort().join(',');ua=AMAI[key];if(!ua&&!AIP[key])aiCached(key,promptUnk(q,U),.2).then(()=>{amLateRedraw(id)})}
   /* only the words she marked "לא ידעתי את המילה" (her request – no other words in this box); no marks = no box */
   if(!U.length)return '';
-  const seen=new Set(),L=[];const hw=d=>d&&d.hint?' – '+bdiEsc(String(d.hint)):Array.isArray(d&&d.steps)&&d.steps.length?`<ol class="am-usteps">${d.steps.map(x=>`<li>${bdiEsc(String(x))}</li>`).join('')}</ol>`:' – '+bdiEsc(d&&d.how||'');const hs=d=>Array.isArray(d&&d.steps)&&d.steps.length?d.steps.join(' '):(d&&d.how||'');
+  const seen=new Set(),L=[];const noW=(t,w)=>{if(!w)return String(t);const e=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),b=String(w).toLowerCase().replace(/(e|y)$/,''),re=b.length>=4?new RegExp('\\b'+e(b)+'[a-z]*\\b','gi'):new RegExp('\\b'+e(String(w))+'(s|es|ed|ing|ly)?\\b','gi');return String(t).replace(re,'המילה')};
+  const hw=(d,w)=>d&&d.hint?' – '+bdiEsc(noW(d.hint,w)):Array.isArray(d&&d.steps)&&d.steps.length?`<ol class="am-usteps">${d.steps.map(x=>`<li>${bdiEsc(String(x))}</li>`).join('')}</ol>`:' – '+bdiEsc(d&&d.how||'');const hs=d=>Array.isArray(d&&d.steps)&&d.steps.length?d.steps.join(' '):(d&&d.how||'');
   const add=(en,how,mean,mk)=>{const k=String(en||'').toLowerCase().trim();if(!k||seen.has(k))return;seen.add(k);
-    const A=unkAlts(id,k),busy=AIP['xa5|'+id+'|'+k+'|'+(A.length+1)],err=UNKERR[id+'|'+k];
-    L.push(`<li${mk?' class="mk"':''}><b><bdi dir="ltr">${esc(en)}</bdi></b>${mk?' <small>🔖</small>':''}${how}${mean?` <div class="am-umean">המשמעות: <b>${esc(mean)}</b></div>`:''}${A.map((a,i)=>`<div class="am-unkalt"><small>הסבר אחר${A.length>1?' '+(i+1):''}</small> ${hw(a)}${a.meaning?` <span>← ${esc(a.meaning)}</span>`:''}</div>`).join('')}${err?`<div class="hint">${esc(err)}</div>`:''}<div><button class="small-link am-unkre" data-unkalt="${esc(id)}" data-w="${esc(k)}" ${busy?'disabled':''}>${busy?'⏳ מכינה הסבר אחר…':'🔄 לא הבנתי – הסבר אחר'}</button></div></li>`)};
-  if(ua&&!ua.err)(ua.words||[]).forEach(d=>add(d.en,hw(d),d.meaning,1));
+    const A=unkAlts(id,k),busy=AIP['xa6|'+id+'|'+k+'|'+(A.length+1)],err=UNKERR[id+'|'+k];
+    L.push(`<li${mk?' class="mk"':''}><b><bdi dir="ltr">${esc(en)}</bdi></b>${mk?' <small>🔖</small>':''}${how}${mean?` <div class="am-umean">המשמעות: <b>${esc(mean)}</b></div>`:''}${A.map((a,i)=>`<div class="am-unkalt"><small>הסבר אחר${A.length>1?' '+(i+1):''}</small> ${hw(a,k)}${a.meaning?` <span>← ${esc(a.meaning)}</span>`:''}</div>`).join('')}${err?`<div class="hint">${esc(err)}</div>`:''}<div><button class="small-link am-unkre" data-unkalt="${esc(id)}" data-w="${esc(k)}" ${busy?'disabled':''}>${busy?'⏳ מכינה הסבר אחר…':'🔄 לא הבנתי – הסבר אחר'}</button></div></li>`)};
+  if(ua&&!ua.err)(ua.words||[]).forEach(d=>add(d.en,hw(d,d.en),d.meaning,1));
   const wait=!ua;
   if(!L.length&&!wait)return '';
   return `<div class="am-box am-xpl am-unkbox"><h5 style="margin-top:0">🔤 איך מבינים את המילים</h5>${L.length?`<ul class="am-xopts">${L.join('')}</ul>`:''}${wait?'<p class="hint">⏳ מכינה הסבר למילים…</p>':''}${ua&&ua.err?`<p class="hint">${esc(ua.err)}</p>`:''}</div>`}
