@@ -2356,7 +2356,9 @@ function heOrdered(s,en,w,key){if(!s||!en||(s.match(/_{4,}/g)||[]).length!==1)re
     const ok=h&&(h.match(/_{4,}/g)||[]).length===1&&Math.abs(h.replace(/_+/g,'').length-s.replace(/_+/g,'').length)<=6;
     if(ok||r&&r.j){HEORD[key]=ok?h.replace(/_{4,}/,'_____'):'';try{const ks=Object.keys(HEORD);ks.slice(0,Math.max(0,ks.length-800)).forEach(x=>delete HEORD[x]);localStorage.setItem('dictHeOrd',JSON.stringify(HEORD))}catch(e){}}
     else HEORD[key]='';delete HEORDP[key];if(S.screen==='amwl')amRedrawKeep()}).catch(()=>{HEORD[key]='';delete HEORDP[key];if(S.screen==='amwl')amRedrawKeep()});return null}
-function wHeRev(w){const s=wHeSent(w),c=wCard(w);if(s&&!(w.used||[]).includes('he:'+s)){const o=heOrdered(s,c&&c.s||'',w,'c:'+(c&&c.id));if(o===null)return null;return {he:o,en:c&&c.s||'',src:'dict'}}
+/* the card's own Hebrew sentence is its example sentence in Hebrew – once that English sentence was shown (the translation round, an earlier Hebrew task) it is a repeat, so Gemini makes a new one; the card's sentence stays only as the fallback when Gemini can't (Nov 25, her report) */
+const wCardSeen=w=>{const c=wCard(w),e=c&&c.s;if(!e)return false;return (w.trs||[]).some(t=>t&&t.en===e)||(w.used||[]).includes(e)||(w.trc&&w.trc.en===e)||(w.log||[]).some(l=>l&&l[1]==='hecl')};
+function wHeRev(w){const s=wHeSent(w),c=wCard(w);if(s&&!(w.used||[]).includes('he:'+s)&&(!wCardSeen(w)||HEERR[wK(w)]||!GKEY())){const o=heOrdered(s,c&&c.s||'',w,'c:'+(c&&c.id));if(o===null)return null;return {he:o,en:c&&c.s||'',src:'dict'}}
   w=wLive(w);if(w.rvh&&w.rvh.he)return w.rvh;const k=wK(w);
   if(HEERR[k]||!GKEY())return false;if(HEP[k])return null;HEP[k]=1;
   const P=wHePick(w),mark=`In the Hebrew translation wrap the Hebrew word(s) that translate "${w.e}" in double square brackets, e.g. [[מילה]] – exactly once, and nothing else in brackets. Put them in the same place in the sentence as "${w.e}" stands in the English, whenever that is correct, natural Hebrew.`;
