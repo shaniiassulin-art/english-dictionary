@@ -3332,14 +3332,22 @@ function wR1Release(){if(!AMS||!AMS.w||wCarry().length)return;let ch=0;const t=a
 const wLearning=w=>!!w&&w.lr!=null&&w.lr>=1&&w.lr<5&&(w.lr>1||w.st>=1);
 const jnKey=x=>'J'+String(x.id).replace(/[^0-9a-z]/gi,'');
 /* step 0 before learning (her request): the day's group goes through the dictionary's own quiz first; ✓ ידעתי leaves the learning, only the words she didn't know are learned */
-const jsKey=x=>'JS'+String(x.id).replace(/[^0-9a-z]/gi,'');
+const jsKey=x=>'JS'+String(x.id).replace(/[^0-9a-z]/gi,'')+(x.srn?'_'+x.srn:'');
 const jsFresh=x=>jnBatch(x).filter(k=>{const w=AMS.w[k],c=jnCard(k);return w&&w.st===0&&c&&!isY(c)});
-const jsNeed=x=>!x.sorted&&jsFresh(x).length>0;
-function jsStart(x){const key=jsKey(x),m=S.mode;S.mode='read';try{if(SESS[key]&&SESS[key].kind==='quiz')resumeQuiz(key);else{const L=jsFresh(x).map(jnCard).filter(Boolean);if(!L.length){x.sorted=amNow();amSave();return draw()}startQuiz(shuffle(L),'מיון המילים של היום','amnw',key)}}finally{S.mode=m}}
-function jsSorted(x){x.sorted=amNow();jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id)}});const P=AMS.jp[String(x.id).split('|')[0]];if(P)P.t=amNow();amSave()}
+/* words still to sort: fresh words not sorted yet (x.srt); a plan sorted by the older version (x.sorted, no x.srt) counts as all sorted */
+const jsToSort=x=>x.sorted&&!x.srt?[]:jsFresh(x).filter(k=>!(x.srt||[]).includes(k));
+const jsNeed=x=>jsToSort(x).length>0;
+function jsStart(x){const key=jsKey(x),m=S.mode;S.mode='read';try{if(SESS[key]&&SESS[key].kind==='quiz')resumeQuiz(key);else{const L=jsToSort(x).map(jnCard).filter(Boolean);if(!L.length){x.sorted=amNow();x.srt=jsFresh(x);amSave();return draw()}startQuiz(shuffle(L),'מיון המילים של היום','amnw',key)}}finally{S.mode=m}}
+function jsSorted(x){const ts=jsToSort(x);x.sorted=amNow();x.srt=[...new Set([...(x.srt||[]),...ts])];jnBatch(x).forEach(k=>{const w=AMS.w[k],c=jnCard(k);if(w&&w.st===0&&c&&isY(c)){wLog(w,'known',1,0);wMaster(w);jrCount(x.id)}});
+  /* words she knew leave the batch – fill it up with more words to sort until there are enough to learn (Nov 25, her request) */
+  let add=0;const need=Math.max(0,(x.n||JNEW)-jsFresh(x).length);
+  if(need>0){const q=wQueue(need*6+20).filter(w=>!x.ws.includes(wK(w))),pick=[],es=new Set(x.ws.map(k=>String((AMS.w[k]||{}).e||'').toLowerCase()));
+    for(const w of q){if(pick.length>=need)break;const e=String(w.e).toLowerCase();if(es.has(e))continue;es.add(e);pick.push(w)}
+    pick.forEach(w=>{if(w.fresh)wAdd(w.e,w.h,w.c,w.src,w.k)});const ks=pick.map(w=>wK(w)).filter(k=>AMS.w[k]&&!x.ws.includes(k));x.ws=x.ws.concat(ks);add=ks.length;if(add)x.srn=(x.srn||0)+1}
+  x.added=add;const P=AMS.jp[String(x.id).split('|')[0]];if(P)P.t=amNow();amSave();return add}
 /* called by the dictionary quiz when it ends: back to the new-words page, ready to learn the words she didn't know */
-function jsQuizDone(){if(!Q||!/^JS/.test(String(Q.key||'')))return false;let x=null;Object.values(AMS.jp||{}).forEach(P=>(P.b||[]).forEach(b=>{if(b.k==='new'&&jsKey(b)===Q.key)x=b}));
-  if(!x)return false;jsSorted(x);S.jb=x.id;const n=jsFresh(x).length;go({screen:'amnw'});amToast(n?`✓ המיון הסתיים – ${n} מילים ללמידה`:'✓ ידעת את כל המילים בקבוצה');return true}
+function jsQuizDone(){if(!Q||!/^JS/.test(String(Q.key||'')))return false;let x=null;Object.values(AMS.jp||{}).forEach(P=>(P.b||[]).forEach(b=>{if(b.k==='new'&&(jsKey(b)===Q.key||String(Q.key).startsWith(jsKey(Object.assign({},b,{srn:0}))+'_')))x=b}));
+  if(!x)return false;const add=jsSorted(x);S.jb=x.id;const n=jsFresh(x).length;go({screen:'amnw'});amToast(add?`✓ ידעת חלק מהמילים – נוספו ${add} מילים חדשות למיון`:n?`✓ המיון הסתיים – ${n} מילים ללמידה`:'✓ ידעת את כל המילים בקבוצה');return true}
 /* called by the dictionary quiz after each word of a 'J' session: a word that isn't ✓ gets its step 2 at once (write it, then choose it in a sentence), then back to the quiz */
 function jnAfterWord(card,back){try{if(!Q||!/^J/.test(String(Q.key||'').replace(/^[NUY](?=J)/,''))||!card)return false;
   const x=jrBlock(S.jb);if(!x||x.k!=='new'||jnKey(x)!==String(Q.key).replace(/^[NUY](?=J)/,''))return false;
@@ -3354,8 +3362,8 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
     <div class="nav"><button class="back" id="bk">המסע</button><span class="nav-ic">${HOME}<button class="home-btn jh-q" id="jhHelp" aria-label="הסבר">?</button></span></div>
     <section class="jh-hero">
       <p class="jh-k">${x.theme?'קבוצת היום · '+esc(x.theme):'מהמילון שלך'}</p>
-      <h2>🌱 ${ws.length} מילים חדשות</h2>
-      <p class="jh-d">${known?`יודעת ${known} מתוך ${ws.length}`:'מילים שסימנת ✗ או שעוד לא סימנת'}</p>
+      <h2>🌱 ${sortNow?jsToSort(x).length+' מילים למיון':left.length+' מילים ללמידה'}</h2>
+      <p class="jh-d">${(()=>{const cy=left.filter(k=>(x.carry||[]).includes(k)).length,nw=left.length-cy,p=[];if(sortNow){const ok=jsFresh(x).length-jsToSort(x).length;if(ok)p.push(ok+' כבר מוכנות ללמידה')}else{if(nw)p.push(nw+' חדשות');if(cy)p.push(cy+' ממשיכות מיום קודם')}if(known)p.push(known+' ידעת במיון');return p.join(' · ')||'מילים שסימנת ✗ או שעוד לא סימנת'})()}</p>
       <div class="jh-track">${wTrack(null,{counts:cnt,cur:open?WS.round:(cnt.findIndex(n=>n)+1||1)})}</div>
       ${sortNow?`<p class="jh-d"><b>שלב ראשון · מיון במילון:</b> סמני ✓ ידעתי / ✗ לא ידעתי לכל מילה. ללמידה ייכנסו רק המילים שלא ידעת.</p><button class="btn jh-go" id="jsGo">${sq&&sq.kind==='quiz'?`▶ להמשיך במיון · מילה ${Math.min((sq.i||0)+1,(sq.ids||[]).length||1)}/${(sq.ids||[]).length||jsFresh(x).length}`:`▶ למיין ${jsFresh(x).length} מילים במילון`}</button><button class="link" id="jsSkip" style="align-self:center">לדלג על המיון וללמוד את כולן</button>`:left.length?`<button class="btn jh-go" id="nwGo">${open?`▶ להמשיך · סבב ${WS.round||1} · מילה ${WS.i+1}/${WS.list.length}`:`▶ ללמוד את המילים · ${left.length}`}</button>`:`<p class="jh-d">✓ סיימת את הסבבים של כל המילים בקבוצה</p><button class="btn jh-go" id="nwMore">➕ ללמוד קבוצת מילים נוספת</button><button class="link" id="nwDone" style="align-self:center">סיום ← חזרה למסע</button>`}
     </section>
@@ -3366,7 +3374,7 @@ function amNewWords(){if(!AMD)return amLoading();const x=jrBlock(S.jb);if(!x||x.
     </div>
     ${cardSess(key)[1]?'<button class="link dh-all" id="fcNew">כרטיסיות מההתחלה</button>':''}
   </div>`;
-  $('jhHelp').onclick=()=>amSheet('מילים חדשות להיום',`<p>${ws.length} מילים מהמילון – מילים שסימנת ✗ או שעוד לא סימנת${x.theme?`, בקבוצה אחת: <b>${esc(x.theme)}</b>`:''}.</p>`+'<h4>מיון במילון (לפני הסבבים)</h4><p>קודם עוברים על המילים בבוחן של המילון ומסמנים ✓ / ✗. ✓ = כבר יודעת – המילה יוצאת מהלמידה ומסומנת ✓ במילון. ללמידה נכנסות רק המילים שלא ידעת.</p>'+WLRN.map((r,i)=>`<h4>סבב ${i+1} · ${r[0]}</h4><p>${r[1]}</p>`).join('')+'<p>המספר מתחת לכל סבב = כמה מילים מחכות בו. לחיצה על סבב = ללמוד עכשיו את המילים שמחכות בו.</p><h4>🚗 מצב רכב</h4><p>מקריא את המילים של היום ברצף – להאזנה בנסיעה.</p>');
+  $('jhHelp').onclick=()=>amSheet('מילים חדשות להיום',`<p>${ws.length} מילים מהמילון – מילים שסימנת ✗ או שעוד לא סימנת${x.theme?`, בקבוצה אחת: <b>${esc(x.theme)}</b>`:''}.</p><p><b>ממשיכות מיום קודם</b> – מילים שהתחלת ללמוד ביום אחר ולא סיימת את ארבעת הסבבים שלהן. הן ממשיכות מהסבב שבו עצרת (למשל סבב 2), ולכן המספרים מופיעים גם בסבבים האחרים.</p><p>מילים שידעת במיון יוצאות מהלמידה, ובמקומן נוספות מילים חדשות למיון – עד שיש ${x.n||JNEW} מילים חדשות ללמידה.</p>`+'<h4>מיון במילון (לפני הסבבים)</h4><p>קודם עוברים על המילים בבוחן של המילון ומסמנים ✓ / ✗. ✓ = כבר יודעת – המילה יוצאת מהלמידה ומסומנת ✓ במילון. ללמידה נכנסות רק המילים שלא ידעת.</p>'+WLRN.map((r,i)=>`<h4>סבב ${i+1} · ${r[0]}</h4><p>${r[1]}</p>`).join('')+'<p>המספר מתחת לכל סבב = כמה מילים מחכות בו. לחיצה על סבב = ללמוד עכשיו את המילים שמחכות בו.</p><h4>🚗 מצב רכב</h4><p>מקריא את המילים של היום ברצף – להאזנה בנסיעה.</p>');
   $('bk').onclick=()=>go({screen:'am'});
   $('list').onclick=()=>go({screen:'words',filter:'all',wl:'jn'});
   bindSettings();bindQuizPanel(key,ws,name,'amnw');bindCards(key,ws);
