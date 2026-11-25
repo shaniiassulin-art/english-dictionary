@@ -722,6 +722,12 @@ function playFile(kind,text,rate){if(MUTED())return Promise.resolve(true);AUDT=D
       const p=a.play();p&&p.catch(e=>{if(AU.end!==done)return;if(e&&e.name==='NotAllowedError')fin(false)})};
     next()})}
 function cleanEn(t){return t.replace(/\s*\(.*?\)/g,'').replace(/…|\.\.\./g,', ').replace(/^\d+(st|nd|rd|th)\s*-\s*/,'').replace(/\s*-\s*10th$/,'')}
+/* English text without a recording (Nov 25, her report – a tapped word outside the dictionary was silent on iPhone, even from its speaker: device speech is muted by the silent switch and often drops after cancel()): an online voice played in the <audio> element, started inside the tap; resolves false when it can't play */
+function playUrl(u){if(MUTED())return Promise.resolve(true);AUDT=Date.now();stopAudio();const a=audioEl();
+  return new Promise(res=>{let tm=null;const fin=ok=>{if(AU.end!==done)return;AU.end=null;clearTimeout(tm);a.onended=a.onerror=a.onpause=null;res(ok)};const done=ok=>fin(ok);AU.end=done;
+    a.onerror=()=>fin(false);a.onended=()=>fin(true);tm=setTimeout(()=>fin(a.currentTime>0),8000);
+    try{a.src=u;a.playbackRate=1;const p=a.play();p&&p.catch(()=>fin(false))}catch(e){fin(false)}})}
+const enUrl=t=>'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&ttsspeed=0.9&q='+encodeURIComponent(String(t).slice(0,200));
 function ttsEn(t,rate){if(!TTS||MUTED())return;try{if(speechSynthesis.speaking||speechSynthesis.pending)speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(cleanEn(t));u.lang='en-US';u.volume=1;if(voice)u.voice=voice;u.rate=rate||.85;speechSynthesis.speak(u)}catch(e){}}
 /* word (or example sentence) button: recorded file first, device voice only if the file can't play */

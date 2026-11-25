@@ -97,8 +97,8 @@ const STOP=new Set('a an the of to in on at by for and or but is are was were be
 const DSENT=new Set(RAW.flatMap(r=>Array.isArray(r.s)?r.s:[r.s]).filter(Boolean));
 function amSay(t){t=String(t||'').replace(/_{2,}/g,' blank ').trim();if(!t)return;unlockAudio();
   if(WORDSET.has(t)||DSENT.has(t)){speak(t);return}
-  if(enGem&&GKEY()){stopAudio();try{speechSynthesis.cancel()}catch(e){}gemSay(t,.95,enGem,true).then(ok=>{if(!ok)ttsEn(t,.9)});return}
-  stopAudio();ttsEn(t,.9)}
+  if(enGem&&GKEY()){stopAudio();try{speechSynthesis.cancel()}catch(e){}gemSay(t,.95,enGem,true).then(ok=>{if(!ok)playUrl(enUrl(t)).then(o=>{if(o===false)ttsEn(t,.9)})});return}
+  playUrl(enUrl(t)).then(ok=>{if(ok===false)ttsEn(t,.9)})}
 const SAYB=(t,cls)=>`<button class="spk am-say${cls?' '+cls:''}" data-amsay="${esc(t)}" aria-label="השמעה">${SPK}</button>`;
 /* every English word in a text as a tappable span; connectors found by connFind (cs) are coloured instead */
 function tapEn(t,cs){t=String(t);const ph=[];
