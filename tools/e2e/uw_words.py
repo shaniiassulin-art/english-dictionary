@@ -10,7 +10,11 @@ with sync_playwright() as p:
   pg.evaluate("amStart(['csc5-1'],'t','learn','am','sc')");pg.wait_for_timeout(800)
   pg.locator('.ax-rad').first.click();pg.wait_for_timeout(300)
   if pg.locator('#amChk').count():pg.click('#amChk')
-  pg.wait_for_timeout(500);pg.click('#amNext');pg.wait_for_timeout(2500)
+  pg.wait_for_timeout(500)
+  for _ in range(4):
+    if pg.locator('.am-wordsbox').count():break
+    pg.click('#amNext');pg.wait_for_timeout(800)
+  pg.wait_for_timeout(2500)
   t=pg.locator('.am-wordsbox').inner_text();print(t[:400])
   assert 'במילון' in t and 'לא במילון' in t and 'frown' in t
   pg.locator('[data-uwsoon="frown"]').click();pg.wait_for_timeout(800)
