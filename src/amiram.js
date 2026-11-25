@@ -1850,52 +1850,44 @@ ${qText(q)}
 Rules: assume she does not know any word. Do NOT give a word-by-word glossary. Keep every field short and clear (1–2 sentences). Sound-alikes: say that an English word sounds like a Hebrew word ONLY when it truly sounds like it when read aloud (a real loanword or near-identical sound, e.g. computer ≈ קומפיוטר, fabric ≈ פבריקה). NEVER say an English word sounds like or resembles its own Hebrew translation (e.g. tents does NOT sound like אוהלים). When there is no real sound-alike, don't invent one – use the other clues. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
 JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit"}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
 ${AIHE}`}
-function promptUnk(q,ws){return `A Hebrew-speaking student who knows almost no English marked words she did not know in this exam question. For EACH marked word show her, in Hebrew, how she could have worked out its meaning by herself while reading, without knowing it.
-HOW TO WRITE IT (very important – earlier explanations were too abstract and didn't help):
-- 2-4 short steps in plain everyday Hebrew, each step at most ~20 words, concrete, like a friend thinking aloud.
-- Step 1: give the part of the sentence around the word IN HEBREW, with ___ where the word is (e.g. "המשפט אומר בערך: 'הנקבות מתנהגות כך, אבל בבונים ___ מתנהגים אחרת'").
-- Then: what makes sense in that gap and why, using the Hebrew words of the sentence (e.g. "מול 'נקבות' או 'מיוחדים' מתאים כאן משהו כמו 'רגילים'").
-- Only then, if it really helps: a real loanword in spoken Hebrew (ordinary ≈ אורדינרי = רגיל, באמת אומרים את זה בעברית) or a word part, with its Hebrew meaning.
-- Never use grammar / teaching terms (מבנה, קבוצה נגדית, חלק דיבר, הקשר, קונוטציה…). Every English word you mention must be followed by its Hebrew meaning in parentheses – she does not know English.
-- Do not say whether the word is related to the answer or why an option is wrong.
-Sound-alikes / loanwords: only when the word truly sounds like a Hebrew or loanword used in Hebrew (computer ≈ קומפיוטר); never say it sounds like its own translation (tents does NOT sound like אוהלים); don't invent one.
+/* where a marked word sits: in the question / passage, or only in the answer options */
+function unkWhere(q,w){const re=new RegExp('\\b'+String(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'\\b','i');const T=AMD&&q.x&&AMD.x[q.x];return re.test(String(q.q||''))||(T&&re.test(String(T.l||T.t||'')))?'sentence':'options'}
+const UNKSTY=`ONE short hint per word – 1 or 2 short sentences in plain everyday Hebrew, no steps, no lists, no grammar / teaching terms. Every English word you mention gets its Hebrew in parentheses. Never "translate" the word by writing it in Hebrew letters or say it sounds like itself (NOT "ordinary sounds like אורדינרי") – that explains nothing. Do not say whether the word is related to the answer or why an option is wrong.
+- A word that appears in the question sentence / passage: a hint that ties the sentence and the word together – what in the sentence points to its meaning.
+- A word that appears ONLY in the answer options: the sentence doesn't help – explain the word itself: its parts (prefix / suffix / a shorter word she may know inside it, with their Hebrew meaning) and what they hint about the meaning.`;
+function promptUnk(q,ws){return `A Hebrew-speaking student who knows almost no English marked words she did not know in this exam question. For each word give her a hint that would have helped her understand its meaning without knowing it.
+${UNKSTY}
 ${qText(q)}
-Marked words: ${ws.join(', ')}
-JSON: {"words":[{"en":"the word","steps":["step 1","step 2","…"],"meaning":"its meaning here, 1-3 Hebrew words"}]}
+Marked words (and where each appears): ${ws.map(w=>w+' ('+unkWhere(q,w)+')').join(', ')}
+JSON: {"words":[{"en":"the word","hint":"the short Hebrew hint","meaning":"its meaning here, 1-3 Hebrew words"}]}
 ${AIHE}`}
 /* box 1 (Nov 20, her request): how to understand the words – the words she marked (🔖), the hard words of the sentence and the words of the options, in one box */
 /* another explanation of a marked word (Nov 25, her request – "if I don't understand the explanation, give me another one"): each one is kept (AMAI 'xa|<id>|<word>|n') and shown under the first */
 const UNKERR={};
-function unkAlts(id,w){const o=[];for(let n=1;n<20;n++){const a=AMAI['xa3|'+id+'|'+w+'|'+n];if(!a||a.err)break;o.push(a)}return o}
-function promptUnkAlt(q,w,prev){return `A Hebrew-speaking student who knows almost no English did not understand the explanations she got for the English word "${w}" in this exam question. Explain AGAIN how she could have worked out its meaning while reading – a COMPLETELY DIFFERENT and SIMPLER way (another clue in the sentence, an everyday situation in Hebrew that shows the same idea, a loanword only if real). Do not repeat the earlier explanations.
-HOW TO WRITE IT (very important – earlier explanations were too abstract and didn't help):
-- 2-4 short steps in plain everyday Hebrew, each step at most ~20 words, concrete, like a friend thinking aloud.
-- Step 1: give the part of the sentence around the word IN HEBREW, with ___ where the word is (e.g. "המשפט אומר בערך: 'הנקבות מתנהגות כך, אבל בבונים ___ מתנהגים אחרת'").
-- Then: what makes sense in that gap and why, using the Hebrew words of the sentence (e.g. "מול 'נקבות' או 'מיוחדים' מתאים כאן משהו כמו 'רגילים'").
-- Only then, if it really helps: a real loanword in spoken Hebrew (ordinary ≈ אורדינרי = רגיל, באמת אומרים את זה בעברית) or a word part, with its Hebrew meaning.
-- Never use grammar / teaching terms (מבנה, קבוצה נגדית, חלק דיבר, הקשר, קונוטציה…). Every English word you mention must be followed by its Hebrew meaning in parentheses – she does not know English.
-- Do not say whether the word is related to the answer or why an option is wrong.
+function unkAlts(id,w){const o=[];for(let n=1;n<20;n++){const a=AMAI['xa5|'+id+'|'+w+'|'+n];if(!a||a.err)break;o.push(a)}return o}
+function promptUnkAlt(q,w,prev){return `A Hebrew-speaking student who knows almost no English did not understand the hints she got for the English word "${w}" (it appears in: ${unkWhere(q,w)}) in this exam question. Give ONE completely different, simpler hint. Do not repeat the earlier hints.
+${UNKSTY}
 ${qText(q)}
-Earlier explanations she did not understand:
+Earlier hints she did not understand:
 ${prev.map((p,i)=>(i+1)+') '+p).join('\n')}
-JSON: {"steps":["step 1","step 2","…"],"meaning":"its meaning here, 1-3 Hebrew words"}
+JSON: {"hint":"the new short Hebrew hint","meaning":"its meaning here, 1-3 Hebrew words"}
 ${AIHE}`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-unkalt]');if(!b)return;const id=b.dataset.unkalt,w=b.dataset.w,q=AMD&&AMD.q[id];if(!q)return;
-  const st=AQ&&AQ.st&&AQ.st[AQ.i],U=st&&st.unk||[],base=AMAI['xu4|'+id+'|'+U.slice().sort().join(',')];
+  const st=AQ&&AQ.st&&AQ.st[AQ.i],U=st&&st.unk||[],base=AMAI['xu6|'+id+'|'+U.slice().sort().join(',')];
   const first=base&&!base.err&&(base.words||[]).find(d=>String(d.en||'').toLowerCase().trim()===w);
-  const A=unkAlts(id,w),prev=[first&&(first.steps?first.steps.join(' '):first.how),...A.map(a=>a.steps?a.steps.join(' '):a.how)].filter(Boolean),key='xa3|'+id+'|'+w+'|'+(A.length+1);
+  const A=unkAlts(id,w),prev=[first&&(first.hint||(first.steps?first.steps.join(' '):first.how)),...A.map(a=>a.hint||(a.steps?a.steps.join(' '):a.how))].filter(Boolean),key='xa5|'+id+'|'+w+'|'+(A.length+1);
   delete UNKERR[id+'|'+w];delete AMAI[key];const p=aiCached(key,promptUnkAlt(q,w,prev),.9);amRedrawKeep();
   p.then(r=>{if(r&&r.err)UNKERR[id+'|'+w]=r.err;amLateRedraw(id)})});
 const ELIMN={add:'מידע נוסף',rel:'קשר אחר',ext:'הקצנה',contra:'סותר',miss:'חסר',out:'לא מהקטע / לא נאמר',wrong:'סותר את הקטע / ההקלטה',nq:'לא עונה לשאלה'};
 /* after answering (Nov 25, her request): the reason she gave when she ruled an option out */
 function elimNote(st,k,q){const r=st&&st.elim&&st.elim[k];if(!r)return '';const right=k===q.a;return `<div class="am-elimd${right?' bad':''}">✗ פסלת: ${esc(ELIMN[r]||r)}${right?' – אבל זו התשובה הנכונה':''}</div>`}
 function amUnkBox(id,st){if(!GKEY())return '';const U=st&&st.unk||[],q=AMD.q[id];let ua=null;
-  if(U.length){const key='xu4|'+id+'|'+U.slice().sort().join(',');ua=AMAI[key];if(!ua&&!AIP[key])aiCached(key,promptUnk(q,U),.2).then(()=>{amLateRedraw(id)})}
+  if(U.length){const key='xu6|'+id+'|'+U.slice().sort().join(',');ua=AMAI[key];if(!ua&&!AIP[key])aiCached(key,promptUnk(q,U),.2).then(()=>{amLateRedraw(id)})}
   /* only the words she marked "לא ידעתי את המילה" (her request – no other words in this box); no marks = no box */
   if(!U.length)return '';
-  const seen=new Set(),L=[];const hw=d=>Array.isArray(d&&d.steps)&&d.steps.length?`<ol class="am-usteps">${d.steps.map(x=>`<li>${bdiEsc(String(x))}</li>`).join('')}</ol>`:bdiEsc(d&&d.how||'');const hs=d=>Array.isArray(d&&d.steps)&&d.steps.length?d.steps.join(' '):(d&&d.how||'');
+  const seen=new Set(),L=[];const hw=d=>d&&d.hint?' – '+bdiEsc(String(d.hint)):Array.isArray(d&&d.steps)&&d.steps.length?`<ol class="am-usteps">${d.steps.map(x=>`<li>${bdiEsc(String(x))}</li>`).join('')}</ol>`:' – '+bdiEsc(d&&d.how||'');const hs=d=>Array.isArray(d&&d.steps)&&d.steps.length?d.steps.join(' '):(d&&d.how||'');
   const add=(en,how,mean,mk)=>{const k=String(en||'').toLowerCase().trim();if(!k||seen.has(k))return;seen.add(k);
-    const A=unkAlts(id,k),busy=AIP['xa3|'+id+'|'+k+'|'+(A.length+1)],err=UNKERR[id+'|'+k];
+    const A=unkAlts(id,k),busy=AIP['xa5|'+id+'|'+k+'|'+(A.length+1)],err=UNKERR[id+'|'+k];
     L.push(`<li${mk?' class="mk"':''}><b><bdi dir="ltr">${esc(en)}</bdi></b>${mk?' <small>🔖</small>':''}${how}${mean?` <div class="am-umean">המשמעות: <b>${esc(mean)}</b></div>`:''}${A.map((a,i)=>`<div class="am-unkalt"><small>הסבר אחר${A.length>1?' '+(i+1):''}</small> ${hw(a)}${a.meaning?` <span>← ${esc(a.meaning)}</span>`:''}</div>`).join('')}${err?`<div class="hint">${esc(err)}</div>`:''}<div><button class="small-link am-unkre" data-unkalt="${esc(id)}" data-w="${esc(k)}" ${busy?'disabled':''}>${busy?'⏳ מכינה הסבר אחר…':'🔄 לא הבנתי – הסבר אחר'}</button></div></li>`)};
   if(ua&&!ua.err)(ua.words||[]).forEach(d=>add(d.en,hw(d),d.meaning,1));
   const wait=!ua;

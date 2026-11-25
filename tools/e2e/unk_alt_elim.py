@@ -8,7 +8,7 @@ with sync_playwright() as p:
   pg.route('**/firestore.googleapis.com/**',lambda r:r.abort())
   def gem(r):
     d=r.request.post_data or ''
-    if 'did not understand the explanations' in d:N[0]+=1;j={"how":"הסבר-אחר-%d"%N[0],"meaning":"פירוש"}
+    if 'did not understand the hints' in d:N[0]+=1;j={"how":"הסבר-אחר-%d"%N[0],"meaning":"פירוש"}
     elif 'marked words she did not know' in d:j={"words":[{"en":"WORD","how":"הסבר-ראשון","meaning":"פ"}]}
     elif 'using the course method' in d:j={"steps":["צעד"],"rule":"כלל"}
     else:j={"translation":"ת","understand":["ה"],"options":[{"en":"a","he":"א","ok":True,"why":"ס"},{"en":"b","he":"ב","ok":False,"why":"ס2"},{"en":"c","he":"ג","ok":False,"why":"ס3"},{"en":"d","he":"ד","ok":False,"why":"ס4"}],"answer":"ל","tip":"ט"}
@@ -23,7 +23,7 @@ with sync_playwright() as p:
   if pg.locator('#amChk').count():pg.click('#amChk')
   pg.wait_for_timeout(1500)
   pg.route('**/generativelanguage.googleapis.com/**',lambda r:r.fulfill(status=200,content_type='application/json',body=body({"words":[{"en":w,"how":"הסבר-ראשון","meaning":"פ"}]})) if 'marked words she did not know' in (r.request.post_data or '') else gem(r))
-  pg.evaluate("Object.keys(AMAI).filter(k=>k.startsWith('xu4|')).forEach(k=>delete AMAI[k]);amRedrawKeep()");pg.wait_for_timeout(1500)
+  pg.evaluate("Object.keys(AMAI).filter(k=>k.startsWith('xu6|')).forEach(k=>delete AMAI[k]);amRedrawKeep()");pg.wait_for_timeout(1500)
   t=pg.locator('.ax-opts').inner_text();print(t[:300])
   assert 'פסלת: מידע נוסף' in t and 'אבל זו התשובה הנכונה' in t
   pg.locator('[data-unkalt]').first.click();pg.wait_for_timeout(1500)
