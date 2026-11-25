@@ -7,4 +7,5 @@ with sync_playwright() as p:
   t=pg.evaluate("""(()=>{AMS.w={};const c=DW.find(c=>c.id==='case#0');const k='c:'+c.id;const s=wHeSent({k,e:c.e,h:c.h[0]});AMS.w[k]={k,e:c.e,h:c.h[0],st:1,lr:5,due:Date.now()-1000,log:[],t:Date.now(),used:['he:'+s]};
     HEERR[k]=1;WS=null;go({screen:'amw'});wStart('rev');return wTaskNow(AMS.w[k])})()""");print(t)
   assert t=='mc',t
+  pg.wait_for_timeout(2500);n=pg.locator('.am-fbnote').inner_text();print(n);assert 'משפט בעברית' in n and 'משפט באנגלית' in n
   assert not errs,errs;print('OK');b.close()

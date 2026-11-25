@@ -2743,6 +2743,7 @@ details.am-exb[open]{background:var(--surface);padding:8px 12px 10px;border-radi
 .am-hintq .hq-steps>li{counter-increment:hq;position:relative;background:var(--fill);border-radius:var(--r-md,14px);padding:10px 12px;padding-inline-start:44px;font-size:.9rem;line-height:1.65}
 .am-hintq .hq-steps>li::before{content:counter(hq);position:absolute;inset-inline-start:12px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;display:grid;place-items:center}
 .am-unkbox .am-xopts li.mk>b{color:var(--bad)}
+.am-fbnote{background:var(--fill);border-radius:var(--r-md,14px);padding:8px 12px;font-size:.84rem;color:var(--muted)}
 .am-badsent{color:var(--muted)!important;font-size:.82rem}
 .am-unkalt{margin-top:6px;padding:6px 10px;background:var(--fill);border-radius:10px}.am-unkalt small{color:var(--muted);font-weight:600}
 .am-unkre{background:none;border:0;padding:4px 0 0;color:var(--accent);font:inherit;font-size:.8rem;cursor:pointer}
@@ -4844,6 +4845,9 @@ function amWordLearn(){wRoundMigrate();setTimeout(wAutoTick,60);if(!WS||!WS.list
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${RVERR[kk]?esc(RVERR[kk]):'⏳ מכינה משפט עם המילה…'}</p></div>`;if(!RVERR[kk]){app.innerHTML=h+'</div>';$('bk').onclick=()=>{wSave();go({screen:WS.from||'amw'})};return}}
     const mcF=task==='mc'?(rvS?rvS.en:WS.mode==='r2'?(wCtx(w)||wOther(w)):(wOther(w)||wCtx(w))):'';
     const mcS=task==='mc'?blankOut(mcF,w.e):'',heS=task==='hecl'&&heR?heR.he:'';
+    /* the question planned here was a Hebrew sentence (or another task) but the word has no fitting sentence – say so on the page (her request, Nov 25) */
+    {const pl=WS.mode==='rev'?WPATH[res&&res.st0!=null?res.st0:w.st]:(WS.step==='first'||(WS.mode==='r2'&&WS.phase==='he'))?'hecl':null;
+      if(pl&&pl!==task&&WTN[pl])h+=`<div class="am-fbnote">💬 כאן אמור היה להיות <b>${esc(WTN[pl])}</b>, אבל ${pl==='hecl'?'לא הצלחתי להכין משפט בעברית':'אין משפט מתאים'} למילה הזו – לכן ${esc(WTN[task]||'שאלה אחרת')}.</div>`}
     if(task==='mc'||task==='hecl'){
       h+=`<div class="am-card"><p class="hint center" style="margin:0">${task==='hecl'?'איזו מילה באנגלית חסרה במשפט?':'איזו מילה משלימה את המשפט?'}</p>
         <div class="${task==='hecl'?'m':'ctx'}" data-task="${task}" ${task==='hecl'?'':'dir="ltr"'} style="font-size:1.15rem;color:var(--ink);line-height:1.6;${task==='hecl'?'font-weight:600':''}">${task==='hecl'?heGapHtml(heS,w.e,!!res):res?SAYB(mcF,'sm inl')+mcFilled(mcF,mcS):SAYB(mcS,'sm inl')+tapEn(mcS).replace(/_{4,}/,'<span class="am-gap">&nbsp;?&nbsp;</span>')}</div>${task==='mc'?srcLab(rvS):task==='hecl'?srcLab(heR):''}${task==='mc'&&res?wTrHtml(mcF,x,ex,w):''}</div>`;
