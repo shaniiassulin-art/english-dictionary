@@ -4330,8 +4330,8 @@ function wRequeue(w){if(!WS||!WS.perWord)return;const L=wLive(w),k=wK(w);L.lr=WS
 /* ONE look for a word's path everywhere: learning rounds 1–4 · reviews 1–6 · 🏆
    o.counts = how many of the round's words wait in each learning round (tap = go there), o.free = free practice */
 function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&WS.list&&WS.list[WS.i]===wK(w));const lr=pw?WS.round:w?lrOf(w):(o.cur||1),s=w?Math.min(w.st,WMAST):0,inRev=!pw&&w&&lr>=5&&s>=1,ch=(t,cls,i)=>o.counts?`<button class="${cls}" data-round="${i}">${t}<small>${o.counts[i-1]}</small></button>`:`<span class="${cls}">${t}</span>`;
-  /* after answering in a learning round the chips show where the word is now (her request: a miss moves the mark back to round 1 at once) */
-  const ans=pw&&WS.res&&(WS.res.rec||WS.res.ok!=null)&&!WS.res.pend,lc=ans?lrOf(w):lr;
+  /* after answering in a learning round the chips stay on the round just played (Nov 25, her request – like the reviews); the line under them says where the word went */
+  const lc=lr;
   const rd=[1,2,3,4].map(i=>ch(i,(w&&(inRev||lc>i))?'done':(lc===i&&!inRev&&(w||o.cur))?'on':'',i)).join('');
   /* after answering, the chips keep the review she just did marked (her request); the line under them says where the word went */const sr=inRev&&WS&&WS.res&&WS.step!=='tr'&&!o.free&&WS.res.st0>=1?Math.min(WS.res.st0,6):s;
   const rv=[1,2,3,4,5,6].map(i=>`<span class="${inRev?(i<sr?'done':i===sr?'on':''):''}">${i}</span>`).join('')+`<span class="${sr>=WMAST?'on':''}">🏆</span>`;

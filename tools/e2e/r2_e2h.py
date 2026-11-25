@@ -17,6 +17,8 @@ with sync_playwright() as p:
   t=pg.inner_text('#app');assert 'סבב 2 – הפירוש בעברית' in t and 'ידעתי' not in t,t[:400]
   pg.fill('#wAns','משהו');pg.click('#wGo');pg.wait_for_timeout(1500)
   r=pg.evaluate("[AMS.w[%r].lr, (WS.res||{}).ok]"%ks[0]);print('after right',r);assert r[0]==3
+  # the chips stay on the round just played (round 2), not the round the word moved to (Nov 25)
+  on=pg.locator('.am-mpath .g1 .on').first.inner_text().strip();print('chip on:',on);assert on.startswith('2')
   # wrong on the second word: stays in round 2
   V[0]='wrong';pg.click('#wOn');pg.wait_for_timeout(1000)
   pg.fill('#wAns','לא');pg.click('#wGo');pg.wait_for_timeout(1500)
