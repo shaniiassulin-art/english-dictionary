@@ -94,6 +94,10 @@ input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;display
 .words .h{color:var(--muted);font-size:.98rem}
 .words li.ok .e::after{content:" ✓";color:var(--ok);font-family:var(--he)}
 .spk{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--accent-soft);color:var(--accent);cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.spk-on,.spk.spk-on,.am-osay.spk-on{background:var(--accent)!important;color:#fff!important;box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent);animation:spkPulse 1s ease-out infinite}
+.spk-on svg{color:#fff;fill:currentColor}
+@keyframes spkPulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 45%,transparent)}100%{box-shadow:0 0 0 10px transparent}}
+@media (prefers-reduced-motion:reduce){.spk-on{animation:none}}
 .spk svg{width:20px;height:20px}
 .no-tts .spk{display:none}
 details.wl summary{cursor:pointer;color:var(--accent);font-weight:700;min-height:44px;display:flex;align-items:center}
@@ -708,6 +712,15 @@ var AUDT=0;
 var SNDM=(()=>{try{const v=localStorage.getItem('dictSnd');return v==='off'||v==='mute'?v:'auto'}catch(e){return 'auto'}})();
 /* שקט silences everything except a speaker button she taps (Nov 25, her request: "in every mode a manual tap should play"); a tap counts for 1.5 s */
 var MANT=0;['click','touchend','keydown'].forEach(ev=>document.addEventListener(ev,e=>{const t=e.target&&e.target.closest&&e.target.closest('.spk,[data-amsay],.am-osay,.ax-osp,[aria-label^="השמעת"],[aria-label="השמעה"]');if(t)MANT=Date.now()},{capture:true}));
+/* a tapped speaker shows it was pressed (Nov 25, her request): it turns solid accent with a soft pulse from the tap until the sound ends (or 1 s if nothing plays) */
+const SPKSEL='.spk,[data-amsay],.am-osay,.ax-osp button,[aria-label^="השמעת"],[aria-label="השמעה"]';
+let SPKON=null,SPKT=0;
+function spkBusy(){const a=AU&&AU.el;let tts=false;try{tts=TTS&&(speechSynthesis.speaking||speechSynthesis.pending)}catch(e){}return !!(a&&!a.paused&&!a.ended&&a.currentTime>=0&&a.src&&!a.src.startsWith('data:'))||tts||!!(typeof GTTS!=='undefined'&&GTTS.busy)}
+function spkOff(){if(SPKON){SPKON.classList.remove('spk-on');SPKON=null}}
+document.addEventListener('click',e=>{const b=e.target&&e.target.closest&&e.target.closest(SPKSEL);if(!b)return;spkOff();SPKON=b;b.classList.add('spk-on');const t0=Date.now();SPKT=t0;
+  const tick=()=>{if(SPKT!==t0||!SPKON)return;const el=Date.now()-t0;if(el<1000||(spkBusy()&&el<25000)||(el<9000&&!spkBusy()&&SPKWAIT())){setTimeout(tick,250);return}spkOff()};setTimeout(tick,250)},true);
+/* while the slower voices are still being prepared (online / Gemini), keep the mark a little longer */
+function SPKWAIT(){return !!(AU&&AU.end)}
 const MUTED=()=>SNDM==='mute'&&Date.now()-MANT>1500;
 function playFile(kind,text,rate){if(MUTED())return Promise.resolve(true);AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
   const pre=PRE.get(kind+h);
