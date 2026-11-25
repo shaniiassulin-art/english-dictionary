@@ -2375,7 +2375,8 @@ const WPATHN=WREV.map(r=>r?r[1]:'');
 /* a Hebrew-sentence task stays Hebrew – never switched to an English sentence (Nov 16, her request) */
 /* after a mistake the same question never comes again (Nov 16, her request): a Hebrew sentence she missed is skipped (w.used 'he:…'),
    when no other Hebrew sentence can be had the task becomes the meaning in Hebrew; a missed "meaning in Hebrew" (w.e2hBad) becomes a sentence task */
-const wPick=(w,he)=>he?(wHeOk(w)?'hecl':w.e2hBad?'mc':'en2he'):(wCtx(w)||wOther(w))?'mc':wHeOk(w)?'hecl':'en2he';
+/* no Hebrew sentence → an English sentence to choose in (her request, Nov 25), not "הפירוש בעברית" */
+const wPick=(w,he)=>he?(wHeOk(w)?'hecl':(wRevNow(w)||wCtx(w)||wOther(w))?'mc':'en2he'):(wCtx(w)||wOther(w))?'mc':wHeOk(w)?'hecl':'en2he';
 /* a missed question: its sentence goes to w.used, its options are drawn again */
 function wMiss(w){w=wLive(w);const k=wK(w),t=WS&&WS.res&&WS.res.task||wTaskNow(w);
   if(t==='hecl'){const s=wHeSent(w);if(s&&!(w.used||[]).includes('he:'+s))w.used=(w.used||[]).concat('he:'+s).slice(-24)}
