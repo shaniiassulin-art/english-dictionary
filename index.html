@@ -4092,6 +4092,8 @@ function amSolveBox(id){const q=AMD.q[id],xk='x4|'+id,mk='m|'+id,X=AMAI[xk],M=AM
     if(!M&&!AIP[mk])aiCached(mk,promptMethod(q),.2).then(re)}
   if(!GKEY())return `<div class="am-box"><h4>🧭 פתרון לפי השיטה</h4>${aiNeedKey()}</div>`;
   const x=X&&!X.err?X:null,m=M&&!M.err?M:null,L=(a,f)=>(a||[]).map(f).join('');
+  /* nothing until both parts are ready (her request – no half explanation) */
+  if(!X||!M)return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4><p class="hint">⏳ מכינה את ההסבר…</p></div>`;
   let b='';
   if(x&&x.translation)b+=`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(x.translation)}</p>`;
   if(x&&(x.understand||[]).length)b+=`<h5>איך מבינים את המשפט</h5><ol>${L(x.understand,t=>`<li>${bdiEsc(t)}</li>`)}</ol>`;
@@ -4103,8 +4105,6 @@ function amSolveBox(id){const q=AMD.q[id],xk='x4|'+id,mk='m|'+id,X=AMAI[xk],M=AM
   if(x&&x.answer)b+=`<h5>למה זו התשובה</h5><p>${bdiEsc(x.answer)}</p>`;
   if(m&&m.rule)b+=`<p><b>📌 ${bdiEsc(m.rule)}</b></p>`;
   if(x&&x.tip&&!(m&&m.rule===x.tip))b+=`<p><b>💡 ${bdiEsc(x.tip)}</b></p>`;
-  const wait=(!X||!M)&&(AIP[xk]||AIP[mk]||!X||!M);
-  if(wait&&!(X&&X.err)&&!(M&&M.err))b+=`<p class="hint">⏳ ${b?'משלימה את ההסבר…':'מכינה את ההסבר…'}</p>`;
   if((X&&X.err)||(M&&M.err))b+=`<p class="hint">${esc((X&&X.err)||(M&&M.err))}</p><button class="btn secondary" data-solvere="${esc(id)}">🔄 לנסות שוב</button>`;
   if(x||m)b+=askBox('xpl|'+id,qText(q)+'\nExplanation she got: '+JSON.stringify({x,m}).slice(0,2800));
   return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4>${b}</div>`}
