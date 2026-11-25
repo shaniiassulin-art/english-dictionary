@@ -2228,8 +2228,13 @@ const STOP=new Set('a an the of to in on at by for and or but is are was were be
 const DSENT=new Set(RAW.flatMap(r=>Array.isArray(r.s)?r.s:[r.s]).filter(Boolean));
 function amSay(t){t=String(t||'').replace(/_{2,}/g,' blank ').trim();if(!t)return;unlockAudio();
   if(WORDSET.has(t)||DSENT.has(t)){speak(t);return}
-  if(enGem&&GKEY()){stopAudio();try{speechSynthesis.cancel()}catch(e){}gemSay(t,.95,enGem,true).then(ok=>{if(!ok)playUrl(enUrl(t)).then(o=>{if(o===false)ttsEn(t,.9)})});return}
-  playUrl(enUrl(t)).then(ok=>{if(ok===false)ttsEn(t,.9)})}
+  /* a speaker she tapped keeps working through the slower fallbacks, also in שקט */
+  if(typeof MANT!=='undefined'&&Date.now()-MANT<1500)MANT=Date.now()+20000;
+  /* no recording (Nov 25, her report: sentence speakers silent): online voice in the <audio> element → Gemini voice (also <audio>, plays on silent mode) → device voice (silenced by iPhone's silent switch – says so) */
+  const dev=()=>{if(GKEY())amToast('🔇 לא הצלחתי להשמיע בקול מהרשת – מנסה בקול של המכשיר (לא נשמע כשהטלפון על שקט)');ttsEn(t,.9)};
+  const gem=()=>GKEY()?(amToast('⏳ מכינה הקראה…'),gemSay(t,.95,enGem||'Kore',true).then(ok=>{if(!ok)dev()})):dev();
+  if(enGem&&GKEY()){stopAudio();try{speechSynthesis.cancel()}catch(e){}gemSay(t,.95,enGem,true).then(ok=>{if(!ok)playUrl(enUrl(t)).then(o=>{if(o===false)dev()})});return}
+  playUrl(enUrl(t)).then(ok=>{if(ok===false)gem()})}
 const SAYB=(t,cls)=>`<button class="spk am-say${cls?' '+cls:''}" data-amsay="${esc(t)}" aria-label="השמעה">${SPK}</button>`;
 /* every English word in a text as a tappable span; connectors found by connFind (cs) are coloured instead */
 function tapEn(t,cs){t=String(t);const ph=[];

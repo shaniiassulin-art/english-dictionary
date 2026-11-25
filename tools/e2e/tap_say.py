@@ -14,6 +14,13 @@ with sync_playwright() as p:
   pg.evaluate("LOGP.length=0");pg.locator('.am-pop .spk, .am-pop [data-amsay]').first.click();pg.wait_for_timeout(1000)
   l2=pg.evaluate("LOGP");print(l2);ok=ok and any('translate_tts' in x for x in l2)
   pg.unroute('**/translate.google.com/translate_tts**');pg.route('**/translate.google.com/translate_tts**',lambda r:r.fulfill(status=404,body='x'))
-  pg.evaluate("LOGP.length=0;amSay('foobarword')");pg.wait_for_timeout(1500)
+  # online voice fails → Gemini voice (an audio blob through the <audio> element)
+  import base64,json as J
+  pg.unroute('**/generativelanguage.googleapis.com/**');pg.route('**/generativelanguage.googleapis.com/**',lambda r:r.fulfill(status=200,content_type='application/json',body=J.dumps({"candidates":[{"content":{"parts":[{"inlineData":{"mimeType":"audio/mpeg","data":base64.b64encode(mp3).decode()}}]}}]})))
+  pg.evaluate("window.LOGP=[];amSay('A sentence without a recording here.')");pg.wait_for_timeout(3000)
+  l4=pg.evaluate("LOGP");print(l4);ok=ok and any(x.startswith('play:blob:') for x in l4)
+  # both fail → device voice
+  pg.unroute('**/generativelanguage.googleapis.com/**');pg.route('**/generativelanguage.googleapis.com/**',lambda r:r.fulfill(status=500,body='x'))
+  pg.evaluate("window.LOGP=[];amSay('foobarword')");pg.wait_for_timeout(4000)
   l3=pg.evaluate("LOGP");print(l3);ok=ok and any(x=='tts:foobarword' for x in l3)
   print('OK' if ok else 'FAIL');b.close()
