@@ -24,5 +24,5 @@ with sync_playwright() as p:
     return seq,path,back
   r1=run('rs',True);print('rs wrong',r1);assert r1[0]==['res','why','meth','words'] and r1[2]==['meth','why','res']
   r2=run('rs',False);print('rs right',r2);assert r2[0]==['res','meth','words'] and r2[2]==['meth','res']
-  r3=run('sc',True);print('sc wrong',r3);assert r3[0]==['res','why','words']
+  r3=run('sc',True);print('sc wrong',r3);assert r3[0]==['res','why','meth','words']
   assert not e,e;print('OK')

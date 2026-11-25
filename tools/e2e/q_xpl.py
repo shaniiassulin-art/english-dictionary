@@ -16,9 +16,8 @@ with sync_playwright() as p:
   pg.locator('.ax-rad').first.click();pg.wait_for_timeout(300)
   if pg.locator('#amChk').count():pg.click('#amChk')
   pg.wait_for_timeout(800)
-  assert pg.locator('details.am-xpl').count()==1 and not pg.locator('details.am-xpl[open]').count()
-  pg.locator('details.am-xpl>summary').click();pg.wait_for_timeout(500)
-  t=' '.join(pg.locator('.am-xpl').all_inner_texts());print(t[:300]);pg.screenshot(path='/tmp/claude-0/-home-claude/57ff57e9-f98a-5dad-a91a-88f510546bae/scratchpad/xpl.png',full_page=True)
+  assert pg.locator('details.am-xpl').count()==0,'explanation moved to the method page'
+  t='';print(t[:300]);pg.screenshot(path='/tmp/claude-0/-home-claude/57ff57e9-f98a-5dad-a91a-88f510546bae/scratchpad/xpl.png',full_page=True)
   assert 'איך מבינים את המילים' not in t and pg.locator('.am-unkbox').count()==0 and 'כיווץ' in pg.locator('.am-box.good').first.inner_text()
   assert 'מתוקן' not in pg.locator('.am-box.good').first.inner_text() and 'כיווץ' in pg.locator('.am-box.good').first.inner_text()
   assert 'כמעט מוכן' not in t

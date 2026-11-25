@@ -932,7 +932,9 @@ function stopAudio(){const a=AU.el;if(a){try{a.pause()}catch(e){}}if(AU.end){con
 var AUDT=0;
 /* sound mode (her request): 'auto' = מצב רץ (default – whatever has a sound plays by itself), 'off' = only when a speaker is tapped (and a tapped word), 'mute' = nothing plays at all. localStorage dictSnd */
 var SNDM=(()=>{try{const v=localStorage.getItem('dictSnd');return v==='off'||v==='mute'?v:'auto'}catch(e){return 'auto'}})();
-const MUTED=()=>SNDM==='mute';
+/* שקט silences everything except a speaker button she taps (Nov 25, her request: "in every mode a manual tap should play"); a tap counts for 1.5 s */
+var MANT=0;['click','touchend','keydown'].forEach(ev=>document.addEventListener(ev,e=>{const t=e.target&&e.target.closest&&e.target.closest('.spk,[data-amsay],.am-osay,.ax-osp,[aria-label^="השמעת"],[aria-label="השמעה"]');if(t)MANT=Date.now()},{capture:true}));
+const MUTED=()=>SNDM==='mute'&&Date.now()-MANT>1500;
 function playFile(kind,text,rate){if(MUTED())return Promise.resolve(true);AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
   const pre=PRE.get(kind+h);
   return new Promise(res=>{let i=pre?-1:AU.base,timer=null;
@@ -1611,7 +1613,7 @@ function sndNext(){SNDM=SNDM==='auto'?'off':SNDM==='off'?'mute':'auto';AUTO=SNDM
 const AUTOBTN=()=>`<button class="autob${SNDM==='auto'?' on':''}${SNDM==='mute'?' mute':''}" id="autoBtn" aria-label="מצב שמע: ${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'} – לחיצה מחליפה">${SNDM==='mute'?'🔇':SPK}<span>${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'}</span></button>`;
 /* the sound button opens a small sheet with the three modes (her question "where is the quiet mode?") */
 function sndSet(m){SNDM=m;AUTO=m==='auto';LS.set('dictSnd',m);if(m==='mute'){try{stopAudio()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}}
-function sndPick(after){const O=[['auto','🔊','מצב רץ','כל שמע מושמע מעצמו: המילה, המשפט והשאלה'],['off','🔈','רגיל','שמע רק כשלוחצים על רמקול או על מילה'],['mute','🔇','שקט','שום דבר לא נשמע']];
+function sndPick(after){const O=[['auto','🔊','מצב רץ','כל שמע מושמע מעצמו: המילה, המשפט והשאלה'],['off','🔈','רגיל','שמע רק כשלוחצים על רמקול או על מילה'],['mute','🔇','שקט','שום דבר לא נשמע מעצמו – רק כשלוחצים על רמקול']];
   amSheet('מצב שמע',`<div class="snd-pick">${O.map(([k,i,n,d])=>`<button class="snd-o${SNDM===k?' on':''}" data-snd="${k}"><span class="i">${i}</span><span><b>${n}</b><small>${d}</small></span>${SNDM===k?'<span class="v">✓</span>':''}</button>`).join('')}</div>`);
   document.querySelectorAll('[data-snd]').forEach(b=>b.onclick=()=>{sndSet(b.dataset.snd);const d=document.getElementById('amSheet');if(d)d.remove();after&&after()})}
 /* every screen gets the sound button (her request): screens that don't draw one get a small icon-only one next to their refresh button */
@@ -3915,7 +3917,7 @@ function amDbLabel(d){const es=d.cards.map(c=>AMS.w['c:'+c.id]).concat([AMS.w[wK
   if(done)return '✓ למדת';if(rev)return '✓ למדת · בחזרות';if(lrn)return '📖 בלמידה עכשיו';if(d.cards.every(isY))return '✓ יודעת';if(wait)return '⏳ ממתינה ללמידה';return ''}
 function amDbStatus(d){if(d.cards.every(isY))return 'y';if(d.cards.some(c=>AMS.w['c:'+c.id])||AMS.w[wKey(d.e)])return 'w';return ''}
 /* restatement (her request): answer → investigation (if wrong) → 🧭 solving by the method → words */
-const amHasMeth=q=>!!q&&/^(rs|wf|gc|lc|lq)$/.test(q.t);
+const amHasMeth=q=>!!q&&/^(sc|rs|rc|wf|gc|lc|lq)$/.test(q.t);
 function amQPath(st,ok,q){const P=[['res','✓ תשובה'],...(ok?[]:[['why','🔍 חקירה']]),...(amHasMeth(q)?[['meth','🧭 לפי השיטה']]:[]),['words','📚 מילים']];const cur=st.fb||'res',ci=P.findIndex(x=>x[0]===cur);
   return `<div class="am-path">${P.map(([k,t],i)=>`<span class="${i<ci?'done':i===ci?'on':''}">${t}</span>`).join('')}</div>`}
 
@@ -3936,7 +3938,7 @@ const XPLO={};
 let XPLQ=[],XPLRUN=false;
 function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x4|'+id]&&!AMAI['x4|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
 function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x4|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
-  aiCached(key,promptXpl(AMD.q[id]),.2).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
+  const q0=AMD.q[id],mk='m|'+id;aiCached(key,promptXpl(q0),.2).then(r=>(r&&r.err||!amHasMeth(q0)||(AMAI[mk]&&!AMAI[mk].err))?r:aiCached(mk,promptMethod(q0),.2).then(()=>r)).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
     if(r&&r.err&&/מכסה/.test(r.err)){XPLQ=[];XPLRUN=false;return}setTimeout(amXplNext,1200)})}
 
 function promptXpl(q){return `You are teaching a Hebrew-speaking student who knows almost NO English words, for the Amiram English exam. Explain this question after she answered it, in detail, so she understands the sentence and every answer option.
@@ -3985,7 +3987,7 @@ function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   if(q.t==='rs'&&q.he)h+=`<div class="am-box"><h4>המשפט המקורי בעברית</h4><p>${esc(q.he)}</p><p class="hint" style="margin:0">ליד כל תשובה למעלה: התרגום שלה וההסבר מהספר.</p></div>`;
   if((q.t==='wf'||q.t==='gc')&&q.he)h+=heBox('תרגום המשפט');
   if(q.t==='lq'&&q.he)h+=`<div class="am-box"><h4>השאלה בעברית</h4><p>${esc(q.he)}</p></div>`;
-  h+=amUnkBox(id,st);h+=amXplBox(id);
+  h+=amUnkBox(id,st);if(!amHasMeth(q))h+=amXplBox(id);
   if(q.ex)h+=`<div class="am-box"><h4>📗 ההסבר</h4><div class="exl">${esc(q.ex)}</div></div>`;
   h+=EXB(!ok?'הטעות מטופלת עכשיו, לא מחכה לאחר כך: הכפתור למטה ממשיך ל<b>חקירת הטעות</b>, אחריה <b>איך פותרים לפי השיטה</b>, ואז <b>המילים מהשאלה</b>.':'הכפתור למטה ממשיך ל<b>איך פותרים לפי השיטה</b> – גם כשצדקת, כדי לוודא שזה לא היה מזל – ואז <b>המילים מהשאלה</b>.');
   h+=`<div class="am-cta">${AQ.i?'<button class="btn secondary" id="amPrev2" aria-label="השאלה הקודמת">→</button>':''}<button class="btn" id="amNext" data-fb="${!ok?'why':amHasMeth(q)?'meth':'words'}">${!ok?'🔍 לחקור את הטעות':amHasMeth(q)?'🧭 פתרון לפי השיטה':'📚 המילים מהשאלה'} ←</button></div>`;
@@ -4003,8 +4005,7 @@ function amFbPage(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   else if(st.fb==='meth'){
     if(q.t!=='rc'&&q.t!=='yb'){const cs=connFind(q.q);if(cs.length)h+=`<div class="am-box"><h4>🔗 מילות הקישור במשפט</h4>${cs.map(c=>`<p>«<bdi>${c.ws.join(', ')}</bdi>» – <b>${c.he}</b>: ${c.tip}</p>`).join('')}</div>`}
     if(q.t==='rc'){const k=rcType(q.q);h+=`<div class="am-box"><h4>📖 סוג השאלה: ${RCT[k][0]}</h4><p>${RCT[k][1]}</p></div>`}
-    if(q.ex)h+=`<div class="am-box"><h4>📗 ההסבר מהספר</h4><div class="exl">${esc(q.ex)}</div></div>`;
-    h+=amMethodBox(id);
+    h+=amSolveBox(id);
     h+=MLINK(q.t);
     h+=`<div class="am-cta"><button class="btn secondary" id="amBackRes">→</button><button class="btn" id="amNext" data-fb="words">📚 המילים מהשאלה ←</button></div>`}
   else{h+=EXB('מילים מהשאלה. מילה מהמילון: <b>⏩ למידה בקרוב</b> מכניס אותה לתור – היא תגיע בשלב המילים החדשות הבא, לפני שאר המילים. ליד מילה כתוב איפה היא אצלך: ⏳ ממתינה ללמידה (בתור, עוד לא התחלת) · 📖 בלמידה עכשיו (בסבבים) · ✓ למדת · בחזרות · ✓ למדת · ✓ יודעת (סימנת במילון). מילה שלא במילון: <b>למילון</b> מוסיף אותה ל"מילים שהוספתי", <b>למילון + למידה בקרוב</b> גם מכניס אותה לתור.');h+=amWordsBox(id);
@@ -4026,6 +4027,29 @@ function amWhyBox(id,st){const q=AMD.q[id],a=AMS.a[id]||{},key='why|'+id+'|'+st.
     <textarea class="am-in" id="amLesson" placeholder="לדוגמה: אם יש although – ההשלמה הפוכה לחלק השני">${esc(ls?ls.r:(ai&&ai.rule)||'')}</textarea>
     <button class="btn ${ls?'secondary':''}" id="amLsSave">${ls?'✓ נשמר · לעדכן':'📝 לשמור את הלקח'}</button></div>`;
   return h}
+/* one page for "how to solve" (Nov 25, her request – the detailed explanation and the method page repeated each other): the method page shows the detailed explanation's translation / reading / passage, then the method steps, then each option once (the explanation's richer list, the method's as fallback), why the answer is right, the rule + tip, and one question box */
+function amSolveBox(id){const q=AMD.q[id],xk='x4|'+id,mk='m|'+id,X=AMAI[xk],M=AMAI[mk];
+  if(GKEY()&&S.screen==='amq'){const re=()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()};
+    if(!X&&!AIP[xk])aiCached(xk,promptXpl(q),.2).then(re);
+    if(!M&&!AIP[mk])aiCached(mk,promptMethod(q),.2).then(re)}
+  if(!GKEY())return `<div class="am-box"><h4>🧭 פתרון לפי השיטה</h4>${aiNeedKey()}</div>`;
+  const x=X&&!X.err?X:null,m=M&&!M.err?M:null,L=(a,f)=>(a||[]).map(f).join('');
+  let b='';
+  if(x&&x.translation)b+=`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(x.translation)}</p>`;
+  if(x&&(x.understand||[]).length)b+=`<h5>איך מבינים את המשפט</h5><ol>${L(x.understand,t=>`<li>${bdiEsc(t)}</li>`)}</ol>`;
+  if(x&&(x.passage||[]).length)b+=`<h5>איפה התשובה בקטע</h5>${L(x.passage,t=>`<p dir="ltr" class="en">${esc(t.en||'')}</p><p>${bdiEsc(t.he||'')}</p>`)}`;
+  if(m&&(m.steps||[]).length)b+=`<h5>הפתרון לפי השיטה, צעד אחר צעד</h5><ol>${L(m.steps,t=>`<li>${bdiEsc(t)}</li>`)}</ol>`;
+  if(x&&(x.options||[]).length)b+=`<h5>התשובות</h5><ul class="am-xopts">${L(x.options,(o,i)=>`<li class="${o.ok?'ok':''}"><b>(${i+1}) <bdi dir="ltr">${esc(o.en||'')}</bdi></b> = ${esc(o.he||'')} ${o.ok?'✓':'✗'}<br><span>${bdiEsc(o.why||'')}</span></li>`)}</ul>`;
+  else if(m&&(m.options||[]).length)b+=`<h5>התשובות</h5><ul>${L(m.options,(t,i)=>`<li>(${i+1}) ${bdiEsc(String(t).replace(/^\(?\d\)?\s*[-–:.]?\s*/,''))}</li>`)}</ul>`;
+  if(x&&x.answer)b+=`<h5>למה זו התשובה</h5><p>${bdiEsc(x.answer)}</p>`;
+  if(m&&m.rule)b+=`<p><b>📌 ${bdiEsc(m.rule)}</b></p>`;
+  if(x&&x.tip&&!(m&&m.rule===x.tip))b+=`<p><b>💡 ${bdiEsc(x.tip)}</b></p>`;
+  const wait=(!X||!M)&&(AIP[xk]||AIP[mk]||!X||!M);
+  if(wait&&!(X&&X.err)&&!(M&&M.err))b+=`<p class="hint">⏳ ${b?'משלימה את ההסבר…':'מכינה את ההסבר…'}</p>`;
+  if((X&&X.err)||(M&&M.err))b+=`<p class="hint">${esc((X&&X.err)||(M&&M.err))}</p><button class="btn secondary" data-solvere="${esc(id)}">🔄 לנסות שוב</button>`;
+  if(x||m)b+=askBox('xpl|'+id,qText(q)+'\nExplanation she got: '+JSON.stringify({x,m}).slice(0,2800));
+  return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4>${b}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-solvere]');if(!b)return;const id=b.dataset.solvere;['x4|','m|'].forEach(k=>{const a=AMAI[k+id];if(a&&a.err)delete AMAI[k+id]});amAiSave();amRedrawKeep()});
 function amMethodBox(id){const q=AMD.q[id],key='m|'+id,ai=AMAI[key];
   if(!ai&&!AIP[key]&&GKEY()&&S.screen==='amq'){const p=aiCached(key,promptMethod(q),.2);p.then(()=>{if(S.screen==='amq'&&AQ.cur===id)amRedrawKeep()})}
   let h=`<div class="am-box" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4>`;

@@ -706,7 +706,9 @@ function stopAudio(){const a=AU.el;if(a){try{a.pause()}catch(e){}}if(AU.end){con
 var AUDT=0;
 /* sound mode (her request): 'auto' = מצב רץ (default – whatever has a sound plays by itself), 'off' = only when a speaker is tapped (and a tapped word), 'mute' = nothing plays at all. localStorage dictSnd */
 var SNDM=(()=>{try{const v=localStorage.getItem('dictSnd');return v==='off'||v==='mute'?v:'auto'}catch(e){return 'auto'}})();
-const MUTED=()=>SNDM==='mute';
+/* שקט silences everything except a speaker button she taps (Nov 25, her request: "in every mode a manual tap should play"); a tap counts for 1.5 s */
+var MANT=0;['click','touchend','keydown'].forEach(ev=>document.addEventListener(ev,e=>{const t=e.target&&e.target.closest&&e.target.closest('.spk,[data-amsay],.am-osay,.ax-osp,[aria-label^="השמעת"],[aria-label="השמעה"]');if(t)MANT=Date.now()},{capture:true}));
+const MUTED=()=>SNDM==='mute'&&Date.now()-MANT>1500;
 function playFile(kind,text,rate){if(MUTED())return Promise.resolve(true);AUDT=Date.now();stopAudio();const a=audioEl(),h=fnv(text);
   const pre=PRE.get(kind+h);
   return new Promise(res=>{let i=pre?-1:AU.base,timer=null;
@@ -1385,7 +1387,7 @@ function sndNext(){SNDM=SNDM==='auto'?'off':SNDM==='off'?'mute':'auto';AUTO=SNDM
 const AUTOBTN=()=>`<button class="autob${SNDM==='auto'?' on':''}${SNDM==='mute'?' mute':''}" id="autoBtn" aria-label="מצב שמע: ${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'} – לחיצה מחליפה">${SNDM==='mute'?'🔇':SPK}<span>${SNDM==='auto'?'מצב רץ':SNDM==='off'?'רגיל':'שקט'}</span></button>`;
 /* the sound button opens a small sheet with the three modes (her question "where is the quiet mode?") */
 function sndSet(m){SNDM=m;AUTO=m==='auto';LS.set('dictSnd',m);if(m==='mute'){try{stopAudio()}catch(e){}try{speechSynthesis.cancel()}catch(e){}}}
-function sndPick(after){const O=[['auto','🔊','מצב רץ','כל שמע מושמע מעצמו: המילה, המשפט והשאלה'],['off','🔈','רגיל','שמע רק כשלוחצים על רמקול או על מילה'],['mute','🔇','שקט','שום דבר לא נשמע']];
+function sndPick(after){const O=[['auto','🔊','מצב רץ','כל שמע מושמע מעצמו: המילה, המשפט והשאלה'],['off','🔈','רגיל','שמע רק כשלוחצים על רמקול או על מילה'],['mute','🔇','שקט','שום דבר לא נשמע מעצמו – רק כשלוחצים על רמקול']];
   amSheet('מצב שמע',`<div class="snd-pick">${O.map(([k,i,n,d])=>`<button class="snd-o${SNDM===k?' on':''}" data-snd="${k}"><span class="i">${i}</span><span><b>${n}</b><small>${d}</small></span>${SNDM===k?'<span class="v">✓</span>':''}</button>`).join('')}</div>`);
   document.querySelectorAll('[data-snd]').forEach(b=>b.onclick=()=>{sndSet(b.dataset.snd);const d=document.getElementById('amSheet');if(d)d.remove();after&&after()})}
 /* every screen gets the sound button (her request): screens that don't draw one get a small icon-only one next to their refresh button */
