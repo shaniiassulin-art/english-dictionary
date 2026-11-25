@@ -7,6 +7,6 @@ with sync_playwright() as p:
   pg.evaluate("amStart(['crs5-1'],'t','learn','am','rs')");pg.wait_for_timeout(800)
   a=pg.evaluate("AMD.q['crs5-1'].a");pg.locator('.ax-rad').nth(a-1).click();pg.wait_for_timeout(200)
   if pg.locator('#amChk').count():pg.click('#amChk')
-  pg.evaluate("['x4|crs5-1','m|crs5-1'].forEach(k=>{delete AMAI[k];AIP[k]=new Promise(()=>{})})");pg.wait_for_timeout(500);pg.click('#amNext');pg.wait_for_timeout(3500)
+  pg.evaluate("['x5|crs5-1','m|crs5-1'].forEach(k=>{delete AMAI[k];delete SOLVEERR[k];AIP[k]=new Promise(()=>{})})");pg.wait_for_timeout(500);pg.click('#amNext');pg.wait_for_timeout(3500)
   t=pg.locator('#amMeth').inner_text();print(t);assert 'שנ׳' in t and int(pg.locator('[data-secs]').inner_text())>=2
   assert not errs,errs;print('OK');b.close()

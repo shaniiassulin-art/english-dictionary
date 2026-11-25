@@ -12,7 +12,7 @@ with sync_playwright() as p:
   pg.route('**/generativelanguage.googleapis.com/**',gem)
   pg.goto('http://localhost:8765/');pg.wait_for_timeout(1200);pg.evaluate("localStorage.clear()");pg.reload();pg.wait_for_timeout(1200);pg.evaluate("amLoad()");pg.wait_for_timeout(2500)
   pg.evaluate("amStart(['csc5-1'],'t','learn','am','sc')");pg.wait_for_timeout(800)
-  pg.wait_for_timeout(1500);assert pg.evaluate("!!AMAI['x4|csc5-1']"),'made ahead'
+  pg.wait_for_timeout(1500);assert pg.evaluate("!!AMAI['x5|csc5-1']"),'made ahead'
   pg.locator('.ax-rad').first.click();pg.wait_for_timeout(300)
   if pg.locator('#amChk').count():pg.click('#amChk')
   pg.wait_for_timeout(800)

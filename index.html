@@ -1419,7 +1419,7 @@ Write all explanations in simple, everyday Hebrew, using only regular Hebrew let
   /* models Google no longer offers to this key (404) are remembered and not asked again */
   const gone=new Set(JSON.parse(LS.get('dictGemGone')||'[]'));
   const MODELS=(good&&all.includes(good)?[good,...all.filter(x=>x!==good)]:all).filter(m=>!gone.has(m));let why='';const noThink=new Set(JSON.parse(LS.get('dictGemNoThink')||'[]'));
-  const call=async(mdl,signal)=>{const gc={responseMimeType:'application/json',temperature:opt&&opt.temp!=null?opt.temp:.2,maxOutputTokens:1400};
+  const call=async(mdl,signal)=>{const gc={responseMimeType:'application/json',temperature:opt&&opt.temp!=null?opt.temp:.2,maxOutputTokens:opt&&opt.max||1400};
     if(!noThink.has(mdl)){if(/2\.5/.test(mdl))gc.thinkingConfig={thinkingBudget:0};else if(/latest/.test(mdl))gc.thinkingConfig={thinkingLevel:'minimal'}}
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+mdl+':generateContent',{method:'POST',signal,headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
       body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:gc})});
@@ -2445,8 +2445,8 @@ function blankOut(s,e){if(!s)return '';const st=e.toLowerCase().slice(0,Math.max
 function aiNeedKey(){return GKEY()?'':'<p class="hint">כדי לקבל הסבר חכם צריך להפעיל את הבדיקה החכמה (מפתח ג׳מיני) בעמוד המשפטים.</p>'}
 function aiWhyText(why){return {quota:'נגמרה המכסה החינמית של ג׳מיני להיום – אפשר לנסות שוב מחר.',busy:'ג׳מיני עמוס כרגע – נסי שוב עוד רגע.',timeout:'ג׳מיני לא ענה בזמן – נסי שוב.',key:'מפתח ג׳מיני לא תקין.',mixed:'התשובה הגיעה משובשת – נסי שוב.'}[why]||('לא הצלחתי לקבל תשובה ('+(why||'שגיאה')+').')}
 const AIP={};
-async function aiCached(key,prompt,temp){if(AMAI[key]&&!AMAI[key].err)return AMAI[key];if(AIP[key])return AIP[key];
-  AIP[key]=(async()=>{const r=await aiRun('','',null,{prompt,temp:temp??.3});delete AIP[key];
+async function aiCached(key,prompt,temp,max){if(AMAI[key]&&!AMAI[key].err)return AMAI[key];if(AIP[key])return AIP[key];
+  AIP[key]=(async()=>{const r=await aiRun('','',null,{prompt,temp:temp??.3,max});delete AIP[key];
     if(r&&r.j){AMAI[key]={...r.j,mdl:r.mdl,t:amNow()};amAiSave();return AMAI[key]}return {err:aiWhyText(r&&r.why)}})();return AIP[key]}
 function qText(q){const T=q.x&&AMD.x[q.x];
   return (T?'PASSAGE:\n'+[].concat(T.l||T.say||[]).join('\n')+'\n\n':'')+(q.ctx?'SITUATION: '+q.ctx+'\n':'')+(q.say?'TEXT HEARD: '+q.say+'\n':'')+(q.base?'BASE WORD (bold): '+q.base+'\n':'')+'QUESTION ('+AMTN[q.t]+'): '+q.q+'\n'+(q.o||[]).map((o,i)=>'('+(i+1)+') '+o).join('\n')+'\nCORRECT ANSWER: '+(typeof q.a==='string'?q.a:'('+q.a+')')+
@@ -2455,7 +2455,7 @@ const AIHE='Write in simple, everyday Hebrew, using only regular Hebrew letters 
 function promptMethod(q){return `You are an expert Israeli psychometric-exam English teacher. Explain to a Hebrew-speaking student, step by step, how to solve this ${q.t==='yb'?'basic English':q.t==='sc'?'Sentence Completion':q.t==='rs'?'Restatement':isNT(q.t)?AMEN[q.t]||q.t:'Reading Comprehension'} question using the course method.
 ${q.t==='wf'?'Method: 1) find the role of the gap from the words around it (a/the → noun, is/was/very → adjective, after a verb → adverb, can/will → verb), 2) name the part of speech needed, 3) change the bold base word with the right prefix / suffix (-tion, -ment, -ness, -ful, -less, -ly, -ize, un-, dis-…), 4) check plural / tense / negative meaning, 5) re-read the sentence.':q.t==='gc'?'Method: 1) find which grammar point the gap tests (tense, conditional, relative word, to / -ing, passive, comparison, preposition), 2) find the clues in the sentence (time words, if, who / which, the verb before the gap), 3) choose the only form that fits every clue, 4) eliminate each other option with its reason.':q.t==='lc'?'Method: 1) understand the situation (who is talking, to whom, about what), 2) follow the logic of the last sentence and its connector (however / so / because), 3) predict what has to come next, 4) choose the option that continues that logic; eliminate options unrelated to the topic.':q.t==='lq'?'Method: 1) read the question before listening, 2) catch the main point and the key details, 3) notice connectors (but / so / because) and the speaker\'s opinion, 4) eliminate options that add information, exaggerate or contradict what was said.':q.t==='yb'?'This is a basic English exercise ('+(q.ch||'')+'). Explain which grammar or vocabulary point it tests and why the correct answer fits.':q.t==='sc'?'Method: 1) read the sentence and translate it in your head WITHOUT looking at the options, 2) find the clue (a connector like but/although/because, a word that the blank must agree with or contrast with), 3) predict the missing word in Hebrew, 4) only then look for an option with that meaning, 5) re-read the full sentence.':q.t==='rs'?'Method: 1) translate the original and find its structure: who/what, what is said, and the relation between the parts (connector: contrast / cause / result / addition / time / condition), 2) eliminate options: added information, changed relation (different connector family), exaggeration (always/never/all), contradiction, reversed cause and effect, missing essential information, 3) check the last option fully.':'Method: identify the question type (main idea / paragraph / detail / function of a detail / inference / vocabulary / refer to), locate the exact sentence in the passage (by line or keywords), read it fully, predict the answer, then eliminate distractors typical for that type.'}
 ${qText(q)}
-JSON: {"steps":["3-5 short steps in Hebrew, each naming exactly what to notice in THIS question (quote the clue English words)"],"options":["one short Hebrew line per option (4 lines, in order): what it means and why it is right or wrong"],"rule":"one short general rule in Hebrew to remember for similar questions"}
+JSON: {"steps":["3-5 short steps in Hebrew, each naming exactly what to notice in THIS question (quote the clue English words)"],"rule":"one short general rule in Hebrew to remember for similar questions"}
 ${AIHE}`}
 function promptWhy(q,choice,why,note){return `You are an expert, warm Israeli psychometric-exam English teacher. A Hebrew-speaking student answered this question wrong. Diagnose WHY, specifically, and teach her how not to fall into it again.
 ${qText(q)}
@@ -3963,7 +3963,7 @@ function amQPath(st,ok,q){const P=[['res','✓ תשובה'],...(ok?[]:[['why','�
 
 /* fixing a question's Hebrew translation on request (always offered, also after the explanation corrected it) */
 const QTRP={};
-function qTrFix(id){const q=AMD.q[id];if(!q||QTRP[id])return;const xai=AMAI['x4|'+id],qfx=AMAI['qtr|'+id];
+function qTrFix(id){const q=AMD.q[id];if(!q||QTRP[id])return;const xai=AMAI['x5|'+id],qfx=AMAI['qtr|'+id];
   const old=qfx&&qfx.he||(xai&&!xai.err&&xai.book_wrong&&xai.translation)||q.he||'';let en=q.q;if(q.t==='sc'&&typeof q.a!=='string'&&q.o)en=en.replace(/_{2,}/,q.o[q.a-1]);else if(typeof q.a==='string')en=en.replace(/_{2,}/,q.a);
   QTRP[id]=1;amRedrawKeep();
   const pr=`English sentence: "${en}"\nA Hebrew translation of it: "${old}"\nThe student says the translation has a mistake. Check it very carefully: meaning of every word, verb forms, gender, prepositions, numbers, natural Israeli Hebrew. Return the correct, natural Hebrew translation (keep numbers as digits).\nJSON: {"he":"...","changed":true or false,"why":"if changed – a very short Hebrew note on what was wrong"}\n${AIHE}`;
@@ -3974,15 +3974,15 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 const XPLO={};
 /* the explanations are made ahead (her request – no waiting): the question on screen and the next 3, one after another, in the background */
 let XPLQ=[],XPLRUN=false;
-function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x4|'+id]&&!AMAI['x4|'+id].err)&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
-function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x4|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
-  const q0=AMD.q[id],mk='m|'+id;aiCached(key,promptXpl(q0),.2).then(r=>(r&&r.err||!amHasMeth(q0)||(AMAI[mk]&&!AMAI[mk].err))?r:aiCached(mk,promptMethod(q0),.2).then(()=>r)).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
+function amXplPre(ids){if(!GKEY()||!AMD)return;ids.forEach(id=>{if(AMD.q[id]&&!(AMAI['x5|'+id]&&!AMAI['x5|'+id].err)&&!SOLVEERR['x5|'+id]&&!XPLQ.includes(id))XPLQ.push(id)});if(!XPLRUN)amXplNext()}
+function amXplNext(){const id=XPLQ.shift();if(!id){XPLRUN=false;return}const key='x5|'+id;if(AMAI[key]&&!AMAI[key].err){amXplNext();return}XPLRUN=true;
+  const q0=AMD.q[id],mk='m|'+id;Promise.all([aiCached(key,promptXpl(q0),.2,3000),amHasMeth(q0)&&!(AMAI[mk]&&!AMAI[mk].err)?aiCached(mk,promptMethod(q0),.2,2000):null]).then(([r,r2])=>{if(r&&r.err)SOLVEERR[key]=r.err;if(r2&&r2.err)SOLVEERR[mk]=r2.err;return r}).then(r=>{if(S.screen==='amq'&&AQ&&AQ.cur===id){const st=AQ.st[AQ.i];if(st&&st.done)amRedrawKeep()}
     if(r&&r.err&&/מכסה/.test(r.err)){XPLQ=[];XPLRUN=false;return}setTimeout(amXplNext,1200)})}
 
 function promptXpl(q){return `You are teaching a Hebrew-speaking student who knows almost NO English words, for the Amiram English exam. Explain this question after she answered it, in detail, so she understands the sentence and every answer option.
 ${qText(q)}
-Rules: assume she does not know any word. Do NOT give a word-by-word glossary – for the hard words, teach HOW to guess the meaning from context and word parts. Sound-alikes: say that an English word sounds like a Hebrew word ONLY when it truly sounds like it when read aloud (a real loanword or near-identical sound, e.g. computer ≈ קומפיוטר, fabric ≈ פבריקה). NEVER say an English word sounds like or resembles its own Hebrew translation (e.g. tents does NOT sound like אוהלים). When there is no real sound-alike, don't invent one – use the other clues. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
-JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","decode":[{"en":"a word she probably does not know – the hard words of the sentence and of the options (up to 8)","how":"Hebrew: how she could work out its meaning WITHOUT knowing the word – clues from the sentence around it (what comes before/after, connectors like but/because, positive or negative tone, what makes sense logically), prefix / suffix / root she may know, a similar word in Hebrew or a loanword, its part of speech from its place in the sentence","meaning":"the meaning she reaches in the end, 1-3 Hebrew words"}],"understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit","words":[{"en":"each word of the option that carries meaning","hint":"Hebrew: a hint how to understand this word without knowing it (context, word parts, a Hebrew look-alike or loanword, its place in the sentence) – then its meaning in a few words"}]}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
+Rules: assume she does not know any word. Do NOT give a word-by-word glossary. Keep every field short and clear (1–2 sentences). Sound-alikes: say that an English word sounds like a Hebrew word ONLY when it truly sounds like it when read aloud (a real loanword or near-identical sound, e.g. computer ≈ קומפיוטר, fabric ≈ פבריקה). NEVER say an English word sounds like or resembles its own Hebrew translation (e.g. tents does NOT sound like אוהלים). When there is no real sound-alike, don't invent one – use the other clues. The book's Hebrew translation may contain mistakes – write your own correct, natural Hebrew translation of the full sentence (with the correct answer filled in) and if the book's translation is wrong or inaccurate, say what is wrong in one short line (book_wrong), else empty string. ${q.x?'For a reading question: explain the question sentence, quote the passage sentence(s) where the answer is, and translate them.':''}
+JSON: {"translation":"correct Hebrew translation of the sentence${q.x?' / the question':''}","book_wrong":"","understand":["short Hebrew steps: how to read and understand the sentence – its parts, what each part says, connectors and what they tell us, what the gap must mean"],${q.x?'"passage":[{"en":"the passage sentence with the answer","he":"its Hebrew translation"}],':''}"options":[{"en":"option text","he":"Hebrew meaning of the option","ok":true,"why":"Hebrew: why it fits or doesn't fit"}],"answer":"Hebrew: one or two sentences why the correct answer is right","tip":"Hebrew: one thing to remember for next time"}
 ${AIHE}`}
 function promptUnk(q,ws){return `A Hebrew-speaking student who knows almost no English marked words she did not know in this exam question. For EACH marked word explain in Hebrew how she could understand it without knowing it (clues from the sentence, connectors, tone, word parts – prefix / suffix / root, a Hebrew look-alike or loanword, its part of speech from its place), then its meaning here. Sound-alikes: say that an English word sounds like a Hebrew word ONLY when it truly sounds like it when read aloud (a real loanword or near-identical sound, e.g. computer ≈ קומפיוטר, fabric ≈ פבריקה). NEVER say an English word sounds like or resembles its own Hebrew translation (e.g. tents does NOT sound like אוהלים). When there is no real sound-alike, don't invent one – use the other clues.
 ${qText(q)}
@@ -4019,7 +4019,7 @@ function amUnkBox(id,st){if(!GKEY())return '';const U=st&&st.unk||[],q=AMD.q[id]
   const wait=!ua;
   if(!L.length&&!wait)return '';
   return `<div class="am-box am-xpl am-unkbox"><h5 style="margin-top:0">🔤 איך מבינים את המילים</h5>${L.length?`<ul class="am-xopts">${L.join('')}</ul>`:''}${wait?'<p class="hint">⏳ מכינה הסבר למילים…</p>':''}${ua&&ua.err?`<p class="hint">${esc(ua.err)}</p>`:''}</div>`}
-function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x4|'+id,ai=AMAI[key],open=!!XPLO[id];
+function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x5|'+id,ai=AMAI[key],open=!!XPLO[id];
   let b='';
   if(open&&!ai&&!AIP[key]){const p=aiCached(key,promptXpl(q),.2);p.then(()=>{if(S.screen==='amq'&&AQ.cur===id)amRedrawKeep()})}
   if(ai&&!ai.err){const L=(a,f)=>(a||[]).map(f).join('');
@@ -4035,10 +4035,10 @@ function amXplBox(id){if(!GKEY())return '';const q=AMD.q[id],key='x4|'+id,ai=AMA
   else b+=`<p class="hint">⏳ ההסבר כמעט מוכן…</p>`;
   return `<details class="am-box am-xpl" data-xpl="${esc(id)}" ${open?'open':''}><summary>🧭 איך פותרים את השאלה – הסבר מפורט</summary>${open?b:''}</details>`}
 document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.am-xpl'))return;const id=d.dataset.xpl;const was=!!XPLO[id];XPLO[id]=d.open;if(d.open&&!was)amRedrawKeep()},true);
-document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x4|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
+document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('[data-xplfix]');if(f){XPLO[f.dataset.xplfix]=true;amRedrawKeep();return}const b=e.target.closest&&e.target.closest('[data-xplre]');if(!b)return;delete AMAI['x5|'+b.dataset.xplre];amAiSave();amRedrawKeep()});
 function amFeedback(id,st){const q=AMD.q[id],ok=amIsOk(q,st.sel);
   let h=amQPath(st,ok,q)+`<div class="am-verdict ${ok?'ok':'bad'}"><span>${ok?'✓':'✗'}</span><b>${ok?'נכון!':typeof q.a==='string'?'לא נכון':'לא נכון – התשובה הנכונה: ('+q.a+')'}</b></div>`;
-  const xai=AMAI['x4|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
+  const xai=AMAI['x5|'+id],qfx=AMAI['qtr|'+id],xfix=xai&&!xai.err&&xai.book_wrong&&xai.translation;
   const heNow=qfx&&qfx.he||(xfix?xai.translation:q.he),fixed=!!(qfx&&qfx.he&&qfx.changed!==false)||!!xfix,why=qfx&&qfx.he?qfx.why:xfix?xai.book_wrong:'';
   const heBox=(t)=>`<div class="am-box good"><h4>${t}</h4><p>${bdiEsc(heNow)}</p>${GKEY()?`<button class="small-link" data-qtrfix="${esc(id)}" style="background:none;border:0;padding:0;color:var(--muted);font-size:.8rem">${QTRP[id]?'⏳ בודקת את התרגום…':'⚠️ יש טעות בתרגום? לתקן'}</button>`:''}</div>`;
   if(q.t==='sc'&&q.he)h+=heBox('תרגום המשפט');
@@ -4087,15 +4087,16 @@ function amWhyBox(id,st){const q=AMD.q[id],a=AMS.a[id]||{},key='why|'+id+'|'+st.
   return h}
 /* one page for "how to solve" (Nov 25, her request – the detailed explanation and the method page repeated each other): the method page shows the detailed explanation's translation / reading / passage, then the method steps, then each option once (the explanation's richer list, the method's as fallback), why the answer is right, the rule + tip, and one question box */
 /* seconds counter on waiting lines (her request): any [data-secs=<start ms>] shows the seconds since then */
-const SOLVET={};setInterval(()=>{document.querySelectorAll('[data-secs]').forEach(e=>{const v=String(Math.floor((Date.now()-+e.dataset.secs)/1000));if(e.textContent!==v)e.textContent=v})},1000);
-function amSolveBox(id){const q=AMD.q[id],xk='x4|'+id,mk='m|'+id,X=AMAI[xk],M=AMAI[mk];
+const SOLVET={},SOLVEERR={};setInterval(()=>{document.querySelectorAll('[data-secs]').forEach(e=>{const v=String(Math.floor((Date.now()-+e.dataset.secs)/1000));if(e.textContent!==v)e.textContent=v})},1000);
+function amSolveBox(id){const q=AMD.q[id],xk='x5|'+id,mk='m|'+id,X=AMAI[xk],M=AMAI[mk];
   if(GKEY()&&S.screen==='amq'){const re=()=>{if(S.screen==='amq'&&AQ&&AQ.cur===id)amRedrawKeep()};
-    if(!X&&!AIP[xk])aiCached(xk,promptXpl(q),.2).then(re);
-    if(!M&&!AIP[mk])aiCached(mk,promptMethod(q),.2).then(re)}
+    if(!X&&!AIP[xk]&&!SOLVEERR[xk])aiCached(xk,promptXpl(q),.2,3000).then(r=>{if(r&&r.err)SOLVEERR[xk]=r.err;re()});
+    if(!M&&!AIP[mk]&&!SOLVEERR[mk])aiCached(mk,promptMethod(q),.2,2000).then(r=>{if(r&&r.err)SOLVEERR[mk]=r.err;re()})}
   if(!GKEY())return `<div class="am-box"><h4>🧭 פתרון לפי השיטה</h4>${aiNeedKey()}</div>`;
   const x=X&&!X.err?X:null,m=M&&!M.err?M:null,L=(a,f)=>(a||[]).map(f).join('');
+  const xe=X&&X.err||SOLVEERR[xk],me=M&&M.err||SOLVEERR[mk];
   /* nothing until both parts are ready (her request – no half explanation) */
-  if(!X||!M){const t0=SOLVET[id]=SOLVET[id]||Date.now();return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4><p class="hint">⏳ מכינה את ההסבר… <b data-secs="${t0}">${Math.floor((Date.now()-t0)/1000)}</b> שנ׳</p></div>`}
+  if((!x&&!xe)||(!m&&!me)){const t0=SOLVET[id]=SOLVET[id]||Date.now();return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4><p class="hint">⏳ מכינה את ההסבר… <b data-secs="${t0}">${Math.floor((Date.now()-t0)/1000)}</b> שנ׳</p></div>`}
   let b='';
   if(x&&x.translation)b+=`<h5>תרגום ${q.x?'השאלה':'המשפט'}</h5><p>${bdiEsc(x.translation)}</p>`;
   if(x&&(x.understand||[]).length)b+=`<h5>איך מבינים את המשפט</h5><ol>${L(x.understand,t=>`<li>${bdiEsc(t)}</li>`)}</ol>`;
@@ -4107,10 +4108,10 @@ function amSolveBox(id){const q=AMD.q[id],xk='x4|'+id,mk='m|'+id,X=AMAI[xk],M=AM
   if(x&&x.answer)b+=`<h5>למה זו התשובה</h5><p>${bdiEsc(x.answer)}</p>`;
   if(m&&m.rule)b+=`<p><b>📌 ${bdiEsc(m.rule)}</b></p>`;
   if(x&&x.tip&&!(m&&m.rule===x.tip))b+=`<p><b>💡 ${bdiEsc(x.tip)}</b></p>`;
-  if((X&&X.err)||(M&&M.err))b+=`<p class="hint">${esc((X&&X.err)||(M&&M.err))}</p><button class="btn secondary" data-solvere="${esc(id)}">🔄 לנסות שוב</button>`;
+  if(xe||me)b+=`<p class="hint">${esc(xe||me)}</p><button class="btn secondary" data-solvere="${esc(id)}">🔄 לנסות שוב</button>`;
   if(x||m)b+=askBox('xpl|'+id,qText(q)+'\nExplanation she got: '+JSON.stringify({x,m}).slice(0,2800));
   return `<div class="am-box am-xpl" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4>${b}</div>`}
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-solvere]');if(!b)return;const id=b.dataset.solvere;['x4|','m|'].forEach(k=>{const a=AMAI[k+id];if(a&&a.err)delete AMAI[k+id]});amAiSave();amRedrawKeep()});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-solvere]');if(!b)return;const id=b.dataset.solvere;['x5|','m|'].forEach(k=>{const a=AMAI[k+id];if(a&&a.err)delete AMAI[k+id];delete SOLVEERR[k+id]});delete SOLVET[id];amAiSave();amRedrawKeep()});
 function amMethodBox(id){const q=AMD.q[id],key='m|'+id,ai=AMAI[key];
   if(!ai&&!AIP[key]&&GKEY()&&S.screen==='amq'){const p=aiCached(key,promptMethod(q),.2);p.then(()=>{if(S.screen==='amq'&&AQ.cur===id)amRedrawKeep()})}
   let h=`<div class="am-box" id="amMeth"><h4>🧭 פתרון לפי השיטה</h4>`;

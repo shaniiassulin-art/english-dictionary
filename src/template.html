@@ -1193,7 +1193,7 @@ Write all explanations in simple, everyday Hebrew, using only regular Hebrew let
   /* models Google no longer offers to this key (404) are remembered and not asked again */
   const gone=new Set(JSON.parse(LS.get('dictGemGone')||'[]'));
   const MODELS=(good&&all.includes(good)?[good,...all.filter(x=>x!==good)]:all).filter(m=>!gone.has(m));let why='';const noThink=new Set(JSON.parse(LS.get('dictGemNoThink')||'[]'));
-  const call=async(mdl,signal)=>{const gc={responseMimeType:'application/json',temperature:opt&&opt.temp!=null?opt.temp:.2,maxOutputTokens:1400};
+  const call=async(mdl,signal)=>{const gc={responseMimeType:'application/json',temperature:opt&&opt.temp!=null?opt.temp:.2,maxOutputTokens:opt&&opt.max||1400};
     if(!noThink.has(mdl)){if(/2\.5/.test(mdl))gc.thinkingConfig={thinkingBudget:0};else if(/latest/.test(mdl))gc.thinkingConfig={thinkingLevel:'minimal'}}
     const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+mdl+':generateContent',{method:'POST',signal,headers:{'Content-Type':'application/json','x-goog-api-key':GKEY()},
       body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:gc})});
