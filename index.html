@@ -2190,7 +2190,12 @@ function amMerge(a,b){a=a||{};b=b||{};const o={a:{},w:{},n:(b.t||0)>(a.t||0)?b.n
   /* the open learning round / question session, so another device goes on from the same place (newest wins) */
   o.ss={};for(const f of ['ws','aq','fp']){const x=(a.ss||{})[f],y=(b.ss||{})[f];const v=!x?y:!y?x:(y[1]||0)>(x[1]||0)?y:x;if(v)o.ss[f]=v}
   return o}
-function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const w=A[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete A[k];continue}if(!w.k)w.k=k;/* a stored Gemini sentence with another meaning of the word (made before senseOk) is dropped – a new one is made (no t bump) */try{if(typeof senseOk==='function'&&DIX){if(w.trc&&w.trc.he&&w.trc.src==='ai'&&!senseOk(w,w.trc.he))delete w.trc;if(w.rv&&w.rv.he&&w.rv.src==='ai'&&!senseOk(w,w.rv.he))delete w.rv}}catch(e){}
+/* stored words keep their review number in the path they were made in (w.pv: none/1 = full path of 6 reviews, 2 = without the translation reviews);
+   mapped once when the path changes (no w.t bump – automatic) */
+function amPathVer(w){const want=WTROFF?2:1,have=w.pv===2?2:1;if(have===want){if(WTROFF&&w.pv!==2)w.pv=2;return}const st=w.st||0;
+  if(want===2){const M={4:4,5:4,6:5,7:5};if(M[st]!=null){if(M[st]!==st||st===4)delete w.rv;w.st=M[st];if(w.st>=WMAST)w.due=0}w.pv=2}
+  else{const M={4:5,5:7};if(M[st]!=null){w.st=M[st];delete w.rv;if(w.st>=7)w.due=0}w.pv=1}}
+function amFixW(){const A=AMS.w||(AMS.w={});for(const k of Object.keys(A)){const w=A[k];if(!w||typeof w!=='object'||typeof w.e!=='string'||!w.e){delete A[k];continue}if(!w.k)w.k=k;amPathVer(w);/* a stored Gemini sentence with another meaning of the word (made before senseOk) is dropped – a new one is made (no t bump) */try{if(typeof senseOk==='function'&&DIX){if(w.trc&&w.trc.he&&w.trc.src==='ai'&&!senseOk(w,w.trc.he))delete w.trc;if(w.rv&&w.rv.he&&w.rv.src==='ai'&&!senseOk(w,w.rv.he))delete w.rv}}catch(e){}
   /* Hebrew sentences blanked straight from a book translation (Nov 16 version) could blank the wrong word – dropped, made again */
   if(w.rvh&&!w.rvh.g&&w.rvh.src!=='ai')delete w.rvh;if(typeof w.st!=='number')w.st=0;
   /* a card's word (c:<id>) learns that card's single meaning – older entries could hold all the meanings joined */
@@ -2328,7 +2333,12 @@ function amSetStat(s){let done=0,ok=0;s.ids.forEach(id=>{const l=amLast(id);if(l
 
 /* ---------- word workshop ---------- */
 /* stages 1..6 = the next review after 20 minutes (same day), 1, 3, 7, 14 and 30 days; stage 7 = learned */
-const WINT=[0,20*60e3,DAY,3*DAY,7*DAY,14*DAY,30*DAY],WMAST=7;
+/* ARCHIVE of the full review path (6 reviews, with the two translation reviews 4 and 6). Turned off at her request (Nov 27):
+   WTROFF=true keeps only reviews 1,2,3,5 of the full path (WKEEP) – set WTROFF=false to bring the translation reviews back
+   (stored words are mapped between the two numberings by amPathVer, w.pv). */
+const WTROFF=true,WKEEP=WTROFF?[0,1,2,3,5]:[0,1,2,3,4,5,6];
+const WINT_ALL=[0,20*60e3,DAY,3*DAY,7*DAY,14*DAY,30*DAY];
+const WINT=WKEEP.map(i=>WINT_ALL[i]),WMAST=WKEEP.length,WNR=WMAST-1,RVI=Array.from({length:WNR},(_,i)=>i+1);
 /* ONE table for the whole path – every explanation and every word's display is built from these two */
 const WLRN=[['תרגום משפט','משפט קל באנגלית עם המילה החדשה (לחיצה עליה = הפירוש). מתרגמים לעברית, מקבלים משוב ורואים את התרגום הנכון ואת האסוציאציה.'],
   ['הפירוש בעברית','רואים את המילה באנגלית וכותבים את הפירוש בעברית; Gemini בודק את התשובה (מילה נרדפת או ניסוח אחר של אותו פירוש נחשבים נכונים).'],
@@ -2336,13 +2346,14 @@ const WLRN=[['תרגום משפט','משפט קל באנגלית עם המילה
   ['משפט באנגלית','משפט באנגלית עם מקום ריק – בוחרים את המילה מתוך 4.']];
 /* reviews get harder one by one, and every review brings a new sentence: easy sentences early, hard exam sentences late
    (a sentence from the exam questions when there is one at that level, else Gemini writes one – the source is shown) */
-const WREV=[null,['סיום הסבבים של היום','משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
+const WREV_ALL=[null,['סיום הסבבים של היום','משפט בעברית','משפט בעברית עם מקום ריק – בוחרים את המילה באנגלית מתוך 4.'],
   ['יום','משפט קל באנגלית','משפט קצר וקל באנגלית (מהשאלות כשיש, אחרת משפט שנכתב בשבילך) – בוחרים את המילה החסרה מתוך 4.'],
   ['3 ימים','הפירוש בעברית','רואים רק את המילה באנגלית, בלי אפשרויות, וכותבים מה הפירוש בעברית.'],
   ['שבוע','תרגום משפט','משפט באורך בינוני (מהשאלות כשיש) – מתרגמים את כל המשפט לעברית.'],
   ['שבועיים','משפט קשה באנגלית','משפט ארוך וקשה מהשאלות (או ברמת המבחן) – בוחרים את המילה החסרה מתוך 4.'],
   ['חודש','תרגום משפט קשה','משפט ארוך וקשה מהשאלות (או ברמת המבחן) – מתרגמים את כל המשפט לעברית.']];
-const WLV=[0,0,1,0,2,3,3];/* sentence level per review: 1 easy · 2 medium · 3 hard */
+const WLV_ALL=[0,0,1,0,2,3,3];
+const WREV=WKEEP.map(i=>WREV_ALL[i]),WLV=WKEEP.map(i=>WLV_ALL[i]);/* sentence level per review: 1 easy · 2 medium · 3 hard */
 const WPN=WREV.map(r=>r?r[0]:'');
 const WTASKN={he2en:'עברית ← אנגלית',cloze:'השלמה במשפט',mc:'משפט באנגלית',hecl:'משפט בעברית',cloze2:'משפט חדש',en2he:'הפירוש בעברית',tr:'תרגום משפט',write:'משפט חדש',first:'שליפה ראשונה',r2:'סיבוב שני',learn:'למידה',known:'ידעתי מראש'};
 function amSheet(title,html){let d=$('amSheet');if(d)d.remove();d=document.createElement('div');d.id='amSheet';d.className='am-sheet';
@@ -3128,10 +3139,10 @@ const JBx=x=>x&&x.k==='q'&&x.qt&&JB['q_'+x.qt]?JB['q_'+x.qt]:JB[x&&x.k];
 const JB={
   rev:['🔁','חזרה על מילים','כל המילים שהגיע זמנן במסלול',
     'מתחילים במילים שהזיכרון שלהן מתחיל לדעוך עכשיו. שליפה בדיוק ברגע הזה היא מה שמקבע אותן לטווח ארוך – לכן זה תמיד הצעד הראשון ביום, כשהראש רענן.',
-    ['כל מילה מקבלת את התרגיל של החזרה שלה (חזרה 1–6): משפט בעברית, תרגום משפט, משפט חדש באנגלית או הפירוש בעברית','אין חזרה שבה כותבים את המילה באנגלית – בוחרים אותה מתוך 4, או מתרגמים משפט שהיא בתוכו','טעות = המילה חוזרת בסוף הסבב ושוב בעוד 20 דקות']],
+    ['כל מילה מקבלת את התרגיל של החזרה שלה (חזרה 1–'+WNR+'): משפט בעברית, משפט חדש באנגלית או הפירוש בעברית','אין חזרה שבה כותבים את המילה באנגלית – בוחרים אותה מתוך 4'+(WTROFF?'':', או מתרגמים משפט שהיא בתוכו')+'','טעות = המילה יורדת חזרה אחת, חוזרת בסוף הסבב ושוב מחר']],
   new:['🌱','מילים חדשות','תרגום משפט ← הפירוש ← משפט בעברית ← משפט באנגלית',
     'אחרי החזרות יש מקום למילים חדשות מהמילון – רק מילים שסימנת ✗ או שעוד לא סימנת. קודם מכירים אותן כמו בכל קבוצה במילון, ואז שולפים: בוחרים אותן במשפט. מחר הן כבר יחזרו אלייך.',
-    [...WLRN.map((r,i)=>`סבב ${i+1} · ${r[0]} – לכל המילים: ${r[1]}`),'אחרי 4 הסבבים הלמידה של היום נגמרת, והמילים נכנסות ל־6 חזרות: '+[1,2,3,4,5,6].map(i=>`חזרה ${i} (אחרי ${WREV[i][0]}) ${WREV[i][1]}`).join(' · ')]],
+    [...WLRN.map((r,i)=>`סבב ${i+1} · ${r[0]} – לכל המילים: ${r[1]}`),'אחרי 4 הסבבים הלמידה של היום נגמרת, והמילים נכנסות ל־'+WNR+' חזרות: '+RVI.map(i=>`חזרה ${i} (אחרי ${WREV[i][0]}) ${WREV[i][1]}`).join(' · ')]],
   q:['✏️','תרגול שאלות לפי השיטה','שאלה אחרי שאלה במסלול',
     'עכשיו מיישמים: שאלות מהמבחן, כל אחת במסלול – לחשוב לפני התשובות, לחקור כל טעות מיד, להבין איך פותרים לפי השיטה, ולאסוף מילים מהמאגר.',
     ['המערכת בוחרת את היחידה הבאה בתור, מתחלפת בין השלמת משפטים, ניסוח מחדש והבנת הנקרא','טעות → חקירה + לקח, מיד','📚 מילים מהשאלה → ➕ ללמידה; בסוף אפשר ללמוד אותן מיד','הצעד נגמר אחרי מספר השאלות שלו – עד אז ממשיכים ליחידה הבאה']],
@@ -3242,7 +3253,7 @@ const jrExtraTxt=k=>{const e=jrExtra(k),p=[];if(e.c)p.push(`+${e.c} דק׳ מי�
 const jrCarryNow=()=>{try{if(S.screen!=='amwl'||!WS||!WS.perWord||!WS.jr||WS.view!=null)return false;const x=jrBlock(WS.jr),k=WS.list&&WS.list[WS.i];return !!(x&&k&&(x.carry||[]).includes(k))}catch(e){return false}};
 /* how long the due reviews take (her question "do 42 reviews fit in half an hour? if not, say what the overflow is"): seconds per review task – a choice ~20 s, writing the meaning ~30 s, translating a sentence ~60 s */
 const WTSEC={hecl:20,mc:20,en2he:30,tr:60};
-function revEst(ws){return Math.ceil(ws.reduce((a,w)=>a+(WTSEC[WPATH[Math.min(6,Math.max(1,w.st||1))]]||30),0)/60)}
+function revEst(ws){return Math.ceil(ws.reduce((a,w)=>a+(WTSEC[WPATH[Math.min(WNR,Math.max(1,w.st||1))]]||30),0)/60)}
 function revOver(x){if(!x||(x.k!=='rev'&&x.k!=='rev2')||x.done)return null;if(x.k==='rev2'){const P=AMS.jp&&AMS.jp[String(x.id||'').split('|')[0]];if(P&&P.b.some(y=>y.k==='rev'&&!y.done&&!y.skip))return null}const ws=wDue(x.k==='rev2'&&!x.go?18e5:0);if(!ws.length)return null;const e=revEst(ws),left=Math.max(0,(x.m||0)-Math.round((x.used||0)/6e4));return {n:ws.length,e,over:Math.max(0,e-left),m:x.m||0}}
 function jrWhat(x){if(x.k==='rev2'&&!x.done){const n=wDue(x.go?0:18e5).length;if(n){const R=revOver(x);return n+' מילים לחזרה'}const nx=Object.values(AMS.w).filter(w=>w.st>=1&&w.st<WMAST&&lrOf(w)>=5).map(w=>w.due).sort((a,b)=>a-b)[0],m=nx?Math.ceil((nx-amNow())/6e4):0;return m>0&&m<=60?'תידלק בעוד '+m+' דק׳':'כבוי עכשיו – יידלק כשתסיימי את הסבבים של המילים החדשות'}
   if(x.k==='rev'||x.k==='rev2'){const n=wDue(x.k==='rev2'&&!x.go?18e5:0).length;if(x.done)return '';if(!n)return 'אין מילים לחזרה כרגע';const R=revOver(x);return n+' מילים לחזרה'+(R.over?` · היום +${R.over} דק׳ מעבר ל־30`:'')}
@@ -4270,7 +4281,7 @@ function amProgress(){if(!AMD)return amLoading();
   const cnt={};Object.values(AMS.a).forEach(a=>(a.r||[]).forEach(r=>cnt[r]=(cnt[r]||0)+1));const top=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).slice(0,4);
   const days=new Set();Object.values(AMS.a).forEach(a=>(a.h||[]).forEach(r=>days.add(dayKey(r[3]))));W.forEach(w=>(w.log||[]).forEach(r=>days.add(dayKey(r[0]))));
   let streak=0;for(let d=0;d<400;d++){if(days.has(dayKey(now-d*DAY)))streak++;else if(d)break}
-  const mx=Math.max(1,...fc),stN=['מחכות',...[1,2,3,4,5,6].map(i=>'חזרה '+i),'נלמדו'];
+  const mx=Math.max(1,...fc),stN=['מחכות',...RVI.map(i=>'חזרה '+i),'נלמדו'];
   app.innerHTML=`<div class="screen am-scr">
     ${amNav('am','אמירנט')}
     <div class="am-title"><span class="gi g-p">📊</span><div><h2>התקדמות ולוח זמנים</h2><p>${streak?`🔥 ${streak} ימים ברצף`:'עוד לא תרגלת היום'} · ${days.size} ימי תרגול</p></div></div>
@@ -4338,7 +4349,7 @@ function amWords(){if(!AMD)return amLoading();
   app.innerHTML=`<div class="screen am-scr">
     ${amNav('am','אמירנט')}
     <div class="am-title"><span class="gi g-w">🧠</span><div><h2>מילים</h2><p>לומדים לעומק ושולפים מהזיכרון – בלי "ידעתי / לא ידעתי".</p></div></div>
-    ${card('wRev','g-w','🔁','חזרה פעילה',due?'כל מילה – התרגיל של החזרה שלה (1–6)':'אין מילים שמחכות עכשיו',due||'',!due)}
+    ${card('wRev','g-w','🔁','חזרה פעילה',due?'כל מילה – התרגיל של החזרה שלה (1–'+WNR+')':'אין מילים שמחכות עכשיו',due||'',!due)}
     ${card('wNew','g-w','🌱','מילים חדשות להיום',newLeft?'4 סבבים: '+WPH.join(' ← '):'סיימת את המילים של היום ✓',newLeft||'',!newLeft)}
     ${''/* free word practice removed (Nov 20, her request) */}
     ${''&&card('wMine','g-w','📒','המילים שלי',`${learn} בלמידה · ${mast} נלמדו${hard?' · '+hard+' קשות':''}${wait?' · '+wait+' מחכות':''}`,'','',EX('כל המילים שאת לומדת, מסוננות: לחזרה, בלמידה, קשות, נלמדו, מחכות. לחיצה על מילה מראה מתי החזרה הבאה, יומן של כל הצלחה וטעות, והמלצה איך ללמוד אותה.','רשימת המילים שלך ← עמוד לכל מילה'))}
@@ -4428,7 +4439,7 @@ function jpQuizDone(){if(!Q||!/^JP/.test(String(Q.key||''))||!FP||FP.key!==Q.key
 
 /* ================= 🛤 the path of a word – a detailed explanation page (from the words page, a word's page and progress) ================= */
 function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?S.pfrom:'amw';
-  const T=[['היום','למידה','4 סבבים, כל סבב לכל המילים של היום (פירוט למטה).'],...[1,2,3,4,5,6].map(i=>['אחרי '+WREV[i][0],'חזרה '+i+' · '+WREV[i][1],WREV[i][2]]),['כ־55 יום מההתחלה','🏆 נלמדה','המילה מסומנת ✓ במילון ויוצאת מהחזרות.']];
+  const T=[['היום','למידה','4 סבבים, כל סבב לכל המילים של היום (פירוט למטה).'],...RVI.map(i=>['אחרי '+WREV[i][0],'חזרה '+i+' · '+WREV[i][1],WREV[i][2]]),['כ־55 יום מההתחלה','🏆 נלמדה','המילה מסומנת ✓ במילון ויוצאת מהחזרות.']];
   app.innerHTML=`<div class="screen am-scr">
     ${amNav(back,back==='amwd'?'המילה':back==='amp'?'התקדמות':back==='am'?'המסע':back==='amwl'?'חזרה לתרגול':'מילים')}
     <div class="am-title"><div><h2>🛤 המסלול של מילה</h2><p>מה קורה למילה מהרגע שמתחילים ללמוד אותה ועד שהיא נלמדה.</p></div></div>
@@ -4438,8 +4449,8 @@ function amPath(){const back=['amw','amwd','amp','am','amwl'].includes(S.pfrom)?
       <p>4 סבבים (זו עוד לא חזרה). כל סבב נעשה לכל המילים של היום, ורק אחריו מתחיל הבא:</p>
       <ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – כשכל המילים של היום יסיימו את הסבבים (אם לא – מחר בבוקר), ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה נשארת באותו סבב וחוזרת בסוף הסבב עם משפט או שאלה אחרים, עד שעונים נכון; עוברים לסבב הבא רק כשכל המילים של הסבב נכונות.</p>
       <p class="hint" style="margin:0">מילה עם כמה פירושים – כל פירוש הוא כרטיס נפרד ועובר מסלול משלו.</p></div>
-    <div class="am-box"><h4>2 · כל חזרה (חזרה 1–6)</h4>
-      <p>כל מילה מקבלת רק את התרגיל של החזרה שלה (חזרה 1–6 ברשימה למעלה), והוא קובע מה יקרה למילה. אין חזרה שבה כותבים את המילה באנגלית.</p>
+    <div class="am-box"><h4>2 · כל חזרה (חזרה 1–${WNR})</h4>
+      <p>כל מילה מקבלת רק את התרגיל של החזרה שלה (חזרה 1–${WNR} ברשימה למעלה), והוא קובע מה יקרה למילה. אין חזרה שבה כותבים את המילה באנגלית.</p>
       <p>כל חזרה קשה יותר מהקודמת, ובכל חזרה יש משפט חדש שלא היה לך עם המילה: בהתחלה משפטים קלים, ובהמשך משפטים ארוכים וקשים מהשאלות. כשאין במאגר משפט מתאים ברמה הזו, נכתב משפט חדש בשבילך. משפט שנלקח מהשאלות מסומן "📘 מתוך שאלות האמירנט" עם סוג השאלה והיחידה.</p></div>
     <div class="am-box"><h4>3 · מה קובע אם מתקדמים</h4>
       <ul><li><b>נכון</b> – המילה עוברת לחזרה הבאה, שרחוקה יותר בזמן.</li>
@@ -4477,7 +4488,7 @@ function wTrack(w,o){o=o||{};const pw=!!(WS&&WS.perWord&&WS.round&&w&&!o.free&&W
   const lc=lr;
   const rd=[1,2,3,4].map(i=>ch(i,(w&&(inRev||lc>i))?'done':(lc===i&&!inRev&&(w||o.cur))?'on':'',i)).join('');
   /* after answering, the chips keep the review she just did marked (her request); the line under them says where the word went */const sr=inRev&&WS&&WS.res&&WS.step!=='tr'&&!o.free&&WS.res.st0>=1?Math.min(WS.res.st0,6):s;
-  const rv=[1,2,3,4,5,6].map(i=>`<span class="${inRev?(i<sr?'done':i===sr?'on':''):''}">${i}</span>`).join('')+`<span class="${sr>=WMAST?'on':''}">🏆</span>`;
+  const rv=RVI.map(i=>`<span class="${inRev?(i<sr?'done':i===sr?'on':''):''}">${i}</span>`).join('')+`<span class="${sr>=WMAST?'on':''}">🏆</span>`;
   const res=WS&&WS.res&&WS.step!=='tr'&&!o.free;let now='';
   if(w&&!w.k&&o.free)now='המילה עוד לא נכנסה ללמידה';
   else if(w&&s>=WMAST)now='🏆 המילה נלמדה';
@@ -4526,7 +4537,7 @@ function wRec(w){const L=w.log||[],a=wAcc(w),bad=w.bad||0,hints=L.filter(r=>r[3]
   return out}
 function amWordPage(){if(!AMD)return amLoading();const w=AMS.w[S.wk];if(!w){go({screen:'amwm'});return}
   const cd=wCard(w),x=cd?EXTRA[cd.xid||cd.id]||{}:{},a=wAcc(w),L=(w.log||[]).slice().reverse();
-  const steps=[1,2,3,4,5,6].map(i=>`חזרה ${i}<br>${WPN[i]}`);
+  const steps=RVI.map(i=>`חזרה ${i}<br>${WPN[i]}`);
   app.innerHTML=`<div class="screen am-scr">
     ${amNav('amwm','המילים שלי')}
     <div class="am-wordhead"><div class="w" dir="ltr">${SAYB(w.e)}<span>${esc(w.e)}</span></div><div class="m">${esc(w.h||'')}</div>
@@ -4567,7 +4578,7 @@ function wStart(mode,keys,cnt){
    Reviews by stage (Nov 6, her request – no stage where she writes the English word): 1 (20 min) Hebrew sentence – choose the English word ·
    2 (1 day) translate an English sentence · 3 (3 days) another English sentence – choose from 4 · 4 (7 days) the meaning in Hebrew ·
    5 (14 days) translate an English sentence · 6 (30 days) another English sentence – choose from 4 → learned. No warm-up before a review. */
-const WPATH=[null,'hecl','mc','en2he','tr','mc','tr'];
+const WPATH_ALL=[null,'hecl','mc','en2he','tr','mc','tr'],WPATH=WKEEP.map(i=>WPATH_ALL[i]);
 const WPATHN=WREV.map(r=>r?r[1]:'');
 /* a choosing task for the word (never writing it in English): Hebrew sentence → English sentence → its meaning in Hebrew */
 /* a Hebrew-sentence task stays Hebrew – never switched to an English sentence (Nov 16, her request) */
@@ -4711,7 +4722,7 @@ function wOpts(w){WS.opts=WS.opts||{};const k=wK(w);if(WS.opts[k])return WS.opts
    1 תרגום משפט (an easy English sentence with the new word – tap it for the meaning – translate, feedback, the right translation)
    2 הפירוש בעברית = the dictionary quiz itself on the round's cards (key 'JW…')   3 משפט בעברית (choose the English word)   4 משפט באנגלית (choose)
    Reviews start with round 1 too (a new sentence every time), then each word's task by its stage. */
-const WPH=WLRN.map(r=>r[0]);/* the 4 learning rounds (סבב 1–4) – not the 6 reviews (חזרה 1–6) */
+const WPH=WLRN.map(r=>r[0]);/* the 4 learning rounds (סבב 1–4) – not the 6 reviews (חזרה 1–${WNR}) */
 function wPathChips(n){return `<div class="am-path">${WPH.map((t,i)=>`<span class="${i<n?'done':i===n?'on':''}">סבב ${i+1} · ${t}${i<n?' ✓':''}</span>`).join('')}</div>`}
 const wPhN=()=>!WS?0:WS.mode==='new'?0:WS.mode==='r2'?({dq:1,he:2,mc:3}[WS.phase]||3):0;
 /* the sentence to translate: the card's example the first time, then a new easy sentence from Gemini each time (else another sentence + Google) */
@@ -4988,7 +4999,7 @@ function trFix(en){const c=TRC[en.toLowerCase()]&&TRC[en.toLowerCase()].src==='�
     if(h){TRC[en.toLowerCase()]={h,src:'תוקן'};if(WS&&WS.res&&WS.res.en===en)WS.res.he=h;Object.values(AMS.w).forEach(w=>{for(const f of ['rv','trc'])if(w[f]&&w[f].en===en)w[f].he=h});amSave();if(WS)wSave();amToast(j.changed===false?'התרגום נבדק – הוא נכון':'✓ התרגום תוקן')}
     else amToast('לא הצלחתי לבדוק את התרגום עכשיו');if(S.screen.startsWith('am'))amRedrawKeep()}).catch(()=>{delete TRFIXP[en];amToast('לא הצלחתי לבדוק את התרגום עכשיו')})}
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-trfix]');if(b)trFix(b.dataset.trfix)});
-function wStageDots(w){return [1,2,3,4,5,6].map(i=>w.st>i?'●':w.st===i?'◉':'○').join('')}
+function wStageDots(w){return RVI.map(i=>w.st>i?'●':w.st===i?'◉':'○').join('')}
 /* is there anything to choose from (the dictionary tip or Gemini ideas, or Gemini still working on them) */
 /* one association at a time: ✨ asks Gemini for a new one (not like the earlier ones), ↩ goes back to the previous one */
 const WSGEN={},WSGERR={};
@@ -5280,10 +5291,10 @@ const AMHELP={
   <li><b>סבב 4 · משפט באנגלית</b> – בוחרים את המילה שמשלימה.</li></ol><p class="hint" style="margin:0">בסוף הסבבים המילה עוברת ל<b>חזרה 1</b> – כשכל המילים של היום יסיימו את הסבבים (אם לא – מחר בבוקר), ב"חזרה על המילים של היום". לכן במילים לחזרה רואים מילים ב"חזרה 1": הן כבר נלמדו, וזו החזרה הראשונה שלהן. <b>טעות בלמידה</b> (בכל אחד מ-4 הסבבים): המילה נשארת באותו סבב וחוזרת בסוף הסבב עם משפט או שאלה אחרים, עד שעונים נכון; עוברים לסבב הבא רק כשכל המילים של הסבב נכונות.</p>
   <p><b>מילה עם כמה פירושים</b> – כל פירוש נלמד בנפרד.</p>`],
  journey:['🛤','המסלול של מילה','אמירנט',`<p><b>למידה (באותו יום) – 4 סבבים, כל סבב לכל המילים לפני הבא:</b></p><ol>${WLRN.map((r,i)=>`<li><b>סבב ${i+1} · ${r[0]}</b> – ${r[1]}</li>`).join('')}</ol>
-  <p><b>חזרות – 6 חזרות במרווחים שגדלים (אין חזרה שבה כותבים את המילה באנגלית). חזרה 1 מגיעה כשכל המילים של היום סיימו את הסבבים (אם לא סיימת – למחרת בבוקר):</b></p>
-  <ol>${[1,2,3,4,5,6].map(i=>`<li><b>חזרה ${i} · אחרי ${WREV[i][0]} · ${WREV[i][1]}</b> – ${WREV[i][2]}${i===6?' הצלחה = 🏆 נלמדה, וסימון ✓ במילון.':''}</li>`).join('')}</ol>
+  <p><b>חזרות – ${WNR} חזרות במרווחים שגדלים (אין חזרה שבה כותבים את המילה באנגלית). חזרה 1 מגיעה כשכל המילים של היום סיימו את הסבבים (אם לא סיימת – למחרת בבוקר):</b></p>
+  <ol>${RVI.map(i=>`<li><b>חזרה ${i} · אחרי ${WREV[i][0]} · ${WREV[i][1]}</b> – ${WREV[i][2]}${i===WNR?' הצלחה = 🏆 נלמדה, וסימון ✓ במילון.':''}</li>`).join('')}</ol>
   <p>נכון = לחזרה הבאה · עם רמז (יש רק בחזרה 3) = אותה חזרה שוב · טעות = חזרה אחת אחורה, עוד פעם בסוף הסבב והחזרה הבאה מחר. האפשרויות בבחירה הן מילים אחרות שאת לומדת – כך לומדים להבחין ביניהן.</p>`],
- mywords:['📒','המילים שלי','אמירנט',`<p>כל המילים שלך, עם לשוניות: <b>לחזרה</b> (הגיע זמנן), <b>בלמידה</b>, <b>קשות</b>, <b>נלמדו</b>, <b>מחכות</b>. ליד כל מילה כתוב באיזו חזרה היא (חזרה 1–6) ומתי החזרה הבאה.</p>
+ mywords:['📒','המילים שלי','אמירנט',`<p>כל המילים שלך, עם לשוניות: <b>לחזרה</b> (הגיע זמנן), <b>בלמידה</b>, <b>קשות</b>, <b>נלמדו</b>, <b>מחכות</b>. ליד כל מילה כתוב באיזו חזרה היא (חזרה 1–${WNR}) ומתי החזרה הבאה.</p>
   <p>לחיצה על מילה פותחת את העמוד שלה: מסלול החזרות ומתי הבאה, <b>היומן</b> (כל תרגול: מתי, איזה תרגיל, הצלחה / טעות / עם רמז), אחוז הצלחה, <b>המלצה אישית</b>, האסוציאציה (אפשר להחליף), משפט משלך (לא חובה), איפה פגשת אותה, ו"תרגול עכשיו".</p>
   <p>למטה בעמוד הרשימה: כמה מילים חדשות ביום.</p>`],
  basics:['🧱','יסודות','אמירנט',`<p>תרגילים מהספר "יסודות אנגלית" עם התשובות מהספר, ורשימות מילים (מילים מבלבלות, פעלים מורכבים, ביטויים…) שאפשר להוסיף ללמידה בלחיצה.</p>`],
