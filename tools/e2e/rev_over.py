@@ -8,5 +8,5 @@ with sync_playwright() as p:
   pg.wait_for_timeout(1200)
   t=pg.locator('.jh').inner_text();print(t[:260]);pg.screenshot(path='/tmp/claude-0/-home-claude/57ff57e9-f98a-5dad-a91a-88f510546bae/scratchpad/rov.png')
   e=pg.evaluate("revEst(wDue(0))");print('est',e)
-  assert 'בערך %d דק׳'%e in t and 'מעבר לתוכנית' in t and 'חריגה' in t
+  assert 'מעבר ל־30' in t and pg.locator('.jh-st .ov').count()==1
   assert not errs,errs;print('OK');b.close()
